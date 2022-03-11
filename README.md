@@ -28,4 +28,8 @@
 Required to build:
 * [node and npm](https://nodejs.org/en/download) to install dependencies
 
-TODO: detailed description covered in different story
+After installing npm, you have to install rollupJS globally which is used to bundle the files:
+```
+$ npm install rollup --global
+```
+
