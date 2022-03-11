@@ -1,0 +1,19 @@
+{
+  "name": "virtual-ct-board",
+  "version": "0.1.0",
+  "description": "This project aims to emulate the cortex-m0 architecture on a ST board that is used in the CT1 course at ZHAW.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZHAW-FS22-PM4/Virtual-CT-Board.git"
+  },
+  "author": "Virtual CT Board Team",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ZHAW-FS22-PM4/Virtual-CT-Board/issues"
+  },
+  "homepage": "https://github.com/ZHAW-FS22-PM4/Virtual-CT-Board#readme"
+}
