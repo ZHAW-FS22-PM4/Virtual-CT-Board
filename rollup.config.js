@@ -4,21 +4,23 @@ import resolve from '@rollup/plugin-node-resolve';
 // allows the usage of commonjs modules with es2016 modules
 import commonjs from '@rollup/plugin-commonjs';
 
-// 
+// allows replacing strings in the codebase
 import replace from '@rollup/plugin-replace';
 
 // support for typescript
 import typescript from '@rollup/plugin-typescript';
 
 // minifies the output to the dist folder
-import terser from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-terser';
 
+// support for html and css
 import html from 'rollup-plugin-generate-html-template';
 import css from 'rollup-plugin-import-css';
 
 // allows clearing the output directory
 import clear from 'rollup-plugin-clear';
 
+// dev tools
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
@@ -73,10 +75,10 @@ if (isDevelopment) {
 }
 
 export default {
-  input: 'src/index.tsx',
+  input: 'src/main.tsx',
   output: {
     dir: 'dist',
-    format: 'iife',
+    format: 'iife', // build output as single executable javascript function
     sourcemap: (isDevelopment ? 'inline' : false)
   },
   plugins

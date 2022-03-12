@@ -25,11 +25,24 @@
 
 ## Installation
 
-Required to build:
+Required software to develop project:
 * [node and npm](https://nodejs.org/en/download) to install dependencies
+* Editor of your choice, prefereably [Visual Studio Code](https://code.visualstudio.com)
 
-After installing npm, you have to install rollupJS globally which is used to bundle the files:
-```
-$ npm install rollup --global
-```
+## Build
 
+* Clone the repository to your desired location
+* Install the dependencies:
+```
+$ npm install
+```
+* Now you should be able to build the project using the rollup command:
+  * The output of the build should be located in the dist/ directory
+```
+$ npm run build
+```
+* Alternatively you can also watch for changes and let rollup rebuild automatically:
+```
+$ npm run watch
+```
+* Hint: The first command will start the build in production mode and the second command runs in development mode. It is possible to override this behaviour by statically setting the `isDevelopment` and `isProduction` flags in the `rollup.config.js` file
