@@ -46,3 +46,10 @@ $ npm run build
 $ npm run watch
 ```
 * Hint: The first command will start the build in production mode and the second command runs in development mode. It is possible to override this behaviour by statically setting the `isDevelopment` and `isProduction` flags in the `rollup.config.js` file
+
+## Tests
+
+* Run tests with:
+```
+$ npm run test
+```
