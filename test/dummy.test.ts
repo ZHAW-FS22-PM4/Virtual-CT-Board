@@ -1,4 +1,4 @@
-import {add} from "../src/dummy/dummy";
+import {add} from "dummy/dummy";
 
 describe("test add function", () => {
     it("should return 15 for add(10,5)", () => {
