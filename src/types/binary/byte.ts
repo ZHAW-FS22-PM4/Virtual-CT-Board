@@ -33,7 +33,7 @@ export class Byte {
   /**
    * Creates a new byte from a signed integer.
    * 
-   * @param value the uigned integer value
+   * @param value the signed integer value
    * @returns the byte representation
    */
   public static fromSignedInteger(value: number): Byte {
@@ -64,8 +64,11 @@ export class Byte {
     if (value instanceof Byte) {
       value = value.value
     }
-    // TODO: Handle underflow
-    return new Byte((this.value + value) % Byte.MAX_VALUE + 1)
+
+    let newValue = (this.value + value) % Byte.MAX_VALUE + 1;
+    newValue = (newValue < 0) ? Byte.MAX_VALUE - newValue: newValue;
+
+    return new Byte(newValue)
   }
 
   /**
