@@ -36,6 +36,14 @@ Required software to develop project:
 ```
 $ npm install
 ```
+* Once install rollup globally:
+```
+$ npm install --global rollup
+```
+* Once install typescript globally:
+```
+$ npm install -g typescript
+```
 * Now you should be able to build the project using the rollup command:
   * The output of the build should be located in the dist/ directory
 ```
