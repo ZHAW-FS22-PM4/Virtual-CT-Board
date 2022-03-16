@@ -1,4 +1,4 @@
-import { Instruction, InstructionName } from './instruction'
+import { Instruction, Command } from './instruction'
 import { Area } from './area'
 import { Register } from '../board/registers'
 
@@ -9,7 +9,7 @@ export function parseInstruction (instruction: string): Instruction {
     let elements : string[] = instruction.split(' |,')
     elements.forEach(element => element.trim())
 
-    if (isValidInstruction(elements)) return new Instruction(InstructionName[elements[0]], elements.slice(1,3))
+    //if (isValidInstruction(elements)) return new Instruction(Command[elements[0]], elements.slice(1,3))
     // else if no valid instruction
     throw new Error(`Unknown instruction '${instruction}'.`)
 }
@@ -19,7 +19,7 @@ export function parseInstruction (instruction: string): Instruction {
 */
 export function parseCode (code: string): Area {
     let lines : string[] = code.split('\n')
-    let instructions : Instruction[]
+    let instructions : Instruction[] = []
     for (let line of lines) {
         instructions.push(parseInstruction(line))
     }
@@ -31,7 +31,7 @@ export function parseCode (code: string): Area {
     return false otherwise
 */
 export function isValidInstruction(instruction: string[]): boolean {
-    if ((<any>Object).values(InstructionName).includes(instruction[0]) &&
+    if ((<any>Object).values(Command).includes(instruction[0]) &&
     Object.keys(Register).includes(instruction[1]) &&
     Object.keys(Register).includes(instruction[2])) {
         return true
