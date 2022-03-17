@@ -1,7 +1,3 @@
-/*
-    Represents the registers of the board's processor
-*/
-
 import { Word } from 'types/binary'
 
 export enum Register {
@@ -23,41 +19,26 @@ export enum Register {
   PC = 15
 }
 
-type IRegisters = {
-  [register in Register]: number;
+interface IRegisterData {
+  [register: number]: number
 }
 
-let registers: IRegisters = initializeRegisters()
+export class Registers {
+  private data: IRegisterData = {}
 
-export function readRegister (register: Register): Word {
-  return Word.fromUnsignedInteger(registers[register])
-}
+  constructor () {
+    this.data = {}
+  }
 
-export function writeRegister (register: Register, word: Word): void {
-  registers[register] = word.value
-}
+  public readRegister (register: Register): Word {
+    return Word.fromUnsignedInteger(this.data[register])
+  }
 
-export function clearRegisters (): void {
-  registers = initializeRegisters()
-}
+  public writeRegister (register: Register, word: Word): void {
+    this.data[register] = word.value
+  }
 
-function initializeRegisters (): IRegisters {
-  return {
-    [Register.R0]: 0x0,
-    [Register.R1]: 0x0,
-    [Register.R2]: 0x0,
-    [Register.R3]: 0x0,
-    [Register.R4]: 0x0,
-    [Register.R5]: 0x0,
-    [Register.R6]: 0x0,
-    [Register.R7]: 0x0,
-    [Register.R8]: 0x0,
-    [Register.R9]: 0x0,
-    [Register.R10]: 0x0,
-    [Register.R11]: 0x0,
-    [Register.R12]: 0x0,
-    [Register.SP]: 0x0,
-    [Register.LR]: 0x0,
-    [Register.PC]: 0x0
+  public clear (): void {
+    this.data = {}
   }
 }
