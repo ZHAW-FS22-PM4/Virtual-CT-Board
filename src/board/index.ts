@@ -15,7 +15,7 @@ class Board {
   public readonly processor: Processor
 
   public readonly devices: IDevice[]
-
+  
   public readonly flash: Flash
 
   constructor () {
