@@ -1,3 +1,6 @@
+/**
+ * Represents the registers of the CPU
+ */
 import { Word } from 'types/binary'
 
 export enum Register {
@@ -19,26 +22,64 @@ export enum Register {
   PC = 15
 }
 
-interface IRegisterData {
-  [register: number]: number
+type IRegisterData = {
+  [register in Register]: number
 }
 
 export class Registers {
-  private data: IRegisterData = {}
+  private data: IRegisterData
 
-  constructor () {
-    this.data = {}
+  constructor() {
+    this.data = this.initializeRegisters()
   }
 
-  public readRegister (register: Register): Word {
+  /**
+   * Reads a word from the register
+   * @param register register to read
+   * @returns read word
+   */
+  public readRegister(register: Register): Word {
     return Word.fromUnsignedInteger(this.data[register])
   }
 
-  public writeRegister (register: Register, word: Word): void {
+  /**
+   * Writes a word to a register
+   * @param register register to write
+   * @param word word to write into the register
+   */
+  public writeRegister(register: Register, word: Word): void {
     this.data[register] = word.value
   }
 
-  public clear (): void {
-    this.data = {}
+  /**
+   * Resets all registers to 0
+   */
+  public clear(): void {
+    this.data = this.initializeRegisters()
+  }
+
+  /**
+   * Resets all registers to 0
+   * @returns reset register of type IRegisterData
+   */
+  private initializeRegisters(): IRegisterData {
+    return {
+      [Register.R0]: 0x0,
+      [Register.R1]: 0x0,
+      [Register.R2]: 0x0,
+      [Register.R3]: 0x0,
+      [Register.R4]: 0x0,
+      [Register.R5]: 0x0,
+      [Register.R6]: 0x0,
+      [Register.R7]: 0x0,
+      [Register.R8]: 0x0,
+      [Register.R9]: 0x0,
+      [Register.R10]: 0x0,
+      [Register.R11]: 0x0,
+      [Register.R12]: 0x0,
+      [Register.SP]: 0x0,
+      [Register.LR]: 0x0,
+      [Register.PC]: 0x0
+    }
   }
 }
