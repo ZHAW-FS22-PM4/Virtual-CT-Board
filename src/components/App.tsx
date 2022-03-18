@@ -1,5 +1,6 @@
 import React from 'react'
 import {Register} from "./register/Register";
+import { StatusFlags } from './register/StatusFlags';
 
 export class App extends React.Component {
     render (): React.ReactNode {
@@ -13,6 +14,7 @@ export class App extends React.Component {
                   </div>
                   <div className="col-sm">
                     <Register/>
+                    <StatusFlags/>
                   </div>
                   <div className="col-sm">
                     Board ...

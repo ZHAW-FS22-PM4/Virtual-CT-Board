@@ -1,0 +1,22 @@
+.status-flags-container {
+    border: 1px solid black;
+    width: 12rem;
+    height: 4rem;
+}
+
+.status-flags-container > .row > .col {
+    text-align: center;
+    border: 1px solid black;
+
+}
+
+.col-md-auto{
+    border-inline: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 3rem;
+    text-align: center;
+}
+
+.status-flags-container > .row {
+    height: 2rem;
+}
