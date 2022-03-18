@@ -18,7 +18,6 @@ export class Processor {
   private readonly instructions: IInstructionSet
 
   private interval: number = 0
-  private isRunning: boolean = false
 
   constructor (registers: Registers, memory: IMemory, instructions: IInstructionSet) {
     this.registers = registers
@@ -32,38 +31,26 @@ export class Processor {
    * @returns void
    */
   public execute (): void {
-    if (this.isRunning) {
-      return
-    }
-
+    if (this.interval !== 0) return
     this.interval = window.setInterval(this.cycle, cycleSpeed)
-    this.isRunning = true
   }
 
   /**
-   * Halts the execution but does not reset registers. This function is only callable
-   * if the code is currently running.
+   * Halts the execution but does not reset state of board.
    * @returns void
    */
   public halt (): void {
-    if (!this.isRunning) {
-      return
-    }
-
-    this.isRunning = false
+    window.clearInterval(this.interval)
+    this.interval = 0
   }
 
   /**
-   * Resets the whole processor state and starts the program back at the beginning. This
-   * method is not callable until the program execution is halted.
+   * Resets the whole processor state. It first halts the execution if required and afterwards
+   * resets memory and registers.
    * @returns void
    */
   public reset (): void {
-    if (this.isRunning) {
-      return
-    }
-
-    window.clearInterval(this.interval)
+    this.halt()
 
     this.memory.clear()
     this.registers.clear()
@@ -73,11 +60,9 @@ export class Processor {
   }
 
   private cycle (): void {
-    if (this.isRunning) {
-      const pc: Word = this.registers.readRegister(Register.PC)
-      const opCode: Halfword = this.memory.readHalfword(this.registers.readRegister(Register.PC))
-      this.instructions.getExecutor(opCode).executeInstruction(opCode, this.registers, this.memory)
-      this.registers.writeRegister(Register.PC, pc.increment(2))
-    }
+    const pc: Word = this.registers.readRegister(Register.PC)
+    const opCode: Halfword = this.memory.readHalfword(this.registers.readRegister(Register.PC))
+    this.instructions.getExecutor(opCode).executeInstruction(opCode, this.registers, this.memory)
+    this.registers.writeRegister(Register.PC, pc.increment(2))
   }
 }
