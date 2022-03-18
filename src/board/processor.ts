@@ -17,7 +17,7 @@ export class Processor {
   private readonly memory: IMemory
   private readonly instructions: IInstructionSet
 
-  private timeout: number = 0
+  private interval: number = 0
   private isRunning: boolean = false
 
   constructor (registers: Registers, memory: IMemory, instructions: IInstructionSet) {
@@ -36,7 +36,7 @@ export class Processor {
       return
     }
 
-    this.timeout = window.setTimeout(this.cycle, cycleSpeed)
+    this.interval = window.setInterval(this.cycle, cycleSpeed)
     this.isRunning = true
   }
 
@@ -63,7 +63,7 @@ export class Processor {
       return
     }
 
-    window.clearTimeout(this.timeout)
+    window.clearInterval(this.interval)
 
     this.memory.clear()
     this.registers.clear()
@@ -73,7 +73,7 @@ export class Processor {
   }
 
   private cycle (): void {
-    while (this.isRunning) {
+    if (this.isRunning) {
       const pc: Word = this.registers.readRegister(Register.PC)
       const opCode: Halfword = this.memory.readHalfword(this.registers.readRegister(Register.PC))
       this.instructions.getExecutor(opCode).executeInstruction(opCode, this.registers, this.memory)
