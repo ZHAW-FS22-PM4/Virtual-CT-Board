@@ -1,0 +1,10 @@
+.register-container {
+    border: 1px solid black;
+    width: 12rem;
+    height: 30rem;
+}
+
+.register-container > .row {
+    padding-bottom: .2rem;
+    border-bottom: 1px solid lightgrey;
+}
