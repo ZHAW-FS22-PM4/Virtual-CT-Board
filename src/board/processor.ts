@@ -61,7 +61,7 @@ export class Processor {
 
   private cycle (): void {
     const pc: Word = this.registers.readRegister(Register.PC)
-    const opCode: Halfword = this.memory.readHalfword(this.registers.readRegister(Register.PC))
+    const opCode: Halfword = this.memory.readHalfword(pc)
     this.instructions.getExecutor(opCode).executeInstruction(opCode, this.registers, this.memory)
     this.registers.writeRegister(Register.PC, pc.increment(2))
   }
