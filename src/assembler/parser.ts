@@ -6,9 +6,9 @@ const END_AREA: string = 'ALIGN'
 
 //Regexes needed to check syntax
 const AREA_TITLE_REGEX: RegExp = / *([a-zA-Z]+) *, *(DATA|CODE) *, *READ(WRITE|ONLY) */
-const LABEL_REGEX: RegExp = /^ *([a-z0-9_]+) +(?!SPACE|EQU|DCD)([A-Z]+).*$/ 
+const LABEL_REGEX: RegExp = /^( |\t)*([a-z0-9_]+)( |\t)+(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 2 ([a-z0-9_]+) and 4 ([A-Z]+) are being used below
 const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
-const INSTRUCTION_REGEX: RegExp = /^ *([A-Z]+) +.*/ 
+const INSTRUCTION_REGEX: RegExp = /^( |\t)*([A-Z]+)( |\t)+.*/ //group 2 ([A-Z]+) is being used below
 
 /**
  * Parses a given code string and returns a code object containing areas that contain instructions.
@@ -18,7 +18,7 @@ const INSTRUCTION_REGEX: RegExp = /^ *([A-Z]+) +.*/
 export function parse (code: string): ICode {
   let areaStrings: string[] = code.split(START_AREA)
 
-  let preface: string[][] = splitLines(areaStrings[0])
+  let preface: string[][] = areaStrings[0].split('\n').map(line => line.split(' '))
   delete areaStrings[0]
 
   let areas: IArea[] = []
@@ -26,7 +26,7 @@ export function parse (code: string): ICode {
   for (let area of areaStrings) {
     let lines: string[] = area.split('\n')
     lines = removeNonCode(lines)
-    if (!area.endsWith(END_AREA)) throw new Error('Compile Error.')
+    if (!area.endsWith(END_AREA)) throw new Error('Compile Error.') //TODO except last one
 
     //extract params for Area
     let tags = lines[0].match(AREA_TITLE_REGEX)
@@ -48,24 +48,15 @@ export function parse (code: string): ICode {
   @param code 
  * @returns 
 */
-function removeNonCode(code: string[]): string[] {
+export function removeNonCode(code: string[]): string[] {
   let lines: string[] = code.filter(line => (line.trim().length > 0) && !line.startsWith(";"))
-  for (let line in lines) {
-    let index: number = line.indexOf(START_COMMENT)
+  for (let i = 0; i < lines.length; i++) {
+    let index: number = lines[i].indexOf(START_COMMENT)
     if (index != -1) {
-      line = line.slice(0, index)
+      lines[i] = lines[i].slice(0, index)
     }
   }
   return lines
-}
-
-/**
-  Splits a given string by \n first and by ' ' in a 2nd step.
-  @param lines string
- * @returns a two-dimensional array.
-*/
-function splitLines(lines: string): string[][] {
-  return lines.split('\n').map(line => line.split(' '))
 }
 
 /**
@@ -73,7 +64,7 @@ function splitLines(lines: string): string[][] {
  * @param lines instruction line
  * @returns array of instructions
  */
-function createInstructions(lines: string[]): IInstruction[] {
+export function createInstructions(lines: string[]): IInstruction[] {
   lines = lines.map(line => line.trim())
 
   let instructions: IInstruction[] = []
@@ -81,15 +72,15 @@ function createInstructions(lines: string[]): IInstruction[] {
   for (let line of lines) {
     let tags = line.match(LABEL_REGEX)
     if (tags) {
-      line = line.slice(line.indexOf(tags[2]))
-      instructions.push({name: tags[2], label: tags[1], params: line.split(',').map(el => el.trim())})
+      line = line.slice(line.indexOf(tags[4])+tags[4].length)
+      instructions.push({name: tags[4], label: tags[2], params: line.split(',').map(el => el.trim())})
     }
 
     else {
       let tags = line.match(INSTRUCTION_REGEX)
       if (tags) {
-        line = line.slice(line.indexOf(tags[1]))
-        instructions.push({name: tags[1], label: '', params: line.split(',').map(el => el.trim())})
+        line = line.slice(line.indexOf(tags[2])+tags[2].length)
+        instructions.push({name: tags[2], label: '', params: line.split(',').map(el => el.trim())})
       }
        //TODO handle data instructions
       else {
