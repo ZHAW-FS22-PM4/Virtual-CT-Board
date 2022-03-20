@@ -4,6 +4,7 @@ import { IObjectFile } from './objectFile'
 import { Word } from '../types/binary/word'
 
 import InstructionSet from 'instruction/set'
+import { NoEncoderFoundError } from 'types/error'
 
 export function encode(code: ICode): IObjectFile {
   const opcode: IObjectFile = { sections: [] }
@@ -14,14 +15,28 @@ export function encode(code: ICode): IObjectFile {
   code.areas.forEach((area, index) => {
     area.instructions.forEach((instr, idx) => {
       //InstructionSet.getEncoder("MOV").encodeInstruction(["R1", "R2"], {});
-      const instrContent = InstructionSet.getEncoder(instr.name)
-        .encodeInstruction(instr.params, {})
-        .toBytes()
-      //TODO correct offset for instruction
-      opcode.sections.push({
-        content: instrContent,
-        offset: Word.fromUnsignedInteger(idx * 4)
-      })
+      try {
+        const instrContent = InstructionSet.getEncoder(instr.name)
+          .encodeInstruction(instr.params, {})
+          .toBytes()
+        //TODO correct offset for instruction
+        opcode.sections.push({
+          content: instrContent,
+          offset: Word.fromUnsignedInteger(idx * 4)
+        })
+        return true
+      } catch (e) {
+        if (e instanceof NoEncoderFoundError) {
+          opcode.sections.push({
+            content: [],
+            offset: Word.fromUnsignedInteger(idx * 4)
+          })
+        } else {
+          //rethrow remaining errors
+          throw e
+        }
+        return false
+      }
     })
   })
 
