@@ -15,7 +15,7 @@ test("fromUnsignedInteger_validValues", ()=> {
     expect(Halfword.fromUnsignedInteger(255).value).toBe(255)
     expect(Halfword.fromUnsignedInteger(256).value).toBe(256)
     expect(Halfword.fromUnsignedInteger(0).value).toBe(0)
-});
+})
 
 test("fromUnsignedInteger_invalidValues", ()=> {
     expect(() => {
@@ -24,7 +24,7 @@ test("fromUnsignedInteger_invalidValues", ()=> {
     expect(() => {
         Halfword.fromUnsignedInteger(65536)
     }).toThrowError("Halfword value can not be larger than `Halfword.MAX_VALUE`.")
-});
+})
 
 
 test("toHexString", ()=> {
@@ -32,7 +32,7 @@ test("toHexString", ()=> {
     expect(halfword_0000.toHexString()).toBe("0000")
     expect(halfword_0100.toHexString()).toBe("0100")
     expect(halfword_00ff.toHexString()).toBe("00ff")
-});
+})
 
 test("toBinaryString", ()=> {
     expect(halfword_ffff.toBinaryString()).toBe("1111111111111111")

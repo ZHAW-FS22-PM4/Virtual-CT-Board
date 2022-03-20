@@ -86,11 +86,7 @@ export class Byte {
    * @returns the signed integer representation as a number
    */
   public toSignedInteger(): number {
-    const abs = this.value & 0x7F
-    if (this.hasSign()) {
-      return abs * -1
-    }
-    return abs
+    return (this.value >= Byte.MAX_VALUE / 2) ? -1 * (Byte.MAX_VALUE - this.value + 1) : this.value
   }
 
   /**

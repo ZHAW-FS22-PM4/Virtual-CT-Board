@@ -61,7 +61,7 @@ export class Word {
         let value = word.value
         while (value > Word.MIN_VALUE) {
           bytes.push(Byte.fromUnsignedInteger(value & 0xFF))
-          value >>= 8
+          value = value >>> 8
         }
       }
       return bytes
@@ -94,7 +94,7 @@ export class Word {
       for (const word of words) {
         let value = word.value
         while (value > Word.MIN_VALUE) {
-          halfwords.push(Halfword.fromUnsignedInteger(value & 0xFF))
+          halfwords.push(Halfword.fromUnsignedInteger(value & 0xFFFF))
           value = value >>> 16
         }
       }
@@ -129,7 +129,7 @@ export class Word {
     }
 
     /**
-     * Splites a word in to a list of bytes
+     * Splites the word into a list of bytes
      *
      * @param value the word to split
      * @returns the list of splitted bytes
@@ -139,7 +139,7 @@ export class Word {
     }
 
     /**
-     * Splites a word in to a list of halfwords
+     * Splites the word into a list of halfwords
      *
      * @param value the word to split
      * @returns the list of splitted halfwords

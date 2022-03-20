@@ -25,19 +25,18 @@ test("fromUnsignedInteger_invalidValues", ()=> {
 })
 
 test("fromBytes", ()=> {
-})
-
-test("toBytes", ()=> {
+    expect(Word.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(254),Byte.fromUnsignedInteger(254))).toEqual("word_ffffffff")
 })
 
 test("fromHalfwords", ()=> {
 })
 
 test("increment", ()=> {
+    expect(word_00010000.increment(2)).toEqual(Word.fromUnsignedInteger(65538))
 })
 
 test("toUnsignedInteger", ()=> {
-        expect(word_ffffffff.toUnsignedInteger()).toBe(4294967295)
+    expect(word_ffffffff.toUnsignedInteger()).toBe(4294967295)
     expect(word_00000000.toUnsignedInteger()).toBe(0)
     expect(word_00010000.toUnsignedInteger()).toBe(65536)
 })
@@ -49,17 +48,20 @@ test("toSignedInteger", ()=> {
     expect(word_0fffffff.toSignedInteger()).toBe(268435455)
     expect(word_f0000000.toSignedInteger()).toBe(-268435456)
     expect(word_f0000001.toSignedInteger()).toBe(-268435455)
-
-
 })
 
 test("toBytes", ()=> {
+    expect(word_ffffffff.toBytes()).toEqual([Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255)])
+    expect(word_0fffffff.toBytes()).toEqual([Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(15)])
+    expect(word_f0000000.toBytes()).toEqual([Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(240)])
+    expect(word_00010000.toBytes()).toEqual([Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(1)])
 })
 
 test("toHalfwords", ()=> {
-    //expect(word_ffffffff.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(65535),Halfword.fromUnsignedInteger(65535)])
-    //expect(word_0fffffff.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(65535),Halfword.fromUnsignedInteger(4095)])
-    //expect(word_0fffffff.toHalfwords()).toEqual("[Halfword.fromUnsignedInteger(65535),Halfword.fromUnsignedInteger(61440)]")
+    expect(word_ffffffff.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(65535),Halfword.fromUnsignedInteger(65535)])
+    expect(word_0fffffff.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(65535),Halfword.fromUnsignedInteger(4095)])
+    expect(word_f0000000.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(0),Halfword.fromUnsignedInteger(61440)])
+    expect(word_00010000.toHalfwords()).toEqual([Halfword.fromUnsignedInteger(0),Halfword.fromUnsignedInteger(1)])
 })
 
 test("toBinaryString", ()=> {
