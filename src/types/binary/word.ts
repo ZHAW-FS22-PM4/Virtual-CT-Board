@@ -95,7 +95,7 @@ export class Word {
         let value = word.value
         while (value > Word.MIN_VALUE) {
           halfwords.push(Halfword.fromUnsignedInteger(value & 0xFF))
-          value >>= 16
+          value = value >>> 16
         }
       }
       return halfwords
@@ -125,9 +125,7 @@ export class Word {
      * @returns the signed integer representation as a number
      */
     public toSignedInteger (): number {
-      const sign = (this.value & 0x80000000) === 0 ? -1 : 1
-      const abs = this.value & 0x7FFFFFFF
-      return sign * abs
+      return (this.value >= Word.MAX_VALUE / 2) ? -1 * (Word.MAX_VALUE - this.value + 1) : this.value
     }
 
     /**
