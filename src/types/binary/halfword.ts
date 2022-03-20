@@ -79,7 +79,7 @@ export class Halfword {
      * @returns the signed integer representation as a number
      */
     public toSignedInteger (): number {
-      const sign = (this.value & 0x8000) === 0 ? -1 : 1
+      const sign = (this.value & 0x8000) === 0 ? 1 : -1
       const abs = this.value & 0x7FFF
       return sign * abs
     }
