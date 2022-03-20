@@ -2,6 +2,7 @@
     border: 1px solid black;
     width: 12rem;
     height: 30rem;
+    font-family: monospace;
 }
 
 .register-container > .row {
