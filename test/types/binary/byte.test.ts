@@ -19,13 +19,6 @@ test("fromUnsignedInteger_invalidValues", ()=> {
     }).toThrowError("OutOfRange: 8-bit signed integer must be an integer in range 0 to 255.")
 })
 
-test("fromSignedInteger", ()=> {
-    //expect(Byte.fromSignedInteger(-1)).toEqual(byte_ff)
-    //expect(Byte.fromSignedInteger(0)).toEqual(byte_00)
-    //expect(Byte.fromSignedInteger(-128)).toEqual(byte_80)
-    //expect(Byte.fromSignedInteger(-127)).toEqual(byte_81)
-})
-
 test("hasSign", ()=> {
     expect(byte_00.hasSign()).toBeFalsy()
 })
