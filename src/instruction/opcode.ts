@@ -17,7 +17,7 @@ export function match (opcode: Halfword, pattern: string): boolean {
       throw new Error('Opcode pattern contains invalid characters. Only 1, 0 or X are valid pattern characters.')
     }
     const mask = 1 << (15 - i)
-    const isBitSet = (opcode.value & mask) === 0
+    const isBitSet = (opcode.value & mask) !== 0
     if (isBitSet && character === '0') {
       return false
     }
