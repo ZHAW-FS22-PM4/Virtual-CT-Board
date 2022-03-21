@@ -1,5 +1,5 @@
 import { IInstruction } from "assembler/ast";
-import { removeNonCode, createInstructions } from "../../src/assembler/parser";
+import { removeNonCode, createInstruction } from "../../src/assembler/parser";
 
 //// create test data
 
@@ -9,19 +9,22 @@ const testCommentsString2: string[] = ["ADDR_LED_31_0        EQU    0x60000100 ;
 const testEmptyLinesString: string[] = ["STRH 		R7, [R1, #2]", "    ", ""]
 
 //for testing createInstructions
-const singleInstruction: string[] = ["		LDR 		R7, =LCD_BACKLIGHT_OFF"]
-const resultSingleInstruction: IInstruction[] = [ {name: "LDR", label: "", params: ["R7", "=LCD_BACKLIGHT_OFF"]} ]
+const movInstruction: string = "MOV R3, R4"
+const resultMovInstruction: IInstruction = {name: "MOV", label: "", params: ["R3", "R4"]}
 
-const multipleInstructions: string[] = ["	LDR 		R7, =LCD_BACKLIGHT_OFF", "   STRH		R7, [R1, #4]", ]
-const resultMultipleInstructions: IInstruction[] = [
-    {name: "LDR", label: "", params: ["R7", "=LCD_BACKLIGHT_OFF"]}, 
-    {name: "STRH", label: "", params: ["R7", "[R1", "#4]"]} ]
+const movsInstruction: string = "MOVS R1, #3"
+const resultMovsInstruction: IInstruction = {name: "MOVS", label: "", params: ["R1", "#3"]}
 
-const instructionWithBranch: string[] = ["B			display"]
-const resultInstructionWithBranch: IInstruction[] = [ {name: "B", label: "", params: ["display"]} ]
+const movInstructionFalse: string = "MOVR3, R4"
 
-const instructionWithLabel: string[] = ["blue			LDR			R1, =ADDR_LCD_COLOUR" ]
-const resultInstructionWithLabel: IInstruction[] = [{name: "LDR", label: "blue", params: ["R1", "=ADDR_LCD_COLOUR"]}]
+const instructionWithIndent: string = "		LDR 		R7, =LCD_BACKLIGHT_OFF"
+const resultInstructionWithIndent: IInstruction = {name: "LDR", label: "", params: ["R7", "=LCD_BACKLIGHT_OFF"]}
+
+const instructionWithBranch: string = "B			display"
+const resultInstructionWithBranch: IInstruction = {name: "B", label: "", params: ["display"]}
+
+const instructionWithLabel: string = "blue			LDR			R1, =ADDR_LCD_COLOUR"
+const resultInstructionWithLabel: IInstruction = {name: "LDR", label: "blue", params: ["R1", "=ADDR_LCD_COLOUR"]}
 
 //// tests
 
@@ -38,17 +41,26 @@ describe("test removeNonCode function", () => {
 });
 
 describe("test createInstructions function", () => {
-    it("should create a single instruction", () => {
-        expect(createInstructions(singleInstruction)).toStrictEqual(resultSingleInstruction)
+    it("should create an IInstruction from a MOV instruction", () => {
+        expect(createInstruction(movInstruction)).toStrictEqual(resultMovInstruction)
+    })
+    it("should create an IInstruction from a MOVS instruction", () => {
+        expect(createInstruction(movsInstruction)).toStrictEqual(resultMovsInstruction)
+    })
+    it("should throw an error for an instruction with false syntax", () => {
+        expect(() => {
+            createInstruction(movInstructionFalse)
+        }).toThrow('Compile Error.')
     });
-    it("should create multiple instructions in an array", () => {
-        expect(createInstructions(multipleInstructions)).toStrictEqual(resultMultipleInstructions)
+
+    it("should create a single instruction", () => {
+        expect(createInstruction(instructionWithIndent)).toStrictEqual(resultInstructionWithIndent)
     });
     it("should create instruction with branch name in params", () => {
-        expect(createInstructions(instructionWithBranch)).toStrictEqual(resultInstructionWithBranch)
+        expect(createInstruction(instructionWithBranch)).toStrictEqual(resultInstructionWithBranch)
     });
     it("should create instruction with label name in param label", () => {
-        expect(createInstructions(instructionWithLabel)).toStrictEqual(resultInstructionWithLabel)
+        expect(createInstruction(instructionWithLabel)).toStrictEqual(resultInstructionWithLabel)
     });
 
 });
