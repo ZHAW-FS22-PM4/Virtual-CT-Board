@@ -19,7 +19,9 @@ class Board {
   public readonly flash: Flash
 
   constructor () {
-    this.devices = [new Flash(), new Switches(), new LEDs()]
+    //TODO flash as own property or within devices
+    this.flash = new Flash()
+    this.devices = [this.flash, new Switches(), new LEDs()]
     this.registers = new Registers()
     this.memory = new MemoryBus(this.devices)
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
