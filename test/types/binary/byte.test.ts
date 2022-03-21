@@ -24,7 +24,6 @@ test("hasSign", ()=> {
 })
 
 test("add", ()=> {
-    //expect(byte_00.add(2)).toEqual(Byte.fromUnsignedInteger(2))
     expect(byte_80.add(2)).toEqual(Byte.fromUnsignedInteger(131))
 })
 
