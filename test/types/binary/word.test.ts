@@ -25,10 +25,15 @@ test("fromUnsignedInteger_invalidValues", ()=> {
 })
 
 test("fromBytes", ()=> {
-    expect(Word.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(254),Byte.fromUnsignedInteger(254))).toEqual("word_ffffffff")
+    expect(Word.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255))).toEqual(word_ffffffff)
+    expect(Word.fromBytes(Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0))).toEqual(word_00000000)
+    expect(Word.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(15))).toEqual(word_0fffffff)
 })
 
 test("fromHalfwords", ()=> {
+    expect(Word.fromHalfwords(Halfword.fromUnsignedInteger(65535), Word.fromHalfwords(Halfword.fromUnsignedInteger(65535)))).toEqual(word_ffffffff)
+    expect(Word.fromHalfwords(Halfword.fromUnsignedInteger(0), Word.fromHalfwords(Halfword.fromUnsignedInteger(0)))).toEqual(word_00000000)
+    expect(Word.fromHalfwords(Halfword.fromUnsignedInteger(65535), Word.fromHalfwords(Halfword.fromUnsignedInteger(4095)))).toEqual(word_0fffffff)
 })
 
 test("increment", ()=> {

@@ -40,7 +40,7 @@ export class Halfword {
       let value = Halfword.MIN_VALUE
       let shift = 0
       for (const byte of bytes) {
-        value |= (byte.value << shift)
+        value = (value | byte.value << shift) >>> 0
         shift += 8
       }
       return new Halfword(value)
