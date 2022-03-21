@@ -6,9 +6,8 @@ const END_AREA: string = 'ALIGN'
 
 //Regexes needed to check syntax
 const AREA_TITLE_REGEX: RegExp = / *([a-zA-Z]+) *, *(DATA|CODE) *, *READ(WRITE|ONLY) */
-const LABEL_REGEX: RegExp = /^( |\t)*([a-z0-9_]+)( |\t)+(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 2 ([a-z0-9_]+) and 4 ([A-Z]+) are being used below
+const INSTRUCTION_REGEX: RegExp = /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 3 ([a-z0-9_]+) and 5 ([A-Z]+) are being used below
 const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
-const INSTRUCTION_REGEX: RegExp = /^( |\t)*([A-Z]+)( |\t)+.*/ //group 2 ([A-Z]+) is being used below
 
 /**
  * Parses a given code string and returns a code object containing areas that contain instructions.
@@ -17,6 +16,10 @@ const INSTRUCTION_REGEX: RegExp = /^( |\t)*([A-Z]+)( |\t)+.*/ //group 2 ([A-Z]+)
  */
 export function parse (code: string): ICode {
   let areaStrings: string[] = code.split(START_AREA)
+
+  if (!areaStrings) {
+    throw new Error('Compile Error.')
+  }
 
   let preface: string[][] = areaStrings[0].split('\n').map(line => line.split(' '))
   delete areaStrings[0]
@@ -35,7 +38,12 @@ export function parse (code: string): ICode {
     let areatype: AreaType = getAreaType(tags[2])
     let name: string = tags[1]
     let isReadOnly: boolean = tags[3] === "READONLY"
-    let instructions: IInstruction[] = createInstructions(lines)
+
+    let instructions: IInstruction[] = []
+    lines.forEach(line => {
+      let instruction: IInstruction = createInstruction(line)
+      instructions.push(instruction)
+    })
 
     areas.push({type: areatype, name: name, isReadOnly: isReadOnly, instructions: instructions})
   }
@@ -61,34 +69,31 @@ export function removeNonCode(code: string[]): string[] {
 
 /**
  * Checks lines for valid instruction syntax and creates an IInstruction array out of it.
- * @param lines instruction line
+ * @param line instruction line
  * @returns array of instructions
  */
-export function createInstructions(lines: string[]): IInstruction[] {
-  lines = lines.map(line => line.trim())
+export function createInstruction(line: string): IInstruction {
+  line = line.trim()
 
-  let instructions: IInstruction[] = []
-
-  for (let line of lines) {
-    let tags = line.match(LABEL_REGEX)
-    if (tags) {
-      line = line.slice(line.indexOf(tags[4])+tags[4].length)
-      instructions.push({name: tags[4], label: tags[2], params: line.split(',').map(el => el.trim())})
-    }
-
-    else {
-      let tags = line.match(INSTRUCTION_REGEX)
-      if (tags) {
-        line = line.slice(line.indexOf(tags[2])+tags[2].length)
-        instructions.push({name: tags[2], label: '', params: line.split(',').map(el => el.trim())})
-      }
-       //TODO handle data instructions
-      else {
-        throw new Error('Compile Error.')
-      }
-    }
+  let tags = line.match(INSTRUCTION_REGEX)
+  if (tags) {
+    line = line.slice(line.indexOf(tags[5])+tags[5].length)
+    if (tags[3]) return {name: tags[5], label: tags[3], params: line.split(',').map(el => el.trim())}
+    else return {name: tags[5], label: "", params: line.split(',').map(el => el.trim())}
   }
-  return instructions
+
+  /*else {
+    let tags = line.match(INSTRUCTION_REGEX)
+    if (tags) {
+      line = line.slice(line.indexOf(tags[2])+tags[2].length)
+      return {name: tags[2], label: '', params: line.split(',').map(el => el.trim())}
+    }
+      //TODO handle data instructions*/
+    else {
+      throw new Error('Compile Error.')
+    }
+  //}
+
 }
 
 
