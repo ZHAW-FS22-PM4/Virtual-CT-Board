@@ -4,7 +4,7 @@ import { Memory } from 'board/memory'
 import { IDevice } from './interfaces'
 
 export abstract class Device implements IDevice {
-  private readonly memory: IMemory
+  protected readonly memory: IMemory
 
   public abstract readonly startAddress: Word
   public abstract readonly endAddress: Word
