@@ -34,6 +34,7 @@ Required software to develop project:
   - Code formatting with [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 ### Prettier Setup
+
 - In the used IDE the plugin prettier has to be installed and active.
 - The recommended settings are as follows (see for screenshot: https://virtualctboard.atlassian.net/l/c/czAEfbfP):
   - Format complete file on save
@@ -43,15 +44,19 @@ Required software to develop project:
 
 In .prettierignore is defined which files and folders should not get formatted
 
-Use Prettier to format all project files over vscode command line:
+Use Prettier to format all project files over vscode command line (just for initial formatting):
 ```
 npx prettier --write .
 ```
-Use Prettier to format all ts-files within project over vscode command line:
-```
-npx prettier --write "**/*.ts"
-```
 
+### Prettier Usage
+
+There is a new script in package.json. On terminal execute:
+```
+npm run prettier
+```
+This command will output a summary of all files which are not conform with the formatting config.
+Go to each listed file and make a change (insert a new line) and then save and let prettier format the file.
 
 ## Build
 
