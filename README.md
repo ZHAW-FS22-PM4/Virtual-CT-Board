@@ -41,6 +41,17 @@ Required software to develop project:
 - So each file should be formatted uniform automatically before commiting the changes
 - Pipeline will verify if file formatting is conform with provided configuration file
 
+In .prettierignore is defined which files and folders should not get formatted
+
+Use Prettier to format all project files over vscode command line:
+```
+npx prettier --write .
+```
+Use Prettier to format all ts-files within project over vscode command line:
+```
+npx prettier --write "**/*.ts"
+```
+
 
 ## Build
 
