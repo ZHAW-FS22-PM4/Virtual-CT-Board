@@ -43,7 +43,7 @@ export class Word {
       let value = Word.MIN_VALUE
       let shift = 0
       for (const byte of bytes) {
-        value |= (byte.value << shift)
+          value = (value | byte.value << shift) >>> 0
         shift += 8
       }
       return new Word(value)
@@ -77,7 +77,7 @@ export class Word {
       let value = Word.MIN_VALUE
       let shift = 0
       for (const halfword of halfwords) {
-        value &= (halfword.value << shift)
+        value = (value | halfword.value << shift) >>> 0
         shift += 16
       }
       return new Word(value)

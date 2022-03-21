@@ -64,15 +64,8 @@ test("toBytes_singleByte", ()=> {
     expect(halfword_00ff.toBytes()).toEqual([Byte.fromUnsignedInteger(255)])
 })
 
-test("toBytes_multipleByte", ()=> {
-    //const halfwordlist = [halfword_ffff, halfword_00ff]
-    //const bytelist = [[Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(255)]]
-    //expect(Halfword.toBytes(halfwordlist)).toEqual(bytelist)
-})
-
 test("fromBytes", ()=> {
-    //const bytes: Byte[] = []
-    //bytes.push(Byte.fromUnsignedInteger(255))
-    //bytes.push(Byte.fromUnsignedInteger(255))
-    //expect(Halfword.fromBytes(bytes)).toEqual("")
+    expect(Halfword.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(255))).toEqual(halfword_ffff)
+    expect(Halfword.fromBytes(Byte.fromUnsignedInteger(0),Byte.fromUnsignedInteger(0))).toEqual(halfword_0000)
+    expect(Halfword.fromBytes(Byte.fromUnsignedInteger(255),Byte.fromUnsignedInteger(127))).toEqual(halfword_7fff)
 })
