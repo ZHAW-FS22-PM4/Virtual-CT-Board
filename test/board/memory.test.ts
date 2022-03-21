@@ -18,20 +18,20 @@ beforeEach(() => {
 
 describe('test read functions', () => {
   test('should read byte values from the memory', () => {
-    expect(memory.readByte(addresses[0]).toUnsignedInteger()).toBe(0x12)
-    expect(memory.readByte(addresses[2]).toUnsignedInteger()).toBe(0x56)
+    expect(memory.readByte(addresses[0]).toUnsignedInteger()).toBe(0x78)
+    expect(memory.readByte(addresses[2]).toUnsignedInteger()).toBe(0x34)
     expect(memory.readByte(addresses[3].increment(2)).toUnsignedInteger()).toBe(0xFF)
   })
   test('should read halfword values from the memory', () => {
-    expect(memory.readHalfword(addresses[0]).toUnsignedInteger()).toBe(0x1234)
+    expect(memory.readHalfword(addresses[0]).toUnsignedInteger()).toBe(0x5678)
     expect(memory.readHalfword(addresses[1]).toUnsignedInteger()).toBe(0x3456)
-    expect(memory.readHalfword(addresses[2]).toUnsignedInteger()).toBe(0x5678)
+    expect(memory.readHalfword(addresses[2]).toUnsignedInteger()).toBe(0x1234)
   })
   test('should read word values from the memory', () => {
     expect(memory.readWord(addresses[0]).toUnsignedInteger()).toBe(0x12345678)
-    expect(memory.readWord(addresses[1]).toUnsignedInteger()).toBe(0x34567800)
+    expect(memory.readWord(addresses[1]).toUnsignedInteger()).toBe(0x00123456)
     expect(memory.readWord(addresses[3]).toUnsignedInteger()).toBe(0xFFFFFFFF)
-    expect(memory.readWord(addresses[3].increment(1)).toUnsignedInteger()).toBe(0xFFFFFF00)
+    expect(memory.readWord(addresses[3].increment(1)).toUnsignedInteger()).toBe(0x00FFFFFF)
   })
 })
 
@@ -54,7 +54,7 @@ describe('test write functions', () => {
   test('should write halfword values to the memory', () => {
     memory.writeHalfword(addresses[3], Halfword.fromUnsignedInteger(0x1234))
     expect(memory.readHalfword(addresses[3]).toUnsignedInteger()).toBe(0x1234)
-    expect(memory.readHalfword(addresses[3].increment(1)).toUnsignedInteger()).toBe(0x34FF)
+    expect(memory.readHalfword(addresses[3].increment(1)).toUnsignedInteger()).toBe(0xFF12)
   })
   test('should write word values to the memory', () => {
     memory.writeWord(addresses[3], Word.fromUnsignedInteger(0x5B84F313))
