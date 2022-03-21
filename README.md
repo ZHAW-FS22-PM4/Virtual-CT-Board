@@ -32,7 +32,15 @@ Required software to develop project:
 - [node and npm](https://nodejs.org/en/download) to install dependencies
 - Editor of your choice, prefereably [Visual Studio Code](https://code.visualstudio.com) with following plugins installed and active:
   - Code formatting with [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-  - Warnings if style guideline not satisfied [StandardJS - JavaScript Standard Style](https://marketplace.visualstudio.com/items?itemName=standard.vscode-standard)
+
+### Prettier Setup
+- In the used IDE the plugin prettier has to be installed and active.
+- The recommended settings are as follows (see for screenshot: https://virtualctboard.atlassian.net/l/c/czAEfbfP):
+  - Format complete file on save
+  - Configure prettier as formatter of IDE
+- So each file should be formatted uniform automatically before commiting the changes
+- Pipeline will verify if file formatting is conform with provided configuration file
+
 
 ## Build
 
