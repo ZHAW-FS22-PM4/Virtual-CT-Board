@@ -11,12 +11,20 @@ const memoryMock: IMemory = mock<IMemory>()
 const registersMock: Registers = mock(Registers)
 
 test('test halt() function', () => {
-  const processor: Processor = new Processor(instance(registersMock), instance(memoryMock), instance(instructionSetMock))
+  const processor: Processor = new Processor(
+    instance(registersMock),
+    instance(memoryMock),
+    instance(instructionSetMock)
+  )
   processor.halt()
 })
 
 test('test reset() function', () => {
-  const processor: Processor = new Processor(instance(registersMock), instance(memoryMock), instance(instructionSetMock))
+  const processor: Processor = new Processor(
+    instance(registersMock),
+    instance(memoryMock),
+    instance(instructionSetMock)
+  )
   processor.reset()
 
   verify(memoryMock.clear()).called()

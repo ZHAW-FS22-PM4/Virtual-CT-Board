@@ -13,11 +13,11 @@ import { MovInstruction } from './instructions/mov'
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
 
-  constructor (instructions: IInstruction[]) {
+  constructor(instructions: IInstruction[]) {
     this.instructions = instructions
   }
 
-  public getEncoder (name: string): IInstructionEncoder {
+  public getEncoder(name: string): IInstructionEncoder {
     for (const instruction of this.instructions) {
       if (instruction.name === name) {
         return instruction
@@ -28,7 +28,7 @@ export class InstructionSet implements IInstructionSet {
     )
   }
 
-  public getExecutor (opcode: Halfword): IInstructionExecutor {
+  public getExecutor(opcode: Halfword): IInstructionExecutor {
     for (const instruction of this.instructions) {
       if (match(opcode, instruction.pattern)) {
         return instruction

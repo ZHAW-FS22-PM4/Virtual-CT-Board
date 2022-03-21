@@ -15,10 +15,10 @@ class Board {
   public readonly processor: Processor
 
   public readonly devices: IDevice[]
-  
+
   public readonly flash: Flash
 
-  constructor () {
+  constructor() {
     //TODO flash as own property or within devices
     this.flash = new Flash()
     this.devices = [this.flash, new Switches(), new LEDs()]

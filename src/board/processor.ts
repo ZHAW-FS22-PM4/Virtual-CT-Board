@@ -19,7 +19,11 @@ export class Processor {
 
   private interval: number = 0
 
-  constructor (registers: Registers, memory: IMemory, instructions: IInstructionSet) {
+  constructor(
+    registers: Registers,
+    memory: IMemory,
+    instructions: IInstructionSet
+  ) {
     this.registers = registers
     this.memory = memory
     this.instructions = instructions
@@ -30,7 +34,7 @@ export class Processor {
    * if program is not already running.
    * @returns void
    */
-  public execute (): void {
+  public execute(): void {
     if (this.interval !== 0) return
     this.interval = window.setInterval(this.cycle, cycleSpeed)
   }
@@ -39,7 +43,7 @@ export class Processor {
    * Halts the execution but does not reset state of board.
    * @returns void
    */
-  public halt (): void {
+  public halt(): void {
     window.clearInterval(this.interval)
     this.interval = 0
   }
@@ -49,7 +53,7 @@ export class Processor {
    * resets memory and registers.
    * @returns void
    */
-  public reset (): void {
+  public reset(): void {
     this.halt()
 
     this.memory.clear()
@@ -59,10 +63,12 @@ export class Processor {
     this.registers.writeRegister(Register.SP, Word.fromUnsignedInteger(0))
   }
 
-  private cycle (): void {
+  private cycle(): void {
     const pc: Word = this.registers.readRegister(Register.PC)
     const opCode: Halfword = this.memory.readHalfword(pc)
-    this.instructions.getExecutor(opCode).executeInstruction(opCode, this.registers, this.memory)
+    this.instructions
+      .getExecutor(opCode)
+      .executeInstruction(opCode, this.registers, this.memory)
     this.registers.writeRegister(Register.PC, pc.increment(2))
   }
 }

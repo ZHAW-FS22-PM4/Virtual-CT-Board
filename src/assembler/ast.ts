@@ -1,6 +1,6 @@
 export enum AreaType {
-  Code = "CODE",
-  Data = "DATA"
+  Code = 'CODE',
+  Data = 'DATA'
 }
 
 export function getAreaType(value: string): AreaType {

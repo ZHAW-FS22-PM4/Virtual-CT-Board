@@ -13,7 +13,6 @@ export interface ILabelOffsets {
  * Represents an encoder of an instruction.
  */
 export interface IInstructionEncoder {
-
   /**
    * The name of the instruction.
    */
@@ -33,7 +32,6 @@ export interface IInstructionEncoder {
  * Represents an executor of an instruction.
  */
 export interface IInstructionExecutor {
-
   /**
    * The opcode pattern of the instruction.
    */
@@ -44,17 +42,21 @@ export interface IInstructionExecutor {
    *
    * @param opcode the opcode of the instruction to be executed
    */
-  executeInstruction: (opcode: Halfword, registers: Registers, memory: IMemory) => void
+  executeInstruction: (
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ) => void
 }
 
 /**
  * Represents an encodable and executable instruction.
  */
-export interface IInstruction extends IInstructionEncoder, IInstructionExecutor
-{}
+export interface IInstruction
+  extends IInstructionEncoder,
+    IInstructionExecutor {}
 
 export interface IInstructionSet {
-
   /**
    * Gets the instruction encoder for the instruction with the specified name.
    *

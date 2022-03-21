@@ -1,26 +1,38 @@
 /**
  * Tests the memory representation of the board
-*/
+ */
 
 import { Memory } from '../../src/board/memory'
 import { Byte, Halfword, Word } from '../../src/types/binary'
 
 let memory: Memory = new Memory()
 
-const bytes: Byte[] = [Byte.fromSignedInteger(0x05), Byte.fromUnsignedInteger(0xFF), Byte.fromSignedInteger(0x3C), Byte.fromUnsignedInteger(0x95)]
-const addresses: Word[] = [Word.fromUnsignedInteger(0x20000000), Word.fromUnsignedInteger(0x20000001), Word.fromUnsignedInteger(0x20000002), Word.fromUnsignedInteger(0x40000000)]
+const bytes: Byte[] = [
+  Byte.fromSignedInteger(0x05),
+  Byte.fromUnsignedInteger(0xff),
+  Byte.fromSignedInteger(0x3c),
+  Byte.fromUnsignedInteger(0x95)
+]
+const addresses: Word[] = [
+  Word.fromUnsignedInteger(0x20000000),
+  Word.fromUnsignedInteger(0x20000001),
+  Word.fromUnsignedInteger(0x20000002),
+  Word.fromUnsignedInteger(0x40000000)
+]
 
 beforeEach(() => {
   memory = new Memory()
   memory.writeWord(addresses[0], Word.fromUnsignedInteger(0x12345678))
-  memory.writeWord(addresses[3], Word.fromUnsignedInteger(0xFFFFFFFF))
+  memory.writeWord(addresses[3], Word.fromUnsignedInteger(0xffffffff))
 })
 
 describe('test read functions', () => {
   test('should read byte values from the memory', () => {
     expect(memory.readByte(addresses[0]).toUnsignedInteger()).toBe(0x78)
     expect(memory.readByte(addresses[2]).toUnsignedInteger()).toBe(0x34)
-    expect(memory.readByte(addresses[3].increment(2)).toUnsignedInteger()).toBe(0xFF)
+    expect(memory.readByte(addresses[3].increment(2)).toUnsignedInteger()).toBe(
+      0xff
+    )
   })
   test('should read halfword values from the memory', () => {
     expect(memory.readHalfword(addresses[0]).toUnsignedInteger()).toBe(0x5678)
@@ -30,8 +42,10 @@ describe('test read functions', () => {
   test('should read word values from the memory', () => {
     expect(memory.readWord(addresses[0]).toUnsignedInteger()).toBe(0x12345678)
     expect(memory.readWord(addresses[1]).toUnsignedInteger()).toBe(0x00123456)
-    expect(memory.readWord(addresses[3]).toUnsignedInteger()).toBe(0xFFFFFFFF)
-    expect(memory.readWord(addresses[3].increment(1)).toUnsignedInteger()).toBe(0x00FFFFFF)
+    expect(memory.readWord(addresses[3]).toUnsignedInteger()).toBe(0xffffffff)
+    expect(memory.readWord(addresses[3].increment(1)).toUnsignedInteger()).toBe(
+      0x00ffffff
+    )
   })
 })
 
@@ -48,17 +62,21 @@ describe('test write functions', () => {
   test('should write multiple byte values to the memory', () => {
     memory.writeBytes(addresses[0], bytes)
     for (let i = 0; i < bytes.length; i++) {
-      expect(memory.readByte(addresses[0].increment(i)).toUnsignedInteger()).toBe(bytes[i].toUnsignedInteger())
+      expect(
+        memory.readByte(addresses[0].increment(i)).toUnsignedInteger()
+      ).toBe(bytes[i].toUnsignedInteger())
     }
   })
   test('should write halfword values to the memory', () => {
     memory.writeHalfword(addresses[3], Halfword.fromUnsignedInteger(0x1234))
     expect(memory.readHalfword(addresses[3]).toUnsignedInteger()).toBe(0x1234)
-    expect(memory.readHalfword(addresses[3].increment(1)).toUnsignedInteger()).toBe(0xFF12)
+    expect(
+      memory.readHalfword(addresses[3].increment(1)).toUnsignedInteger()
+    ).toBe(0xff12)
   })
   test('should write word values to the memory', () => {
-    memory.writeWord(addresses[3], Word.fromUnsignedInteger(0x5B84F313))
-    expect(memory.readWord(addresses[3]).toUnsignedInteger()).toBe(0x5B84F313)
+    memory.writeWord(addresses[3], Word.fromUnsignedInteger(0x5b84f313))
+    expect(memory.readWord(addresses[3]).toUnsignedInteger()).toBe(0x5b84f313)
   })
 })
 

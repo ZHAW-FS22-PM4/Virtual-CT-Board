@@ -45,6 +45,7 @@ Required software to develop project:
 In .prettierignore is defined which files and folders should not get formatted
 
 Use Prettier to format all project files over vscode command line (just for initial formatting):
+
 ```
 npx prettier --write .
 ```
@@ -52,9 +53,11 @@ npx prettier --write .
 ### Prettier Usage
 
 There is a new script in package.json. On terminal execute:
+
 ```
 npm run prettier
 ```
+
 This command will output a summary of all files which are not conform with the formatting config.
 Go to each listed file and make a change (insert a new line) and then save and let prettier format the file.
 

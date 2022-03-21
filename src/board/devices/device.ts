@@ -11,60 +11,62 @@ export abstract class Device implements IDevice {
   public abstract readonly isReadOnly: boolean
   public abstract readonly isVolatile: boolean
 
-  constructor () {
+  constructor() {
     this.memory = new Memory()
   }
 
-  public isResponsibleFor (address: Word): boolean {
-    return address.value >= this.startAddress.value &&
+  public isResponsibleFor(address: Word): boolean {
+    return (
+      address.value >= this.startAddress.value &&
       address.value <= this.endAddress.value
+    )
   }
 
-  public readByte (address: Word): Byte {
+  public readByte(address: Word): Byte {
     return this.memory.readByte(address)
   }
 
-  public readHalfword (address: Word): Halfword {
+  public readHalfword(address: Word): Halfword {
     return this.memory.readHalfword(address)
   }
 
-  public readWord (address: Word): Word {
+  public readWord(address: Word): Word {
     return this.memory.readWord(address)
   }
 
-  public writeByte (address: Word, byte: Byte): void {
+  public writeByte(address: Word, byte: Byte): void {
     if (this.isReadOnly) {
       return
     }
     this.memory.writeByte(address, byte)
   }
 
-  public writeBytes (address: Word, bytes: Byte[]): void {
+  public writeBytes(address: Word, bytes: Byte[]): void {
     if (this.isReadOnly) {
       return
     }
     this.memory.writeBytes(address, bytes)
   }
 
-  public writeHalfword (address: Word, halfword: Halfword): void {
+  public writeHalfword(address: Word, halfword: Halfword): void {
     if (this.isReadOnly) {
       return
     }
     this.memory.writeHalfword(address, halfword)
   }
 
-  public writeWord (address: Word, word: Word): void {
+  public writeWord(address: Word, word: Word): void {
     if (this.isReadOnly) {
       return
     }
     this.memory.writeWord(address, word)
   }
 
-  public clear (): void {
+  public clear(): void {
     this.memory.clear()
   }
 
-  public reset (): void {
+  public reset(): void {
     if (this.isVolatile) {
       this.clear()
     }

@@ -10,11 +10,15 @@ export class MovInstruction implements IInstruction {
   public name: string = 'MOV'
   public pattern: string = '01000110XXXXXXXX'
 
-  public encodeInstruction (options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     throw new Error('Instruction not yet implemented.')
   }
 
-  public executeInstruction (opcode: Halfword, registers: Registers, memory: IMemory): void {
+  public executeInstruction(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void {
     throw new Error('Instruction not yet implemented.')
   }
 }
