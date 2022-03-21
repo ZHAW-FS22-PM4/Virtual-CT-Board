@@ -8,7 +8,7 @@ import { IObjectFile } from './objectFile'
 import { Word, Byte, Halfword } from '../types/binary'
 
 import InstructionSet from 'instruction/set'
-import { NoEncoderFoundError, AreaHasNoTypeDefinedError } from 'types/error'
+import { VirtualBoardError, VirtualBoardErrorType } from '../types/error'
 
 //TODO correct offset for section
 const offsetCodeAreaReadOnly = Word.fromUnsignedInteger(0x08000000)
@@ -57,8 +57,9 @@ function determineOffset(area: IArea): Word {
   } else if (area.type === AreaType.Data) {
     return offsetDataArea
   } else {
-    throw new AreaHasNoTypeDefinedError(
-      'Not supported or no type defined for area'
+    throw new VirtualBoardError(
+      'Not supported or no type defined for area',
+      VirtualBoardErrorType.InvalidAreaType
     )
   }
 }
@@ -126,7 +127,10 @@ function encodeCodeInstruction(instr: IInstruction): Byte[] {
     return instrContent
     //same as : areaContent = [...areaContent, ...instrContent]
   } catch (e) {
-    if (e instanceof NoEncoderFoundError) {
+    if (
+      e instanceof VirtualBoardError &&
+      e.type === VirtualBoardErrorType.NoEncoderFound
+    ) {
       //just fill with all zeros
       return Halfword.fromUnsignedInteger(0).toBytes()
     } else {

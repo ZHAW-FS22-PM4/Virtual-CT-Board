@@ -6,7 +6,7 @@ import {
   IInstructionSet
 } from './interfaces'
 import { match } from './opcode'
-import { NoEncoderFoundError } from '../types/error'
+import { VirtualBoardError, VirtualBoardErrorType } from '../types/error'
 
 import { MovInstruction } from './instructions/mov'
 
@@ -23,8 +23,9 @@ export class InstructionSet implements IInstructionSet {
         return instruction
       }
     }
-    throw new NoEncoderFoundError(
-      `Unable to find instruction encoder for the instruction '${name}'.`
+    throw new VirtualBoardError(
+      `Unable to find instruction encoder for the instruction '${name}'.`,
+      VirtualBoardErrorType.NoEncoderFound
     )
   }
 
