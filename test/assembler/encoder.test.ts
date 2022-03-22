@@ -3,10 +3,15 @@
  */
 
 import { ICode, IArea, IInstruction, AreaType } from 'assembler/ast'
-import { encode, encodeDataInsruction } from 'assembler/encoder'
-import { Byte } from 'types/binary'
+import {
+  encode,
+  encodeDataInsruction,
+  encodeCodeInstruction
+} from 'assembler/encoder'
+import { Byte, Halfword, Word } from 'types/binary'
 
 import { mock, when, instance, verify, anything } from 'ts-mockito'
+import { VirtualBoardError } from 'types/error'
 
 const zeroByte: Byte = Byte.fromUnsignedInteger(0x00)
 const movInstrucion: IInstruction = {
@@ -65,33 +70,49 @@ const readonlyCodeArea: IArea = {
   type: AreaType.Code,
   name: 'CODE',
   isReadOnly: true,
-  instructions: [movInstrucion, movsInstrucion]
+  instructions: [] //[movInstrucion, movsInstrucion]
 }
 const codeArea: IArea = {
   type: AreaType.Code,
   name: 'CODE',
   isReadOnly: false,
-  instructions: [movsInstrucion]
+  instructions: [] //[movsInstrucion]
 }
 const dataArea: IArea = {
   type: AreaType.Data,
   name: 'DATA',
   isReadOnly: false,
-  instructions: [movsInstrucion]
+  instructions: [dcdInstruction, spaceInstruction, dcbInstruction]
 }
 
 let dcbInstructionMock: IInstruction
 let dcwInstructionMock: IInstruction
 let dcdInstructionMock: IInstruction
+let movInstructionMock: IInstruction
+let movsInstructionMock: IInstruction
+let movsImmediateInstructionMock: IInstruction
+let movsImmediateHexInstructionMock: IInstruction
+let codeMock: ICode
 beforeEach(() => {
   //equivalent dcwInstructionMock = createInstructionMock('DCW', 'var2', ['0x9876'])
   dcwInstructionMock = createInstructionMockOfInstruction(dcwInstruction)
   dcbInstructionMock = createInstructionMockOfInstruction(dcbInstruction)
   dcdInstructionMock = createInstructionMockOfInstruction(dcdInstruction)
 
-  //initial steps
-  /*when(codeMock.areas).thenReturn([readonlyCodeArea, dataArea])
-  let spaceMock: IInstruction = mock(spaceInstruction)
+  movInstructionMock = createInstructionMockOfInstruction(movInstrucion)
+  movsInstructionMock = createInstructionMockOfInstruction(movsInstrucion)
+  movsImmediateInstructionMock = createInstructionMockOfInstruction(
+    movsImmediateInstrucion
+  )
+  movsImmediateHexInstructionMock = createInstructionMockOfInstruction(
+    movsImmediateHexInstrucion
+  )
+
+  const codeMockTemplate: ICode = mock<ICode>()
+  when(codeMockTemplate.areas).thenReturn([readonlyCodeArea, dataArea])
+  codeMock = instance(codeMockTemplate)
+
+  /*let spaceMock: IInstruction = mock(spaceInstruction)
   when(spaceMock.params).thenReturn(['0x1234', '0x6789'])*/
 })
 
@@ -108,9 +129,28 @@ function createInstructionMockOfInstruction(instr: IInstruction) {
   return createInstructionMock(instr.name, instr.label, instr.params)
 }
 
-/*describe('test encode function', () => {
-  test('should return ')
-})*/
+describe('test encode function', () => {
+  test('should return correct offset for section', () => {
+    let result = encode(codeMock)
+    expect(result.sections.length).toBe(2)
+    expect(result.sections[0].offset).toStrictEqual(
+      Word.fromUnsignedInteger(0x08000000)
+    )
+    expect(result.sections[1].offset).toStrictEqual(
+      Word.fromUnsignedInteger(0x20010000)
+    )
+    expect(result.sections[1].content.length).toBe(17)
+
+    const codeMockTemplate: ICode = mock<ICode>()
+    when(codeMockTemplate.areas).thenReturn([codeArea])
+    let codeMock2 = instance(codeMockTemplate)
+    let result2 = encode(codeMock2)
+    expect(result2.sections.length).toBe(1)
+    expect(result2.sections[0].offset).toStrictEqual(
+      Word.fromUnsignedInteger(0x20000000)
+    )
+  })
+})
 describe('test encoder.encodeDataInsruction function', () => {
   test('should return correct byte array for data instruction', () => {
     testByteArrayWithLengthAndContent(
@@ -223,3 +263,32 @@ function testByteArrayWithLengthAndContent(result: Byte[], expected: Byte[]) {
   expect(result.length).toBe(expected.length)
   expect(result).toEqual(expected)
 }
+
+describe('test encoder.encodeCodeInstruction function', () => {
+  /*test('should return correct byte array for code instruction', () => {
+    testByteArrayWithLengthAndContent(encodeCodeInstruction(movInstrucion), tbd)
+    testByteArrayWithLengthAndContent(
+      encodeCodeInstruction(movsInstructionMock),
+      tbd
+    )
+    testByteArrayWithLengthAndContent(
+      encodeCodeInstruction(movsImmediateInstructionMock),
+      tbd
+    )
+    testByteArrayWithLengthAndContent(
+      encodeCodeInstruction(movsImmediateHexInstructionMock),
+      tbd
+    )
+  })*/
+  test('should return byte array with zeros for invalid instructions', () => {
+    //expect(Halfword.fromUnsignedInteger(0).toBytes()).toBe([zeroByte, zeroByte])
+    testByteArrayWithLengthAndContent(
+      encodeCodeInstruction(dcwInstructionMock),
+      [] //should return two 0 bytes [zeroByte, zeroByte]
+    )
+    testByteArrayWithLengthAndContent(
+      encodeCodeInstruction(createInstructionMock('NOTIMPLEMENTED', '', [])),
+      [] //should return two 0 bytes [zeroByte, zeroByte][zeroByte, zeroByte]
+    )
+  })
+})

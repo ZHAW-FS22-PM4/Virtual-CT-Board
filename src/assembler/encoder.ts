@@ -45,8 +45,6 @@ export function encode(code: ICode): IObjectFile {
     })
     //TODO Constants at end of optcode (CT1 SW2 Folie 21)
   }
-
-  console.error('encoder.encode: implemented with flaws')
   return opcode
 }
 
