@@ -92,7 +92,7 @@ let movInstructionMock: IInstruction
 let movsInstructionMock: IInstruction
 let movsImmediateInstructionMock: IInstruction
 let movsImmediateHexInstructionMock: IInstruction
-let codeMock: ICode
+let codeMock: ICodeFile
 beforeEach(() => {
   //equivalent dcwInstructionMock = createInstructionMock('DCW', 'var2', ['0x9876'])
   dcwInstructionMock = createInstructionMockOfInstruction(dcwInstruction)
@@ -108,7 +108,7 @@ beforeEach(() => {
     movsImmediateHexInstrucion
   )
 
-  const codeMockTemplate: ICode = mock<ICode>()
+  const codeMockTemplate: ICodeFile = mock<ICodeFile>()
   when(codeMockTemplate.areas).thenReturn([readonlyCodeArea, dataArea])
   codeMock = instance(codeMockTemplate)
 
@@ -141,7 +141,7 @@ describe('test encode function', () => {
     )
     expect(result.sections[1].content.length).toBe(17)
 
-    const codeMockTemplate: ICode = mock<ICode>()
+    const codeMockTemplate: ICodeFile = mock<ICodeFile>()
     when(codeMockTemplate.areas).thenReturn([codeArea])
     let codeMock2 = instance(codeMockTemplate)
     let result2 = encode(codeMock2)

@@ -37,7 +37,7 @@ export function parse (code: string): ICodeFile {
     let tags = lines[0].match(AREA_TITLE_REGEX)
     if (tags === null || tags.length < 4) throw new Error('Compile Error.')
 
-    let areatype: AreaType = AreaType[tags[2] as keyof typeof AreaType]
+    let areatype: AreaType = tags[2] === 'CODE' ? AreaType.Code : AreaType.Data;
     let name: string = tags[1]
     let isReadOnly: boolean = tags[3] === 'READONLY'
 

@@ -60,8 +60,7 @@ const falseInstruction2: string = 'print("Hello world")'
 
 const validCode: string =
   'AREA MyCode, CODE, READONLY\n MOVS    R1, #0xfe\n ALIGN'
-const resultValidCode: ICode = {
-  constants: '',
+const resultValidCode: ICodeFile = {
   areas: [
     {
       type: AreaType.Code,
