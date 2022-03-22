@@ -1,5 +1,5 @@
 import React from 'react'
-import CodeMirror from '@uiw/react-codemirror'
+import CodeMirror, { Text } from '@uiw/react-codemirror'
 import { Assembly } from './assembly'
 
 interface CodeEditorState {
@@ -7,24 +7,31 @@ interface CodeEditorState {
 }
 
 export class CodeEditor extends React.Component<{}, CodeEditorState> {
-  constructor () {
-    super({})
-    // create board class
-  }
+  private editorContent: Text = Text.of([''])
 
   state: CodeEditorState = {
     codeRunning: false
   }
 
   handleCompileAndReset = (): void => {
-    // call reset() function on processor
+    // TODO: call reset() function on processor
   }
 
   handleRunOrHalt = (): void => {
     if (this.state.codeRunning) {
-      // call halt() function on processor
+      // TODO: call halt() function on processor
     } else {
-      // call execute() function on processor
+      // TODO: call execute() function on processor
+    }
+
+    // access the content of the editor
+    // see https://codemirror.net/6/docs/ref/#text
+    console.log(this.editorContent.toString())
+    console.log()
+    if (this.editorContent !== undefined) {
+      for (const line of this.editorContent) {
+        console.log(line)
+      }
     }
 
     this.setState((state) => ({
@@ -47,6 +54,10 @@ export class CodeEditor extends React.Component<{}, CodeEditorState> {
           height='700px'
           theme='dark'
           extensions={[Assembly()]}
+          onChange={(value, viewUpdate) => {
+            // a bit ugly but this ensures that the editor content is always up to date
+            this.editorContent = viewUpdate.state.doc
+          }}
         />
       </div>
     )
