@@ -1,8 +1,7 @@
+import { Halfword, Word } from 'types/binary'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers, Register } from 'board/registers'
 import { IInstructionSet } from 'instruction/interfaces'
-import { Word } from 'types/binary/word'
-import { Halfword } from 'types/binary'
 
 const cycleSpeed: number = 1000
 

@@ -1,6 +1,9 @@
 import { Byte } from './byte'
 import { Halfword } from './halfword'
 
+/**
+ * Represents a word in range (0x00000000 - 0xFFFFFFFF).
+ */
 export class Word {
   public static MIN_VALUE: number = 0x00000000
   public static MAX_VALUE: number = 0xffffffff
@@ -36,7 +39,7 @@ export class Word {
   /**
    * Creates a new word from bytes.
    *
-   * @param value the list of bytes
+   * @param value the list of bytes (in little endian)
    * @returns the word representation
    */
   public static fromBytes(...bytes: Byte[]): Word {
@@ -50,10 +53,10 @@ export class Word {
   }
 
   /**
-   * Splites a word into a list of bytes
+   * Splites a word into a list of bytes.
    *
    * @param value the word to split
-   * @returns list of splitted bytes
+   * @returns list of splitted bytes (in little endian)
    */
   public static toBytes(...words: Word[]): Byte[] {
     const bytes: Byte[] = []
@@ -71,7 +74,7 @@ export class Word {
    * Creates a new word from a list of halfwords.
    *
    * @param value the list of halfwords
-   * @returns the word representation
+   * @returns the word representation (in little endian)
    */
   public static fromHalfwords(...halfwords: Halfword[]): Word {
     let value = Word.MIN_VALUE
@@ -87,7 +90,7 @@ export class Word {
    * Splites a word in to a list of halfwords
    *
    * @param value the word to split
-   * @returns the list of splitted halfwords
+   * @returns the list of splitted halfwords (in little endian)
    */
   public static toHalfwords(...words: Word[]): Halfword[] {
     const halfwords: Halfword[] = []
@@ -134,7 +137,7 @@ export class Word {
    * Splites the word into a list of bytes
    *
    * @param value the word to split
-   * @returns the list of splitted bytes
+   * @returns the list of splitted bytes (in little endian)
    */
   public toBytes(): Byte[] {
     return Word.toBytes(this)
@@ -144,7 +147,7 @@ export class Word {
    * Splites the word into a list of halfwords
    *
    * @param value the word to split
-   * @returns the list of splitted halfwords
+   * @returns the list of splitted halfwords (in little endian)
    */
   public toHalfwords(): Halfword[] {
     return Word.toHalfwords(this)

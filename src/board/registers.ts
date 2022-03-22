@@ -1,6 +1,3 @@
-/**
- * Represents the registers of the CPU
- */
 import { Word } from 'types/binary'
 
 export enum Register {
@@ -26,6 +23,9 @@ type IRegisterData = {
   [register in Register]: number
 }
 
+/**
+ * Represents the registers of the CPU
+ */
 export class Registers {
   private data: IRegisterData
 

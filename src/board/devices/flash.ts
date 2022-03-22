@@ -1,6 +1,7 @@
 import { Word } from 'types/binary'
-import { Device } from './device'
 import { IObjectFile } from 'assembler/objectFile'
+
+import { Device } from './device'
 
 export class Flash extends Device {
   public startAddress = Word.fromUnsignedInteger(0x08000000)

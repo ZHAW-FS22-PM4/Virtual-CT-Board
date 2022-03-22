@@ -1,5 +1,6 @@
 import { IDevice } from 'board/devices/interfaces'
 import { Byte, Halfword, Word } from 'types/binary'
+
 import { IMemory } from './interfaces'
 
 export class MemoryBus implements IMemory {

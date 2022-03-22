@@ -1,4 +1,4 @@
-import { ICode, IArea, AreaType, IInstruction } from './ast'
+import { ICodeFile, AreaType, IArea, IInstruction } from './ast'
 
 const START_COMMENT: string = ';'
 const START_AREA: string = 'AREA'
@@ -10,11 +10,12 @@ const INSTRUCTION_REGEX: RegExp = /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DC
 const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
 
 /**
- * Parses a given code string and returns a code object containing areas that contain instructions.
- * @param code as a string
- * @returns code object
+ * Parses a given code string and returns a code file containing areas that contain instructions.
+ * 
+ * @param code the assembler code (text representation)
+ * @returns the parsed code file
  */
-export function parse (code: string): ICode {
+export function parse (code: string): ICodeFile {
   let areaStrings: string[] = code.split(START_AREA)
 
   if (areaStrings.length == 1) {
@@ -58,7 +59,7 @@ export function parse (code: string): ICode {
     })
   }
 
-  return { constants: preface, areas: areas }
+  return { areas: areas }
 }
 
 /**
@@ -114,7 +115,7 @@ export function createInstruction (line: string): IInstruction {
  * @param unformattedCode code that stands before first occurrence of START_AREA.
  * @returns extracted preface.
  */
-export function extractPreface (unformattedCode: string): any {
+function extractPreface (unformattedCode: string): any {
   return unformattedCode === ''
     ? ''
     : unformattedCode.split('\n').map((line) => line.split(' '))

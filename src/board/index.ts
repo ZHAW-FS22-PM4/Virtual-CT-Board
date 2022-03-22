@@ -4,7 +4,6 @@ import { IMemory } from './memory/interfaces'
 import { MemoryBus } from './memory/bus'
 
 import InstructionSet from 'instruction/set'
-import { IDevice } from './devices/interfaces'
 import { Flash } from './devices/flash'
 import { Switches } from './devices/input/switches'
 import { LEDs } from './devices/output/leds'
@@ -14,16 +13,16 @@ class Board {
   public readonly memory: IMemory
   public readonly processor: Processor
 
-  public readonly devices: IDevice[]
-
   public readonly flash: Flash
+  public readonly switches: Switches
+  public readonly leds: LEDs
 
   constructor() {
-    //TODO flash as own property or within devices
     this.flash = new Flash()
-    this.devices = [this.flash, new Switches(), new LEDs()]
+    this.switches = new Switches()
+    this.leds = new LEDs()
     this.registers = new Registers()
-    this.memory = new MemoryBus(this.devices)
+    this.memory = new MemoryBus([this.flash, this.switches, this.leds])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
   }
 }

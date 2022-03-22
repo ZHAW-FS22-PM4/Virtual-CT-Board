@@ -2,7 +2,7 @@
  * Tests the encoder functionalities (translating parsed code into object file)
  */
 
-import { ICode, IArea, IInstruction, AreaType } from 'assembler/ast'
+import { ICodeFile, IArea, IInstruction, AreaType } from 'assembler/ast'
 import {
   encode,
   encodeDataInsruction,

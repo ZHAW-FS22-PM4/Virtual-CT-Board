@@ -1,5 +1,8 @@
 import { Byte } from './byte'
 
+/**
+ * Represents a halfword in range (0x0000 - 0xFFFF).
+ */
 export class Halfword {
   public static MIN_VALUE: number = 0x0000
   public static MAX_VALUE: number = 0xffff
@@ -54,7 +57,7 @@ export class Halfword {
    * Splites the halfword list into bytes.
    *
    * @param halfwords halfword list to split
-   * @ returns the list of splited bytes
+   * @returns the list of splited bytes (in little endian)
    */
   public static toBytes(...halfwords: Halfword[]): Byte[] {
     const bytes: Byte[] = []
@@ -91,7 +94,7 @@ export class Halfword {
   /**
    * Splites the halfword into bytes.
    *
-   * @ returns the list of splited bytes
+   * @returns the list of splited bytes (in little endian)
    */
   public toBytes(): Byte[] {
     return Halfword.toBytes(this)
@@ -100,7 +103,7 @@ export class Halfword {
   /**
    * Represents the halfword as string
    *
-   * @ returns the halfword as string
+   * @returns the halfword as string
    */
   public toBinaryString(): string {
     const byteString = this.value.toString(2)
@@ -110,7 +113,7 @@ export class Halfword {
   /**
    * Represents the halfword as HexString
    *
-   * @ returns the halfword as hexstring
+   * @returns the halfword as hexstring
    */
   public toHexString(): string {
     const hexString = this.value.toString(16)

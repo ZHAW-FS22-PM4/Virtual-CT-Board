@@ -1,22 +1,21 @@
-/**
- * Translates parsed code (ast representation) into object file
- */
-
-import { ICode, AreaType, IInstruction, IArea } from './ast'
-import { IObjectFile } from './objectFile'
-
-import { Word, Byte, Halfword } from '../types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+import { Word, Byte, Halfword } from 'types/binary'
 
 import InstructionSet from 'instruction/set'
-import { VirtualBoardError, VirtualBoardErrorType } from '../types/error'
 
-//TODO correct offset for section
+import { ICodeFile, AreaType, IArea, IInstruction } from './ast'
+import { IObjectFile } from './objectFile'
+
+// TODO: Correct the offset for the sections.
 const offsetCodeAreaReadOnly = Word.fromUnsignedInteger(0x08000000)
 const offsetCodeArea = Word.fromUnsignedInteger(0x20000000)
 const offsetDataArea = Word.fromUnsignedInteger(0x20010000)
 const offsetStackArea = Word.fromUnsignedInteger(0x20010200)
 
-export function encode(code: ICode): IObjectFile {
+/**
+ * Encodes a code file (AST representation) into an object file.
+ */
+export function encode(code: ICodeFile): IObjectFile {
   const opcode: IObjectFile = { sections: [] }
 
   for (let area of code.areas) {

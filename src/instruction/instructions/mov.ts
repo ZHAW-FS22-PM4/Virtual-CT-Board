@@ -1,6 +1,7 @@
 import { Halfword } from 'types/binary'
 import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
+
 import { ILabelOffsets, IInstruction } from '../interfaces'
 
 /**

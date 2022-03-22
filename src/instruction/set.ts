@@ -1,4 +1,6 @@
 import { Halfword } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+
 import {
   IInstruction,
   IInstructionEncoder,
@@ -6,7 +8,6 @@ import {
   IInstructionSet
 } from './interfaces'
 import { match } from './opcode'
-import { VirtualBoardError, VirtualBoardErrorType } from '../types/error'
 
 import { MovInstruction } from './instructions/mov'
 

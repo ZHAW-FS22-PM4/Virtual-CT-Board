@@ -1,4 +1,4 @@
-import { IInstruction, ICode, AreaType } from 'assembler/ast'
+import { IInstruction, ICodeFile, AreaType } from 'assembler/ast'
 import {
   removeNonCode,
   createInstruction,
