@@ -6,14 +6,8 @@ import { ICode, IArea, IInstruction, AreaType } from 'assembler/ast'
 import { encode, encodeDataInsruction } from 'assembler/encoder'
 import { Byte } from 'types/binary'
 
-import { mock, when, instance, verify, anything, spy } from 'ts-mockito'
+import { mock, when, instance, verify, anything } from 'ts-mockito'
 
-const resultInstructionWithLabel: IInstruction[] = [
-  { name: 'LDR', label: 'blue', params: ['R1', '=ADDR_LCD_COLOUR'] }
-]
-
-const codeMock: ICode = mock<ICode>()
-const instructionMock: IInstruction = mock<IInstruction>()
 const zeroByte: Byte = Byte.fromUnsignedInteger(0x00)
 const movInstrucion: IInstruction = {
   name: 'MOV',
@@ -25,11 +19,22 @@ const movsInstrucion: IInstruction = {
   label: '',
   params: ['R1', 'R2']
 }
+const movsImmediateInstrucion: IInstruction = {
+  name: 'MOVS',
+  label: '',
+  params: ['R6', '#12']
+}
+const movsImmediateHexInstrucion: IInstruction = {
+  name: 'MOVS',
+  label: '',
+  params: ['R6', '#0x12']
+}
 const dcbInstruction: IInstruction = {
   name: 'DCB',
   label: 'var1',
   params: ['0x15']
 }
+const dcbByteArray: Byte[] = [Byte.fromUnsignedInteger(0x15)]
 const dcwInstruction: IInstruction = {
   name: 'DCW',
   label: 'var2',
@@ -62,7 +67,6 @@ const readonlyCodeArea: IArea = {
   isReadOnly: true,
   instructions: [movInstrucion, movsInstrucion]
 }
-
 const codeArea: IArea = {
   type: AreaType.Code,
   name: 'CODE',
@@ -75,12 +79,34 @@ const dataArea: IArea = {
   isReadOnly: false,
   instructions: [movsInstrucion]
 }
+
+let dcbInstructionMock: IInstruction
+let dcwInstructionMock: IInstruction
+let dcdInstructionMock: IInstruction
 beforeEach(() => {
+  //equivalent dcwInstructionMock = createInstructionMock('DCW', 'var2', ['0x9876'])
+  dcwInstructionMock = createInstructionMockOfInstruction(dcwInstruction)
+  dcbInstructionMock = createInstructionMockOfInstruction(dcbInstruction)
+  dcdInstructionMock = createInstructionMockOfInstruction(dcdInstruction)
+
   //initial steps
   /*when(codeMock.areas).thenReturn([readonlyCodeArea, dataArea])
   let spaceMock: IInstruction = mock(spaceInstruction)
   when(spaceMock.params).thenReturn(['0x1234', '0x6789'])*/
 })
+
+//afterEach(() => {})
+
+function createInstructionMock(name: string, label: string, params: string[]) {
+  const mockTemplate: IInstruction = mock<IInstruction>()
+  when(mockTemplate.name).thenReturn(name)
+  when(mockTemplate.label).thenReturn(label)
+  when(mockTemplate.params).thenReturn(params)
+  return instance(mockTemplate)
+}
+function createInstructionMockOfInstruction(instr: IInstruction) {
+  return createInstructionMock(instr.name, instr.label, instr.params)
+}
 
 /*describe('test encode function', () => {
   test('should return ')
@@ -88,15 +114,15 @@ beforeEach(() => {
 describe('test encoder.encodeDataInsruction function', () => {
   test('should return correct byte array for data instruction', () => {
     testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcbInstruction, []),
-      [Byte.fromUnsignedInteger(0x15)]
+      encodeDataInsruction(dcbInstructionMock, []),
+      dcbByteArray
     )
     testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcwInstruction, []),
+      encodeDataInsruction(dcwInstructionMock, []),
       dcwByteArray
     )
     testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcdInstruction, []),
+      encodeDataInsruction(dcdInstructionMock, []),
       dcdByteArray
     )
 
@@ -107,54 +133,32 @@ describe('test encoder.encodeDataInsruction function', () => {
     spaceResult = encodeDataInsruction(spaceInstruction, [])
     expect(spaceResult.length).toBe(3)
   })
-  test('should filled with zero bytes for correct alignment', () => {
-    testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcwInstruction, [Byte.fromUnsignedInteger(0x12)]),
-      [zeroByte, ...dcwByteArray]
-    )
-    testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcdInstruction, [Byte.fromUnsignedInteger(0x73)]),
-      [zeroByte, zeroByte, zeroByte, ...dcdByteArray]
-    )
-    testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcdInstruction, [
-        Byte.fromUnsignedInteger(0x73),
-        Byte.fromUnsignedInteger(0x34)
-      ]),
-      [zeroByte, zeroByte, ...dcdByteArray]
-    )
-    testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcdInstruction, [
-        Byte.fromUnsignedInteger(0x81),
-        Byte.fromUnsignedInteger(0x34),
-        Byte.fromUnsignedInteger(0x94)
-      ]),
-      [zeroByte, ...dcdByteArray]
-    )
-  })
+
   test('should return correct byte array for data instruction (multiple params)', () => {
-    //TODO correct mocking
-    let dcbMock: IInstruction = spy(dcbInstruction)
-    when(dcbMock.params).thenReturn(['0x66', '0x72'])
-    //when(dcbMock.name).thenReturn('DCB')
-    let dcbMockInstance = instance(dcbMock)
-    expect(dcbMockInstance.params).toEqual(['0x66', '0x72'])
-    expect(dcbMockInstance.name).toEqual('DCB')
-    testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcbMockInstance, []),
-      [Byte.fromUnsignedInteger(0x66), Byte.fromUnsignedInteger(0x72)]
+    let dcbAlternativeMock = createInstructionMock(
+      dcbInstruction.name,
+      'var12',
+      [...dcbInstruction.params, '0x66', '0x72']
     )
-    let dcwSpy: IInstruction = spy(dcwInstruction)
-    when(dcwSpy.params).thenReturn([
-      '0x9876', //TODO why does not work ...dcwInstruction.params,
-      '0x1234',
-      '0x5454',
-      '0x9685'
-    ])
-    let dcwSpyInstance = instance(dcwSpy)
+
+    expect(dcbAlternativeMock.params).toEqual(['0x15', '0x66', '0x72'])
+    //expect(dcbMockInstance.name).toEqual('DCB')
+    testByteArrayWithLengthAndContent(
+      encodeDataInsruction(dcbAlternativeMock, []),
+      [
+        ...dcbByteArray,
+        Byte.fromUnsignedInteger(0x66),
+        Byte.fromUnsignedInteger(0x72)
+      ]
+    )
+    let dcwAlternativeMock = createInstructionMock(
+      dcwInstruction.name,
+      'var7',
+      [...dcwInstruction.params, '0x1234', '0x5454', '0x9685']
+    )
 
     testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcwSpyInstance, []),
+      encodeDataInsruction(dcwAlternativeMock, []),
       [
         ...dcwByteArray,
         Byte.fromUnsignedInteger(0x34),
@@ -165,9 +169,52 @@ describe('test encoder.encodeDataInsruction function', () => {
         Byte.fromUnsignedInteger(0x96)
       ]
     )
+
+    let dcdAlternativeMock = createInstructionMock(
+      dcdInstruction.name,
+      'var8',
+      [...dcdInstruction.params, '0x35462469']
+    )
+
     testByteArrayWithLengthAndContent(
-      encodeDataInsruction(dcdInstruction, []),
-      dcdByteArray
+      encodeDataInsruction(dcdAlternativeMock, []),
+      [
+        ...dcdByteArray,
+        Byte.fromUnsignedInteger(0x69),
+        Byte.fromUnsignedInteger(0x24),
+        Byte.fromUnsignedInteger(0x46),
+        Byte.fromUnsignedInteger(0x35)
+      ]
+    )
+  })
+
+  test('should filled with zero bytes for correct alignment', () => {
+    testByteArrayWithLengthAndContent(
+      encodeDataInsruction(dcwInstructionMock, [
+        Byte.fromUnsignedInteger(0x12)
+      ]),
+      [zeroByte, ...dcwByteArray]
+    )
+    testByteArrayWithLengthAndContent(
+      encodeDataInsruction(dcdInstructionMock, [
+        Byte.fromUnsignedInteger(0x73)
+      ]),
+      [zeroByte, zeroByte, zeroByte, ...dcdByteArray]
+    )
+    testByteArrayWithLengthAndContent(
+      encodeDataInsruction(dcdInstructionMock, [
+        Byte.fromUnsignedInteger(0x73),
+        Byte.fromUnsignedInteger(0x34)
+      ]),
+      [zeroByte, zeroByte, ...dcdByteArray]
+    )
+    testByteArrayWithLengthAndContent(
+      encodeDataInsruction(dcdInstructionMock, [
+        Byte.fromUnsignedInteger(0x81),
+        Byte.fromUnsignedInteger(0x34),
+        Byte.fromUnsignedInteger(0x94)
+      ]),
+      [zeroByte, ...dcdByteArray]
     )
   })
 })
