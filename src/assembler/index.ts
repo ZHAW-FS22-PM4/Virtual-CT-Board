@@ -4,7 +4,7 @@ import { encode } from './encoder'
 
 /**
  * Assembles a code file (text representation) into an object file.
- * 
+ *
  * @param code the assembler code
  * @returns the generated object file
  */

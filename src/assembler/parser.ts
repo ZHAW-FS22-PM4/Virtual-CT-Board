@@ -5,17 +5,19 @@ const START_AREA: string = 'AREA'
 const END_AREA: string = 'ALIGN'
 
 //Regexes needed to check syntax
-const AREA_TITLE_REGEX: RegExp = / *([a-zA-Z]+) *, *(DATA|CODE) *, *(READ(WRITE|ONLY)) */ //groups 1 and 3 used below
-const INSTRUCTION_REGEX: RegExp = /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 3 ([a-z0-9_]+) and 5 ([A-Z]+) are being used below
+const AREA_TITLE_REGEX: RegExp =
+  / *([a-zA-Z]+) *, *(DATA|CODE) *, *(READ(WRITE|ONLY)) */ //groups 1 and 3 used below
+const INSTRUCTION_REGEX: RegExp =
+  /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 3 ([a-z0-9_]+) and 5 ([A-Z]+) are being used below
 const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
 
 /**
  * Parses a given code string and returns a code file containing areas that contain instructions.
- * 
+ *
  * @param code the assembler code (text representation)
  * @returns the parsed code file
  */
-export function parse (code: string): ICodeFile {
+export function parse(code: string): ICodeFile {
   let areaStrings: string[] = code.split(START_AREA)
 
   if (areaStrings.length == 1) {
@@ -37,7 +39,7 @@ export function parse (code: string): ICodeFile {
     let tags = lines[0].match(AREA_TITLE_REGEX)
     if (tags === null || tags.length < 4) throw new Error('Compile Error.')
 
-    let areatype: AreaType = tags[2] === 'CODE' ? AreaType.Code : AreaType.Data;
+    let areatype: AreaType = tags[2] === 'CODE' ? AreaType.Code : AreaType.Data
     let name: string = tags[1]
     let isReadOnly: boolean = tags[3] === 'READONLY'
 
@@ -67,7 +69,7 @@ export function parse (code: string): ICodeFile {
   @param code 
  * @returns 
 */
-export function removeNonCode (code: string[]): string[] {
+export function removeNonCode(code: string[]): string[] {
   let lines: string[] = code.filter(
     (line) => line.trim().length > 0 && !line.startsWith(';')
   )
@@ -85,7 +87,7 @@ export function removeNonCode (code: string[]): string[] {
  * @param line instruction line
  * @returns array of instructions
  */
-export function createInstruction (line: string): IInstruction {
+export function createInstruction(line: string): IInstruction {
   line = line.trim()
 
   let tags = line.match(INSTRUCTION_REGEX)
@@ -115,7 +117,7 @@ export function createInstruction (line: string): IInstruction {
  * @param unformattedCode code that stands before first occurrence of START_AREA.
  * @returns extracted preface.
  */
-function extractPreface (unformattedCode: string): any {
+function extractPreface(unformattedCode: string): any {
   return unformattedCode === ''
     ? ''
     : unformattedCode.split('\n').map((line) => line.split(' '))

@@ -62,7 +62,7 @@ function determineOffset(area: IArea): Word {
 }
 
 /**
- * 
+ *
  * @param instr Instruction to encode
  * @param areaContent content of objectFile to see if filling bytes are required
  * @returns byte array for provided instruction
