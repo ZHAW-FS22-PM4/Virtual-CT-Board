@@ -64,7 +64,13 @@ function determineOffset(area: IArea): Word {
   }
 }
 
-function encodeDataInsruction(
+/**
+ * 
+ * @param instr Instruction to encode
+ * @param areaContent content of objectFile to see if filling bytes are required
+ * @returns byte array for provided instruction
+ */
+export function encodeDataInsruction(
   instr: IInstruction,
   areaContent: Byte[]
 ): Byte[] {
@@ -88,12 +94,15 @@ function encodeDataInsruction(
       }
     }
     instr.params.forEach((s) => objCode.push(...interpretDataParam(s)))
-  } else if (instr.name === 'SPACE') {
+  } else if (instr.name === 'SPACE' || instr.name === '%') {
     if (instr.params.length !== 1) {
-      throw new Error('Invalid param count for SPACE')
+      throw new VirtualBoardError(
+        'Invalid param count for SPACE',
+        VirtualBoardErrorType.InvalidParamProvided
+      )
     }
     //TODO should be random or as before
-    for (let i = 0; i < instr.params.length; i++) {
+    for (let i = 0; i < Number.parseInt(instr.params[0]); i++) {
       objCode.push(Byte.fromUnsignedInteger(0))
     }
   }
@@ -118,7 +127,7 @@ function interpretDataParam(param: string): Byte[] {
   }
 }
 
-function encodeCodeInstruction(instr: IInstruction): Byte[] {
+export function encodeCodeInstruction(instr: IInstruction): Byte[] {
   //InstructionSet.getEncoder("MOV").encodeInstruction(["R1", "R2"], {});
   try {
     const instrContent = InstructionSet.getEncoder(instr.name)

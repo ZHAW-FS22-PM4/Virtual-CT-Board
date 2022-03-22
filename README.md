@@ -60,6 +60,7 @@ npm run prettier
 
 This command will output a summary of all files which are not conform with the formatting config.
 Go to each listed file and make a change (insert a new line) and then save and let prettier format the file.
+Important: If the warning remains, make sure that the file has an empty line as last line 
 
 ## Build
 
@@ -104,3 +105,16 @@ $ npm run watch
 ```
 $ npm run test
 ```
+
+
+- Just run tests of file with path 'assembler/encoder.test.ts'
+```
+$ npm run test -- assembler/encoder.test.ts
+```
+
+- or just watch for changes in tests. And then within use p option to filter for certain file. After that you can just start a run with <Enter>
+```
+$ npm run test -- --watch
+```
+
+
