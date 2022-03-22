@@ -1,4 +1,4 @@
-import { ICode, IArea, AreaType, IInstruction, getAreaType } from './ast'
+import { ICode, IArea, AreaType, IInstruction } from './ast'
 
 const START_COMMENT: string = ';'
 const START_AREA: string = 'AREA'
@@ -36,7 +36,7 @@ export function parse (code: string): ICode {
     let tags = lines[0].match(AREA_TITLE_REGEX)
     if (tags === null || tags.length < 4) throw new Error('Compile Error.')
 
-    let areatype: AreaType = getAreaType(tags[2])
+    let areatype: AreaType = AreaType[tags[2] as keyof typeof AreaType]
     let name: string = tags[1]
     let isReadOnly: boolean = tags[3] === 'READONLY'
 
