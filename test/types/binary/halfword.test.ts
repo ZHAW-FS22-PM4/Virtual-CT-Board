@@ -20,11 +20,13 @@ test('fromUnsignedInteger_invalidValues', () => {
   expect(() => {
     Halfword.fromUnsignedInteger(-1)
   }).toThrowError(
-    'Halfword value can not be smaller than `Halfword.MIN_VALUE`.'
+    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535.'
   )
   expect(() => {
     Halfword.fromUnsignedInteger(65536)
-  }).toThrowError('Halfword value can not be larger than `Halfword.MAX_VALUE`.')
+  }).toThrowError(
+    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535.'
+  )
 })
 
 test('toHexString', () => {
@@ -67,7 +69,10 @@ test('toBytes_singleByte', () => {
     Byte.fromUnsignedInteger(0),
     Byte.fromUnsignedInteger(1)
   ])
-  expect(halfword_00ff.toBytes()).toEqual([Byte.fromUnsignedInteger(255)])
+  expect(halfword_00ff.toBytes()).toEqual([
+    Byte.fromUnsignedInteger(255),
+    Byte.fromUnsignedInteger(0)
+  ])
 })
 
 test('fromBytes', () => {

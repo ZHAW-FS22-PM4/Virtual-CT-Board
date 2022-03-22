@@ -22,17 +22,17 @@ export class Memory implements IMemory {
 
   public readHalfword(address: Word): Halfword {
     return Halfword.fromBytes(
-      this.readByte(address.increment(0)),
-      this.readByte(address.increment(1))
+      this.readByte(address.add(0)),
+      this.readByte(address.add(1))
     )
   }
 
   public readWord(address: Word): Word {
     return Word.fromBytes(
-      this.readByte(address.increment(0)),
-      this.readByte(address.increment(1)),
-      this.readByte(address.increment(2)),
-      this.readByte(address.increment(3))
+      this.readByte(address.add(0)),
+      this.readByte(address.add(1)),
+      this.readByte(address.add(2)),
+      this.readByte(address.add(3))
     )
   }
 
@@ -43,7 +43,7 @@ export class Memory implements IMemory {
   public writeBytes(address: Word, bytes: Byte[]): void {
     for (const byte of bytes) {
       this.writeByte(address, byte)
-      address = address.increment(1)
+      address = address.add(1)
     }
   }
 

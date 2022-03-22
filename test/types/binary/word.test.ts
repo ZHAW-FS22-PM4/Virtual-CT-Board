@@ -18,10 +18,14 @@ test('fromUnsignedInteger_validValues', () => {
 test('fromUnsignedInteger_invalidValues', () => {
   expect(() => {
     Word.fromUnsignedInteger(-1)
-  }).toThrowError('Word value can not be smaller than `Word.MIN_VALUE`.')
+  }).toThrowError(
+    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295.'
+  )
   expect(() => {
     Word.fromUnsignedInteger(4294967296)
-  }).toThrowError('Word value can not be larger than `Word.MAX_VALUE`.')
+  }).toThrowError(
+    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295.'
+  )
 })
 
 test('fromBytes', () => {
@@ -55,25 +59,25 @@ test('fromHalfwords', () => {
   expect(
     Word.fromHalfwords(
       Halfword.fromUnsignedInteger(65535),
-      Word.fromHalfwords(Halfword.fromUnsignedInteger(65535))
+      Halfword.fromUnsignedInteger(65535)
     )
   ).toEqual(word_ffffffff)
   expect(
     Word.fromHalfwords(
       Halfword.fromUnsignedInteger(0),
-      Word.fromHalfwords(Halfword.fromUnsignedInteger(0))
+      Halfword.fromUnsignedInteger(0)
     )
   ).toEqual(word_00000000)
   expect(
     Word.fromHalfwords(
       Halfword.fromUnsignedInteger(65535),
-      Word.fromHalfwords(Halfword.fromUnsignedInteger(4095))
+      Halfword.fromUnsignedInteger(4095)
     )
   ).toEqual(word_0fffffff)
 })
 
-test('increment', () => {
-  expect(word_00010000.increment(2)).toEqual(Word.fromUnsignedInteger(65538))
+test('add', () => {
+  expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
 })
 
 test('toUnsignedInteger', () => {
@@ -113,7 +117,8 @@ test('toBytes', () => {
   expect(word_00010000.toBytes()).toEqual([
     Byte.fromUnsignedInteger(0),
     Byte.fromUnsignedInteger(0),
-    Byte.fromUnsignedInteger(1)
+    Byte.fromUnsignedInteger(1),
+    Byte.fromUnsignedInteger(0)
   ])
 })
 

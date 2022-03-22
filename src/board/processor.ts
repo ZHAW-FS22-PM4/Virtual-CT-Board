@@ -68,6 +68,6 @@ export class Processor {
     this.instructions
       .getExecutor(opCode)
       .executeInstruction(opCode, this.registers, this.memory)
-    this.registers.writeRegister(Register.PC, pc.increment(2))
+    this.registers.writeRegister(Register.PC, pc.add(2))
   }
 }

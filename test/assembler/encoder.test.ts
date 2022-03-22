@@ -284,11 +284,11 @@ describe('test encoder.encodeCodeInstruction function', () => {
     //expect(Halfword.fromUnsignedInteger(0).toBytes()).toBe([zeroByte, zeroByte])
     testByteArrayWithLengthAndContent(
       encodeCodeInstruction(dcwInstructionMock),
-      [] //should return two 0 bytes [zeroByte, zeroByte]
+      [Byte.fromUnsignedInteger(0x00), Byte.fromUnsignedInteger(0x00)]
     )
     testByteArrayWithLengthAndContent(
       encodeCodeInstruction(createInstructionMock('NOTIMPLEMENTED', '', [])),
-      [] //should return two 0 bytes [zeroByte, zeroByte][zeroByte, zeroByte]
+      [Byte.fromUnsignedInteger(0x00), Byte.fromUnsignedInteger(0x00)]
     )
   })
 })
