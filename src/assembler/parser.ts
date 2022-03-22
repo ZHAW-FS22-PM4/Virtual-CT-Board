@@ -5,10 +5,8 @@ const START_AREA: string = 'AREA'
 const END_AREA: string = 'ALIGN'
 
 //Regexes needed to check syntax
-const AREA_TITLE_REGEX: RegExp =
-  / *([a-zA-Z]+) *, *(DATA|CODE) *, *READ(WRITE|ONLY) */
-const INSTRUCTION_REGEX: RegExp =
-  /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 3 ([a-z0-9_]+) and 5 ([A-Z]+) are being used below
+const AREA_TITLE_REGEX: RegExp = / *([a-zA-Z]+) *, *(DATA|CODE) *, *(READ(WRITE|ONLY)) */ //groups 1 and 3 used below
+const INSTRUCTION_REGEX: RegExp = /^( |\t)*(([a-z0-9_]+)( |\t)+)*(?!SPACE|EQU|DCD)([A-Z]+)( |\t)+.*$/ //groups 3 ([a-z0-9_]+) and 5 ([A-Z]+) are being used below
 const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
 
 /**
@@ -16,24 +14,23 @@ const DATA_REGEX: RegExp = /.*(EQU|SPACE|DCD).*/
  * @param code as a string
  * @returns code object
  */
-export function parse(code: string): ICode {
+export function parse (code: string): ICode {
   let areaStrings: string[] = code.split(START_AREA)
 
-  if (!areaStrings) {
+  if (areaStrings.length == 1) {
     throw new Error('Compile Error.')
   }
 
-  let preface: string[][] = areaStrings[0]
-    .split('\n')
-    .map((line) => line.split(' '))
-  delete areaStrings[0]
+  let preface = extractPreface(areaStrings[0])
+  areaStrings.splice(0, 1)
 
   let areas: IArea[] = []
 
   for (let area of areaStrings) {
     let lines: string[] = area.split('\n')
     lines = removeNonCode(lines)
-    if (!area.endsWith(END_AREA)) throw new Error('Compile Error.') //TODO except last one
+    if (lines.length == 1 || !area.endsWith(END_AREA))
+      throw new Error('Compile Error.') //TODO except last one - should end with 'END'
 
     //extract params for Area
     let tags = lines[0].match(AREA_TITLE_REGEX)
@@ -42,6 +39,10 @@ export function parse(code: string): ICode {
     let areatype: AreaType = getAreaType(tags[2])
     let name: string = tags[1]
     let isReadOnly: boolean = tags[3] === 'READONLY'
+
+    //remove AREA start and end lines
+    lines.splice(0, 1)
+    lines.splice(-1, 1)
 
     let instructions: IInstruction[] = []
     lines.forEach((line) => {
@@ -65,7 +66,7 @@ export function parse(code: string): ICode {
   @param code 
  * @returns 
 */
-export function removeNonCode(code: string[]): string[] {
+export function removeNonCode (code: string[]): string[] {
   let lines: string[] = code.filter(
     (line) => line.trim().length > 0 && !line.startsWith(';')
   )
@@ -83,7 +84,7 @@ export function removeNonCode(code: string[]): string[] {
  * @param line instruction line
  * @returns array of instructions
  */
-export function createInstruction(line: string): IInstruction {
+export function createInstruction (line: string): IInstruction {
   line = line.trim()
 
   let tags = line.match(INSTRUCTION_REGEX)
@@ -101,15 +102,20 @@ export function createInstruction(line: string): IInstruction {
         label: '',
         params: line.split(',').map((el) => el.trim())
       }
-  } else {
-    /*else {
-    let tags = line.match(INSTRUCTION_REGEX)
-    if (tags) {
-      line = line.slice(line.indexOf(tags[2])+tags[2].length)
-      return {name: tags[2], label: '', params: line.split(',').map(el => el.trim())}
-    }
-      //TODO handle data instructions*/
+  }
+  //TODO handle data instructions
+  else {
     throw new Error('Compile Error.')
   }
-  //}
+}
+
+/**
+ * Extracts a 2-dimensional string from a code if param is not empty, empty string otherwise.
+ * @param unformattedCode code that stands before first occurrence of START_AREA.
+ * @returns extracted preface.
+ */
+export function extractPreface (unformattedCode: string): any {
+  return unformattedCode === ''
+    ? ''
+    : unformattedCode.split('\n').map((line) => line.split(' '))
 }
