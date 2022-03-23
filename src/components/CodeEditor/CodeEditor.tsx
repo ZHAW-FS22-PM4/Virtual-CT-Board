@@ -7,6 +7,9 @@ interface CodeEditorState {
 }
 
 export class CodeEditor extends React.Component<{}, CodeEditorState> {
+  /**
+   * @see https://codemirror.net/6/docs/ref/#text
+   */
   private editorContent: Text = Text.of([''])
 
   state: CodeEditorState = {
@@ -22,16 +25,6 @@ export class CodeEditor extends React.Component<{}, CodeEditorState> {
       // TODO: call halt() function on processor
     } else {
       // TODO: call execute() function on processor
-    }
-
-    // access the content of the editor
-    // see https://codemirror.net/6/docs/ref/#text
-    console.log(this.editorContent.toString())
-    console.log()
-    if (this.editorContent !== undefined) {
-      for (const line of this.editorContent) {
-        console.log(line)
-      }
     }
 
     this.setState((state) => ({
