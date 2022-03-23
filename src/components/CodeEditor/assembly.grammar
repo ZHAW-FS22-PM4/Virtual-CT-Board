@@ -1,0 +1,50 @@
+@top Program { expression* }
+
+@skip { space | LineComment }
+
+expression {
+  Area
+}
+
+Area { "AREA" "," Label "," "DATA" "," ( "READONLY" | "READWRITE" ) Instruction+ }
+
+Instruction {
+  InstructionGroup01 |
+  InstructionGroup02 |
+  InstructionGroup03 |
+  InstructionGroup04 |
+  InstructionGroup05 |
+  InstructionGroup06 |
+  InstructionGroup07 |
+  InstructionGroup08 |
+  InstructionGroup09
+}
+
+InstructionGroup01 { Label? InstructionName LowReg "," HighReg }
+InstructionGroup02 { Label? InstructionName LowReg "," LowReg }
+InstructionGroup03 { Label? InstructionName LowReg "," ImmEight }
+InstructionGroup04 { Label? InstructionName LowReg "," LowReg "," LowReg }
+InstructionGroup05 { Label? InstructionName LowReg "," LowReg "," ImmThree }
+InstructionGroup06 { Label? InstructionName LowReg "," LowReg "," ImmFive }
+InstructionGroup07 { Label? InstructionName LowReg "," "[" LowReg "," LowReg "]" }
+InstructionGroup08 { Label? InstructionName LowReg "," "[" LowReg "," ImmFive "]" }
+InstructionGroup09 { Label? InstructionName LowReg "," "[" "PC" "," ImmEight "]" }
+
+@tokens {
+  ImmEight { "#" $[0-9] | "#" $[1-9] $[0-9] | "#1" $[0-9] $[0-9] | "#2" $[0-4] $[0-9] | "#25" $[0-6] }
+  ImmFive { "#" $[0-9] | "#" $[1-2] $[0-9] | "#3" $[0-2] }
+  ImmThree { "#" $[0-8] }
+
+  LowReg { "R" $[0-7] }
+  HighReg { "R" $[0-9] | "R1" $[0-2] | "SP" | "LR" | "PC" }
+
+  InstructionName { $[A-Z]+ }
+  Label { std.asciiLetter+ }
+
+  @precedence { ImmThree, ImmFive, ImmEight, LowReg, HighReg, InstructionName, "AREA", "DATA", "READONLY", "READWRITE", Label }
+
+  LineComment { ";" ![\n]* }
+  space { $[ \t\n\r]+ }
+}
+
+@detectDelim
