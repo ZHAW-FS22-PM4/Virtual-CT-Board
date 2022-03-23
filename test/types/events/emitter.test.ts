@@ -5,9 +5,7 @@ type TestEvents = {
   ping: (arg1: boolean[], arg2: string, arg3: string) => number
 }
 
-class TestEmitter extends EventEmitter<TestEvents> {}
-
-const emitter = new TestEmitter()
+const emitter = new EventEmitter<TestEvents>()
 
 describe('event emitter', function () {
   it('should invoke listeners on emit', function () {

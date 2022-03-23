@@ -5,9 +5,9 @@ type Events = {
 }
 
 /**
- * An abstract base class for event emitting classes.
+ * Represents an emitter of specific events.
  */
-export abstract class EventEmitter<TEvents extends Events> {
+export class EventEmitter<TEvents extends Events> {
   private readonly map: Map<keyof TEvents, EventHandler[]>
 
   public constructor() {

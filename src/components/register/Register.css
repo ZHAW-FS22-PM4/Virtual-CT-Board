@@ -1,28 +1,28 @@
 .register-container {
-    background-color: #EDF1F1;
-    border-radius: 10px;
-    border-style: none;
-    margin-top: 3em;
-    padding-top: 0.75em;
-    width: 12rem;
-    height: 31rem;
+  background-color: #edf1f1;
+  border-radius: 10px;
+  border-style: none;
+  margin-top: 3em;
+  padding-top: 0.75em;
+  width: 12rem;
+  height: 31rem;
 }
 
-.title{
-    text-indent: 0.75em;
+.title {
+  text-indent: 0.75em;
 }
 
 .register {
-    width: 12rem;
-    height: 25rem;
-    font-family: monospace;
+  width: 12rem;
+  height: 25rem;
+  font-family: monospace;
 }
 
 .register > .row {
-    padding-top: .2rem;
-    border-top: 1px solid lightgrey;
+  padding-top: 0.2rem;
+  border-top: 1px solid lightgrey;
 }
 
-.register > .row >.col-sm-4 {
-    font-weight: bold;
+.register > .row > .col-sm-4 {
+  font-weight: bold;
 }
