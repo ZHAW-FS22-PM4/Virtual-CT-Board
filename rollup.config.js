@@ -58,10 +58,7 @@ let plugins = [
 ]
 
 if (isProduction) {
-  plugins = [
-    ...plugins,
-    terser()
-  ]
+  plugins = [...plugins, terser()]
 }
 
 if (isDevelopment) {
@@ -83,7 +80,7 @@ export default {
   output: {
     dir: 'dist',
     format: 'iife', // build output as single executable javascript function
-    sourcemap: (isDevelopment ? 'inline' : false)
+    sourcemap: isDevelopment ? 'inline' : false
   },
   plugins
 }
