@@ -13,7 +13,8 @@ export class App extends React.Component {
                 <CodeEditor />
               </div>
               <div className="col-md-2">
-                Registers...
+                <Register />
+                <StatusFlags />
               </div>
               <div className="col-md-6">
                 CT Board...
