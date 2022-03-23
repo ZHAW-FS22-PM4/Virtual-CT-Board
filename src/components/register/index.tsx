@@ -36,7 +36,7 @@ export class RegisterComponent extends React.Component<{}, RegisterState> {
         <h4 className="title">Register</h4>
         <div className="register">
           {Object.keys(this.state).map((key) => (
-            <div className="row mx-2 my-1">
+            <div className="row mx-2 my-1" key={'register_' + key}>
               <div className="col-sm-4">{key}</div>
               <div className="col-sm-8">{this.state[key]}</div>
             </div>

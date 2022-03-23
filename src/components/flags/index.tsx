@@ -17,12 +17,16 @@ export class FlagsComponent extends React.Component {
         <div>
           <div className="row justify-content-md-center">
             {statusFlags.map((r) => (
-              <div className="col-md-auto">{r.key}</div>
+              <div key={'flag_' + r.key} className="col-md-auto">
+                {r.key}
+              </div>
             ))}
           </div>
           <div className="row justify-content-md-center">
             {statusFlags.map((r) => (
-              <div className="col-md-auto">{r.value}</div>
+              <div key={'flagvalue_' + r.key} className="col-md-auto">
+                {r.value}
+              </div>
             ))}
           </div>
         </div>
