@@ -1,7 +1,8 @@
 import React from 'react'
-import './StatusFlags.css'
 
-export class StatusFlags extends React.Component {
+import './style.css'
+
+export class FlagsComponent extends React.Component {
   render(): React.ReactNode {
     // TODO: replace dummy StatusFlags
     const statusFlags = [

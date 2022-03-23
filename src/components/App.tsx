@@ -1,8 +1,8 @@
 import React from 'react'
-import { Register } from './register/Register'
-import { StatusFlags } from './register/StatusFlags'
 
-import { CodeEditor } from './CodeEditor/CodeEditor'
+import { EditorComponent } from 'components/editor'
+import { RegisterComponent } from 'components/register'
+import { FlagsComponent } from 'components/flags'
 
 export class App extends React.Component {
   render(): React.ReactNode {
@@ -10,11 +10,11 @@ export class App extends React.Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-4">
-            <CodeEditor />
+            <EditorComponent />
           </div>
           <div className="col-md-2">
-            <Register />
-            <StatusFlags />
+            <RegisterComponent />
+            <FlagsComponent />
           </div>
           <div className="col-md-6">CT Board...</div>
         </div>
