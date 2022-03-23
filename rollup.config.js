@@ -24,6 +24,9 @@ import clear from 'rollup-plugin-clear'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 
+// to automatically convert .grammar files to javascript object files
+import { lezer } from '@lezer/generator/rollup'
+
 const isDevelopment = !!process.env.ROLLUP_WATCH
 const isProduction = !isDevelopment
 
@@ -31,7 +34,7 @@ const environment = isDevelopment ? 'development' : 'production'
 
 console.log(`Building for ${environment} environment.`)
 
-var plugins = [
+let plugins = [
   clear({
     targets: ['dist'],
     watch: false
@@ -50,7 +53,8 @@ var plugins = [
   html({
     template: 'src/index.html',
     target: 'index.html'
-  })
+  }),
+  lezer()
 ]
 
 if (isProduction) {
