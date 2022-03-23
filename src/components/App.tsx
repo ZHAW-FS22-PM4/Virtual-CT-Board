@@ -2,27 +2,24 @@ import React from 'react'
 import {Register} from "./register/Register";
 import { StatusFlags } from './register/StatusFlags';
 
+import { CodeEditor } from './CodeEditor/CodeEditor'
+
 export class App extends React.Component {
     render (): React.ReactNode {
         return (
-            <div className="m-3">
-              <h1>Virtual CT Board</h1>
-              <div className="container">
-                <div className="row">
-                  <div className="col-sm">
-                    Code Editor ...
-                  </div>
-                  <div className="col-sm">
-                    <Register/>
-                    <StatusFlags/>
-                  </div>
-                  <div className="col-sm">
-                    Board ...
-                  </div>
-                </div>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-4">
+                <CodeEditor />
               </div>
-
+              <div className="col-md-2">
+                Registers...
+              </div>
+              <div className="col-md-6">
+                CT Board...
+              </div>
             </div>
+          </div>
         )
     }
 }
