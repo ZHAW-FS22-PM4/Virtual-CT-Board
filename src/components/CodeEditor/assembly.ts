@@ -6,7 +6,8 @@ export const AssemblyLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       styleTags({
-        'MOV MOVS ADD ADDS ADCS SUBS RSBS SBCS MULS CMP CMN ANDS BICS EORS MVNS ORRS TST ASRS': t.variableName,
+        'MOV MOVS ADD ADDS ADCS SUBS RSBS SBCS MULS CMP CMN ANDS BICS EORS MVNS ORRS TST ASRS':
+          t.variableName,
         ImmEight: t.number,
         ImmFive: t.number,
         ImmThree: t.number,
@@ -22,6 +23,6 @@ export const AssemblyLanguage = LRLanguage.define({
   }
 })
 
-export function Assembly (): LanguageSupport {
+export function Assembly(): LanguageSupport {
   return new LanguageSupport(AssemblyLanguage)
 }
