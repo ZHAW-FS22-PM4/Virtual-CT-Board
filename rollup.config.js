@@ -1,35 +1,35 @@
 // allows the discovery of dependencies from the node_modules directory
-import resolve from '@rollup/plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve'
 
 // allows the usage of commonjs modules with es2016 modules
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs'
 
 // allows replacing strings in the codebase
-import replace from '@rollup/plugin-replace';
+import replace from '@rollup/plugin-replace'
 
 // support for typescript
-import typescript from '@rollup/plugin-typescript';
+import typescript from '@rollup/plugin-typescript'
 
 // minifies the output to the dist folder
-import { terser } from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-terser'
 
 // support for html and css
-import html from 'rollup-plugin-generate-html-template';
-import css from 'rollup-plugin-import-css';
+import html from 'rollup-plugin-generate-html-template'
+import css from 'rollup-plugin-import-css'
 
 // allows clearing the output directory
-import clear from 'rollup-plugin-clear';
+import clear from 'rollup-plugin-clear'
 
 // dev tools
-import serve from 'rollup-plugin-serve';
-import livereload from 'rollup-plugin-livereload';
+import serve from 'rollup-plugin-serve'
+import livereload from 'rollup-plugin-livereload'
 
-const isDevelopment = !!process.env.ROLLUP_WATCH;
-const isProduction = !isDevelopment;
+const isDevelopment = !!process.env.ROLLUP_WATCH
+const isProduction = !isDevelopment
 
-const environment = isDevelopment ? 'development' : 'production';
+const environment = isDevelopment ? 'development' : 'production'
 
-console.log(`Building for ${environment} environment.`);
+console.log(`Building for ${environment} environment.`)
 
 var plugins = [
   clear({
@@ -54,10 +54,7 @@ var plugins = [
 ]
 
 if (isProduction) {
-  plugins = [
-    ...plugins,
-    terser()
-  ];
+  plugins = [...plugins, terser()]
 }
 
 if (isDevelopment) {
@@ -71,7 +68,7 @@ if (isDevelopment) {
     livereload({
       watch: 'dist'
     })
-  ];
+  ]
 }
 
 export default {
@@ -79,7 +76,7 @@ export default {
   output: {
     dir: 'dist',
     format: 'iife', // build output as single executable javascript function
-    sourcemap: (isDevelopment ? 'inline' : false)
+    sourcemap: isDevelopment ? 'inline' : false
   },
   plugins
 }
