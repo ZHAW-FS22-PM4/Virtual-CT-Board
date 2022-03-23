@@ -7,6 +7,7 @@
     "build": "rollup --config",
     "watch": "rollup --config --watch",
     "test": "jest",
+    "test-ci": "jest --reporters=\"jest-junit\"",
     "prettier": "prettier --check .",
     "format-all-files": "prettier --write ."
   },
@@ -43,7 +44,8 @@
     "ts-standard": "^11.0.0",
     "@lezer/generator": "^0.15.0",
     "rollup-plugin-dts": "^4.0.1",
-    "ts-mockito": "^2.6.1"
+    "ts-mockito": "^2.6.1",
+    "jest-junit": "^12.2.0" 
   },
   "dependencies": {
     "@uiw/react-codemirror": "^4.5.1",
