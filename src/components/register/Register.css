@@ -1,11 +1,27 @@
 .register-container {
-    border: 1px solid black;
+    background-color: #EDF1F1;
+    border-radius: 10px;
+    border-style: none;
+    margin-top: 3em;
+    padding-top: 0.75em;
     width: 12rem;
-    height: 30rem;
+}
+
+.title{
+    text-indent: 0.75em;
+}
+
+.register {
+    width: 12rem;
+    height: 25rem;
     font-family: monospace;
 }
 
-.register-container > .row {
+.register > .row {
     padding-bottom: .2rem;
     border-bottom: 1px solid lightgrey;
+}
+
+.register > .row >.col-sm-4 {
+    font-weight: bold;
 }

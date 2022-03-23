@@ -1,5 +1,5 @@
 import React from 'react'
-import {Register} from "./register/Register";
+import { Register } from "./register/Register";
 import { StatusFlags } from './register/StatusFlags';
 
 import { CodeEditor } from './CodeEditor/CodeEditor'

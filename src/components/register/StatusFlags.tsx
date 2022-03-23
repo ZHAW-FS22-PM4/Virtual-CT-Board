@@ -14,8 +14,8 @@ export class StatusFlags extends React.Component {
     ]
 
     return (
-        <div>
-          <div className="status-flags-container">
+        <div className="status-flags-container">
+          <div>
               <div className="row justify-content-md-center">
                   {statusFlags.map(r =>
                     <div className="col-md-auto">
