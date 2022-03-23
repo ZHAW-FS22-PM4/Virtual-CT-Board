@@ -14,8 +14,15 @@ export class Register extends React.Component {
           {key: 'R5', value: '0x123F4678'},
           {key: 'R6', value: '0x1AC4CC78'},
           {key: 'R7', value: '0x12345DE8'},
+          {key: 'R8', value: '0x12345DE8'},
+          {key: 'R9', value: '0x12345DE8'},
+          {key: 'R10', value: '0x12345DE8'},
+          {key: 'R11', value: '0x12345DE8'},
+          {key: 'R12', value: '0x12345DE8'},
+          {key: 'SP', value: '0x12345DE8'},
+          {key: 'LR', value: '0x12345DE8'},
+          {key: 'PC', value: '0x12345DE8'},
       ]
-
 
     return (
         <div className="register-container">

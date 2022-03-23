@@ -19,7 +19,7 @@ export class StatusFlags extends React.Component {
               <div className="row justify-content-md-center">
                   {statusFlags.map(r =>
                     <div className="col-md-auto">
-                    {r.key}
+                        {r.key}
                     </div>
                     )}
                 </div>
