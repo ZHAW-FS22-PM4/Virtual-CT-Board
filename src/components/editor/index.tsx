@@ -2,6 +2,7 @@ import React from 'react'
 import CodeMirror, { Text } from '@uiw/react-codemirror'
 
 import { Assembly } from './assembly'
+import {Processor} from 'board/processor'
 
 interface EditorState {
   codeRunning: boolean
@@ -18,14 +19,14 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   }
 
   handleCompileAndReset = (): void => {
-    // TODO: call reset() function on processor
+    Processor.prototype.reset()
   }
 
   handleRunOrHalt = (): void => {
     if (this.state.codeRunning) {
-      // TODO: call halt() function on processor
+      Processor.prototype.halt()
     } else {
-      // TODO: call execute() function on processor
+      Processor.prototype.execute()
     }
 
     this.setState((state) => ({
