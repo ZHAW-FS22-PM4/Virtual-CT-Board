@@ -10,6 +10,7 @@ export class Byte {
   public static MAX_UNSIGNED_VALUE: number = 255
   public static MIN_SIGNED_VALUE: number = -128
   public static MAX_SIGNED_VALUE: number = 127
+  public static ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
 
   /**
    * The unsigned integer representation of the byte as a number (IEEE double precision floating point).

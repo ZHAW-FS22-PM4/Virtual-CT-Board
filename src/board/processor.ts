@@ -1,4 +1,5 @@
 import { Halfword, Word } from 'types/binary'
+import { EventEmitter } from 'types/events/emitter'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers, Register } from 'board/registers'
 import { IInstructionSet } from 'instruction/interfaces'
@@ -7,11 +8,15 @@ const cycleSpeed: number = 1000
 
 const flashStartAddress: Word = Word.fromUnsignedInteger(0x08000000)
 
+type ProcessorEvents = {
+  afterCycle: () => void
+}
+
 /**
  * The processor is responsible for the actual execcution of the program that is currently stored to flash memory.
  * @author Leo Rudin
  */
-export class Processor {
+export class Processor extends EventEmitter<ProcessorEvents> {
   private readonly registers: Registers
   private readonly memory: IMemory
   private readonly instructions: IInstructionSet
@@ -23,6 +28,7 @@ export class Processor {
     memory: IMemory,
     instructions: IInstructionSet
   ) {
+    super()
     this.registers = registers
     this.memory = memory
     this.instructions = instructions
@@ -69,5 +75,6 @@ export class Processor {
       .getExecutor(opCode)
       .executeInstruction(opCode, this.registers, this.memory)
     this.registers.writeRegister(Register.PC, pc.add(2))
+    this.emit('afterCycle')
   }
 }
