@@ -1,18 +1,19 @@
 import React from 'react'
 import CodeMirror, { Text } from '@uiw/react-codemirror'
+
 import { Assembly } from './assembly'
 
-interface CodeEditorState {
+interface EditorState {
   codeRunning: boolean
 }
 
-export class CodeEditor extends React.Component<{}, CodeEditorState> {
+export class EditorComponent extends React.Component<{}, EditorState> {
   /**
    * @see https://codemirror.net/6/docs/ref/#text
    */
   private editorContent: Text = Text.of([''])
 
-  state: CodeEditorState = {
+  state: EditorState = {
     codeRunning: false
   }
 
