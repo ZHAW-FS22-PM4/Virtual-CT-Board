@@ -9,7 +9,11 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 
-import { MovInstruction } from './instructions/mov'
+import {
+  MovInstruction,
+  MovsFromRegisterInstruction,
+  MovsFromLiteralInstruction
+} from './instructions/mov'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -42,4 +46,8 @@ export class InstructionSet implements IInstructionSet {
   }
 }
 
-export default new InstructionSet([new MovInstruction()])
+export default new InstructionSet([
+  new MovInstruction(),
+  new MovsFromRegisterInstruction(),
+  new MovsFromLiteralInstruction()
+])
