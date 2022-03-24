@@ -68,7 +68,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     this.registers.writeRegister(Register.SP, Word.fromUnsignedInteger(0))
   }
 
-  private cycle(): void {
+  cycle = (): void => {
     const pc: Word = this.registers.readRegister(Register.PC)
     const opCode: Halfword = this.memory.readHalfword(pc)
     this.instructions
