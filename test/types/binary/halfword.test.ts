@@ -20,12 +20,12 @@ test('fromUnsignedInteger_invalidValues', () => {
   expect(() => {
     Halfword.fromUnsignedInteger(-1)
   }).toThrowError(
-    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535.'
+    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: -1).'
   )
   expect(() => {
     Halfword.fromUnsignedInteger(65536)
   }).toThrowError(
-    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535.'
+    'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: 65536).'
   )
 })
 
