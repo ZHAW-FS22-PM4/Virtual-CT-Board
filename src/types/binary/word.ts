@@ -1,6 +1,7 @@
 import { checkRange } from './utils'
 import { Byte } from './byte'
 import { Halfword } from './halfword'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 /**
  * Represents a word in range (0x00000000 - 0xFFFFFFFF).
@@ -12,9 +13,10 @@ export class Word {
   public static MAX_UNSIGNED_VALUE: number = 4294967295
   public static MIN_SIGNED_VALUE: number = -2147483648
   public static MAX_SIGNED_VALUE: number = 2147483647
+  public static NUMBER_OF_BITS: number = 32
 
   /**
-   * The unsigned integer representation of the halfword as a number (IEEE double precision floating point).
+   * The unsigned integer representation of the word as a number (IEEE double precision floating point).
    */
   public readonly value: number
 
@@ -207,5 +209,59 @@ export class Word {
   public toHexString(): string {
     const hexString = this.value.toString(16)
     return hexString.padStart(8, '0')
+  }
+
+  /**
+   * throws exception if offset is not smaller than 32
+   * @param bitOffset 0-indexed offset
+   */
+  private checkIfBitOffsetInWordRange(bitOffset: number): void {
+    if (bitOffset >= Word.NUMBER_OF_BITS || bitOffset < 0) {
+      throw new VirtualBoardError(
+        'Offset is not within Word range',
+        VirtualBoardErrorType.BitOutOfTypeRange
+      )
+    }
+  }
+
+  /**
+   *
+   * @param bitOffset
+   * @returns
+   */
+  public isBitSet(bitOffset: number): boolean {
+    this.checkIfBitOffsetInWordRange(bitOffset)
+    return (this.value & (1 << bitOffset)) !== 0
+  }
+
+  /**
+   * sets the bit with 0-indexed offset from right side to 1
+   * @param bitOffset
+   * @returns new Word instance with changed value
+   */
+  public setBit(bitOffset: number): Word {
+    this.checkIfBitOffsetInWordRange(bitOffset)
+    return Word.fromSignedInteger(this.value | (1 << bitOffset))
+  }
+
+  /**
+   * sets the bit with 0-indexed offset from right side to 0
+   * @param bitOffset
+   * @returns new Word instance with changed value
+   */
+  public clearBit(bitOffset: number): Word {
+    this.checkIfBitOffsetInWordRange(bitOffset)
+    return Word.fromSignedInteger(this.value & ~(1 << bitOffset))
+  }
+  /**
+   * sets the bit to 1 when it was 0 or to 0 if it was 1 before
+   * @param bitOffset
+   * @returns new Word instance with changed value
+   */
+  public toggleBit(bitOffset: number): Word {
+    this.checkIfBitOffsetInWordRange(bitOffset)
+    return this.isBitSet(bitOffset)
+      ? this.clearBit(bitOffset)
+      : this.setBit(bitOffset)
   }
 }

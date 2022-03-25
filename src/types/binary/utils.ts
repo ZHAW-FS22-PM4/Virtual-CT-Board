@@ -6,7 +6,7 @@ export function checkRange(
 ) {
   if (!Number.isInteger(value) || value < min || value > max) {
     throw new Error(
-      `OutOfRange: ${name} must be an integer in range ${min} to ${max}.`
+      `OutOfRange: ${name} must be an integer in range ${min} to ${max} (provided: ${value}).`
     )
   }
 }
