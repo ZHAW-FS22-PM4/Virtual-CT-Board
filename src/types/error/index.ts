@@ -2,7 +2,11 @@ export enum VirtualBoardErrorType {
   NoEncoderFound,
   InvalidAreaType,
   InvalidParamProvided,
-  BitOutOfTypeRange
+  BitOutOfTypeRange,
+  InstructionWrongOptionCount,
+  InvalidRegisterAsOption,
+  ProvidedRegisterShouldBeLow,
+  ProvidedImmediateIsInvalid
 }
 
 export class VirtualBoardError extends Error {

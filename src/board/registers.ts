@@ -131,7 +131,7 @@ export class Registers {
    * @param register register to check
    * @returns true if its a low register
    */
-  public isLowRegister(register: Register): boolean {
+  public static isLowRegister(register: Register): boolean {
     return Registers.lowRegisters.includes(register)
   }
 
