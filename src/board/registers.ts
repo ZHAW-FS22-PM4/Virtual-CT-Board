@@ -24,17 +24,6 @@ type IRegisterData = {
 }
 
 /**
- * Converts a registers name to its numerical representation
- * @param registerName Registername as string (f.e. 'R8')
- * @returns The numerical representation of the register (f.e. 8)
- */
-export function numericalRepresentationFromString(
-  registerName: string
-): number {
-  throw new Error('Function not yet implemented.')
-}
-
-/**
  * Represents the registers of the CPU
  */
 export class Registers {
