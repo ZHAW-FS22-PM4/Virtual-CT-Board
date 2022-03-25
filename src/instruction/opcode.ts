@@ -48,7 +48,7 @@ export function create(pattern: string): Halfword {
       VirtualBoardErrorType.InvalidParamProvided
     )
   }
-  let opcode: string = ''
+  let opcode: number = 0
   for (let i = 0; i < 16; i++) {
     const character = pattern[i]
     if (!['0', '1', 'X'].includes(character)) {
@@ -57,13 +57,12 @@ export function create(pattern: string): Halfword {
         VirtualBoardErrorType.InvalidParamProvided
       )
     }
-    if (['0', '1'].includes(character)) {
-      opcode = opcode.concat(character)
-    } else {
-      opcode = opcode.concat('0')
+    if (character === '1') {
+      const mask = 1 << (15 - i)
+      opcode |= mask
     }
   }
-  return Halfword.fromUnsignedInteger(parseInt(opcode, 2))
+  return Halfword.fromUnsignedInteger(opcode)
 }
 
 /**
@@ -88,7 +87,7 @@ export function setBits(
       VirtualBoardErrorType.InvalidParamProvided
     )
   }
-  let opcodeNr: number = opcode.toUnsignedInteger()
+  let opcodeNr: number = opcode.value
   let bitsToChange: number = (pattern.match(/X/g) || []).length
   if (bitsToChange === 0) {
     return opcode
@@ -113,4 +112,42 @@ export function setBits(
     }
   }
   return Halfword.fromUnsignedInteger(opcodeNr)
+}
+
+/**
+ * Gets defined bits of an opcode
+ *
+ * @param opcode opcode to get the bits from
+ * @param pattern defines which bits are returned (has to be 16 bits digits long)
+ * @returns the chosen bits as halfword
+ */
+export function getBits(opcode: Halfword, pattern: string): Halfword {
+  if (pattern.length !== 16) {
+    throw new VirtualBoardError(
+      'Opcode pattern length is invalid. Must be 16 characters long.',
+      VirtualBoardErrorType.InvalidParamProvided
+    )
+  }
+  let valueString: string = ''
+  for (let i = 0; i < 16; i++) {
+    const character = pattern[i]
+    if (!['0', '1', 'X'].includes(character)) {
+      throw new VirtualBoardError(
+        'Opcode pattern contains invalid characters. Only 1, 0 or X are valid pattern characters.',
+        VirtualBoardErrorType.InvalidParamProvided
+      )
+    }
+    if (character === 'X') {
+      const mask = 1 << (15 - i)
+      if ((opcode.value & mask) !== 0) {
+        valueString = valueString.concat('1')
+      } else {
+        valueString = valueString.concat('0')
+      }
+    }
+  }
+  if (valueString === '') {
+    valueString = '0'
+  }
+  return Halfword.fromUnsignedInteger(parseInt(valueString, 2))
 }

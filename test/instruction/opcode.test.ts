@@ -1,4 +1,4 @@
-import { match, create, setBits } from 'instruction/opcode'
+import { match, create, setBits, getBits } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
@@ -100,5 +100,41 @@ describe('test setBits function', function () {
     expect(() => setBits(opcode, '1112111111XXXXXX', value)).toThrow(
       VirtualBoardError
     )
+  })
+})
+
+describe('test getBits function', function () {
+  let opcode: Halfword = Halfword.fromUnsignedInteger(0b0011010001110001)
+  it('should get correct bits according to a pattern', function () {
+    expect(getBits(opcode, '1111111111XXXXXX').toBinaryString()).toBe(
+      '0000000000110001'
+    )
+    expect(getBits(opcode, '01010101010101XX').toBinaryString()).toBe(
+      '0000000000000001'
+    )
+    expect(getBits(opcode, 'XX010X010101010X').toBinaryString()).toBe(
+      '0000000000000011'
+    )
+    opcode = Halfword.fromUnsignedInteger(0b1010101010101010)
+    expect(getBits(opcode, 'X111XX11X1X1XXXX').toBinaryString()).toBe(
+      '0000000110111010'
+    )
+    expect(getBits(opcode, 'X0X0X0X0X0X0X0X0').toBinaryString()).toBe(
+      '0000000011111111'
+    )
+    expect(getBits(opcode, '0X0X0X0X0X0X0X0X').toBinaryString()).toBe(
+      '0000000000000000'
+    )
+  })
+
+  it('should throw when pattern not 16 characters', function () {
+    expect(() => getBits(opcode, '1111111111XXXXXXX')).toThrow(
+      VirtualBoardError
+    )
+    expect(() => getBits(opcode, '11111111XXXXXXX')).toThrow(VirtualBoardError)
+  })
+
+  it('should throw when pattern contains invalid characters', function () {
+    expect(() => getBits(opcode, '1112111111XXXXXX')).toThrow(VirtualBoardError)
   })
 })
