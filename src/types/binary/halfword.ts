@@ -97,7 +97,7 @@ export class Halfword {
    * @returns a boolean indicating whether the halfword has a sign
    */
   public hasSign(): boolean {
-    return (this.value & 0x8000) !== 0
+    return (this.value & (1 << 15)) !== 0
   }
 
   /**

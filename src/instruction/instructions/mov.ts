@@ -9,9 +9,8 @@ import {
   isImmediate,
   setBits
 } from 'instruction/opcode'
-import { Register, Registers } from 'board/registers'
+import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
-import { $enum } from 'ts-enum-util'
 
 import { ILabelOffsets, IInstruction } from '../interfaces'
 
@@ -66,10 +65,12 @@ export class MovsFromRegisterInstruction implements IInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    registers.writeRegister(
-      getBits(opcode, this.rdPattern).value,
-      registers.readRegister(getBits(opcode, this.rmPattern).value)
+    let valueToWrite = registers.readRegister(
+      getBits(opcode, this.rmPattern).value
     )
+    registers.setNegativeFlag(valueToWrite)
+    registers.setZeroFlag(valueToWrite.value)
+    registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
   }
 }
 
@@ -107,9 +108,12 @@ export class MovsFromLiteralInstruction extends MovsFromRegisterInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
+    let valueToWrite = Word.fromHalfwords(getBits(opcode, this.immPattern))
+    registers.setNegativeFlag(valueToWrite)
+    registers.setZeroFlag(valueToWrite.value)
     registers.writeRegister(
       getBits(opcode, this.rdLiteralPattern).value,
-      Word.fromHalfwords(getBits(opcode, this.immPattern))
+      valueToWrite
     )
   }
 }

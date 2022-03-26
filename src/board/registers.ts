@@ -90,22 +90,51 @@ export class Registers {
       ? this.data[Register.APSR].setBit(offset)
       : this.data[Register.APSR].clearBit(offset)
   }
-
   /**
-   *
+   * Updates just the overflow flag
    * @param value
+   */
+  public setNegativeFlag(value: Word) {
+    this.setFlag(Flag.N, value.hasSign())
+  }
+  /**
+   * Updates just the overflow flag
+   * @param value
+   */
+  public setZeroFlag(value: number) {
+    this.setFlag(Flag.Z, value === 0)
+  }
+  /**
+   * Updates just the carry flag
+   * @param isCarrySet
+   */
+  public setCarryFlag(isCarrySet: boolean) {
+    this.setFlag(Flag.C, isCarrySet)
+  }
+  /**
+   * Updates just the overflow flag
    * @param isCarrySet
    * @param wasCarryHighestBit
+   */
+  public setOverflowFlag(isCarrySet: boolean, wasCarryHighestBit: boolean) {
+    this.setFlag(Flag.V, wasCarryHighestBit ? !isCarrySet : isCarrySet)
+  }
+
+  /**
+   * Sets all flags in one go
+   * @param value resulting value for which flags should be set
+   * @param isCarrySet if carry happend during operation
+   * @param wasCarryHighestBit if there was a carry to highest bit (31)
    */
   public setFlags(
     value: Word,
     isCarrySet: boolean = false,
     wasCarryHighestBit: boolean = false
   ): void {
-    this.setFlag(Flag.N, value.isBitSet(31))
-    this.setFlag(Flag.Z, value.value === 0)
-    this.setFlag(Flag.C, isCarrySet)
-    this.setFlag(Flag.V, wasCarryHighestBit ? !isCarrySet : isCarrySet)
+    this.setNegativeFlag(value)
+    this.setZeroFlag(value.value)
+    this.setCarryFlag(isCarrySet)
+    this.setOverflowFlag(isCarrySet, wasCarryHighestBit)
   }
 
   /**
