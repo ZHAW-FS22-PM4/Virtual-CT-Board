@@ -24,7 +24,7 @@ export class FlagsComponent extends React.Component<{}, FlagState> {
     const state: FlagState = {}
     for (const flag of $enum(Flag).getValues()) {
       const name = Flag[flag]
-      state[name] = Board.registers.isFlagSet(flag).toString()
+      state[name] = Board.registers.isFlagSet(flag) ? '1' : '0'
     }
     return state
   }
