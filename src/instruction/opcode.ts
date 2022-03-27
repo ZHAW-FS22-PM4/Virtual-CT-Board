@@ -223,6 +223,23 @@ export function checkOptionCount(
 }
 
 /**
+ * Convenience method to return boolean wheter the option count is satisfied or not
+ * @param options parameter provided to canEncodeInstruction method
+ * @param minCount how many options were expected by the assembly command
+ * @param maxCount if not provided set to minCount (so exactly minCount is required)
+ */
+export function isOptionCountValid(
+  options: string[],
+  minCount: number,
+  maxCount: number = minCount
+): boolean {
+  if (options.length < minCount || options.length > maxCount) {
+    return false
+  }
+  return true
+}
+
+/**
  * Determine if string is immediate or not
  * @param possibleImmediate immedate to check
  * @returns true if it is an immediate

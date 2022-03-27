@@ -14,17 +14,18 @@ import {
   MovsFromRegisterInstruction,
   MovsFromLiteralInstruction
 } from './instructions/mov'
+import { BaseInstruction } from './instructions/baseInstruction'
 
 export class InstructionSet implements IInstructionSet {
-  private readonly instructions: IInstruction[]
+  private readonly instructions: BaseInstruction[]
 
-  constructor(instructions: IInstruction[]) {
+  constructor(instructions: BaseInstruction[]) {
     this.instructions = instructions
   }
 
-  public getEncoder(name: string): IInstructionEncoder {
+  public getEncoder(name: string, options: string[]): IInstructionEncoder {
     for (const instruction of this.instructions) {
-      if (instruction.name === name) {
+      if (instruction.canEncodeInstruction(name, options)) {
         return instruction
       }
     }

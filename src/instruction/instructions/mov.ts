@@ -7,17 +7,19 @@ import {
   createRegisterBits,
   getBits,
   isImmediate,
+  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
 
-import { ILabelOffsets, IInstruction } from '../interfaces'
+import { ILabelOffsets } from '../interfaces'
+import { BaseInstruction } from './baseInstruction'
 
 /**
  * Represents a 'MOV' instruction.
  */
-export class MovInstruction implements IInstruction {
+export class MovInstruction extends BaseInstruction {
   public name: string = 'MOV'
   public pattern: string = '01000110XXXXXXXX'
   private rdPattern: string = '01000110X0000XXX'
@@ -46,14 +48,28 @@ export class MovInstruction implements IInstruction {
 /**
  * Represents a 'MOVS' instruction, getting a value from a register.
  */
-export class MovsFromRegisterInstruction implements IInstruction {
-  public name: string = 'MOVS_withRegister' // so it never matches as encoder (gets called by child if needed)
+export class MovsFromRegisterInstruction extends BaseInstruction {
+  public name: string = 'MOVS'
   public pattern: string = '0000000000XXXXXX'
   private rdPattern: string = '0000000000000XXX'
   private rmPattern: string = '0000000000XXX000'
+  private expectedOptionCount: number = 2
+
+  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+        options.length != this.expectedOptionCount ||
+        !isImmediate(options[1])
+      ) {
+        //take in all instructions except the one with immediate on second option
+        return true
+      }
+    }
+    return false
+  }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    //never called directly but from child method if no immediate is provided
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
@@ -77,24 +93,29 @@ export class MovsFromRegisterInstruction implements IInstruction {
 /**
  * Represents a 'MOVS' instruction, getting a value from a literal.
  */
-export class MovsFromLiteralInstruction extends MovsFromRegisterInstruction {
+export class MovsFromLiteralInstruction extends BaseInstruction {
   public name: string = 'MOVS'
   public pattern: string = '00100XXXXXXXXXXX'
-  private rdLiteralPattern: string = '00100XXX00000000'
+  private rdPattern: string = '00100XXX00000000'
   private immPattern: string = '00100000XXXXXXXX'
+  private expectedOptionCount: number = 2
+
+  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+        isOptionCountValid(options, this.expectedOptionCount) &&
+        isImmediate(options[1])
+      ) {
+        return true
+      }
+    }
+    return false
+  }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 2)
-    if (!isImmediate(options[1])) {
-      //use MovsFromRegisterInstruction if second option is also a register
-      return super.encodeInstruction(options, labels)
-    }
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(
-      opcode,
-      this.rdLiteralPattern,
-      createLowRegisterBits(options[0])
-    )
+    opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
       opcode,
       this.immPattern,
@@ -111,9 +132,6 @@ export class MovsFromLiteralInstruction extends MovsFromRegisterInstruction {
     let valueToWrite = Word.fromHalfwords(getBits(opcode, this.immPattern))
     registers.setNegativeFlag(valueToWrite)
     registers.setZeroFlag(valueToWrite.value)
-    registers.writeRegister(
-      getBits(opcode, this.rdLiteralPattern).value,
-      valueToWrite
-    )
+    registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
   }
 }
