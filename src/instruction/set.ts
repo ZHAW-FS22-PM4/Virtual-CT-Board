@@ -2,7 +2,6 @@ import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 import {
-  IInstruction,
   IInstructionEncoder,
   IInstructionExecutor,
   IInstructionSet

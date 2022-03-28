@@ -1,3 +1,5 @@
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+
 export function checkRange(
   name: string,
   value: number,
@@ -5,8 +7,9 @@ export function checkRange(
   max: number
 ) {
   if (!Number.isInteger(value) || value < min || value > max) {
-    throw new Error(
-      `OutOfRange: ${name} must be an integer in range ${min} to ${max} (provided: ${value}).`
+    throw new VirtualBoardError(
+      `OutOfRange: ${name} must be an integer in range ${min} to ${max} (provided: ${value}).`,
+      VirtualBoardErrorType.BinaryTypeOutOfRange
     )
   }
 }

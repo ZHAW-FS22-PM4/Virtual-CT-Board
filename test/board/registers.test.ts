@@ -108,6 +108,55 @@ describe('test flag functions', () => {
       Word.fromUnsignedInteger(0x10000000)
     )
   })
+
+  test('setFlag individually: setNegativeFlag', () => {
+    registers.setNegativeFlag(Word.fromUnsignedInteger(0x70012004))
+    expect(registers.isFlagSet(Flag.N)).toBe(false)
+    registers.setNegativeFlag(Word.fromUnsignedInteger(0xc1234567))
+    expect(registers.isFlagSet(Flag.N)).toBe(true)
+    registers.setNegativeFlag(Word.fromUnsignedInteger(0x00112233))
+    expect(registers.isFlagSet(Flag.N)).toBe(false)
+    //unchanged remaining flags
+    expect(registers.isFlagSet(Flag.Z)).toBe(false)
+    expect(registers.isFlagSet(Flag.C)).toBe(true)
+    expect(registers.isFlagSet(Flag.V)).toBe(false)
+  })
+  test('setFlag individually: setZeroFlag', () => {
+    registers.setZeroFlag(0x00000)
+    expect(registers.isFlagSet(Flag.Z)).toBe(true)
+    registers.setZeroFlag(0x00001)
+    expect(registers.isFlagSet(Flag.Z)).toBe(false)
+    registers.setZeroFlag(0x800000000)
+    expect(registers.isFlagSet(Flag.Z)).toBe(false)
+    //unchanged remaining flags
+    expect(registers.isFlagSet(Flag.N)).toBe(true)
+    expect(registers.isFlagSet(Flag.C)).toBe(true)
+    expect(registers.isFlagSet(Flag.V)).toBe(false)
+  })
+  test('setFlag individually: setCarryFlag', () => {
+    registers.setCarryFlag(false)
+    expect(registers.isFlagSet(Flag.C)).toBe(false)
+    registers.setCarryFlag(true)
+    expect(registers.isFlagSet(Flag.C)).toBe(true)
+    //unchanged remaining flags
+    expect(registers.isFlagSet(Flag.N)).toBe(true)
+    expect(registers.isFlagSet(Flag.Z)).toBe(false)
+    expect(registers.isFlagSet(Flag.V)).toBe(false)
+  })
+  test('setFlag individually: setOverflowFlag', () => {
+    registers.setOverflowFlag(false, true)
+    expect(registers.isFlagSet(Flag.V)).toBe(true)
+    registers.setOverflowFlag(false, false)
+    expect(registers.isFlagSet(Flag.V)).toBe(false)
+    registers.setOverflowFlag(true, false)
+    expect(registers.isFlagSet(Flag.V)).toBe(true)
+    registers.setOverflowFlag(true, true)
+    expect(registers.isFlagSet(Flag.V)).toBe(false)
+    //unchanged remaining flags
+    expect(registers.isFlagSet(Flag.N)).toBe(true)
+    expect(registers.isFlagSet(Flag.Z)).toBe(false)
+    expect(registers.isFlagSet(Flag.C)).toBe(true)
+  })
   test('isLowRegister returns only for low registers true', () => {
     expect(Registers.isLowRegister(Register.R0)).toBe(true)
     expect(Registers.isLowRegister(Register.R3)).toBe(true)

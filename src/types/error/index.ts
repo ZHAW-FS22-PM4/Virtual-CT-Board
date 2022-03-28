@@ -6,7 +6,8 @@ export enum VirtualBoardErrorType {
   InstructionWrongOptionCount,
   InvalidRegisterAsOption,
   ProvidedRegisterShouldBeLow,
-  ProvidedImmediateIsInvalid
+  ProvidedImmediateIsInvalid,
+  BinaryTypeOutOfRange
 }
 
 export class VirtualBoardError extends Error {

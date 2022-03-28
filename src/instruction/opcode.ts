@@ -198,6 +198,27 @@ export function createImmediateBits(
 }
 
 /**
+ * checks wheter max is bigger value than min and if provided values are positive
+ * @param minCount
+ * @param maxCount
+ * @returns
+ */
+function checkValidPositiveRange(minCount: number, maxCount: number): void {
+  if (minCount > maxCount) {
+    throw new VirtualBoardError(
+      'range max should be bigger value than min',
+      VirtualBoardErrorType.InvalidParamProvided
+    )
+  }
+  if (minCount < 0 || maxCount < 0) {
+    throw new VirtualBoardError(
+      'range should only include positive values',
+      VirtualBoardErrorType.InvalidParamProvided
+    )
+  }
+}
+
+/**
  * Convenience method to throw a vbe if encoder is not called with the right amount of options
  * @param options parameter provided to encodeInstruction method
  * @param minCount how many options were expected by the assembly command
@@ -208,6 +229,7 @@ export function checkOptionCount(
   minCount: number,
   maxCount: number = minCount
 ): void {
+  checkValidPositiveRange(minCount, maxCount)
   if (options.length < minCount) {
     throw new VirtualBoardError(
       `to less options provided expected at least ${minCount}`,
@@ -233,6 +255,7 @@ export function isOptionCountValid(
   minCount: number,
   maxCount: number = minCount
 ): boolean {
+  checkValidPositiveRange(minCount, maxCount)
   if (options.length < minCount || options.length > maxCount) {
     return false
   }
