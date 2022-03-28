@@ -1,0 +1,9 @@
+.dip-switch-container {
+  border: 1px solid lightgrey;
+  width: 12rem;
+  height: 4rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}

@@ -1,3 +1,7 @@
-h1 {
-  color: purple;
+:root {
+  --background-color: #edf1f1;
+}
+
+.title {
+  text-indent: 0.75em;
 }
