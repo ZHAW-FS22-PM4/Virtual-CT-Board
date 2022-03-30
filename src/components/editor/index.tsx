@@ -5,7 +5,7 @@ import { Assembly } from './assembly'
 import Board from 'board'
 import { assemble } from 'assembler'
 
-import { IObjectFile } from 'assembler/objectFile'
+import { IELF } from 'assembler/elf'
 
 import './style.css'
 
@@ -44,8 +44,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     } else {
       if (this.state.editMode) {
         try {
-          const file: IObjectFile = assemble(this.editorContent.toString())
-          Board.loadObjectFile(file)
+          const file: IELF = assemble(this.editorContent.toString())
+          Board.loadExecutable(file)
         } catch (err: unknown) {
           if (err instanceof Error) {
             const errorMessage: string = err.message

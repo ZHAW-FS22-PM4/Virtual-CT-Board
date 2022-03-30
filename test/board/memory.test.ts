@@ -78,9 +78,9 @@ describe('test write functions', () => {
   })
 })
 
-describe('test clear function', () => {
-  test('should clear all values in the memory', () => {
-    memory.clear()
+describe('test reset function', () => {
+  test('should reset all values in the memory', () => {
+    memory.reset()
     addresses.forEach(function (address) {
       expect(memory.readWord(address).toUnsignedInteger()).toBe(0x00)
     })

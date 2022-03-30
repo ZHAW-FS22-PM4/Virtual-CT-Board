@@ -8,7 +8,7 @@ import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Switches } from './devices/input/switches'
 import { LEDs } from './devices/output/leds'
-import { IObjectFile } from 'assembler/objectFile'
+import { IELF, SegmentType } from 'assembler/elf'
 
 class Board {
   public readonly registers: Registers
@@ -31,11 +31,26 @@ class Board {
   }
 
   /**
-   * Loads the object file created by the assembler into the CT board.
-   * @param file object file to load
+   * Loads the executable file created by the assembler into the board.
+   *
+   * @param file the executable file to load
    */
-  public loadObjectFile(file: IObjectFile): void {
-    this.flash.writeObjectFile(file)
+  public loadExecutable(file: IELF): void {
+    if (this.processor.isRunning()) {
+      throw new Error('Can not load executable while processor is running.')
+    }
+    for (const segment of file.segments) {
+      if (segment.type === SegmentType.LOAD) {
+        this.memory.writeBytes(
+          segment.address,
+          file.content.slice(
+            segment.offset.value,
+            segment.offset.value + segment.size.value
+          )
+        )
+      }
+    }
+    this.processor.reset()
   }
 }
 
