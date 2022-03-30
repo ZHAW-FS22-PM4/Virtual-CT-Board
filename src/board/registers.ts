@@ -114,27 +114,27 @@ export class Registers {
   /**
    * Updates just the overflow flag
    * @param isCarrySet
-   * @param wasCarryHighestBit
+   * @param wasCarryIntoSign
    */
-  public setOverflowFlag(isCarrySet: boolean, wasCarryHighestBit: boolean) {
-    this.setFlag(Flag.V, wasCarryHighestBit ? !isCarrySet : isCarrySet)
+  public setOverflowFlag(isCarrySet: boolean, wasCarryIntoSign: boolean) {
+    this.setFlag(Flag.V, wasCarryIntoSign ? !isCarrySet : isCarrySet)
   }
 
   /**
    * Sets all flags in one go
    * @param value resulting value for which flags should be set
    * @param isCarrySet if carry happend during operation
-   * @param wasCarryHighestBit if there was a carry to highest bit (31)
+   * @param wasCarryIntoSign if there was a carry to highest bit (31)
    */
   public setFlags(
     value: Word,
     isCarrySet: boolean = false,
-    wasCarryHighestBit: boolean = false
+    wasCarryIntoSign: boolean = false
   ): void {
     this.setNegativeFlag(value)
     this.setZeroFlag(value.value)
     this.setCarryFlag(isCarrySet)
-    this.setOverflowFlag(isCarrySet, wasCarryHighestBit)
+    this.setOverflowFlag(isCarrySet, wasCarryIntoSign)
   }
 
   /**
