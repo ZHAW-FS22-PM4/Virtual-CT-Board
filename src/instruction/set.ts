@@ -2,6 +2,7 @@ import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 import {
+  IInstruction,
   IInstructionEncoder,
   IInstructionExecutor,
   IInstructionSet
@@ -13,12 +14,11 @@ import {
   MovsFromRegisterInstruction,
   MovsFromLiteralInstruction
 } from './instructions/mov'
-import { BaseInstruction } from './instructions/baseInstruction'
 
 export class InstructionSet implements IInstructionSet {
-  private readonly instructions: BaseInstruction[]
+  private readonly instructions: IInstruction[]
 
-  constructor(instructions: BaseInstruction[]) {
+  constructor(instructions: IInstruction[]) {
     this.instructions = instructions
   }
 
