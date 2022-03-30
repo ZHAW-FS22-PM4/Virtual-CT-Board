@@ -40,7 +40,13 @@
 
 \section{Ausgangslage}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung "Computertechnik 1", die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hardware und Software behandelt. Im dazugehörigen Praktikum probieren die Studenten das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung XY). Damit sie die Übungen auch zuhause durchführen können, leihen die Studenten zu Beginn des Semesters ein solches CT Board von den Dozenten aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung "Computertechnik 1", die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hardware und Software behandelt. Im dazugehörigen Praktikum probieren die Studenten das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studenten zu Beginn des Semesters ein solches CT Board von den Dozenten aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{ctboard}
+\caption{Das CT Board, das den Studenten im Modul Computertechnik 1 als Hardware zur Verfügung gestellt wird. (Quelle: ennis.zhaw.ch)}
+\label{ctboard}
+\end{figure}
 
 \section{Idee}
 
@@ -68,7 +74,24 @@ Unsere Kundschaft besteht aus zwei Zielgruppen, nämlich die Informatikstudenten
 
 \section{Stand der Technik / Konkurrenzanalyse}
 
+Es existieren bereits verschiedene Produkte, die den Studenten des Moduls "Computertechnik 1" beim Erlernen ihrer Fertigkeiten behilflich sein können. Zum einen gibt es virtuelle Emulatoren für die Assembly-Sprache wie zum Beispiel VisUAL, zum anderen treten wir mit unserem Produkt natürlich auch gegen das physische CT Board an, das aktuell noch in den "Computertechnik"-Praktika verwendet wird.
+
+\paragraph{VisUAL Emulator}
+Der Emulator VisUAL von Alman Sarif wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{visual_emulator}
+\caption{Der Emulator VisUAL samt seiner grafischen Oberfläche. (Quelle: https://salmanarif.bitbucket.io/visual/index.html)}
+\label{emulator}
+\end{figure}
+Der Unterschied zu unserem "Virtual CT Board" besteht darin, dass VisUAL und auch andere Emulatoren für Assembler nicht auf das CT Board ausgerichtet sind, das die "Computertechnik 1"-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der "Computertechnik 1"-Praktika an der ZHAW ausreichen. Das "Virtual CT Board" füllt diese Lücke, indem das komplette physische CT Board virtuell visualisiert wird und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
+
+\paragraph{physisches CT Board} 
+
+Das physische CT Board soll hier noch einmal erwähnt werden, da es die Hauptkonkurrenz zu unserem Produkt darstellt. Es erfüllt die funktionalen Anforderungen der "Computertechnik 1"-Praktika vollumfänglich und ist ausserdem im Schulbetrieb bereits etabliert. Seine Nachteile bestehen insbesondere in seiner Unhandlichkeit. Das "Virtual CT Board" soll diesen Nachteil genau durch seine Virtualität beheben (siehe dazu Abschnitt "Kundennutzen") und gleichzeitig dem realen CT Board bzgl. Funktionalität in nichts nachstehen. 
+
 \section{Kontextszenario (Hauptablauf)}
+
+
 
 \section{Weitere Anforderungen}
 
