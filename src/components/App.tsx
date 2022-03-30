@@ -3,6 +3,7 @@ import React from 'react'
 import { EditorComponent } from 'components/editor'
 import { RegisterComponent } from 'components/register'
 import { FlagsComponent } from 'components/flags'
+import { MemoryExplorerComponent } from './memoryexplorer'
 
 export class App extends React.Component {
   render(): React.ReactNode {
@@ -18,6 +19,7 @@ export class App extends React.Component {
           </div>
           <div className="col-md-6">CT Board...</div>
         </div>
+        <MemoryExplorerComponent />
       </div>
     )
   }
