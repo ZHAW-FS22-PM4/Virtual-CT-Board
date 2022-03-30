@@ -1,5 +1,5 @@
-import { Halfword, Word } from 'types/binary'
-import { Register, Registers } from 'board/registers'
+import { Halfword } from 'types/binary'
+import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
 
 import { ILabelOffsets, IInstruction } from '../interfaces'
@@ -8,11 +8,11 @@ import { ILabelOffsets, IInstruction } from '../interfaces'
  * Represents a 'MOV' instruction.
  */
 export class MovInstruction implements IInstruction {
-  public name: string = 'MOVS'
+  public name: string = 'MOV'
   public pattern: string = '01000110XXXXXXXX'
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    return Halfword.fromUnsignedInteger(0b0100011000000000)
+    throw new Error('Instruction not yet implemented.')
   }
 
   public executeInstruction(
@@ -20,7 +20,6 @@ export class MovInstruction implements IInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0x77))
-    registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x44))
+    throw new Error('Instruction not yet implemented.')
   }
 }
