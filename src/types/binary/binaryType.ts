@@ -32,18 +32,17 @@ export abstract class BinaryType {
   /**
    * sets the bit with 0-indexed offset from right side to 1
    * @param bitOffset
-   * @returns signed number with changed value
+   * @returns unsigned number with changed value
    */
   protected setBitOnNumber(bitOffset: number): number {
     this.throwErrorIfBitOffsetNotInRange(bitOffset)
     return this.convertToUnsignedNumber(this.value | (1 << bitOffset))
-    //return this.value | (1 << bitOffset)
   }
 
   /**
    * sets the bit with 0-indexed offset from right side to 0
    * @param bitOffset
-   * @returns signed number with changed value
+   * @returns unsigned number with changed value
    */
   protected clearBitOnNumber(bitOffset: number): number {
     this.throwErrorIfBitOffsetNotInRange(bitOffset)
@@ -52,7 +51,7 @@ export abstract class BinaryType {
   /**
    * sets the bit to 1 when it was 0 or to 0 if it was 1 before
    * @param bitOffset
-   * @returns signed number with changed value
+   * @returns unsigned number with changed value
    */
   protected toggleBitOnNumber(bitOffset: number): number {
     this.throwErrorIfBitOffsetNotInRange(bitOffset)

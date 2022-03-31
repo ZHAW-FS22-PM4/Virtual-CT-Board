@@ -1,16 +1,18 @@
 import { checkRange } from './utils'
 import { Byte } from './byte'
+import { BinaryType } from './binaryType'
 
 /**
  * Represents a halfword in range (0x0000 - 0xFFFF).
  */
-export class Halfword {
+export class Halfword extends BinaryType {
   public static MIN_VALUE: number = 0x0000
   public static MAX_VALUE: number = 0xffff
   public static MIN_UNSIGNED_VALUE: number = 0
   public static MAX_UNSIGNED_VALUE: number = 65535
   public static MIN_SIGNED_VALUE: number = -32768
   public static MAX_SIGNED_VALUE: number = 32767
+  public static NUMBER_OF_BITS: number = 16
 
   /**
    * The unsigned integer representation of the halfword as a number (IEEE double precision floating point).
@@ -18,6 +20,7 @@ export class Halfword {
   public readonly value: number
 
   private constructor(value: number) {
+    super(Halfword.NUMBER_OF_BITS)
     checkRange('Halfword', value, Halfword.MIN_VALUE, Halfword.MAX_VALUE)
     this.value = value
   }
@@ -162,5 +165,31 @@ export class Halfword {
   public toHexString(): string {
     const hexString = this.value.toString(16)
     return hexString.padStart(4, '0')
+  }
+
+  /**
+   * sets the bit with 0-indexed offset from right side to 1
+   * @param bitOffset
+   * @returns new Halfword instance with changed value
+   */
+  public setBit(bitOffset: number): Halfword {
+    return Halfword.fromUnsignedInteger(this.setBitOnNumber(bitOffset))
+  }
+
+  /**
+   * sets the bit with 0-indexed offset from right side to 0
+   * @param bitOffset
+   * @returns new Word instance with changed value
+   */
+  public clearBit(bitOffset: number): Halfword {
+    return Halfword.fromUnsignedInteger(this.clearBitOnNumber(bitOffset))
+  }
+  /**
+   * sets the bit to 1 when it was 0 or to 0 if it was 1 before
+   * @param bitOffset
+   * @returns new Word instance with changed value
+   */
+  public toggleBit(bitOffset: number): Halfword {
+    return Halfword.fromUnsignedInteger(this.toggleBitOnNumber(bitOffset))
   }
 }
