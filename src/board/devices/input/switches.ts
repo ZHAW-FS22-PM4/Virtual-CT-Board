@@ -7,7 +7,7 @@ import { Device } from 'board/devices/device'
  * @author Leo Rudin
  */
 export class Switches extends Device {
-  private static readonly blockAddressList: Word[] = [
+  private static readonly BLOCK_ADDRESS_LIST: Word[] = [
     Word.fromUnsignedInteger(0x60000200),
     Word.fromUnsignedInteger(0x60000201),
     Word.fromUnsignedInteger(0x60000202),
@@ -16,8 +16,8 @@ export class Switches extends Device {
 
   private static readonly MAX_SWITCH_NUMBER: number = 31
 
-  public startAddress = Switches.blockAddressList[0]
-  public endAddress = Switches.blockAddressList[3]
+  public startAddress = Switches.BLOCK_ADDRESS_LIST[0]
+  public endAddress = Switches.BLOCK_ADDRESS_LIST[3]
   public isReadOnly = false
   public isVolatile = false
 
@@ -45,7 +45,10 @@ export class Switches extends Device {
       throw new Error(`Position ${position} does not exist.`)
     }
 
-    this.findSwitchByte(position).toggleBit(position % 8)
+    const updatedByte: Byte = this.findSwitchByte(position).toggleBit(
+      position % 8
+    )
+    this.updateSwitchByte(position, updatedByte)
   }
 
   /**
@@ -59,11 +62,14 @@ export class Switches extends Device {
       throw new Error(`Position ${position} does not exist.`)
     }
 
+    let updatedByte: Byte
     if (isOn) {
-      this.findSwitchByte(position).setBit(position % 8)
+      updatedByte = this.findSwitchByte(position).setBit(position % 8)
     } else {
-      this.findSwitchByte(position).clearBit(position % 8)
+      updatedByte = this.findSwitchByte(position).clearBit(position % 8)
     }
+
+    this.updateSwitchByte(position, updatedByte)
   }
 
   private invalidPosition(position: number): boolean {
@@ -71,6 +77,10 @@ export class Switches extends Device {
   }
 
   private findSwitchByte(position: number): Byte {
-    return this.readByte(Switches.blockAddressList[Math.floor(position / 8)])
+    return this.readByte(Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)])
+  }
+
+  private updateSwitchByte(position: number, byte: Byte): void {
+    this.writeByte(Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)], byte)
   }
 }
