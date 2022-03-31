@@ -127,7 +127,7 @@ function interpretDataParam(param: string): Byte[] {
 export function encodeCodeInstruction(instr: IInstruction): Byte[] {
   //InstructionSet.getEncoder("MOV").encodeInstruction(["R1", "R2"], {});
   try {
-    const instrContent = InstructionSet.getEncoder(instr.name)
+    const instrContent = InstructionSet.getEncoder(instr.name, instr.params)
       .encodeInstruction(instr.params, {})
       .toBytes()
     return instrContent

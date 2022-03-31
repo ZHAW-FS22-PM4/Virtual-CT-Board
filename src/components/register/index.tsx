@@ -24,6 +24,7 @@ export class RegisterComponent extends React.Component<{}, RegisterState> {
   private getState() {
     const state: RegisterState = {}
     for (const register of $enum(Register).getValues()) {
+      if (register == Register.APSR) continue
       const name = Register[register]
       state[name] = '0x' + Board.registers.readRegister(register).toHexString()
     }

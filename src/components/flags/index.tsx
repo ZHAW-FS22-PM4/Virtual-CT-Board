@@ -1,7 +1,7 @@
 import React from 'react'
 import { $enum } from 'ts-enum-util'
 import Board from 'board'
-import { Flag } from 'board/flags'
+import { Register, Flag } from 'board/registers'
 
 import './style.css'
 
@@ -24,7 +24,7 @@ export class FlagsComponent extends React.Component<{}, FlagState> {
     const state: FlagState = {}
     for (const flag of $enum(Flag).getValues()) {
       const name = Flag[flag]
-      state[name] = (Board.flags.readFlag(flag).value & 0x1).toString()
+      state[name] = Board.registers.isFlagSet(flag) ? '1' : '0'
     }
     return state
   }
