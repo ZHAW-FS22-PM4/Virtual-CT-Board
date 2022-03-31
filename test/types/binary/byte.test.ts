@@ -3,24 +3,47 @@ const byte_ff = Byte.fromUnsignedInteger(255)
 const byte_00 = Byte.fromUnsignedInteger(0)
 const byte_80 = Byte.fromUnsignedInteger(128)
 const byte_81 = Byte.fromUnsignedInteger(129)
+describe('fromUnsignedInteger method', () => {
+  test('fromUnsignedInteger_validValues', () => {
+    expect(Byte.fromUnsignedInteger(255).value).toBe(255)
+    expect(Byte.fromUnsignedInteger(128).value).toBe(128)
+    expect(Byte.fromUnsignedInteger(0).value).toBe(0)
+  })
 
-test('fromUnsignedInteger_validValues', () => {
-  expect(Byte.fromUnsignedInteger(255).value).toBe(255)
-  expect(Byte.fromUnsignedInteger(128).value).toBe(128)
-  expect(Byte.fromUnsignedInteger(0).value).toBe(0)
+  test('fromUnsignedInteger_invalidValues', () => {
+    expect(() => {
+      Byte.fromUnsignedInteger(-1)
+    }).toThrowError(
+      'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: -1).'
+    )
+    expect(() => {
+      Byte.fromUnsignedInteger(256)
+    }).toThrowError(
+      'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: 256).'
+    )
+  })
 })
 
-test('fromUnsignedInteger_invalidValues', () => {
-  expect(() => {
-    Byte.fromUnsignedInteger(-1)
-  }).toThrowError(
-    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: -1).'
-  )
-  expect(() => {
-    Byte.fromUnsignedInteger(256)
-  }).toThrowError(
-    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: 256).'
-  )
+describe('fromSignedInteger method', () => {
+  test('fromSignedInteger validValues', () => {
+    expect(Byte.fromSignedInteger(-1).value).toBe(255)
+    expect(Byte.fromSignedInteger(-128).value).toBe(128)
+    expect(Byte.fromSignedInteger(96).value).toBe(96)
+    expect(Byte.fromSignedInteger(0).value).toBe(0)
+  })
+
+  test('fromSignedInteger invalidValues', () => {
+    expect(() => {
+      Byte.fromSignedInteger(128)
+    }).toThrowError(
+      'OutOfRange: 8-bit signed integer must be an integer in range -128 to 127 (provided: 128).'
+    )
+    expect(() => {
+      Byte.fromSignedInteger(-129)
+    }).toThrowError(
+      'OutOfRange: 8-bit signed integer must be an integer in range -128 to 127 (provided: -129).'
+    )
+  })
 })
 
 test('hasSign', () => {
@@ -32,6 +55,12 @@ test('hasSign', () => {
 
 test('add', () => {
   expect(byte_80.add(2)).toEqual(Byte.fromUnsignedInteger(130))
+  expect(byte_81.add(0x9f)).toEqual(Byte.fromUnsignedInteger(0x20))
+  expect(byte_ff.add(0xa6)).toEqual(Byte.fromUnsignedInteger(0xa5))
+  expect(byte_81.add(byte_81)).toEqual(Byte.fromUnsignedInteger(0x02))
+  expect(byte_81.add(Byte.fromUnsignedInteger(0x9b))).toEqual(
+    Byte.fromUnsignedInteger(0x1c)
+  )
 })
 
 test('toUnsignedInteger', () => {

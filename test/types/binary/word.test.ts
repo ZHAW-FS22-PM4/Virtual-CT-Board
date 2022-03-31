@@ -10,23 +10,47 @@ const word_0fffffff = Word.fromUnsignedInteger(268435455)
 const word_f0000000 = Word.fromUnsignedInteger(4026531840)
 const word_f0000001 = Word.fromUnsignedInteger(4026531841)
 
-test('fromUnsignedInteger_validValues', () => {
-  expect(Word.fromUnsignedInteger(4294967295).value).toBe(4294967295)
-  expect(Word.fromUnsignedInteger(65535).value).toBe(65535)
-  expect(Word.fromUnsignedInteger(0).value).toBe(0)
+describe('fromUnsignedInteger method', () => {
+  test('fromUnsignedInteger_validValues', () => {
+    expect(Word.fromUnsignedInteger(4294967295).value).toBe(4294967295)
+    expect(Word.fromUnsignedInteger(65535).value).toBe(65535)
+    expect(Word.fromUnsignedInteger(0).value).toBe(0)
+  })
+
+  test('fromUnsignedInteger_invalidValues', () => {
+    expect(() => {
+      Word.fromUnsignedInteger(-1)
+    }).toThrowError(
+      'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: -1).'
+    )
+    expect(() => {
+      Word.fromUnsignedInteger(4294967296)
+    }).toThrowError(
+      'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: 4294967296).'
+    )
+  })
 })
 
-test('fromUnsignedInteger_invalidValues', () => {
-  expect(() => {
-    Word.fromUnsignedInteger(-1)
-  }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: -1).'
-  )
-  expect(() => {
-    Word.fromUnsignedInteger(4294967296)
-  }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: 4294967296).'
-  )
+describe('fromSignedInteger method', () => {
+  test('fromSignedInteger validValues', () => {
+    expect(Word.fromSignedInteger(-1).value).toBe(4294967295)
+    expect(Word.fromSignedInteger(-122).value).toBe(4294967174)
+    expect(Word.fromSignedInteger(8456).value).toBe(8456)
+    expect(Word.fromSignedInteger(0).value).toBe(0)
+  })
+
+  test('fromSignedInteger invalidValues', () => {
+    expect(() => {
+      Word.fromSignedInteger(2147483648)
+    }).toThrowError(
+      'OutOfRange: 32-bit signed integer must be an integer in range -2147483648 to 2147483647 (provided: 2147483648).'
+    )
+    expect(() => {
+      Word.fromSignedInteger(-2147483649)
+    }).toThrowError(
+      'OutOfRange: 32-bit signed integer must be an integer in range -2147483648 to 2147483647 (provided: -2147483649).'
+    )
+  })
 })
 
 test('hasSign', () => {
@@ -88,6 +112,15 @@ test('fromHalfwords', () => {
 
 test('add', () => {
   expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
+  expect(word_0fffffff.add(0xf0007000)).toEqual(
+    Word.fromUnsignedInteger(0x00006fff)
+  )
+  expect(word_0fffffff.add(word_0fffffff)).toEqual(
+    Word.fromUnsignedInteger(0x1ffffffe)
+  )
+  expect(word_ffffffff.add(word_00010000)).toEqual(
+    Word.fromUnsignedInteger(0xffff)
+  )
 })
 
 test('toUnsignedInteger', () => {
