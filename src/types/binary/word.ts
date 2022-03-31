@@ -225,9 +225,9 @@ export class Word {
   }
 
   /**
-   *
-   * @param bitOffset
-   * @returns
+   * checks wheter the specified bit is set or not
+   * @param bitOffset 0-indexed offset from right side
+   * @returns true if bit is a one else false
    */
   public isBitSet(bitOffset: number): boolean {
     this.checkIfBitOffsetInWordRange(bitOffset)
