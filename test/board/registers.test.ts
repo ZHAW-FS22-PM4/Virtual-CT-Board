@@ -40,9 +40,9 @@ describe('test writeRegister function', () => {
   })
 })
 
-describe('test clear function', () => {
-  test('should clear all values in the registers', () => {
-    registers.clear()
+describe('test reset function', () => {
+  test('should reset all values in the registers', () => {
+    registers.reset()
     expect(registers.readRegister(Register.R2).toUnsignedInteger()).toBe(0)
     expect(registers.readRegister(10).toUnsignedInteger()).toBe(0)
     expect(registers.readRegister(Register.LR).toUnsignedInteger()).toBe(0)
