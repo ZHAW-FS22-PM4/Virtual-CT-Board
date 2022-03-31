@@ -100,6 +100,10 @@ describe('test set() function', () => {
     switches.set(30, false)
 
     expect(switches.readByte(block1)).toEqual(byte_1111_1111)
+    expect(switches.readByte(block2)).toEqual(byte_0000_0000)
+    expect(switches.readByte(block3)).toEqual(byte_1111_1111)
+    expect(switches.readByte(block4)).toEqual(byte_0000_0000)
+
     expect(switches.isOn(0)).toBe(true)
     expect(switches.isOn(1)).toBe(true)
     expect(switches.isOn(2)).toBe(true)
@@ -109,7 +113,6 @@ describe('test set() function', () => {
     expect(switches.isOn(6)).toBe(true)
     expect(switches.isOn(7)).toBe(true)
 
-    expect(switches.readByte(block2)).toEqual(byte_0000_0000)
     expect(switches.isOn(8)).toBe(false)
     expect(switches.isOn(9)).toBe(false)
     expect(switches.isOn(10)).toBe(false)
@@ -119,7 +122,6 @@ describe('test set() function', () => {
     expect(switches.isOn(14)).toBe(false)
     expect(switches.isOn(15)).toBe(false)
 
-    expect(switches.readByte(block3)).toEqual(byte_1111_1111)
     expect(switches.isOn(16)).toBe(true)
     expect(switches.isOn(17)).toBe(true)
     expect(switches.isOn(18)).toBe(true)
@@ -129,7 +131,6 @@ describe('test set() function', () => {
     expect(switches.isOn(22)).toBe(true)
     expect(switches.isOn(23)).toBe(true)
 
-    expect(switches.readByte(block4)).toEqual(byte_0000_0000)
     expect(switches.isOn(24)).toBe(false)
     expect(switches.isOn(25)).toBe(false)
     expect(switches.isOn(26)).toBe(false)
@@ -159,6 +160,7 @@ describe('test toggle() function', () => {
     switches.toggle(5)
     switches.toggle(6)
     switches.toggle(7)
+
     switches.toggle(8)
     switches.toggle(9)
     switches.toggle(10)
@@ -167,6 +169,7 @@ describe('test toggle() function', () => {
     switches.toggle(13)
     switches.toggle(14)
     switches.toggle(15)
+
     switches.toggle(16)
     switches.toggle(17)
     switches.toggle(18)
@@ -175,6 +178,7 @@ describe('test toggle() function', () => {
     switches.toggle(21)
     switches.toggle(22)
     switches.toggle(23)
+
     switches.toggle(24)
     switches.toggle(25)
     switches.toggle(26)
@@ -197,6 +201,7 @@ describe('test toggle() function', () => {
     expect(switches.isOn(5)).toBe(true)
     expect(switches.isOn(6)).toBe(false)
     expect(switches.isOn(7)).toBe(true)
+
     expect(switches.isOn(8)).toBe(false)
     expect(switches.isOn(9)).toBe(true)
     expect(switches.isOn(10)).toBe(false)
@@ -205,6 +210,7 @@ describe('test toggle() function', () => {
     expect(switches.isOn(13)).toBe(true)
     expect(switches.isOn(14)).toBe(false)
     expect(switches.isOn(15)).toBe(true)
+
     expect(switches.isOn(16)).toBe(false)
     expect(switches.isOn(17)).toBe(true)
     expect(switches.isOn(18)).toBe(false)
@@ -213,6 +219,7 @@ describe('test toggle() function', () => {
     expect(switches.isOn(21)).toBe(true)
     expect(switches.isOn(22)).toBe(false)
     expect(switches.isOn(23)).toBe(true)
+
     expect(switches.isOn(24)).toBe(false)
     expect(switches.isOn(25)).toBe(true)
     expect(switches.isOn(26)).toBe(false)
