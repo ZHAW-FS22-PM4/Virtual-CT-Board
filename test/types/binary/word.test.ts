@@ -187,13 +187,12 @@ describe('test isBitSet function', () => {
     expect(word_f0000001.isBitSet(28)).toBe(true)
   })
   test('should throw error if out of range', () => {
-    let vbe = new VirtualBoardError(
-      'Offset is not within Word range',
-      VirtualBoardErrorType.BitOutOfTypeRange
+    let systemError = new Error(
+      'bit offset (tried to access) is not within type range'
     )
-    expect(() => word_00010000.isBitSet(32)).toThrow(vbe)
-    expect(() => word_00010000.isBitSet(66)).toThrow(vbe)
-    expect(() => word_00010000.isBitSet(-1)).toThrow(vbe)
+    expect(() => word_00010000.isBitSet(32)).toThrow(systemError)
+    expect(() => word_00010000.isBitSet(66)).toThrow(systemError)
+    expect(() => word_00010000.isBitSet(-1)).toThrow(systemError)
   })
 })
 
