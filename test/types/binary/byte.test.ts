@@ -129,44 +129,49 @@ describe('test setBit function', () => {
   })
 })
 
-/*
 describe('test clearBit function', () => {
-  test('clear bit which was set', () => {
-    expect(word_ffffffff.clearBit(31)).toEqual(
-      Word.fromUnsignedInteger(0x7fffffff)
-    )
-    expect(word_ffffffff.clearBit(0)).toEqual(
-      Word.fromUnsignedInteger(0xfffffffe)
-    )
-    expect(word_ffffffff.clearBit(22)).toEqual(
-      Word.fromUnsignedInteger(0xffbfffff)
-    )
-    expect(word_00010000.clearBit(16)).toEqual(word_00000000)
-    expect(word_f0000001.clearBit(0)).toEqual(word_f0000000)
-    expect(word_f0000001.clearBit(30)).toEqual(
-      Word.fromUnsignedInteger(0xb0000001)
-    )
+  test('clear bit where already cleared', () => {
+    expect(byte_0000_0000.clearBit(7)).toEqual(byte_0000_0000)
+    expect(byte_0000_0000.clearBit(5)).toEqual(byte_0000_0000)
+    expect(byte_0000_0000.clearBit(0)).toEqual(byte_0000_0000)
+    expect(byte_0101_1010.clearBit(7)).toEqual(byte_0101_1010)
+    expect(byte_0101_1010.clearBit(5)).toEqual(byte_0101_1010)
+    expect(byte_0101_1010.clearBit(2)).toEqual(byte_0101_1010)
+    expect(byte_0101_1010.clearBit(0)).toEqual(byte_0101_1010)
   })
-  test('clear bit which is already 0', () => {
-    expect(word_00000000.clearBit(31)).toEqual(word_00000000)
-    expect(word_00000000.clearBit(0)).toEqual(word_00000000)
-    expect(word_00000000.clearBit(7)).toEqual(word_00000000)
-    expect(word_00010000.clearBit(15)).toEqual(word_00010000)
-    expect(word_00010000.clearBit(17)).toEqual(word_00010000)
-    expect(word_f0000001.clearBit(2)).toEqual(word_f0000001)
-    expect(word_f0000001.clearBit(13)).toEqual(word_f0000001)
-    expect(word_f0000001.clearBit(23)).toEqual(word_f0000001)
+
+  test('clear bit which was set', () => {
+    expect(byte_0000_0001.clearBit(0)).toEqual(byte_0000_0000)
+    expect(byte_0000_0011.clearBit(1)).toEqual(byte_0000_0001)
+    expect(byte_0000_0111.clearBit(2)).toEqual(byte_0000_0011)
+    expect(byte_0000_1111.clearBit(3)).toEqual(byte_0000_0111)
+    expect(byte_0001_1111.clearBit(4)).toEqual(byte_0000_1111)
+    expect(byte_0011_1111.clearBit(5)).toEqual(byte_0001_1111)
+    expect(byte_0111_1111.clearBit(6)).toEqual(byte_0011_1111)
+    expect(byte_1111_1111.clearBit(7)).toEqual(byte_0111_1111)
   })
 })
 
 describe('test toggleBit function', () => {
-  test('toggle and toggle again', () => {
-    let result = word_ffffffff.toggleBit(21)
-    expect(result).toEqual(Word.fromUnsignedInteger(0xffdfffff))
-    expect(result.toggleBit(21)).toEqual(word_ffffffff)
-    result = word_00000000.toggleBit(10)
-    expect(result).toEqual(Word.fromUnsignedInteger(0x00000400))
-    expect(result.toggleBit(10)).toEqual(word_00000000)
+  test('toggle from 0 to 1', () => {
+    expect(byte_0000_0000.toggleBit(0)).toEqual(byte_0000_0001)
+    expect(byte_0000_0001.toggleBit(1)).toEqual(byte_0000_0011)
+    expect(byte_0000_0011.toggleBit(2)).toEqual(byte_0000_0111)
+    expect(byte_0000_0111.toggleBit(3)).toEqual(byte_0000_1111)
+    expect(byte_0000_1111.toggleBit(4)).toEqual(byte_0001_1111)
+    expect(byte_0001_1111.toggleBit(5)).toEqual(byte_0011_1111)
+    expect(byte_0011_1111.toggleBit(6)).toEqual(byte_0111_1111)
+    expect(byte_0111_1111.toggleBit(7)).toEqual(byte_1111_1111)
+  })
+
+  test('toggle from 1 to 0', () => {
+    expect(byte_1111_1111.toggleBit(7)).toEqual(byte_0111_1111)
+    expect(byte_0111_1111.toggleBit(6)).toEqual(byte_0011_1111)
+    expect(byte_0011_1111.toggleBit(5)).toEqual(byte_0001_1111)
+    expect(byte_0001_1111.toggleBit(4)).toEqual(byte_0000_1111)
+    expect(byte_0000_1111.toggleBit(3)).toEqual(byte_0000_0111)
+    expect(byte_0000_0111.toggleBit(2)).toEqual(byte_0000_0011)
+    expect(byte_0000_0011.toggleBit(1)).toEqual(byte_0000_0001)
+    expect(byte_0000_0001.toggleBit(0)).toEqual(byte_0000_0000)
   })
 })
-*/
