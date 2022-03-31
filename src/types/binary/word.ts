@@ -135,7 +135,7 @@ export class Word {
    * @returns a boolean indicating whether the word has a sign
    */
   public hasSign(): boolean {
-    return (this.value & (1 << 31)) !== 0
+    return this.isBitSet(31)
   }
 
   /**

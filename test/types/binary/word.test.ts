@@ -29,6 +29,15 @@ test('fromUnsignedInteger_invalidValues', () => {
   )
 })
 
+test('hasSign', () => {
+  expect(word_00000000.hasSign()).toBeFalsy()
+  expect(word_00010000.hasSign()).toBeFalsy()
+  expect(word_0fffffff.hasSign()).toBeFalsy()
+  expect(word_ffffffff.hasSign()).toBeTruthy()
+  expect(word_f0000000.hasSign()).toBeTruthy()
+  expect(word_f0000001.hasSign()).toBeTruthy()
+})
+
 test('fromBytes', () => {
   expect(
     Word.fromBytes(
