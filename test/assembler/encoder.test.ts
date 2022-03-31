@@ -9,6 +9,7 @@ describe('encode', function () {
       getEncoder: jest.fn(
         (): IInstructionEncoder => ({
           name: 'MOVS',
+          canEncodeInstruction: jest.fn(() => true),
           encodeInstruction: jest.fn(() => Halfword.fromUnsignedInteger(0x7744))
         })
       ),
