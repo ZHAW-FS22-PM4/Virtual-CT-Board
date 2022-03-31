@@ -126,7 +126,7 @@ export class Byte extends BinaryType {
   /**
    * sets the bit with 0-indexed offset from right side to 1
    * @param bitOffset
-   * @returns new Halfword instance with changed value
+   * @returns new Byte instance with changed value
    */
   public setBit(bitOffset: number): Byte {
     return Byte.fromUnsignedInteger(this.setBitOnNumber(bitOffset))
@@ -135,7 +135,7 @@ export class Byte extends BinaryType {
   /**
    * sets the bit with 0-indexed offset from right side to 0
    * @param bitOffset
-   * @returns new Word instance with changed value
+   * @returns new Byte instance with changed value
    */
   public clearBit(bitOffset: number): Byte {
     return Byte.fromUnsignedInteger(this.clearBitOnNumber(bitOffset))
@@ -143,7 +143,7 @@ export class Byte extends BinaryType {
   /**
    * sets the bit to 1 when it was 0 or to 0 if it was 1 before
    * @param bitOffset
-   * @returns new Word instance with changed value
+   * @returns new Byte instance with changed value
    */
   public toggleBit(bitOffset: number): Byte {
     return Byte.fromUnsignedInteger(this.toggleBitOnNumber(bitOffset))

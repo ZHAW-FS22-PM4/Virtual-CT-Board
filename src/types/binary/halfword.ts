@@ -29,7 +29,7 @@ export class Halfword extends BinaryType {
    * Creates a new halfword from an unsigned integer.
    *
    * @param value the unsigned integer value
-   * @returns the halword representation
+   * @returns the halfword representation
    */
   public static fromUnsignedInteger(value: number): Halfword {
     checkRange(
@@ -179,7 +179,7 @@ export class Halfword extends BinaryType {
   /**
    * sets the bit with 0-indexed offset from right side to 0
    * @param bitOffset
-   * @returns new Word instance with changed value
+   * @returns new Halfword instance with changed value
    */
   public clearBit(bitOffset: number): Halfword {
     return Halfword.fromUnsignedInteger(this.clearBitOnNumber(bitOffset))
@@ -187,7 +187,7 @@ export class Halfword extends BinaryType {
   /**
    * sets the bit to 1 when it was 0 or to 0 if it was 1 before
    * @param bitOffset
-   * @returns new Word instance with changed value
+   * @returns new Halfword instance with changed value
    */
   public toggleBit(bitOffset: number): Halfword {
     return Halfword.fromUnsignedInteger(this.toggleBitOnNumber(bitOffset))
