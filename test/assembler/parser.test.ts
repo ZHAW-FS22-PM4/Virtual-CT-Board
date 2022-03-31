@@ -18,14 +18,14 @@ const movInstruction: string = 'MOV R3, R4'
 const resultMovInstruction: IInstruction = {
   name: 'MOV',
   label: '',
-  params: ['R3', 'R4']
+  options: ['R3', 'R4']
 }
 
 const movsInstruction: string = 'MOVS R1, #3'
 const resultMovsInstruction: IInstruction = {
   name: 'MOVS',
   label: '',
-  params: ['R1', '#3']
+  options: ['R1', '#3']
 }
 
 const movInstructionFalse: string = 'MOVR3, R4'
@@ -34,21 +34,21 @@ const instructionWithIndent: string = '		LDR 		R7, =LCD_BACKLIGHT_OFF'
 const resultInstructionWithIndent: IInstruction = {
   name: 'LDR',
   label: '',
-  params: ['R7', '=LCD_BACKLIGHT_OFF']
+  options: ['R7', '=LCD_BACKLIGHT_OFF']
 }
 
 const instructionWithBranch: string = 'B			display'
 const resultInstructionWithBranch: IInstruction = {
   name: 'B',
   label: '',
-  params: ['display']
+  options: ['display']
 }
 
 const instructionWithLabel: string = 'blue			LDR			R1, =ADDR_LCD_COLOUR'
 const resultInstructionWithLabel: IInstruction = {
   name: 'LDR',
   label: 'blue',
-  params: ['R1', '=ADDR_LCD_COLOUR']
+  options: ['R1', '=ADDR_LCD_COLOUR']
 }
 
 const falseInstruction1: string = 'Hello world'
@@ -62,7 +62,7 @@ const resultValidCode: ICodeFile = {
       type: AreaType.Code,
       name: 'MyCode',
       isReadOnly: true,
-      instructions: [{ name: 'MOVS', label: '', params: ['R1', '#0xfe'] }]
+      instructions: [{ name: 'MOVS', label: '', options: ['R1', '#0xfe'] }]
     }
   ]
 }

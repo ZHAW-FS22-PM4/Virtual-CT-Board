@@ -26,12 +26,12 @@ test('fromUnsignedInteger_invalidValues', () => {
   expect(() => {
     Byte.fromUnsignedInteger(-1)
   }).toThrowError(
-    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255.'
+    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: -1).'
   )
   expect(() => {
     Byte.fromUnsignedInteger(256)
   }).toThrowError(
-    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255.'
+    'OutOfRange: 8-bit unsigned integer must be an integer in range 0 to 255 (provided: 256).'
   )
 })
 
