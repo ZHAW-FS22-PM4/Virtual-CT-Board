@@ -29,6 +29,14 @@ test('fromUnsignedInteger_invalidValues', () => {
   )
 })
 
+test('hasSign', () => {
+  expect(halfword_0000.hasSign()).toBeFalsy()
+  expect(halfword_ffff.hasSign()).toBeTruthy()
+  expect(halfword_8001.hasSign()).toBeTruthy()
+  expect(halfword_8000.hasSign()).toBeTruthy()
+  expect(Halfword.fromUnsignedInteger(0x7000).hasSign()).toBeFalsy()
+})
+
 test('toHexString', () => {
   expect(halfword_ffff.toHexString()).toBe('ffff')
   expect(halfword_0000.toHexString()).toBe('0000')
@@ -91,4 +99,65 @@ test('fromBytes', () => {
       Byte.fromUnsignedInteger(127)
     )
   ).toEqual(halfword_7fff)
+})
+
+describe('test isBitSet function', () => {
+  test('should return if bit is set or not', () => {
+    expect(halfword_7fff.isBitSet(15)).toBe(false)
+    expect(halfword_7fff.isBitSet(2)).toBe(true)
+    expect(halfword_7fff.isBitSet(9)).toBe(true)
+    expect(halfword_00ff.isBitSet(8)).toBe(false)
+    expect(halfword_0100.isBitSet(0)).toBe(false)
+  })
+  test('should throw error if out of range', () => {
+    let systemError = new Error(
+      'bit offset (tried to access) is not within type range'
+    )
+    expect(() => halfword_8001.isBitSet(16)).toThrow(systemError)
+    expect(() => halfword_8001.isBitSet(33)).toThrow(systemError)
+    expect(() => halfword_8001.isBitSet(-1)).toThrow(systemError)
+  })
+})
+
+describe('test setBit function', () => {
+  test('should set bit as expected', () => {
+    expect(halfword_00ff.setBit(6)).toEqual(halfword_00ff)
+    expect(halfword_00ff.setBit(15)).toEqual(
+      Halfword.fromUnsignedInteger(0x80ff)
+    )
+    expect(halfword_8001.setBit(10)).toEqual(
+      Halfword.fromUnsignedInteger(0x8401)
+    )
+    expect(halfword_8001.setBit(2)).toEqual(
+      Halfword.fromUnsignedInteger(0x8005)
+    )
+    expect(halfword_00ff.setBit(7)).toEqual(halfword_00ff)
+  })
+})
+
+describe('test clearBit function', () => {
+  test('should clear bit as expected', () => {
+    expect(halfword_00ff.clearBit(7)).toEqual(
+      Halfword.fromUnsignedInteger(0x007f)
+    )
+    expect(halfword_00ff.clearBit(0)).toEqual(
+      Halfword.fromUnsignedInteger(0xfe)
+    )
+    expect(halfword_00ff.clearBit(11)).toEqual(halfword_00ff)
+    expect(halfword_7fff.clearBit(9)).toEqual(
+      Halfword.fromUnsignedInteger(0x7dff)
+    )
+    expect(halfword_00ff.clearBit(15)).toEqual(halfword_00ff)
+  })
+})
+
+describe('test toggleBit function', () => {
+  test('toggle and toggle again', () => {
+    let result = halfword_0000.toggleBit(12)
+    expect(result).toEqual(Halfword.fromUnsignedInteger(0x1000))
+    expect(result.toggleBit(12)).toEqual(halfword_0000)
+    result = halfword_ffff.toggleBit(2)
+    expect(result).toEqual(Halfword.fromUnsignedInteger(0xfffb))
+    expect(result.toggleBit(2)).toEqual(halfword_ffff)
+  })
 })

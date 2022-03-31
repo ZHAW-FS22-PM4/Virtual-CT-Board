@@ -25,6 +25,9 @@ test('fromUnsignedInteger_invalidValues', () => {
 
 test('hasSign', () => {
   expect(byte_00.hasSign()).toBeFalsy()
+  expect(byte_ff.hasSign()).toBeTruthy()
+  expect(byte_80.hasSign()).toBeTruthy()
+  expect(byte_81.hasSign()).toBeTruthy()
 })
 
 test('add', () => {
@@ -57,4 +60,54 @@ test('toHexString', () => {
   expect(byte_00.toHexString()).toBe('00')
   expect(byte_80.toHexString()).toBe('80')
   expect(byte_81.toHexString()).toBe('81')
+})
+describe('test isBitSet function', () => {
+  test('should return if bit is set or not', () => {
+    expect(byte_ff.isBitSet(7)).toBe(true)
+    expect(byte_ff.isBitSet(2)).toBe(true)
+    expect(byte_00.isBitSet(0)).toBe(false)
+    expect(byte_00.isBitSet(6)).toBe(false)
+  })
+  test('should throw error if out of range', () => {
+    let systemError = new Error(
+      'bit offset (tried to access) is not within type range'
+    )
+    expect(() => byte_80.isBitSet(8)).toThrow(systemError)
+    expect(() => byte_80.isBitSet(33)).toThrow(systemError)
+    expect(() => byte_80.isBitSet(-1)).toThrow(systemError)
+  })
+})
+
+describe('test setBit function', () => {
+  test('should set bit as expected', () => {
+    expect(byte_ff.setBit(7)).toEqual(byte_ff)
+    expect(byte_ff.setBit(0)).toEqual(byte_ff)
+    expect(byte_ff.setBit(5)).toEqual(byte_ff)
+    expect(byte_00.setBit(7)).toEqual(Byte.fromUnsignedInteger(0x80))
+    expect(byte_81.setBit(2)).toEqual(Byte.fromUnsignedInteger(0x85))
+    expect(byte_81.setBit(6)).toEqual(Byte.fromUnsignedInteger(0xc1))
+  })
+})
+
+describe('test clearBit function', () => {
+  test('should clear bit as expected', () => {
+    expect(byte_ff.clearBit(7)).toEqual(Byte.fromUnsignedInteger(0x7f))
+    expect(byte_ff.clearBit(0)).toEqual(Byte.fromUnsignedInteger(0xfe))
+    expect(byte_ff.clearBit(4)).toEqual(Byte.fromUnsignedInteger(0xef))
+    expect(byte_81.clearBit(7)).toEqual(Byte.fromUnsignedInteger(0x01))
+    expect(byte_81.clearBit(0)).toEqual(byte_80)
+    expect(byte_80.clearBit(6)).toEqual(byte_80)
+    expect(byte_80.clearBit(2)).toEqual(byte_80)
+  })
+})
+
+describe('test toggleBit function', () => {
+  test('toggle and toggle again', () => {
+    let result = byte_00.toggleBit(5)
+    expect(result).toEqual(Byte.fromUnsignedInteger(0x20))
+    expect(result.toggleBit(5)).toEqual(byte_00)
+    result = byte_ff.toggleBit(3)
+    expect(result).toEqual(Byte.fromUnsignedInteger(0xf7))
+    expect(result.toggleBit(3)).toEqual(byte_ff)
+  })
 })
