@@ -13,11 +13,12 @@ type RegisterState = {
 export class RegisterComponent extends React.Component<{}, RegisterState> {
   constructor(props: {}) {
     super(props)
-    Board.processor.on('afterCycle', this.afterCycle)
+    Board.processor.on('afterReset', () => this.update())
+    Board.processor.on('afterCycle', () => this.update())
     this.state = this.getState()
   }
 
-  private afterCycle() {
+  private update() {
     this.setState(this.getState())
   }
 
