@@ -1,6 +1,7 @@
 import { Byte } from 'types/binary'
 import { Halfword } from 'types/binary'
 import { Word } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const word_ffffffff = Word.fromUnsignedInteger(4294967295)
 const word_00000000 = Word.fromUnsignedInteger(0)
@@ -19,13 +20,22 @@ test('fromUnsignedInteger_invalidValues', () => {
   expect(() => {
     Word.fromUnsignedInteger(-1)
   }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295.'
+    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: -1).'
   )
   expect(() => {
     Word.fromUnsignedInteger(4294967296)
   }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295.'
+    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: 4294967296).'
   )
+})
+
+test('hasSign', () => {
+  expect(word_00000000.hasSign()).toBeFalsy()
+  expect(word_00010000.hasSign()).toBeFalsy()
+  expect(word_0fffffff.hasSign()).toBeFalsy()
+  expect(word_ffffffff.hasSign()).toBeTruthy()
+  expect(word_f0000000.hasSign()).toBeTruthy()
+  expect(word_f0000001.hasSign()).toBeTruthy()
 })
 
 test('fromBytes', () => {
@@ -157,4 +167,109 @@ test('toHexString', () => {
   expect(word_ffffffff.toHexString()).toBe('ffffffff')
   expect(word_00000000.toHexString()).toBe('00000000')
   expect(word_00010000.toHexString()).toBe('00010000')
+})
+
+describe('test isBitSet function', () => {
+  test('should return if bit is set or not', () => {
+    expect(word_ffffffff.isBitSet(31)).toBe(true)
+    expect(word_ffffffff.isBitSet(0)).toBe(true)
+    expect(word_ffffffff.isBitSet(18)).toBe(true)
+    expect(word_00000000.isBitSet(31)).toBe(false)
+    expect(word_00000000.isBitSet(0)).toBe(false)
+    expect(word_00000000.isBitSet(8)).toBe(false)
+    expect(word_00010000.isBitSet(15)).toBe(false)
+    expect(word_00010000.isBitSet(16)).toBe(true)
+    expect(word_00010000.isBitSet(17)).toBe(false)
+    expect(word_f0000001.isBitSet(0)).toBe(true)
+    expect(word_f0000001.isBitSet(1)).toBe(false)
+    expect(word_f0000001.isBitSet(14)).toBe(false)
+    expect(word_f0000001.isBitSet(27)).toBe(false)
+    expect(word_f0000001.isBitSet(28)).toBe(true)
+  })
+  test('should throw error if out of range', () => {
+    let vbe = new VirtualBoardError(
+      'Offset is not within Word range',
+      VirtualBoardErrorType.BitOutOfTypeRange
+    )
+    expect(() => word_00010000.isBitSet(32)).toThrow(vbe)
+    expect(() => word_00010000.isBitSet(66)).toThrow(vbe)
+    expect(() => word_00010000.isBitSet(-1)).toThrow(vbe)
+  })
+})
+
+describe('test setBit function', () => {
+  test('set bit where already set', () => {
+    expect(word_ffffffff.setBit(31)).toEqual(word_ffffffff)
+    expect(word_ffffffff.setBit(0)).toEqual(word_ffffffff)
+    expect(word_ffffffff.setBit(18)).toEqual(word_ffffffff)
+    expect(word_00010000.setBit(16)).toEqual(word_00010000)
+    expect(word_f0000001.setBit(0)).toEqual(word_f0000001)
+    expect(word_f0000001.setBit(28)).toEqual(word_f0000001)
+  })
+  test('set bit where not set yet', () => {
+    expect(word_00000000.setBit(31)).toEqual(
+      Word.fromUnsignedInteger(0x80000000)
+    )
+    expect(word_00000000.setBit(0)).toEqual(
+      Word.fromUnsignedInteger(0x00000001)
+    )
+    expect(word_00000000.setBit(7)).toEqual(
+      Word.fromUnsignedInteger(0x00000080)
+    )
+    expect(word_00010000.setBit(15)).toEqual(
+      Word.fromUnsignedInteger(0x00018000)
+    )
+    expect(word_00010000.setBit(17)).toEqual(
+      Word.fromUnsignedInteger(0x00030000)
+    )
+    expect(word_f0000001.setBit(2)).toEqual(
+      Word.fromUnsignedInteger(0xf0000005)
+    )
+    expect(word_f0000001.setBit(13)).toEqual(
+      Word.fromUnsignedInteger(0xf0002001)
+    )
+    expect(word_f0000001.setBit(27)).toEqual(
+      Word.fromUnsignedInteger(0xf8000001)
+    )
+  })
+})
+
+describe('test clearBit function', () => {
+  test('clear bit which was set', () => {
+    expect(word_ffffffff.clearBit(31)).toEqual(
+      Word.fromUnsignedInteger(0x7fffffff)
+    )
+    expect(word_ffffffff.clearBit(0)).toEqual(
+      Word.fromUnsignedInteger(0xfffffffe)
+    )
+    expect(word_ffffffff.clearBit(22)).toEqual(
+      Word.fromUnsignedInteger(0xffbfffff)
+    )
+    expect(word_00010000.clearBit(16)).toEqual(word_00000000)
+    expect(word_f0000001.clearBit(0)).toEqual(word_f0000000)
+    expect(word_f0000001.clearBit(30)).toEqual(
+      Word.fromUnsignedInteger(0xb0000001)
+    )
+  })
+  test('clear bit which is already 0', () => {
+    expect(word_00000000.clearBit(31)).toEqual(word_00000000)
+    expect(word_00000000.clearBit(0)).toEqual(word_00000000)
+    expect(word_00000000.clearBit(7)).toEqual(word_00000000)
+    expect(word_00010000.clearBit(15)).toEqual(word_00010000)
+    expect(word_00010000.clearBit(17)).toEqual(word_00010000)
+    expect(word_f0000001.clearBit(2)).toEqual(word_f0000001)
+    expect(word_f0000001.clearBit(13)).toEqual(word_f0000001)
+    expect(word_f0000001.clearBit(23)).toEqual(word_f0000001)
+  })
+})
+
+describe('test toggleBit function', () => {
+  test('toggle and toggle again', () => {
+    let result = word_ffffffff.toggleBit(21)
+    expect(result).toEqual(Word.fromUnsignedInteger(0xffdfffff))
+    expect(result.toggleBit(21)).toEqual(word_ffffffff)
+    result = word_00000000.toggleBit(10)
+    expect(result).toEqual(Word.fromUnsignedInteger(0x00000400))
+    expect(result.toggleBit(10)).toEqual(word_00000000)
+  })
 })

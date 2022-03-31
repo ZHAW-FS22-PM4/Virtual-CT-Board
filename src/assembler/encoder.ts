@@ -49,13 +49,12 @@ function encodeCodeInstruction(
   instructionSet: IInstructionSet
 ): Byte[] {
   return instructionSet
-    .getEncoder(instruction.name)
+    .getEncoder(instruction.name, instruction.options)
     .encodeInstruction(instruction.options, {})
     .toBytes()
 }
 
 function encodeDataInsruction(instruction: IInstruction): Byte[] {
-  const bytes: Byte[] = []
   const expressions = instruction.options.map(Number)
   switch (instruction.name) {
     case 'DCB':
@@ -73,5 +72,5 @@ function encodeDataInsruction(instruction: IInstruction): Byte[] {
     case '%':
       return Array(expressions[0]).fill(Byte.fromUnsignedInteger(0x00))
   }
-  return bytes
+  return []
 }

@@ -63,7 +63,7 @@ export class Byte {
    * @returns a boolean indicating whether the byte has a sign
    */
   public hasSign(): boolean {
-    return (this.value & 0x80) !== 0
+    return (this.value & (1 << 7)) !== 0
   }
 
   /**
