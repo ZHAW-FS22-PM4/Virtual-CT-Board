@@ -164,6 +164,12 @@ describe('test set() function', () => {
     expect(switches.isOn(30)).toBe(false)
     expect(switches.isOn(31)).toBe(false)
   })
+  test('test passing the same value to set() function again', () => {
+    switches.set(1, true)
+    expect(switches.isOn(1)).toBe(true)
+    switches.set(1, true)
+    expect(switches.isOn(1)).toBe(true)
+  })
 })
 
 describe('test toggle() function', () => {

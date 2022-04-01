@@ -1,5 +1,5 @@
 import React from 'react'
-import Board from '../../board'
+import Board from '../../../board'
 
 import './style.css'
 
@@ -13,16 +13,18 @@ type DipSwitchProps = {
 }
 
 export class DipSwitch extends React.Component<DipSwitchProps, DipSwitchState> {
+  private readonly endIndex: number
+
   constructor(props: DipSwitchProps) {
     super(props)
     this.state = this.getState()
+    this.endIndex = this.props.startIndex + this.props.size - 1
   }
 
   private getState() {
     const state: DipSwitchState = {}
-    const endIndex = this.props.startIndex + this.props.size - 1
 
-    for (let i = this.props.startIndex; i <= endIndex; i++) {
+    for (let i = this.props.startIndex; i <= this.endIndex; i++) {
       state[i] = Board.switches.isOn(i)
     }
 

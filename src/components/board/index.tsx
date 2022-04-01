@@ -1,5 +1,5 @@
 import React from 'react'
-import { DipSwitch } from '../dip-switch'
+import { DipSwitch } from './dip-switch'
 
 import './style.css'
 
