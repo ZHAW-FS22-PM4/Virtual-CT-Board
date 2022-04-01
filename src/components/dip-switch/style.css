@@ -1,0 +1,27 @@
+.dip-switch-container {
+  border: 1px solid lightgrey;
+  height: 4rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.switch {
+  width: 1rem;
+  height: 1.5rem;
+  border: grey solid 1px;
+}
+
+.switch-on {
+  background: linear-gradient(0deg, var(--background-color) 65%, darkgrey 35%);
+}
+
+.switch-off {
+  background: linear-gradient(180deg, var(--background-color) 65%, darkgrey 35%);
+}
+
+.label {
+  font-size: .6rem;
+  text-align: center;
+}
