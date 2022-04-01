@@ -17,8 +17,8 @@ export class DipSwitch extends React.Component<DipSwitchProps, DipSwitchState> {
 
   constructor(props: DipSwitchProps) {
     super(props)
-    this.state = this.getState()
     this.endIndex = this.props.startIndex + this.props.size - 1
+    this.state = this.getState()
   }
 
   private getState() {
