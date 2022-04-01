@@ -77,10 +77,15 @@ export class Switches extends Device {
   }
 
   private findSwitchByte(position: number): Byte {
-    return this.memory.readByte(Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)])
+    return this.memory.readByte(
+      Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)]
+    )
   }
 
   private updateSwitchByte(position: number, byte: Byte): void {
-    this.memory.writeByte(Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)], byte)
+    this.memory.writeByte(
+      Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)],
+      byte
+    )
   }
 }

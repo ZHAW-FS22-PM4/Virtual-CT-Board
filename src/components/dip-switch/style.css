@@ -18,10 +18,14 @@
 }
 
 .switch-off {
-  background: linear-gradient(180deg, var(--background-color) 65%, darkgrey 35%);
+  background: linear-gradient(
+    180deg,
+    var(--background-color) 65%,
+    darkgrey 35%
+  );
 }
 
 .label {
-  font-size: .6rem;
+  font-size: 0.6rem;
   text-align: center;
 }
