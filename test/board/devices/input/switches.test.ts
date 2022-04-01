@@ -15,10 +15,34 @@ let switches: Switches
 
 beforeEach(() => {
   switches = new Switches()
-  switches.writeByte(block1, byte_0101_0101)
-  switches.writeByte(block2, byte_0101_0101)
-  switches.writeByte(block3, byte_0101_0101)
-  switches.writeByte(block4, byte_0101_0101)
+  switches.toggle(0)
+  switches.toggle(2)
+  switches.toggle(4)
+  switches.toggle(6)
+  switches.toggle(8)
+  switches.toggle(10)
+  switches.toggle(12)
+  switches.toggle(14)
+  switches.toggle(16)
+  switches.toggle(18)
+  switches.toggle(20)
+  switches.toggle(22)
+  switches.toggle(24)
+  switches.toggle(26)
+  switches.toggle(28)
+  switches.toggle(30)
+})
+
+test('test that switches are set to readonly', () => {
+  switches.writeByte(block1, byte_0000_0000)
+  switches.writeByte(block2, byte_0000_0000)
+  switches.writeByte(block3, byte_0000_0000)
+  switches.writeByte(block4, byte_0000_0000)
+
+  expect(switches.readByte(block1)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block2)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block3)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block4)).toEqual(byte_0101_0101)
 })
 
 describe('test isOn() function', () => {
