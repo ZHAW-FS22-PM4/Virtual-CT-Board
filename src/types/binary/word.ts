@@ -1,4 +1,4 @@
-import { checkRange } from './utils'
+import { checkRange, limitValuesToBitCount } from './utils'
 import { Byte } from './byte'
 import { Halfword } from './halfword'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
@@ -79,10 +79,10 @@ export class Word extends BinaryType {
   }
 
   /**
-   * Splites a word into a list of bytes.
+   * splits a word into a list of bytes.
    *
    * @param words the word to split
-   * @returns list of splitted bytes (in little endian)
+   * @returns list of split bytes (in little endian)
    */
   public static toBytes(...words: Word[]): Byte[] {
     const bytes: Byte[] = []
@@ -114,10 +114,10 @@ export class Word extends BinaryType {
   }
 
   /**
-   * Splites a word in to a list of halfwords.
+   * splits a word in to a list of halfwords.
    *
    * @param words the word to split
-   * @returns the list of splitted halfwords (in little endian)
+   * @returns the list of split halfwords (in little endian)
    */
   public static toHalfwords(...words: Word[]): Halfword[] {
     const halfwords: Halfword[] = []
@@ -132,85 +132,34 @@ export class Word extends BinaryType {
   }
 
   /**
-   * Determines whether the word does have a sign when interpreted as a signed integer.
-   *
-   * @returns a boolean indicating whether the word has a sign
-   */
-  public hasSign(): boolean {
-    return this.isBitSet(31)
-  }
-
-  /**
    * Adds the specified number to the word and returns the result as a new word. In case the
-   * result exeeds the `Word.MAX_VALUE` then it will overflow.
+   * result exceeds the `Word.MAX_VALUE` then it will overflow.
    *
    * @param value the number to be added to the word
    * @returns the new word with the value added
    */
   public add(value: Word | number): Word {
-    if (value instanceof Word) {
-      value = value.value
-    }
-    value = (value + this.value) >>> 0
-    return new Word((value & 0xffffffff) >>> 0)
+    return new Word(
+      limitValuesToBitCount(this.addToNumber(value), Word.NUMBER_OF_BITS)
+    )
   }
 
   /**
-   * Gets the unsigned integer representation of the word as a number.
+   * splits the word into a list of bytes
    *
-   * @returns the unsigned integer representation as a number
-   */
-  public toUnsignedInteger(): number {
-    return this.value
-  }
-
-  /**
-   * Gets the signed integer representation of the word as a number.
-   *
-   * @returns the signed integer representation as a number
-   */
-  public toSignedInteger(): number {
-    return this.value >= Word.MAX_VALUE / 2
-      ? -1 * (Word.MAX_VALUE - this.value + 1)
-      : this.value
-  }
-
-  /**
-   * Splites the word into a list of bytes
-   *
-   * @returns the list of splitted bytes (in little endian)
+   * @returns the list of split bytes (in little endian)
    */
   public toBytes(): Byte[] {
     return Word.toBytes(this)
   }
 
   /**
-   * Splites the word into a list of halfwords
+   * splits the word into a list of halfwords
    *
-   * @returns the list of splitted halfwords (in little endian)
+   * @returns the list of split halfwords (in little endian)
    */
   public toHalfwords(): Halfword[] {
     return Word.toHalfwords(this)
-  }
-
-  /**
-   * Represents the word as string
-   *
-   * @ returns the word as string
-   */
-  public toBinaryString(): string {
-    const byteString = this.value.toString(2)
-    return byteString.padStart(32, '0')
-  }
-
-  /**
-   * Represents the word as HexString
-   *
-   * @ returns the word as hexstring
-   */
-  public toHexString(): string {
-    const hexString = this.value.toString(16)
-    return hexString.padStart(8, '0')
   }
 
   /**

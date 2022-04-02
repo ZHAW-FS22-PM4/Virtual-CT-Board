@@ -1,13 +1,18 @@
+import { Byte, Halfword, Word } from '.'
+import { convertToUnsignedNumber } from './utils'
+
 export abstract class BinaryType {
   /**
    * The unsigned integer representation of the type as a number (IEEE double precision floating point).
    * Has to be always positive use toSignedInteger method to get interpretation of negative values
    */
   abstract value: number
-  private numberOfBitsForType: number
+  private readonly numberOfBitsForType: number
+  private readonly maxValueForType: number
 
   constructor(numberOfBitsForType: number) {
     this.numberOfBitsForType = numberOfBitsForType
+    this.maxValueForType = parseInt('f'.repeat(this.getHexCharCount()), 16)
   }
 
   /**
@@ -21,12 +26,70 @@ export abstract class BinaryType {
   }
 
   /**
-   * Converts negative value as number to unsigned equivalent as number.
-   * Needed since 32-bit value is interpreted by javascript as signed in number type.
-   * This method is used to always stay in unsigned range (only positive values including 0)
+   * Determines whether the binary type does have a sign when interpreted as a signed integer.
+   *
+   * @returns a boolean indicating whether the binary type has a sign
    */
-  protected convertToUnsignedNumber(value: number): number {
-    return value >>> 0
+  public hasSign(): boolean {
+    return this.isBitSet(this.numberOfBitsForType - 1)
+  }
+
+  /**
+   * Gets the unsigned integer representation of the binary type as a number.
+   *
+   * @returns the unsigned integer representation as a number
+   */
+  public toUnsignedInteger(): number {
+    return this.value
+  }
+
+  /**
+   * Gets the signed integer representation of the binary type as a number.
+   *
+   * @returns the signed integer representation as a number
+   */
+  public toSignedInteger(): number {
+    return this.hasSign()
+      ? -1 * (this.maxValueForType + 1 - this.value)
+      : this.value
+  }
+
+  /**
+   * Gets the binary representation of the binary type as a string.
+   *
+   * @returns the binary type as string
+   */
+  public toBinaryString(): string {
+    const byteString = this.value.toString(2)
+    return byteString.padStart(this.numberOfBitsForType, '0')
+  }
+
+  /**
+   * Gets the hexadecimal representation of the binary type as a string.
+   *
+   * @returns the binary type as a hexstring
+   */
+  public toHexString(): string {
+    const hexString = this.value.toString(16)
+    return hexString.padStart(this.getHexCharCount(), '0')
+  }
+
+  /**
+   * Adds the specified number to the binary type value and returns the result as a number.
+   * In case the result exceeds the max value of the type the result is out of the range of the type.
+   *
+   * @param value the number to be added
+   * @returns the unsigned result of the addition
+   */
+  public addToNumber(value: Byte | Halfword | Word | number): number {
+    if (
+      value instanceof Word ||
+      value instanceof Byte ||
+      value instanceof Halfword
+    ) {
+      value = value.value
+    }
+    return convertToUnsignedNumber(value + this.value)
   }
 
   /**
@@ -36,7 +99,7 @@ export abstract class BinaryType {
    */
   protected setBitOnNumber(bitOffset: number): number {
     this.throwErrorIfBitOffsetNotInRange(bitOffset)
-    return this.convertToUnsignedNumber(this.value | (1 << bitOffset))
+    return convertToUnsignedNumber(this.value | (1 << bitOffset))
   }
 
   /**
@@ -46,7 +109,7 @@ export abstract class BinaryType {
    */
   protected clearBitOnNumber(bitOffset: number): number {
     this.throwErrorIfBitOffsetNotInRange(bitOffset)
-    return this.convertToUnsignedNumber(this.value & ~(1 << bitOffset))
+    return convertToUnsignedNumber(this.value & ~(1 << bitOffset))
   }
   /**
    * sets the bit to 1 when it was 0 or to 0 if it was 1 before
@@ -68,5 +131,13 @@ export abstract class BinaryType {
     if (bitOffset >= this.numberOfBitsForType || bitOffset < 0) {
       throw new Error('bit offset (tried to access) is not within type range')
     }
+  }
+
+  /**
+   * How many chars are required at most to represent the value in hex
+   * @returns the length string for a hexadecimal representation for a type
+   */
+  private getHexCharCount(): number {
+    return this.numberOfBitsForType / 4
   }
 }

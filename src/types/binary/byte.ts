@@ -1,5 +1,5 @@
 import { BinaryType } from './binaryType'
-import { checkRange } from './utils'
+import { checkRange, limitValuesToBitCount } from './utils'
 
 /**
  * Represents a byte in range (0x00 - 0xFF).
@@ -59,69 +59,17 @@ export class Byte extends BinaryType {
     }
     return new Byte(value)
   }
-
-  /**
-   * Determines whether the byte does have a sign when interpreted as a signed integer.
-   *
-   * @returns a boolean indicating whether the byte has a sign
-   */
-  public hasSign(): boolean {
-    return (this.value & (1 << 7)) !== 0
-  }
-
   /**
    * Adds the specified number to the byte and returns the result as a new byte. In case the
-   * result exeeds the `Byte.MAX_VALUE` then it will overflow.
+   * result exceeds the `Byte.MAX_VALUE` then it will overflow.
    *
    * @param value the number to be added to the byte
    * @returns the new byte with the value added
    */
   public add(value: Byte | number): Byte {
-    if (value instanceof Byte) {
-      value = value.value
-    }
-    value = (value + this.value) >>> 0
-    return new Byte((value & 0xff) >>> 0)
-  }
-
-  /**
-   * Gets the unsigned integer representation of the byte as a number.
-   *
-   * @returns the unsigned integer representation as a number
-   */
-  public toUnsignedInteger(): number {
-    return this.value
-  }
-
-  /**
-   * Gets the signed integer representation of the byte as a number.
-   *
-   * @returns the signed integer representation as a number
-   */
-  public toSignedInteger(): number {
-    return this.value >= Byte.MAX_VALUE / 2
-      ? -1 * (Byte.MAX_VALUE - this.value + 1)
-      : this.value
-  }
-
-  /**
-   * Gets the binary representation of the byte as a string.
-   *
-   * @returns the binary representation as a string
-   */
-  public toBinaryString(): string {
-    const byteString = this.value.toString(2)
-    return byteString.padStart(8, '0')
-  }
-
-  /**
-   * Gets the hexadecimal representation of the byte as a string.
-   *
-   * @returns the hexadecimal representation as a string
-   */
-  public toHexString(): string {
-    const hexString = this.value.toString(16)
-    return hexString.padStart(2, '0')
+    return new Byte(
+      limitValuesToBitCount(this.addToNumber(value), Byte.NUMBER_OF_BITS)
+    )
   }
   /**
    * sets the bit with 0-indexed offset from right side to 1
