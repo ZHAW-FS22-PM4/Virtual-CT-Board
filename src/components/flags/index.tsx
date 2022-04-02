@@ -1,7 +1,7 @@
 import React from 'react'
 import { $enum } from 'ts-enum-util'
 import Board from 'board'
-import { Flag } from 'board/flags'
+import { Register, Flag } from 'board/registers'
 
 import './style.css'
 
@@ -12,11 +12,12 @@ type FlagState = {
 export class FlagsComponent extends React.Component<{}, FlagState> {
   constructor(props: {}) {
     super(props)
-    Board.processor.on('afterCycle', this.afterCycle)
+    Board.processor.on('afterReset', () => this.update())
+    Board.processor.on('afterCycle', () => this.update())
     this.state = this.getState()
   }
 
-  private afterCycle() {
+  private update() {
     this.setState(this.getState())
   }
 
@@ -24,7 +25,7 @@ export class FlagsComponent extends React.Component<{}, FlagState> {
     const state: FlagState = {}
     for (const flag of $enum(Flag).getValues()) {
       const name = Flag[flag]
-      state[name] = (Board.flags.readFlag(flag).value & 0x1).toString()
+      state[name] = Board.registers.isFlagSet(flag) ? '1' : '0'
     }
     return state
   }

@@ -97,13 +97,13 @@ export function createInstruction(line: string): IInstruction {
       return {
         name: tags[5],
         label: tags[3],
-        params: line.split(',').map((el) => el.trim())
+        options: line.split(',').map((el) => el.trim())
       }
     else
       return {
         name: tags[5],
         label: '',
-        params: line.split(',').map((el) => el.trim())
+        options: line.split(',').map((el) => el.trim())
       }
   }
   //TODO handle data instructions

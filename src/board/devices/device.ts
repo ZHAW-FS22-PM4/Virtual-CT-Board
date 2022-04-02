@@ -63,13 +63,9 @@ export abstract class Device implements IDevice {
     this.memory.writeWord(address, word)
   }
 
-  public clear(): void {
-    this.memory.clear()
-  }
-
   public reset(): void {
     if (this.isVolatile) {
-      this.clear()
+      this.memory.reset()
     }
   }
 }

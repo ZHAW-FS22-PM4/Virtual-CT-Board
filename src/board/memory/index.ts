@@ -55,7 +55,7 @@ export class Memory implements IMemory {
     this.writeBytes(address, word.toBytes())
   }
 
-  public clear(): void {
+  public reset(): void {
     this.data = {}
   }
 }

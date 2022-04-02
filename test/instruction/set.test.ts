@@ -5,6 +5,7 @@ import { Halfword } from 'types/binary'
 const instruction: IInstruction = {
   name: 'TEST',
   pattern: '11001100XXXXXXXX',
+  canEncodeInstruction: jest.fn(() => true),
   encodeInstruction: jest.fn(),
   executeInstruction: jest.fn()
 }
@@ -12,7 +13,7 @@ const instruction: IInstruction = {
 describe('InstructionSet', function () {
   const sut = new InstructionSet([instruction])
   it('should return encoder', function () {
-    expect(sut.getEncoder('TEST')).not.toBeNull()
+    expect(sut.getEncoder('TEST', [])).not.toBeNull()
   })
   it('should return executor', function () {
     const opcode = Halfword.fromUnsignedInteger(0b1100110000000000)

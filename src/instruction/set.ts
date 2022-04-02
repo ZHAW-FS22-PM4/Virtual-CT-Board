@@ -9,7 +9,11 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 
-import { MovInstruction } from './instructions/mov'
+import {
+  MovInstruction,
+  MovsFromRegisterInstruction,
+  MovsFromLiteralInstruction
+} from './instructions/mov'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -18,9 +22,9 @@ export class InstructionSet implements IInstructionSet {
     this.instructions = instructions
   }
 
-  public getEncoder(name: string): IInstructionEncoder {
+  public getEncoder(name: string, options: string[]): IInstructionEncoder {
     for (const instruction of this.instructions) {
-      if (instruction.name === name) {
+      if (instruction.canEncodeInstruction(name, options)) {
         return instruction
       }
     }
@@ -42,4 +46,8 @@ export class InstructionSet implements IInstructionSet {
   }
 }
 
-export default new InstructionSet([new MovInstruction()])
+export default new InstructionSet([
+  new MovInstruction(),
+  new MovsFromRegisterInstruction(),
+  new MovsFromLiteralInstruction()
+])

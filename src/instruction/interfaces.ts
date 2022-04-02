@@ -19,6 +19,14 @@ export interface IInstructionEncoder {
   name: string
 
   /**
+   * checks wheter this implementation can handle the given options for the instruction (e.g. MOVS with immediate or 2 registers)
+   *
+   * @param commandName name of the command
+   * @param options the options of the instruction
+   */
+  canEncodeInstruction: (commandName: string, options: string[]) => boolean
+
+  /**
    * Encodes the instruction into its opcode.
    *
    * @param options the options of the instruction
@@ -61,10 +69,11 @@ export interface IInstructionSet {
    * Gets the instruction encoder for the instruction with the specified name.
    *
    * @param name the name of the instruction
+   * @param options options which are used for instruction
    * @returns the instruction encoder for the instruction
    * @throws when the instruction encoder could not be found
    */
-  getEncoder: (name: string) => IInstructionEncoder
+  getEncoder: (name: string, options: string[]) => IInstructionEncoder
 
   /**
    * Gets the instruction executor for the instruction with the specified opcode.
