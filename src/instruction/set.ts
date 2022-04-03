@@ -14,6 +14,11 @@ import {
   MovsFromRegisterInstruction,
   MovsFromLiteralInstruction
 } from './instructions/mov'
+import {
+  StoreInstructionImmediateOffset, StoreInstructionImmediateOffsetByte, StoreInstructionImmediateOffsetHalfword,
+  StoreInstructionRegisterOffset, StoreInstructionRegisterOffsetByte,
+  StoreInstructionRegisterOffsetHalfword
+} from "./instructions/store";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -49,5 +54,11 @@ export class InstructionSet implements IInstructionSet {
 export default new InstructionSet([
   new MovInstruction(),
   new MovsFromRegisterInstruction(),
-  new MovsFromLiteralInstruction()
+  new MovsFromLiteralInstruction(),
+  new StoreInstructionImmediateOffset(),
+  new StoreInstructionRegisterOffset(),
+  new StoreInstructionImmediateOffsetHalfword(),
+  new StoreInstructionRegisterOffsetHalfword(),
+  new StoreInstructionImmediateOffsetByte(),
+  new StoreInstructionRegisterOffsetByte()
 ])
