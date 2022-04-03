@@ -46,10 +46,10 @@ export class StoreInstructionImmediateOffset extends BaseInstruction {
       memory: IMemory
   ): void {
     memory.writeWord(
-        registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-            Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
-        ),
-        registers.readRegister(getBits(opcode,this.rtPattern).value)
+      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+          Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
+      ),
+      registers.readRegister(getBits(opcode,this.rtPattern).value)
     )
   }
 }
@@ -93,21 +93,15 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
   }
 }
 
-
-
-
-
-
-
 /**
  * Represents a 'STORE' instruction - STR (immediate offset) - halfword
  */
 export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
-  public name: string = 'STR'
-  public pattern: string = '01100XXXXXXXXXXX'
-  private rnPattern: string = '0110000000XXX000'
-  private rtPattern: string = '0110000000000XXX'
-  private immPattern: string = '01100XXXXX000000'
+  public name: string = 'STRH'
+  public pattern: string = '10000XXXXXXXXXXX'
+  private rnPattern: string = '1000000000XXX000'
+  private rtPattern: string = '1000000000000XXX'
+  private immPattern: string = '10000XXXXX000000'
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     // todo
@@ -128,25 +122,32 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
       registers: Registers,
       memory: IMemory
   ): void {
-    memory.writeWord(
+
+    memory.writeHalfword(
         registers.readRegister(getBits(opcode,this.rnPattern).value).add(
             Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
         ),
-        registers.readRegister(getBits(opcode,this.rtPattern).value)
+        registers.readRegister(getBits(opcode,this.rtPattern).value).toHalfwords()[0]
+    )
+
+    memory.writeWord(
+      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+          Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
+      ),
+      registers.readRegister(getBits(opcode,this.rtPattern).value)
     )
   }
 }
-
 
 /**
  * Represents a 'STORE' instruction - STR (register offset) - halfword
  */
 export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
-  public name: string = 'STR'
-  public pattern: string = '0101000XXXXXXXXX'
-  private rnPattern: string = '0101000000XXX000'
-  private rmPattern: string = '0101000XXX000000'
-  private rtPattern: string = '0101000000000XXX'
+  public name: string = 'STRH'
+  public pattern: string = '0101001XXXXXXXXX'
+  private rnPattern: string = '0101001000XXX000'
+  private rmPattern: string = '0101001XXX000000'
+  private rtPattern: string = '0101001000000XXX'
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     // todo
@@ -167,28 +168,24 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
       registers: Registers,
       memory: IMemory
   ): void {
-    memory.writeWord(
-        registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-            registers.readRegister(getBits(opcode,this.rmPattern).value)
-        ),
-        registers.readRegister(getBits(opcode,this.rtPattern).value)
+    memory.writeHalfword(
+      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+          registers.readRegister(getBits(opcode,this.rmPattern).value)
+      ),
+      registers.readRegister(getBits(opcode,this.rtPattern).value).toHalfwords()[0]
     )
   }
 }
-
-
-
-
 
 /**
  * Represents a 'STORE' instruction - STR (immediate offset) - byte
  */
 export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
-  public name: string = 'STR'
-  public pattern: string = '01100XXXXXXXXXXX'
-  private rnPattern: string = '0110000000XXX000'
-  private rtPattern: string = '0110000000000XXX'
-  private immPattern: string = '01100XXXXX000000'
+  public name: string = 'STRB'
+  public pattern: string = '01110XXXXXXXXXXX'
+  private rnPattern: string = '011100000XXX000'
+  private rtPattern: string = '0111000000000XXX'
+  private immPattern: string = '01110XXXXX000000'
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     // todo
@@ -205,15 +202,15 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
   }
 
   public executeInstruction(
-      opcode: Halfword,
-      registers: Registers,
-      memory: IMemory
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
   ): void {
-    memory.writeWord(
-        registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-            Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
-        ),
-        registers.readRegister(getBits(opcode,this.rtPattern).value)
+    memory.writeByte(
+      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+          Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
+      ),
+      registers.readRegister(getBits(opcode,this.rtPattern).value).toBytes()[0]
     )
   }
 }
@@ -223,11 +220,11 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
  * Represents a 'STORE' instruction - STR (register offset) - byte
  */
 export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
-  public name: string = 'STR'
-  public pattern: string = '0101000XXXXXXXXX'
-  private rnPattern: string = '0101000000XXX000'
-  private rmPattern: string = '0101000XXX000000'
-  private rtPattern: string = '0101000000000XXX'
+  public name: string = 'STRB'
+  public pattern: string = '0101010XXXXXXXXX'
+  private rnPattern: string = '0101010000XXX000'
+  private rmPattern: string = '0101010XXX000000'
+  private rtPattern: string = '0101010000000XXX'
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     // todo
@@ -244,15 +241,15 @@ export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
   }
 
   public executeInstruction(
-      opcode: Halfword,
-      registers: Registers,
-      memory: IMemory
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
   ): void {
-    memory.writeWord(
-        registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-            registers.readRegister(getBits(opcode,this.rmPattern).value)
-        ),
-        registers.readRegister(getBits(opcode,this.rtPattern).value)
+    memory.writeByte(
+      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+          registers.readRegister(getBits(opcode,this.rmPattern).value)
+      ),
+      registers.readRegister(getBits(opcode,this.rtPattern).value).toBytes()[0]
     )
   }
 }
