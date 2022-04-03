@@ -9,43 +9,43 @@ export type AluResult = {
 }
 
 /**
- * Adds the two words together and returns the result with the correclty set flags.
+ * Adds the two words together and returns the result with the correctly set flags.
  *
- * @param o1 operant one
- * @param o2 operant two
+ * @param w1 operant one
+ * @param w2 operant two
  * @returns alu result which contains the result word and the flags
  */
-export function add(o1: Word, o2: Word): AluResult {
-  const result: Word = o1.add(o2)
+export function add(w1: Word, w2: Word): AluResult {
+  const result: Word = w1.add(w2)
   return {
     result: result,
     N: result.hasSign(),
     Z: result.toUnsignedInteger() === 0,
     C:
-      o1.toUnsignedInteger() + o2.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE,
-    V: o1.hasSign() == o2.hasSign() && o1.hasSign() != result.hasSign()
+      w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE,
+    V: w1.hasSign() == w2.hasSign() && w1.hasSign() != result.hasSign()
   }
 }
 
 /**
  * Subtracts the two words from each other and returns the result with the correctly set flags.
  *
- * @param o1 operant one
- * @param o2 operant two
+ * @param w1 operant one
+ * @param w2 operant two
  * @returns alu result which contains the result word and the flags
  */
-export function sub(o1: Word, o2: Word): AluResult {
+export function sub(w1: Word, w2: Word): AluResult {
   const complement: Word = Word.fromUnsignedInteger(
-    (~o2.toUnsignedInteger() + 1) >>> 0
+    (~w2.toUnsignedInteger() + 1) >>> 0
   )
-  const result: Word = o1.add(complement)
+  const result: Word = w1.add(complement)
   return {
     result: result,
     N: result.hasSign(),
     Z: result.toUnsignedInteger() === 0,
     C:
-      o1.toUnsignedInteger() + complement.toUnsignedInteger() >
+      w1.toUnsignedInteger() + complement.toUnsignedInteger() >
       Word.MAX_UNSIGNED_VALUE,
-    V: o1.hasSign() != o2.hasSign() && o1.hasSign() != result.hasSign()
+    V: w1.hasSign() != w2.hasSign() && w1.hasSign() != result.hasSign()
   }
 }
