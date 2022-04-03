@@ -21,13 +21,15 @@ import { BaseInstruction } from './baseInstruction'
  */
 export class LoadInstruction extends BaseInstruction {
   public name: string = 'LDR'
-  public name: string = 'STR'
   public pattern: string ='' //toDo
   private rdPattern: string ='' //toDo
   private rmPattern: string = ''//toDo
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     // toDo
+    let opcode: Halfword = create(this.pattern) // dummy to return an opcode
+    return opcode
+
   }
 
   public executeInstruction(
