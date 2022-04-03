@@ -3,7 +3,6 @@
   border-radius: 10px;
   border-style: none;
   margin-top: 1em;
-  width: 12rem;
 }
 
 .status-flags-container > .row > .col {
@@ -11,7 +10,7 @@
 }
 
 .col-md-auto {
-  width: 3rem;
+  width: 4rem;
   text-align: center;
 }
 

@@ -22,8 +22,8 @@ export interface IArea {
  */
 export interface IInstruction {
   name: string
-  label: string
-  params: string[]
+  label?: string
+  options: string[]
 }
 
 /**
