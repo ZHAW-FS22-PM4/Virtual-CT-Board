@@ -6,18 +6,32 @@
   padding-top: 0.75em;
   padding-bottom: 0.75em;
   padding-left: 1em;
-  font-size: 12px;
+  font-size: 14px;
+  width: 40em;
 }
 
-.memory {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+.memory-table {
   gap: 10px;
   height: 10rem;
-  line-height: 10px;
+  line-height: 20px;
   column-gap: 5px;
   row-gap: 5px;
-  grid-row-gap: 5px;
+}
+
+.memory-topbar {
+  white-space: nowrap;
+}
+
+.address {
+  font-family: monospace;
+}
+
+.memory-entry {
+  position: relative;
+}
+
+.memory-cell-hex {
+  width: 40%;
 }
 
 .title {
