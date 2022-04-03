@@ -25,9 +25,17 @@ export class StoreInstructionImmediateOffset extends BaseInstruction {
   private rnPattern: string = '0110000000XXX000'
   private rtPattern: string = '0110000000000XXX'
   private immPattern: string = '01100XXXXX000000'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
@@ -64,9 +72,17 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
   private rnPattern: string = '0101000000XXX000'
   private rmPattern: string = '0101000XXX000000'
   private rtPattern: string = '0101000000000XXX'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
@@ -102,9 +118,17 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
   private rnPattern: string = '1000000000XXX000'
   private rtPattern: string = '1000000000000XXX'
   private immPattern: string = '10000XXXXX000000'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
@@ -148,9 +172,17 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
   private rnPattern: string = '0101001000XXX000'
   private rmPattern: string = '0101001XXX000000'
   private rtPattern: string = '0101001000000XXX'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
@@ -186,9 +218,17 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
   private rnPattern: string = '011100000XXX000'
   private rtPattern: string = '0111000000000XXX'
   private immPattern: string = '01110XXXXX000000'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
@@ -225,9 +265,17 @@ export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
   private rnPattern: string = '0101010000XXX000'
   private rmPattern: string = '0101010XXX000000'
   private rtPattern: string = '0101010000000XXX'
+  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    // todo
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+          isOptionCountValid(options, this.expectedOptionCount) &&
+          !isImmediate(options[2])
+      ) {
+        return true
+      }
+    }
     return false
   }
 
