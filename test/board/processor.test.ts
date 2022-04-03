@@ -27,7 +27,7 @@ test('test reset() function', () => {
   )
   processor.reset()
 
-  verify(memoryMock.clear()).called()
-  verify(registersMock.clear()).called()
+  verify(memoryMock.reset()).called()
+  verify(registersMock.reset()).called()
   verify(registersMock.writeRegister(anything(), anything())).twice()
 })

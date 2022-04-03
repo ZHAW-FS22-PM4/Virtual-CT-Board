@@ -51,7 +51,7 @@ export interface IMemory {
   writeWord: (address: Word, word: Word) => void
 
   /**
-   * Resets and clears the whole memory
+   * Resets the whole memory
    */
-  clear: () => void
+  reset: () => void
 }
