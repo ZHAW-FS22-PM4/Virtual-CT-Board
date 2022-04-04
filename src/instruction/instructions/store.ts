@@ -7,7 +7,7 @@ import {
   createRegisterBits,
   getBits,
   isImmediate,
-  isOptionCountValid,
+  isOptionCountValid, registerStringHasBrackets, removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
 import { Registers } from 'board/registers'
@@ -31,7 +31,8 @@ export class StoreInstructionImmediateOffset extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2])
+          isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -42,9 +43,9 @@ export class StoreInstructionImmediateOffset extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(options[2],5))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),5))
     return opcode
   }
 
@@ -78,7 +79,8 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2])
+          isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -89,9 +91,9 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
     return opcode
   }
 
@@ -124,7 +126,8 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2])
+          isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -135,9 +138,9 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(options[2],5))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),5))
     return opcode
   }
 
@@ -178,7 +181,8 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2])
+          isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -189,9 +193,9 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
     return opcode
   }
 
@@ -224,7 +228,8 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2])
+          isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -235,9 +240,9 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(options[2],5))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),5))
     return opcode
   }
 
@@ -271,7 +276,8 @@ export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          !isImmediate(options[2])
+          !isImmediate(options[2]) &&
+          registerStringHasBrackets(options[1],options[2])
       ) {
         return true
       }
@@ -282,9 +288,9 @@ export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
     return opcode
   }
 
