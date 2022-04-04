@@ -286,3 +286,11 @@ function getEnumValueForRegisterString(option: string): Register {
     )
   }
 }
+
+function removeBracketsFromRegisterString(registerString: string): string {
+  return registerString.replace('[', "").replace(']', "")
+}
+
+function registerStringHasBrackets(registerString1: string, registerString2: string): boolean {
+  return registerString1.startsWith('[') && registerString2.endsWith(']')
+}
