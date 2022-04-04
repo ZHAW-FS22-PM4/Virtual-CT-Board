@@ -20,6 +20,10 @@ export enum Register {
   APSR = 99
 }
 
+export type IFlag = {
+  [flag in Flag]?: boolean
+}
+
 export enum Flag {
   N = 'N',
   Z = 'Z',

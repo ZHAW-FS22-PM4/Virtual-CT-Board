@@ -1,11 +1,22 @@
 import { Word } from 'types/binary'
+import { Flag, IFlag } from './registers'
 
 export type AluResult = {
   result: Word
-  N: boolean
-  Z: boolean
-  C: boolean
-  V: boolean
+  flags: IFlag
+}
+
+/**
+ * Evaluates the zero and negative flags for the given word.
+ *
+ * @param w word to evaluate
+ * @returns zero and negative flags for the given word
+ */
+export function evaluateZeroAndNegativeFlags(w: Word): IFlag {
+  return {
+    [Flag.Z]: w.toUnsignedInteger() === 0,
+    [Flag.N]: w.hasSign()
+  }
 }
 
 /**
@@ -17,13 +28,15 @@ export type AluResult = {
  */
 export function add(w1: Word, w2: Word): AluResult {
   const result: Word = w1.add(w2)
+  const flags = evaluateZeroAndNegativeFlags(result)
+  flags[Flag.C] =
+    w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE
+  flags[Flag.V] =
+    w1.hasSign() == w2.hasSign() && w1.hasSign() != result.hasSign()
+
   return {
     result: result,
-    N: result.hasSign(),
-    Z: result.toUnsignedInteger() === 0,
-    C:
-      w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE,
-    V: w1.hasSign() == w2.hasSign() && w1.hasSign() != result.hasSign()
+    flags: flags
   }
 }
 
@@ -35,17 +48,42 @@ export function add(w1: Word, w2: Word): AluResult {
  * @returns alu result which contains the result word and the flags
  */
 export function sub(w1: Word, w2: Word): AluResult {
-  const complement: Word = Word.fromUnsignedInteger(
+  const comp: Word = Word.fromUnsignedInteger(
     (~w2.toUnsignedInteger() + 1) >>> 0
   )
-  const result: Word = w1.add(complement)
+  const result: Word = w1.add(comp)
+  const flags = evaluateZeroAndNegativeFlags(result)
+  flags[Flag.C] =
+    w1.toUnsignedInteger() + comp.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE
+  flags[Flag.V] =
+    w1.hasSign() != w2.hasSign() && w1.hasSign() != result.hasSign()
+
   return {
     result: result,
-    N: result.hasSign(),
-    Z: result.toUnsignedInteger() === 0,
-    C:
-      w1.toUnsignedInteger() + complement.toUnsignedInteger() >
-      Word.MAX_UNSIGNED_VALUE,
-    V: w1.hasSign() != w2.hasSign() && w1.hasSign() != result.hasSign()
+    flags: flags
+  }
+}
+
+/**
+ * Multiplies the two words together and returns the result with the correctly set flags. For multiplication only N and Z flag are returned.
+ *
+ * @param w1 word one
+ * @param w2 word two
+ * @returns alu result which contains the result word and the flags
+ */
+export function mul(w1: Word, w2: Word): AluResult {
+  // in javascript it is not possible to use any bit operations above 32 bit
+  // furthermore numbers lose precision after 54 bit so even if we could use bit operations
+  // it is not even possible since the number represented in memory is not precise enough
+  // so we just use string formatting
+
+  const mul: BigInt =
+    BigInt(w1.toUnsignedInteger()) * BigInt(w2.toUnsignedInteger())
+  const binaryStr: string = mul.toString(2).slice(-32)
+  const result: Word = Word.fromUnsignedInteger(parseInt(binaryStr, 2))
+
+  return {
+    result: result,
+    flags: evaluateZeroAndNegativeFlags(result)
   }
 }
