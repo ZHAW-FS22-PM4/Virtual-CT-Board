@@ -88,9 +88,6 @@ describe('test executeInstruction function', () => {
       )
     ).once()
 
-    verify(registerMock.setNegativeFlag(anything())).called()
-    verify(
-      registerMock.setZeroFlag(registerValue1.value * registerValue2.value)
-    ).called()
+    verify(registerMock.setFlags(anything())).called()
   })
 })

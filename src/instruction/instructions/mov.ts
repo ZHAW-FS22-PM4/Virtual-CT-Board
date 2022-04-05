@@ -15,6 +15,7 @@ import { IMemory } from 'board/memory/interfaces'
 
 import { ILabelOffsets } from '../interfaces'
 import { BaseInstruction } from './baseInstruction'
+import { evaluateZeroAndNegativeFlags } from 'board/alu'
 
 /**
  * Represents a 'MOV' instruction.
@@ -84,8 +85,7 @@ export class MovsFromRegisterInstruction extends BaseInstruction {
     let valueToWrite = registers.readRegister(
       getBits(opcode, this.rmPattern).value
     )
-    registers.setNegativeFlag(valueToWrite)
-    registers.setZeroFlag(valueToWrite.value)
+    registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
     registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
   }
 }
@@ -130,8 +130,7 @@ export class MovsFromLiteralInstruction extends BaseInstruction {
     memory: IMemory
   ): void {
     let valueToWrite = Word.fromHalfwords(getBits(opcode, this.immPattern))
-    registers.setNegativeFlag(valueToWrite)
-    registers.setZeroFlag(valueToWrite.value)
+    registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
     registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
   }
 }

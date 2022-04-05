@@ -94,51 +94,17 @@ export class Registers {
       ? this.data[Register.APSR].setBit(offset)
       : this.data[Register.APSR].clearBit(offset)
   }
-  /**
-   * Updates just the overflow flag
-   * @param value
-   */
-  public setNegativeFlag(value: Word) {
-    this.setFlag(Flag.N, value.hasSign())
-  }
-  /**
-   * Updates just the overflow flag
-   * @param value
-   */
-  public setZeroFlag(value: number) {
-    this.setFlag(Flag.Z, value === 0)
-  }
-  /**
-   * Updates just the carry flag
-   * @param isCarrySet
-   */
-  public setCarryFlag(isCarrySet: boolean) {
-    this.setFlag(Flag.C, isCarrySet)
-  }
-  /**
-   * Updates just the overflow flag
-   * @param isCarrySet
-   * @param wasCarryIntoSign
-   */
-  public setOverflowFlag(isCarrySet: boolean, wasCarryIntoSign: boolean) {
-    this.setFlag(Flag.V, wasCarryIntoSign ? !isCarrySet : isCarrySet)
-  }
 
   /**
-   * Sets all flags in one go
-   * @param value resulting value for which flags should be set
-   * @param isCarrySet if carry happend during operation
-   * @param wasCarryIntoSign if there was a carry to highest bit (31)
+   * Sets the flags that are available in the given list of flags. The other flags are not changed.
+   *
+   * @param flags flags to set
    */
-  public setFlags(
-    value: Word,
-    isCarrySet: boolean = false,
-    wasCarryIntoSign: boolean = false
-  ): void {
-    this.setNegativeFlag(value)
-    this.setZeroFlag(value.value)
-    this.setCarryFlag(isCarrySet)
-    this.setOverflowFlag(isCarrySet, wasCarryIntoSign)
+  public setFlags(flags: IFlag): void {
+    if (Flag.Z in flags) this.setFlag(Flag.Z, flags[Flag.Z] === true)
+    if (Flag.N in flags) this.setFlag(Flag.N, flags[Flag.N] === true)
+    if (Flag.V in flags) this.setFlag(Flag.V, flags[Flag.V] === true)
+    if (Flag.C in flags) this.setFlag(Flag.C, flags[Flag.C] === true)
   }
 
   /**

@@ -7,7 +7,7 @@ import {
 import { ILabelOffsets } from 'instruction/interfaces'
 import { anything, instance, mock, resetCalls, verify, when } from 'ts-mockito'
 import { VirtualBoardError } from 'types/error'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import { $enum } from 'ts-enum-util'
 
@@ -286,8 +286,7 @@ describe('test executeInstruction function', () => {
         lowRegisterValue2
       )
     ).once()
-    verify(registerMock.setNegativeFlag(anything())).called()
-    verify(registerMock.setZeroFlag(lowRegisterValue2.value)).called()
+    verify(registerMock.setFlags(anything())).called()
 
     resetCalls(registerMock)
 
@@ -313,8 +312,7 @@ describe('test executeInstruction function', () => {
         lowRegisterValue
       )
     ).once()
-    verify(registerMock.setNegativeFlag(anything())).called()
-    verify(registerMock.setZeroFlag(lowRegisterValue.value)).called()
+    verify(registerMock.setFlags(anything())).called()
 
     resetCalls(registerMock)
 
@@ -330,9 +328,6 @@ describe('test executeInstruction function', () => {
         anything()
       )
     ).once()
-    verify(registerMock.setNegativeFlag(anything())).called()
-    verify(
-      registerMock.setZeroFlag(parseInt(validImmediateOption.slice(1), 16))
-    ).called()
+    verify(registerMock.setFlags(anything())).called()
   })
 })
