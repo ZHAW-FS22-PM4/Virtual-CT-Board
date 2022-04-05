@@ -21,6 +21,8 @@ import {
   SubsLargeImmediateInstruction
 } from './instructions/subs'
 
+import { RsbsInstruction } from './instructions/rsbs'
+
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
 
@@ -58,5 +60,6 @@ export default new InstructionSet([
   new MovsFromLiteralInstruction(),
   new SubsRegisterInstruction(),
   new SubsSmallImmediateInstruction(),
-  new SubsLargeImmediateInstruction()
+  new SubsLargeImmediateInstruction(),
+  new RsbsInstruction()
 ])
