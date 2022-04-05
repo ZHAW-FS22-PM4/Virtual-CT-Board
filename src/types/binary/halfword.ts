@@ -10,8 +10,9 @@ export class Halfword extends BinaryType {
   public static MAX_VALUE: number = 0xffff //decimal: 65535
   public static MIN_SIGNED_VALUE: number = -32768
   public static MAX_SIGNED_VALUE: number = 32767
+  public static NUMBER_OF_BITS: number = 16
 
-  readonly numberOfBitsForType: number = 16
+  readonly numberOfBitsForType: number = Halfword.NUMBER_OF_BITS
   readonly maxValueForType: number = 0xffff
 
   /**
@@ -67,13 +68,9 @@ export class Halfword extends BinaryType {
    * @returns the halfword representation
    */
   public static fromBytes(...bytes: Byte[]): Halfword {
-    let value = Halfword.MIN_VALUE
-    let shift = 0
-    for (let i = 0; i < 2; i++) {
-      value = (value | ((bytes[i]?.value ?? Byte.MIN_VALUE) << shift)) >>> 0
-      shift += 8
-    }
-    return new Halfword(value)
+    return new Halfword(
+      this.fromBytesToNumber(Halfword.NUMBER_OF_BITS, ...bytes)
+    )
   }
 
   /**
@@ -83,15 +80,7 @@ export class Halfword extends BinaryType {
    * @returns the list of split bytes (in little endian)
    */
   public static toBytes(...halfwords: Halfword[]): Byte[] {
-    const bytes: Byte[] = []
-    for (const halfword of halfwords) {
-      let value = halfword.value
-      for (let i = 0; i < 2; i++) {
-        bytes.push(Byte.fromUnsignedInteger((value & 0xff) >>> 0))
-        value = value >>> 8
-      }
-    }
-    return bytes
+    return BinaryType.toBytesGeneral(Halfword.NUMBER_OF_BITS / 8, ...halfwords)
   }
 
   /**

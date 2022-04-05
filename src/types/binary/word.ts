@@ -1,7 +1,6 @@
 import { checkRange, limitValuesToBitCount } from './utils'
 import { Byte } from './byte'
 import { Halfword } from './halfword'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BinaryType } from './binaryType'
 
 /**
@@ -12,8 +11,9 @@ export class Word extends BinaryType {
   public static MAX_VALUE: number = 0xffffffff //decimal: 4294967295
   public static MIN_SIGNED_VALUE: number = -2147483648
   public static MAX_SIGNED_VALUE: number = 2147483647
+  public static NUMBER_OF_BITS: number = 32
 
-  readonly numberOfBitsForType: number = 32
+  readonly numberOfBitsForType: number = Word.NUMBER_OF_BITS
   readonly maxValueForType: number = 0xffffffff
 
   /**
@@ -64,13 +64,7 @@ export class Word extends BinaryType {
    * @returns the word representation
    */
   public static fromBytes(...bytes: Byte[]): Word {
-    let value = Word.MIN_VALUE
-    let shift = 0
-    for (let i = 0; i < 4; i++) {
-      value = (value | ((bytes[i]?.value ?? Byte.MIN_VALUE) << shift)) >>> 0
-      shift += 8
-    }
-    return new Word(value)
+    return new Word(this.fromBytesToNumber(Word.NUMBER_OF_BITS, ...bytes))
   }
 
   /**
@@ -80,15 +74,7 @@ export class Word extends BinaryType {
    * @returns list of split bytes (in little endian)
    */
   public static toBytes(...words: Word[]): Byte[] {
-    const bytes: Byte[] = []
-    for (const word of words) {
-      let value = word.value
-      for (let i = 0; i < 4; i++) {
-        bytes.push(Byte.fromUnsignedInteger((value & 0xff) >>> 0))
-        value = value >>> 8
-      }
-    }
-    return bytes
+    return BinaryType.toBytesGeneral(Word.NUMBER_OF_BITS / 8, ...words)
   }
 
   /**
