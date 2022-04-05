@@ -79,7 +79,7 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
     if (super.canEncodeInstruction(commandName, options)) {
       if (
           isOptionCountValid(options, this.expectedOptionCount) &&
-          isImmediate(options[2]) &&
+          !isImmediate(options[2]) &&
           registerStringHasBrackets(options[1],options[2])
       ) {
         return true

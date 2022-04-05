@@ -18,8 +18,11 @@ const strName = 'STR'
 const strbName = 'STRB'
 const strhName = 'STRH'
 
-const strRegisterOptions = ['R0', 'R1', 'R2']
-const strLiteralOptions = ['R0', 'R1', '#0xe6']
+const strRegisterOptionsValid = ['R0', '[R1', 'R2]']
+const strRegisterOptionsInvalid = ['R0', 'R1', 'R2']
+const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
+const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
+
 
 const lowRegisterOption: string = 'R5'
 const lowRegisterValue: Word = Word.fromUnsignedInteger(0x5555)
@@ -62,10 +65,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         invalidInstructionOptions
       )
     ).toBe(false)
-    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strLiteralOptions)).toBe(false)
-    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strLiteralOptions)).toBe(false)
-    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strRegisterOptions)).toBe(false)
-    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strLiteralOptions)).toBe(true)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strLiteralOptionsValid)).toBe(true)
   })
   test('STORE instruction - STR (register offset) - word encoder', () => {
     expect(
@@ -74,10 +79,68 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
             invalidInstructionOptions
         )
     ).toBe(false)
-    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strRegisterOptions)).toBe(false)
-    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strRegisterOptions)).toBe(false)
-    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strLiteralOptions)).toBe(false)
-    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strRegisterOptions)).toBe(true)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strRegisterOptionsValid)).toBe(true)
+  })
+  test('STORE instruction - STR (immediate offset) - halfword encoder', () => {
+    expect(
+        instructionStoreInstructionImmediateOffset.canEncodeInstruction(
+            invalidInstructionName,
+            invalidInstructionOptions
+        )
+    ).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strLiteralOptionsValid)).toBe(true)
+  })
+  test('STORE instruction - STR (register offset) - halfword encoder', () => {
+    expect(
+        instructionStoreInstructionRegisterOffset.canEncodeInstruction(
+            invalidInstructionName,
+            invalidInstructionOptions
+        )
+    ).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strRegisterOptionsValid)).toBe(true)
+  })
+  test('STORE instruction - STR (immediate offset) - byte encoder', () => {
+    expect(
+        instructionStoreInstructionImmediateOffset.canEncodeInstruction(
+            invalidInstructionName,
+            invalidInstructionOptions
+        )
+    ).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strhName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionImmediateOffset.canEncodeInstruction(strbName, strLiteralOptionsValid)).toBe(true)
+  })
+  test('STORE instruction - STR (register offset) - byte encoder', () => {
+    expect(
+        instructionStoreInstructionRegisterOffset.canEncodeInstruction(
+            invalidInstructionName,
+            invalidInstructionOptions
+        )
+    ).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strhName, strRegisterOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strLiteralOptionsValid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strRegisterOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strLiteralOptionsInvalid)).toBe(false)
+    expect(instructionStoreInstructionRegisterOffset.canEncodeInstruction(strbName, strRegisterOptionsValid)).toBe(true)
   })
 })
 
