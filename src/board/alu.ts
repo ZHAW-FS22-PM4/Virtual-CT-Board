@@ -72,15 +72,9 @@ export function sub(w1: Word, w2: Word): AluResult {
  * @returns alu result which contains the result word and the flags
  */
 export function mul(w1: Word, w2: Word): AluResult {
-  // in javascript it is not possible to use any bit operations above 32 bit
-  // furthermore numbers lose precision after 54 bit so even if we could use bit operations
-  // it is not even possible since the number represented in memory is not precise enough
-  // so we just use string formatting
-
-  const mul: BigInt =
-    BigInt(w1.toUnsignedInteger()) * BigInt(w2.toUnsignedInteger())
-  const binaryStr: string = mul.toString(2).slice(-32)
-  const result: Word = Word.fromUnsignedInteger(parseInt(binaryStr, 2))
+  const mul = BigInt(w1.toUnsignedInteger()) * BigInt(w2.toUnsignedInteger())
+  const cut = mul & BigInt(4294967295)
+  const result: Word = Word.fromUnsignedInteger(Number(cut))
 
   return {
     result: result,
