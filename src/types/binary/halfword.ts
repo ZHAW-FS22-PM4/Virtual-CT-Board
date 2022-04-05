@@ -6,13 +6,13 @@ import { BinaryType } from './binaryType'
  * Represents a halfword in range (0x0000 - 0xFFFF).
  */
 export class Halfword extends BinaryType {
-  public static MIN_VALUE: number = 0x0000
-  public static MAX_VALUE: number = 0xffff
-  public static MIN_UNSIGNED_VALUE: number = 0
-  public static MAX_UNSIGNED_VALUE: number = 65535
+  public static MIN_VALUE: number = 0
+  public static MAX_VALUE: number = 0xffff //decimal: 65535
   public static MIN_SIGNED_VALUE: number = -32768
   public static MAX_SIGNED_VALUE: number = 32767
-  public static NUMBER_OF_BITS: number = 16
+
+  readonly numberOfBitsForType: number = 16
+  readonly maxValueForType: number = 0xffff
 
   /**
    * The unsigned integer representation of the halfword as a number (IEEE double precision floating point).
@@ -20,7 +20,7 @@ export class Halfword extends BinaryType {
   public readonly value: number
 
   private constructor(value: number) {
-    super(Halfword.NUMBER_OF_BITS)
+    super()
     checkRange('Halfword', value, Halfword.MIN_VALUE, Halfword.MAX_VALUE)
     this.value = value
   }
@@ -35,8 +35,8 @@ export class Halfword extends BinaryType {
     checkRange(
       '16-bit unsigned integer',
       value,
-      Halfword.MIN_UNSIGNED_VALUE,
-      Halfword.MAX_UNSIGNED_VALUE
+      Halfword.MIN_VALUE,
+      Halfword.MAX_VALUE
     )
     return new Halfword(value)
   }
@@ -103,7 +103,7 @@ export class Halfword extends BinaryType {
    */
   public add(value: Halfword | number): Halfword {
     return new Halfword(
-      limitValuesToBitCount(this.addToNumber(value), Halfword.NUMBER_OF_BITS)
+      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
     )
   }
 

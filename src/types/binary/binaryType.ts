@@ -7,12 +7,11 @@ export abstract class BinaryType {
    * Has to be always positive use toSignedInteger method to get interpretation of negative values
    */
   abstract value: number
-  private readonly numberOfBitsForType: number
-  private readonly maxValueForType: number
+  abstract readonly numberOfBitsForType: number
+  abstract readonly maxValueForType: number
 
-  constructor(numberOfBitsForType: number) {
-    this.numberOfBitsForType = numberOfBitsForType
-    this.maxValueForType = parseInt('f'.repeat(this.getHexCharCount()), 16)
+  constructor() {
+    //since value here is sometimes undefined, abstract properties are used
   }
 
   /**
@@ -78,10 +77,14 @@ export abstract class BinaryType {
    * Adds the specified number to the binary type value and returns the result as a number.
    * In case the result exceeds the max value of the type the result is out of the range of the type.
    *
+   * As long as result stays in safe integer range (below 2^53 and higher than 2^(-53) according to https://www.avioconsulting.com/blog/overcoming-javascript-numeric-precision-issues
+   * there is no problem in precision. Otherwise LSB will be cut off.
+   *
    * @param value the number to be added
    * @returns the unsigned result of the addition
    */
   public addToNumber(value: Byte | Halfword | Word | number): number {
+    //TODO tests for this method
     if (
       value instanceof Word ||
       value instanceof Byte ||
@@ -89,7 +92,11 @@ export abstract class BinaryType {
     ) {
       value = value.value
     }
-    return convertToUnsignedNumber(value + this.value)
+    let result = value + this.value
+    if (!Number.isSafeInteger(result)) {
+      throw new Error('addition result is not within safe integer range')
+    }
+    return convertToUnsignedNumber(result)
   }
 
   /**

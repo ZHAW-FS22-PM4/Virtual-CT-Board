@@ -8,13 +8,13 @@ import { BinaryType } from './binaryType'
  * Represents a word in range (0x00000000 - 0xFFFFFFFF).
  */
 export class Word extends BinaryType {
-  public static MIN_VALUE: number = 0x00000000
-  public static MAX_VALUE: number = 0xffffffff
-  public static MIN_UNSIGNED_VALUE: number = 0
-  public static MAX_UNSIGNED_VALUE: number = 4294967295
+  public static MIN_VALUE: number = 0
+  public static MAX_VALUE: number = 0xffffffff //decimal: 4294967295
   public static MIN_SIGNED_VALUE: number = -2147483648
   public static MAX_SIGNED_VALUE: number = 2147483647
-  public static NUMBER_OF_BITS: number = 32
+
+  readonly numberOfBitsForType: number = 32
+  readonly maxValueForType: number = 0xffffffff
 
   /**
    * The unsigned integer representation of the word as a number (IEEE double precision floating point).
@@ -22,7 +22,7 @@ export class Word extends BinaryType {
   public readonly value: number
 
   private constructor(value: number) {
-    super(Word.NUMBER_OF_BITS)
+    super()
     checkRange('Word', value, Word.MIN_VALUE, Word.MAX_VALUE)
     this.value = value
   }
@@ -34,12 +34,7 @@ export class Word extends BinaryType {
    * @returns the word representation
    */
   public static fromUnsignedInteger(value: number): Word {
-    checkRange(
-      '32-bit unsigned integer',
-      value,
-      Word.MIN_UNSIGNED_VALUE,
-      Word.MAX_UNSIGNED_VALUE
-    )
+    checkRange('32-bit unsigned integer', value, Word.MIN_VALUE, Word.MAX_VALUE)
     return new Word(value)
   }
 
@@ -140,7 +135,7 @@ export class Word extends BinaryType {
    */
   public add(value: Word | number): Word {
     return new Word(
-      limitValuesToBitCount(this.addToNumber(value), Word.NUMBER_OF_BITS)
+      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
     )
   }
 

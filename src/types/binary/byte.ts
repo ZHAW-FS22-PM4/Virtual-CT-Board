@@ -5,14 +5,14 @@ import { checkRange, limitValuesToBitCount } from './utils'
  * Represents a byte in range (0x00 - 0xFF).
  */
 export class Byte extends BinaryType {
-  public static MIN_VALUE: number = 0x00
-  public static MAX_VALUE: number = 0xff
-  public static MIN_UNSIGNED_VALUE: number = 0
-  public static MAX_UNSIGNED_VALUE: number = 255
+  public static MIN_VALUE: number = 0
+  public static MAX_VALUE: number = 0xff //decimal: 255
   public static MIN_SIGNED_VALUE: number = -128
   public static MAX_SIGNED_VALUE: number = 127
-  public static ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
-  public static NUMBER_OF_BITS: number = 8
+  public static readonly ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
+
+  readonly numberOfBitsForType: number = 8
+  readonly maxValueForType: number = 0xff
 
   /**
    * The unsigned integer representation of the byte as a number (IEEE double precision floating point).
@@ -20,7 +20,7 @@ export class Byte extends BinaryType {
   public readonly value: number
 
   private constructor(value: number) {
-    super(Byte.NUMBER_OF_BITS)
+    super()
     checkRange('Byte', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
     this.value = value
   }
@@ -32,12 +32,7 @@ export class Byte extends BinaryType {
    * @returns the byte representation
    */
   public static fromUnsignedInteger(value: number): Byte {
-    checkRange(
-      '8-bit unsigned integer',
-      value,
-      Byte.MIN_UNSIGNED_VALUE,
-      Byte.MAX_UNSIGNED_VALUE
-    )
+    checkRange('8-bit unsigned integer', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
     return new Byte(value)
   }
 
@@ -68,7 +63,7 @@ export class Byte extends BinaryType {
    */
   public add(value: Byte | number): Byte {
     return new Byte(
-      limitValuesToBitCount(this.addToNumber(value), Byte.NUMBER_OF_BITS)
+      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
     )
   }
   /**
