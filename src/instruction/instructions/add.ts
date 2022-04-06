@@ -24,10 +24,7 @@ export class AddInstruction extends BaseInstruction {
   private rdnPattern: string = '01000100X0000XXX'
   private rmPattern: string = '010001000XXXX000'
 
-  public encodeInstruction (
-    options: string[],
-    labels: ILabelOffsets
-  ): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdnPattern, createRegisterBits(options[0]))
@@ -35,7 +32,7 @@ export class AddInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -62,10 +59,7 @@ export class AddsRegistersInstruction extends BaseInstruction {
   private rnPattern: string = '0001100000XXX000'
   private rmPattern: string = '0001100XXX000000'
 
-  public encodeInstruction (
-    options: string[],
-    labels: ILabelOffsets
-  ): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
@@ -76,7 +70,7 @@ export class AddsRegistersInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -105,10 +99,7 @@ export class AddsImmediate3Instruction extends BaseInstruction {
   private rnPattern: string = '0001110000XXX000'
   private immPattern: string = '0001110XXX000000'
 
-  public encodeInstruction (
-    options: string[],
-    labels: ILabelOffsets
-  ): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 3)
     if (options[0] === options[1]) {
       throw new Error(
@@ -123,7 +114,7 @@ export class AddsImmediate3Instruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -151,10 +142,7 @@ export class AddsImmediate8Instruction extends BaseInstruction {
   private rdnPattern: string = '00110XXX00000000'
   private immPattern: string = '00110000XXXXXXXX'
 
-  public encodeInstruction (
-    options: string[],
-    labels: ILabelOffsets
-  ): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2, 3)
     // for ADDS imm8, result and operand must be stored in the same register
     if (options.length === 3 && options[0] !== options[1]) {
@@ -170,7 +158,7 @@ export class AddsImmediate8Instruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory

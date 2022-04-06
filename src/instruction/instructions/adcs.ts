@@ -18,10 +18,7 @@ export class AdcsInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000101000XXX'
   private rmPattern: string = '0100000101XXX000'
 
-  public encodeInstruction (
-    options: string[],
-    labels: ILabelOffsets
-  ): Halfword {
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2, 3)
     if (options.length === 3 && options[0] !== options[1]) {
       throw new Error(
@@ -38,7 +35,7 @@ export class AdcsInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
