@@ -4,6 +4,7 @@ import { EditorComponent } from 'components/editor'
 import { RegisterComponent } from 'components/register'
 import { FlagsComponent } from 'components/flags'
 import { Board } from './board'
+import { MemoryExplorerComponent } from './memoryexplorer'
 
 export class App extends React.Component {
   render(): React.ReactNode {
@@ -21,6 +22,7 @@ export class App extends React.Component {
             <Board />
           </div>
         </div>
+        <MemoryExplorerComponent />
       </div>
     )
   }
