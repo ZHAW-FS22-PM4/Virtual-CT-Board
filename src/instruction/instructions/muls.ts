@@ -1,4 +1,10 @@
 import { Halfword } from 'types/binary'
+
+import { Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
+import { mul, AluResult } from 'board/alu'
+
+import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -6,11 +12,8 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-import { Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-import { ILabelOffsets } from '../interfaces'
-import { BaseInstruction } from './baseInstruction'
-import { mul, AluResult } from 'board/alu'
+
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'MULS' instruction.

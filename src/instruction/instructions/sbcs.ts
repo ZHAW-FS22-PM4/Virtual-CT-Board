@@ -1,4 +1,10 @@
 import { Halfword, Word } from 'types/binary'
+
+import { Flag, Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
+import { add } from 'board/alu'
+
+import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -6,12 +12,8 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-import { Flag, Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-import { add } from 'board/alu'
 
-import { ILabelOffsets } from '../interfaces'
-import { BaseInstruction } from './baseInstruction'
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'SBCS' instruction which does a substraction with carry.

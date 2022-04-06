@@ -1,4 +1,10 @@
 import { Halfword, Word } from 'types/binary'
+
+import { Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
+import { sub } from 'board/alu'
+
+import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -6,37 +12,34 @@ import {
   createLowRegisterBits,
   getBits,
   isImmediate,
+  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
-import { Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-import { sub } from 'board/alu'
 
-import { ILabelOffsets } from '../interfaces'
-import { BaseInstruction } from './baseInstruction'
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'SUBS' instruction which substracts a register
  * from a register and stores the result in another register.
  */
-export class SubsRegisterInstruction extends BaseInstruction {
+export class SubsRegistersInstruction extends BaseInstruction {
   public name: string = 'SUBS'
-  private expectedOptionCount: number = 3
   public pattern: string = '0001101XXXXXXXXX'
   private rdPattern: string = '0001101000000XXX'
   private rnPattern: string = '0001101000XXX000'
   private rmPattern: string = '0001101XXX000000'
+  private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      options.length == this.expectedOptionCount &&
+      super.canEncodeInstruction(name, options) &&
+      isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2])
     )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
@@ -65,24 +68,24 @@ export class SubsRegisterInstruction extends BaseInstruction {
  * Represents a 'SUBS' instruction which substracts a register
  * from a small immediate value and stores the result in another register.
  */
-export class SubsSmallImmediateInstruction extends BaseInstruction {
+export class SubsImmediate3Instruction extends BaseInstruction {
   public name: string = 'SUBS'
-  private expectedOptionCount: number = 3
   public pattern: string = '0001111XXXXXXXXX'
   private rdPattern: string = '0001111000000XXX'
   private rnPattern: string = '0001111000XXX000'
   private imm3Pattern: string = '0001111XXX000000'
+  private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      options.length == this.expectedOptionCount &&
+      super.canEncodeInstruction(name, options) &&
+      isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2])
     )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
@@ -115,22 +118,22 @@ export class SubsSmallImmediateInstruction extends BaseInstruction {
  * Represents a 'SUBS' instruction which substracts a register
  * from a large immediate value and stores the result in the first register.
  */
-export class SubsLargeImmediateInstruction extends BaseInstruction {
+export class SubsImmediate8Instruction extends BaseInstruction {
   public name: string = 'SUBS'
-  private expectedOptionCount: number = 2
   public pattern: string = '00111XXXXXXXXXXX'
   private rdnPattern: string = '00111XXX00000000'
   private imm8Pattern: string = '00111000XXXXXXXX'
+  private expectedOptionCount: number = 2
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      options.length == this.expectedOptionCount
+      super.canEncodeInstruction(name, options) &&
+      isOptionCountValid(options, this.expectedOptionCount)
     )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 2)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(

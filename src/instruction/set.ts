@@ -9,18 +9,26 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 
+import { AdcsInstruction } from './instructions/adcs'
+import { AddInstruction } from './instructions/add'
 import {
-  MovInstruction,
-  MovsFromRegisterInstruction,
-  MovsFromLiteralInstruction
-} from './instructions/mov'
+  AddsImmediate3Instruction,
+  AddsImmediate8Instruction,
+  AddsRegistersInstruction
+} from './instructions/adds'
+import { MovInstruction } from './instructions/mov'
 import {
-  SubsRegisterInstruction,
-  SubsSmallImmediateInstruction,
-  SubsLargeImmediateInstruction
-} from './instructions/subs'
+  MovsImmediate8Instruction,
+  MovsRegistersInstruction
+} from './instructions/movs'
+import { MulsInstruction } from './instructions/muls'
 import { RsbsInstruction } from './instructions/rsbs'
 import { SbcsInstruction } from './instructions/sbcs'
+import {
+  SubsImmediate3Instruction,
+  SubsImmediate8Instruction,
+  SubsRegistersInstruction
+} from './instructions/subs'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -54,12 +62,18 @@ export class InstructionSet implements IInstructionSet {
 }
 
 export default new InstructionSet([
+  new AdcsInstruction(),
+  new AddInstruction(),
+  new AddsRegistersInstruction(),
+  new AddsImmediate3Instruction(),
+  new AddsImmediate8Instruction(),
   new MovInstruction(),
-  new MovsFromRegisterInstruction(),
-  new MovsFromLiteralInstruction(),
-  new SubsRegisterInstruction(),
-  new SubsSmallImmediateInstruction(),
-  new SubsLargeImmediateInstruction(),
+  new MovsRegistersInstruction(),
+  new MovsImmediate8Instruction(),
+  new MulsInstruction(),
   new RsbsInstruction(),
-  new SbcsInstruction()
+  new SbcsInstruction(),
+  new SubsRegistersInstruction(),
+  new SubsImmediate3Instruction(),
+  new SubsImmediate8Instruction()
 ])

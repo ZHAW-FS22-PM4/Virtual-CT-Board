@@ -1,6 +1,9 @@
+import { Halfword, Word } from 'types/binary'
+
 import { AluResult, add } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Flag, Registers } from 'board/registers'
+
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -9,8 +12,8 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-import { Halfword, Word } from 'types/binary'
-import { BaseInstruction } from './baseInstruction'
+
+import { BaseInstruction } from './base'
 
 export class AdcsInstruction extends BaseInstruction {
   public name: string = 'ADCS'

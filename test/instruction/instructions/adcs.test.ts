@@ -2,7 +2,7 @@ import { Word } from 'types/binary'
 import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import { AdcsInstruction } from 'instruction/instructions/adcs'
-import { AddsRegistersInstruction } from 'instruction/instructions/add'
+import { AddsRegistersInstruction } from 'instruction/instructions/adds'
 
 const registers = new Registers()
 const memory = new Memory()

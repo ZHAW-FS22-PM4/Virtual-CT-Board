@@ -1,4 +1,11 @@
 import { Halfword, Word } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+
+import { Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
+import { sub } from 'board/alu'
+
+import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -7,13 +14,8 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-import { Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-import { sub } from 'board/alu'
 
-import { ILabelOffsets } from '../interfaces'
-import { BaseInstruction } from './baseInstruction'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'RSBS' instruction which does a reverse substraction.
