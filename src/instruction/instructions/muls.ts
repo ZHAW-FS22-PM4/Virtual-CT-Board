@@ -1,21 +1,16 @@
-import { Halfword, Word } from 'types/binary'
+import { Halfword } from 'types/binary'
 import {
   checkOptionCount,
   create,
-  createImmediateBits,
   createLowRegisterBits,
-  createRegisterBits,
   getBits,
-  isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
-
 import { ILabelOffsets } from '../interfaces'
 import { BaseInstruction } from './baseInstruction'
-import { evaluateZeroAndNegativeFlags } from 'board/alu'
+import { mul, AluResult } from 'board/alu'
 
 /**
  * Represents a 'MULS' instruction.
@@ -44,15 +39,12 @@ export class MulsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    // TODO: change to central ALU
     let rdmRegister = getBits(opcode, this.rdmPattern).value
-    let valueToWrite = Word.fromSignedInteger(
-      registers.readRegister(rdmRegister).toSignedInteger() *
-        registers
-          .readRegister(getBits(opcode, this.rnPattern).value)
-          .toSignedInteger()
+    let aluResult: AluResult = mul(
+      registers.readRegister(rdmRegister),
+      registers.readRegister(getBits(opcode, this.rnPattern).value)
     )
-    registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
-    registers.writeRegister(rdmRegister, valueToWrite)
+    registers.writeRegister(rdmRegister, aluResult.result)
+    registers.setFlags(aluResult.flags)
   }
 }
