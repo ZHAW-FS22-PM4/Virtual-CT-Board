@@ -7,7 +7,7 @@ import './style.css'
 import { Word } from 'types/binary'
 
 interface IMemoryExplorerState {
-  memory: Map<number, Word>
+  memory: Map<number, Word | undefined>
   format: FormatType
   startAddress: number
   endAddress: number
@@ -31,10 +31,14 @@ export class MemoryExplorerComponent extends React.Component<
   }
 
   state: IMemoryExplorerState = {
-    memory: new Map<number, Word>(),
+    memory: new Map<number, Word | undefined>(),
     format: FormatType.HEX,
     startAddress: START_ADDRESS,
     endAddress: START_ADDRESS + ADDRESS_OFFSET
+  }
+
+  public componentDidMount() {
+    this.update()
   }
 
   private update() {
@@ -42,24 +46,36 @@ export class MemoryExplorerComponent extends React.Component<
   }
 
   private getState() {
-    const newMemory: Map<number, Word> = new Map<number, Word>()
+    const memory = new Map<number, Word | undefined>()
     for (
       let i = this.state.startAddress;
       i <= this.state.endAddress;
       i = i + 4
     ) {
-      newMemory.set(i, Board.memory.readWord(Word.fromUnsignedInteger(i)))
+      let content: Word | undefined = undefined
+      try {
+        content = Board.memory.readWord(Word.fromUnsignedInteger(i))
+      } catch {
+        // this can happen when the memory is undefined (e.g. because there is no device attached)
+      }
+      memory.set(i, content)
     }
-    return { memory: newMemory }
+    return { memory }
   }
 
   scrollUp = (): void => {
+    if (this.state.startAddress - 16 < Word.MIN_VALUE) {
+      return
+    }
     this.state.startAddress -= 16
     this.state.endAddress -= 16
     this.update()
   }
 
   scrollDown = (): void => {
+    if (this.state.endAddress + 16 > Word.MAX_VALUE) {
+      return
+    }
     this.state.startAddress += 16
     this.state.endAddress += 16
     this.update()
@@ -81,7 +97,13 @@ export class MemoryExplorerComponent extends React.Component<
     const formElements = form.elements as typeof form.elements & {
       searchTerm: { value: string }
     }
-    const address = parseInt(String(formElements.searchTerm.value), 16)
+    let address = parseInt(String(formElements.searchTerm.value), 16)
+    if (address < Word.MIN_VALUE || address > Word.MAX_VALUE) {
+      return
+    }
+    if (address + ADDRESS_OFFSET > Word.MAX_VALUE) {
+      address -= ADDRESS_OFFSET - (Word.MAX_VALUE - address)
+    }
     this.state.startAddress = address
     this.state.endAddress = address + ADDRESS_OFFSET
     this.update()
@@ -134,36 +156,34 @@ export class MemoryExplorerComponent extends React.Component<
             ))}
           </tbody>
         </table>
-        <button onClick={this.scrollUp}>Up</button>
-        <button onClick={this.scrollDown}>Down</button>
-        <div
-          className="btn-group"
-          role="group"
-          aria-label="Basic radio toggle button group">
-          <input
-            type="radio"
-            className="btn-check"
-            name="btnradio"
-            id="btnradio1"
-            autoComplete="off"
-            checked
-            onClick={this.hexView}
-          />
-          <label className="btn btn-outline-primary" htmlFor="btnradio1">
-            Hex View
-          </label>
-          <input
-            type="radio"
-            className="btn-check"
-            name="btnradio"
-            id="btnradio2"
-            autoComplete="off"
-            onClick={this.binView}
-          />
-          <label className="btn btn-outline-primary" htmlFor="btnradio2">
-            Binary View
-          </label>
-        </div>
+        <button
+          className="btn btn-outline-primary me-2"
+          onClick={this.scrollUp}>
+          Up
+        </button>
+        <button
+          className="btn btn-outline-primary me-2"
+          onClick={this.scrollDown}>
+          Down
+        </button>
+        <button
+          className={`btn me-2 ${
+            this.state.format === FormatType.HEX
+              ? 'btn-primary'
+              : 'btn-outline-primary'
+          }`}
+          onClick={this.hexView}>
+          Hex View
+        </button>
+        <button
+          className={`btn me-2 ${
+            this.state.format === FormatType.BIN
+              ? 'btn-primary'
+              : 'btn-outline-primary'
+          }`}
+          onClick={this.binView}>
+          Binary View
+        </button>
       </div>
     )
   }
@@ -173,16 +193,21 @@ export class MemoryExplorerComponent extends React.Component<
     let currentLine: string[] = []
     let currentAddress: string
     let lineCounter = 0
-    this.state.memory.forEach((memoryEntry: Word, address: number) => {
+    this.state.memory.forEach((word: Word | undefined, address: number) => {
       if (lineCounter == 0) {
         currentAddress = Word.fromUnsignedInteger(address)
           .toHexString()
           .toUpperCase()
       }
-      if (this.state.format == FormatType.HEX) {
-        currentLine.push(memoryEntry.toHexString().toUpperCase())
+      if (word === undefined) {
+        const length = this.state.format === FormatType.HEX ? 8 : 32
+        currentLine.push('?'.repeat(length))
       } else {
-        currentLine.push(memoryEntry.toBinaryString())
+        if (this.state.format == FormatType.HEX) {
+          currentLine.push(word.toHexString().toUpperCase())
+        } else {
+          currentLine.push(word.toBinaryString())
+        }
       }
       if (lineCounter == 3) {
         memoryList.push([currentAddress, ...currentLine])
