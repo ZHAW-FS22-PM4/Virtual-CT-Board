@@ -8,12 +8,10 @@ import {
   StoreInstructionRegisterOffsetHalfword
 } from 'instruction/instructions/store'
 import {ILabelOffsets} from 'instruction/interfaces'
-import {instance, mock, resetCalls, verify, when} from 'ts-mockito'
+import {mock} from 'ts-mockito'
 import {VirtualBoardError} from 'types/error'
 import {Register, Registers} from 'board/registers'
 import {Memory} from 'board/memory'
-import {$enum} from 'ts-enum-util'
-import {removeBracketsFromRegisterString} from "../../../src/instruction/opcode";
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -32,19 +30,13 @@ const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
 
 const lowRegisterOption: string = 'R1'
-const lowRegisterValue: Word = Word.fromUnsignedInteger(0x5555)
 const lowRegisterOption2: string = '[R2'
-const lowRegisterValue2: Word = Word.fromUnsignedInteger(0x2222)
 const lowRegisterOption3: string = 'R3]'
-const lowRegisterValue3: Word = Word.fromUnsignedInteger(0x2222)
 const validImmediateOptionLow: string = '#0x01]'
 const validImmediateOptionHigh: string = '#0x1F'
 const invalidImmediateOption: string = '5'
-const toolongImmediateOption: string = '#0x111'
-
 
 const highRegisterOption: string = 'SP'
-const highRegisterValue: Word = Word.fromUnsignedInteger(0x13131313)
 const invalidRegisterOption: string = 'R22'
 
 const instructionStoreInstructionImmediateOffset = new StoreInstructionImmediateOffset()
@@ -55,25 +47,16 @@ const instructionStoreInstructionImmediateOffsetByte = new StoreInstructionImmed
 const instructionStoreInstructionRegisterOffsetByte = new StoreInstructionRegisterOffsetByte()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
-const memoryMock: Memory = mock<Memory>()
-const registerMock: Registers = mock<Registers>()
-const registers: Registers = instance(registerMock)
-const registersWithValue: Registers = instance(registerMock)
-registersWithValue.writeRegister(Register.R7, Word.fromUnsignedInteger(51240930))
-registersWithValue.writeRegister(Register.R6, Word.fromUnsignedInteger(53687912))
+const registers: Registers = new Registers()
+const memory: Memory = new Memory()
 
-when(
-  registerMock.readRegister($enum(Register).getValueOrThrow(removeBracketsFromRegisterString(lowRegisterOption)))
-).thenReturn(lowRegisterValue)
-when(
-  registerMock.readRegister($enum(Register).getValueOrThrow(removeBracketsFromRegisterString(lowRegisterOption2)))
-).thenReturn(lowRegisterValue2)
-when(
-    registerMock.readRegister($enum(Register).getValueOrThrow(removeBracketsFromRegisterString(lowRegisterOption3)))
-).thenReturn(lowRegisterValue3)
-when(
-  registerMock.readRegister($enum(Register).getValueOrThrow(highRegisterOption))
-).thenReturn(highRegisterValue)
+const registerValueR7: Word = Word.fromUnsignedInteger(0x08000010)
+const registerValueR6: Word = Word.fromUnsignedInteger(0x12345678)
+const registerValueR5: Word = Word.fromUnsignedInteger(0x00000100)
+
+registers.writeRegister(Register.R7, registerValueR7)
+registers.writeRegister(Register.R6, registerValueR6)
+registers.writeRegister(Register.R5, registerValueR5)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
   test('STORE instruction - STR (immediate offset) - word encoder', () => {
@@ -449,60 +432,69 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-
-
-  // todo : test are copied from the mov tests. need to get changed accordingly.
   test('STR word immediate offset', () => {
     // STR R7, [R6, #0x01]
     instructionStoreInstructionImmediateOffset.executeInstruction(
       Halfword.fromUnsignedInteger(0b0110000001111110),
-      registersWithValue,
-      memoryMock
-    )
-    verify(
-      registerMock.readRegister(
-        $enum(Register).getValueOrThrow(lowRegisterOption)
-      )
-    ).calledBefore(
-      registerMock.writeRegister(
-        $enum(Register).getValueOrThrow(highRegisterOption),
-        lowRegisterValue
-      )
-    )
-    verify(
-      registerMock.writeRegister(
-        $enum(Register).getValueOrThrow(highRegisterOption),
-        lowRegisterValue
-      )
-    ).once()
-
-    resetCalls(registerMock)
-
-
-    // MOV R5, SP
-    instructionStoreInstructionImmediateOffset.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0100011001101101),
       registers,
-      memoryMock
+      memory
     )
-    verify(
-      registerMock.readRegister(
-        $enum(Register).getValueOrThrow(highRegisterOption)
-      )
-    ).calledBefore(
-      registerMock.writeRegister(
-        $enum(Register).getValueOrThrow(lowRegisterOption),
-        highRegisterValue
-      )
-    )
-    verify(
-      registerMock.writeRegister(
-        $enum(Register).getValueOrThrow(lowRegisterOption),
-        highRegisterValue
-      )
-    ).once()
-
-    resetCalls(registerMock)
+    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual('12345678')
+    memory.reset()
   })
 
+  test('STR word register offset', () => {
+    // STR R7, [R6, R5]
+    instructionStoreInstructionRegisterOffset.executeInstruction(
+        Halfword.fromUnsignedInteger(0b0101000101111110),
+        registers,
+        memory
+    )
+    expect(memory.readWord(registerValueR7.add(registerValueR5)).toHexString()).toEqual('12345678')
+    memory.reset()
+  })
+
+  test('STR halfword immediate offset', () => {
+    // STR R7, [R6, #0x01]
+    instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
+        Halfword.fromUnsignedInteger(0b1000000001111110),
+        registers,
+        memory
+    )
+    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual('00005678')
+    memory.reset()
+  })
+
+  test('STR halfword register offset', () => {
+    // STR R7, [R6, R5]
+    instructionStoreInstructionRegisterOffsetHalfword.executeInstruction(
+        Halfword.fromUnsignedInteger(0b0101000101111110),
+        registers,
+        memory
+    )
+    expect(memory.readWord(registerValueR7.add(registerValueR5)).toHexString()).toEqual('00005678')
+    memory.reset()
+  })
+
+  test('STR byte immediate offset', () => {
+    // STR R7, [R6, #0x01]
+    instructionStoreInstructionImmediateOffsetByte.executeInstruction(
+        Halfword.fromUnsignedInteger(0b0111000001111110),
+        registers,
+        memory
+    )
+    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual('00000078')
+    memory.reset()
+  })
+
+  test('STR byte register offset', () => {
+    // STR R7, [R6, R5]
+    instructionStoreInstructionRegisterOffsetByte.executeInstruction(
+        Halfword.fromUnsignedInteger(0b0101010101111110),
+        registers,
+        memory
+    )
+    expect(memory.readWord(registerValueR7.add(registerValueR5)).toHexString()).toEqual('00000078')
+    memory.reset()
+  })
 })

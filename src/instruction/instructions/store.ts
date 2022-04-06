@@ -156,13 +156,6 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
         ),
         registers.readRegister(getBits(opcode,this.rtPattern).value).toHalfwords()[0]
     )
-
-    memory.writeWord(
-      registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-          Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)
-      ),
-      registers.readRegister(getBits(opcode,this.rtPattern).value)
-    )
   }
 }
 
