@@ -97,16 +97,21 @@ export class MemoryExplorerComponent extends React.Component<
     const formElements = form.elements as typeof form.elements & {
       searchTerm: { value: string }
     }
-    let address = parseInt(String(formElements.searchTerm.value), 16)
-    if (address < Word.MIN_VALUE || address > Word.MAX_VALUE) {
-      return
-    }
-    if (address + ADDRESS_OFFSET > Word.MAX_VALUE) {
-      address -= ADDRESS_OFFSET - (Word.MAX_VALUE - address)
-    }
+    const address = MemoryExplorerComponent.getLineAddress(
+        formElements.searchTerm.value
+    )
     this.state.startAddress = address
     this.state.endAddress = address + ADDRESS_OFFSET
     this.update()
+  }
+
+  private static getLineAddress(test: string) {
+    let address = parseInt(String(test), 16)
+    const rest = address % 16
+    if (rest != 0) {
+      address = address - rest
+    }
+    return address
   }
 
   public render(): React.ReactNode {
@@ -124,6 +129,8 @@ export class MemoryExplorerComponent extends React.Component<
                 id="searchTerm"
                 className="form-control"
                 placeholder="Memory Address (HEX)"
+                pattern="0[xX][0-9A-Fa-f]{8}"
+                title="Valid address in hex format (e.g. 0x080000A0)"
               />
               <div className="input-group-append">
                 <button type="submit" className="btn btn-outline-primary">
@@ -135,7 +142,7 @@ export class MemoryExplorerComponent extends React.Component<
         </div>
         <table
           className="table table-striped table-hover"
-          style={{ width: 70 }}>
+          style={{ width: 70, margin: 'auto' }}>
           <thead>
             <tr className="memory-topbar">
               <th>Address</th>
@@ -144,7 +151,7 @@ export class MemoryExplorerComponent extends React.Component<
           </thead>
           <tbody>
             {memoryList.map((line) => (
-              <tr className="address">
+              <tr className="address"  key={'address_' + line[0]}>
                 <th scope="row" className="w-25">
                   0x{line[0]}
                 </th>

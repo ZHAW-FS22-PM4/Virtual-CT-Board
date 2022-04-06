@@ -3,11 +3,15 @@
   border-radius: 10px;
   border-style: none;
   margin-top: 3em;
-  padding-top: 0.75em;
-  padding-bottom: 0.75em;
-  padding-left: 1em;
+  padding: 0.75em 1em;
   font-size: 14px;
-  width: 40em;
+  width: max-content;
+  min-width: 50em;
+}
+
+.scroll-button-container {
+  width: min-content;
+  margin-left: 5em;
 }
 
 .search-container {
@@ -15,6 +19,7 @@
   align-content: end;
   float: right;
   padding-right: 1em;
+  margin-left: 5em;
 }
 
 .input-group-text {
@@ -31,6 +36,7 @@
 
 .memory-topbar {
   white-space: nowrap;
+  display: flex;
 }
 
 .address {
