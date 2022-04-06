@@ -19,6 +19,12 @@ import {
   StoreInstructionRegisterOffset, StoreInstructionRegisterOffsetByte,
   StoreInstructionRegisterOffsetHalfword
 } from "./instructions/store";
+import {
+  LoadInstructionImmediateOffset,
+  LoadInstructionImmediateOffsetByte, LoadInstructionImmediateOffsetHalfword, LoadInstructionPointerOffset,
+  LoadInstructionRegisterOffset,
+  LoadInstructionRegisterOffsetByte, LoadInstructionRegisterOffsetHalfword
+} from './instructions/load'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -60,5 +66,12 @@ export default new InstructionSet([
   new StoreInstructionImmediateOffsetHalfword(),
   new StoreInstructionRegisterOffsetHalfword(),
   new StoreInstructionImmediateOffsetByte(),
-  new StoreInstructionRegisterOffsetByte()
+  new StoreInstructionRegisterOffsetByte(),
+  new LoadInstructionImmediateOffset(),
+  new LoadInstructionRegisterOffset(),
+  new LoadInstructionImmediateOffsetHalfword(),
+  new LoadInstructionRegisterOffsetHalfword(),
+  new LoadInstructionImmediateOffsetByte(),
+  new LoadInstructionRegisterOffsetByte(),
+  new LoadInstructionPointerOffset()
 ])
