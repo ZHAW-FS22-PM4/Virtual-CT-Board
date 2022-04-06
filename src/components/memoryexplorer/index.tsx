@@ -97,9 +97,12 @@ export class MemoryExplorerComponent extends React.Component<
     const formElements = form.elements as typeof form.elements & {
       searchTerm: { value: string }
     }
-    const address = MemoryExplorerComponent.getLineAddress(
+    let address = MemoryExplorerComponent.getLineAddress(
       formElements.searchTerm.value
     )
+    if (address + ADDRESS_OFFSET > Word.MAX_VALUE) {
+      address -= ADDRESS_OFFSET - (Word.MAX_VALUE - address)
+    }
     this.state.startAddress = address
     this.state.endAddress = address + ADDRESS_OFFSET
     this.update()
