@@ -98,7 +98,7 @@ export class MemoryExplorerComponent extends React.Component<
       searchTerm: { value: string }
     }
     const address = MemoryExplorerComponent.getLineAddress(
-        formElements.searchTerm.value
+      formElements.searchTerm.value
     )
     this.state.startAddress = address
     this.state.endAddress = address + ADDRESS_OFFSET
@@ -151,7 +151,7 @@ export class MemoryExplorerComponent extends React.Component<
           </thead>
           <tbody>
             {memoryList.map((line) => (
-              <tr className="address"  key={'address_' + line[0]}>
+              <tr className="address" key={'address_' + line[0]}>
                 <th scope="row" className="w-25">
                   0x{line[0]}
                 </th>
