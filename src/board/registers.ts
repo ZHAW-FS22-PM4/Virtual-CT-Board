@@ -137,7 +137,7 @@ export class Registers {
   /**
    * Resets all registers to 0
    */
-  public clear(): void {
+  public reset(): void {
     this.data = this.initializeRegisters()
   }
 

@@ -38,9 +38,9 @@ export class MemoryBus implements IMemory {
     this.findDevice(address).writeWord(address, word)
   }
 
-  public clear(): void {
+  public reset(): void {
     for (const device of this.devices) {
-      device.clear()
+      device.reset()
     }
   }
 
