@@ -49,7 +49,6 @@ export class AddInstruction extends BaseInstruction {
     let aluResult: AluResult = add(rdnRegisterContent, rmRegisterContent)
 
     registers.writeRegister(rdnRegister, aluResult.result)
-    registers.setFlags(aluResult.flags)
   }
 }
 
@@ -67,11 +66,13 @@ export class AddsRegistersInstruction extends BaseInstruction {
     options: string[],
     labels: ILabelOffsets
   ): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, 2, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    let rnBits = createLowRegisterBits(options[options.length - 2])
+    let rmBits = createLowRegisterBits(options[options.length - 1])
+    opcode = setBits(opcode, this.rnPattern, rnBits)
+    opcode = setBits(opcode, this.rmPattern, rmBits)
     return opcode
   }
 
@@ -109,14 +110,16 @@ export class AddsImmediate3Instruction extends BaseInstruction {
     labels: ILabelOffsets
   ): Halfword {
     checkOptionCount(options, 3)
+    if (options[0] === options[1]) {
+      throw new Error(
+        'If operand 1 and result are the same register, AddsImmediate8Instruction must be used.'
+      )
+    }
+    let immBits = createImmediateBits(options[2], 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(
-      opcode,
-      this.immPattern,
-      createImmediateBits(options[2], 3)
-    )
+    opcode = setBits(opcode, this.immPattern, immBits)
     return opcode
   }
 
@@ -152,14 +155,18 @@ export class AddsImmediate8Instruction extends BaseInstruction {
     options: string[],
     labels: ILabelOffsets
   ): Halfword {
-    checkOptionCount(options, 2)
+    checkOptionCount(options, 2, 3)
+    // for ADDS imm8, result and operand must be stored in the same register
+    if (options.length === 3 && options[0] !== options[1]) {
+      throw new Error(
+        'First and second parameter must be the same register (Rdn = Rdn + <imm8>).'
+      )
+    }
+    let regBits = createLowRegisterBits(options[0])
+    let immBits = createImmediateBits(options[options.length - 1], 8)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(
-      opcode,
-      this.immPattern,
-      createImmediateBits(options[1], 8)
-    )
+    opcode = setBits(opcode, this.rdnPattern, regBits)
+    opcode = setBits(opcode, this.immPattern, immBits)
     return opcode
   }
 
