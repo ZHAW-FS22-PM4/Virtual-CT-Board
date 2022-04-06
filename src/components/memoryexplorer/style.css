@@ -10,6 +10,17 @@
   width: 40em;
 }
 
+.search-container {
+  width: 20em;
+  align-content: end;
+  float: right;
+  padding-right: 1em;
+}
+
+.input-group-text {
+  padding: 0.65rem 0.65rem;
+}
+
 .memory-table {
   gap: 10px;
   height: 10rem;

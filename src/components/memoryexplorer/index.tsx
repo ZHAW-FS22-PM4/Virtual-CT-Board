@@ -3,9 +3,10 @@ import React from 'react'
 import Board from 'board'
 
 import './style.css'
-import { Byte, Word } from '../../types/binary'
 
-interface MemoryState {
+import { Word } from 'types/binary'
+
+interface IMemoryExplorerState {
   memory: Map<number, Word>
   format: FormatType
   startAddress: number
@@ -17,17 +18,23 @@ enum FormatType {
   BIN
 }
 
-export class MemoryExplorerComponent extends React.Component<{}, any> {
+const START_ADDRESS = 0x08000000
+const ADDRESS_OFFSET = 96
+
+export class MemoryExplorerComponent extends React.Component<
+  {},
+  IMemoryExplorerState
+> {
   constructor(props: {}) {
     super(props)
     Board.processor.on('afterCycle', () => this.update())
   }
 
-  state: MemoryState = {
+  state: IMemoryExplorerState = {
     memory: new Map<number, Word>(),
     format: FormatType.HEX,
-    startAddress: 0x08000000,
-    endAddress: 0x08000080
+    startAddress: START_ADDRESS,
+    endAddress: START_ADDRESS + ADDRESS_OFFSET
   }
 
   private update() {
@@ -68,11 +75,42 @@ export class MemoryExplorerComponent extends React.Component<{}, any> {
     this.update()
   }
 
+  searchAddress = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    const form = event.currentTarget
+    const formElements = form.elements as typeof form.elements & {
+      searchTerm: { value: string }
+    }
+    const address = parseInt(String(formElements.searchTerm.value), 16)
+    this.state.startAddress = address
+    this.state.endAddress = address + ADDRESS_OFFSET
+    this.update()
+  }
+
   public render(): React.ReactNode {
     const memoryList = this.formatMemoryNew()
     return (
       <div className="memory-container">
-        <h4 className="title">Memory</h4>
+        <div className="memory-topbar">
+          <h4 className="title" style={{ float: 'left' }}>
+            Memory
+          </h4>
+          <div className="search-container">
+            <form className="input-group mb-3" onSubmit={this.searchAddress}>
+              <input
+                type="text"
+                id="searchTerm"
+                className="form-control"
+                placeholder="Memory Address (HEX)"
+              />
+              <div className="input-group-append">
+                <button type="submit" className="btn btn-outline-primary">
+                  <i className="fa fa-search" />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
         <table
           className="table table-striped table-hover"
           style={{ width: 70 }}>
@@ -86,7 +124,7 @@ export class MemoryExplorerComponent extends React.Component<{}, any> {
             {memoryList.map((line) => (
               <tr className="address">
                 <th scope="row" className="w-25">
-                  {line[0]}
+                  0x{line[0]}
                 </th>
                 <td className="w-25">{line[1]}</td>
                 <td className="w-25">{line[2]}</td>
@@ -135,8 +173,7 @@ export class MemoryExplorerComponent extends React.Component<{}, any> {
     let currentLine: string[] = []
     let currentAddress: string
     let lineCounter = 0
-    this.getState().memory.forEach((memoryEntry: Word, address: number) => {
-      console.log(memoryEntry.toHexString())
+    this.state.memory.forEach((memoryEntry: Word, address: number) => {
       if (lineCounter == 0) {
         currentAddress = Word.fromUnsignedInteger(address)
           .toHexString()
