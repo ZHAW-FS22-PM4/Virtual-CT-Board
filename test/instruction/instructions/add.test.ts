@@ -17,7 +17,7 @@ const addsImmediate3Instruction = new AddsImmediate3Instruction()
 const addsImmediate8Instruction = new AddsImmediate8Instruction()
 
 beforeEach(function () {
-  registers.clear()
+  registers.reset()
   registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0x00a4))
   registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x12345678))
   registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0xfedcba98))

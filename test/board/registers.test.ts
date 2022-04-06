@@ -43,7 +43,7 @@ describe('test writeRegister() function', () => {
 
 describe('test clear() function', () => {
   test('test that all flags are cleared', () => {
-    registers.clear()
+    registers.reset()
     expect(registers.readRegister(Register.R2).toUnsignedInteger()).toBe(0)
     expect(registers.readRegister(10).toUnsignedInteger()).toBe(0)
     expect(registers.readRegister(Register.LR).toUnsignedInteger()).toBe(0)

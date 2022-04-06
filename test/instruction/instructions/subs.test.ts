@@ -10,8 +10,8 @@ const registers = new Registers()
 const memory = new Memory()
 
 beforeEach(function () {
-  registers.clear()
-  memory.clear()
+  registers.reset()
+  memory.reset()
   registers.writeRegister(Register.R1, Word.fromUnsignedInteger(2))
   registers.writeRegister(Register.R2, Word.fromUnsignedInteger(4))
   registers.writeRegister(Register.R3, Word.fromUnsignedInteger(16))

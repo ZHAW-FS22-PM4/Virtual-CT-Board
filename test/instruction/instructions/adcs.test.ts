@@ -11,7 +11,7 @@ const adcsInstruction = new AdcsInstruction()
 const addsInstruction = new AddsRegistersInstruction()
 
 beforeEach(function () {
-  registers.clear()
+  registers.reset()
   registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0xffffffff))
   registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x01))
   registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0x01))

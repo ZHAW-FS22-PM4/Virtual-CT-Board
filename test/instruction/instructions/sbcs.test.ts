@@ -8,8 +8,8 @@ const registers = new Registers()
 const memory = new Memory()
 
 beforeEach(function () {
-  registers.clear()
-  memory.clear()
+  registers.reset()
+  memory.reset()
 })
 
 describe('SBCS instruction', function () {
