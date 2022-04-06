@@ -1,5 +1,10 @@
-import { Byte, Halfword } from '.'
+import { checkRange, limitValuesToBitCount } from './utils'
+
 import { convertToUnsignedNumber } from './utils'
+
+export interface IByte {
+  readonly value: number
+}
 
 export abstract class BinaryType {
   public static MIN_UNSIGNED_VALUE: number = 0
@@ -7,7 +12,7 @@ export abstract class BinaryType {
    * The unsigned integer representation of the type as a number (IEEE double precision floating point).
    * Has to be always positive use toSignedInteger method to get interpretation of negative values
    */
-  abstract value: number
+  abstract readonly value: number
   abstract readonly numberOfBitsForType: number
   abstract readonly maxValueForType: number
 
@@ -24,7 +29,7 @@ export abstract class BinaryType {
    */
   public static fromBytesToNumber(
     numberOfBitsForType: number,
-    ...bytes: Byte[]
+    ...bytes: IByte[]
   ): number {
     const maxByteCount = BinaryType.getHexCharCount(numberOfBitsForType)
     if (bytes.length > maxByteCount) {
@@ -202,5 +207,97 @@ export abstract class BinaryType {
     if (bitOffset >= this.numberOfBitsForType || bitOffset < 0) {
       throw new Error('bit offset (tried to access) is not within type range')
     }
+  }
+}
+
+/**
+ * Represents a byte in range (0x00 - 0xFF).
+ */
+export class Byte extends BinaryType implements IByte {
+  public static MIN_VALUE: number = 0
+  public static MAX_VALUE: number = 0xff //decimal: 255
+  public static MIN_SIGNED_VALUE: number = -128
+  public static MAX_SIGNED_VALUE: number = 127
+  public static readonly ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
+
+  readonly numberOfBitsForType: number = 8
+  readonly maxValueForType: number = 0xff
+
+  /**
+   * The unsigned integer representation of the byte as a number (IEEE double precision floating point).
+   */
+  public readonly value: number
+
+  private constructor(value: number) {
+    super()
+    checkRange('Byte', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
+    this.value = value
+  }
+
+  /**
+   * Creates a new byte from an unsigned integer.
+   *
+   * @param value the unsigned integer value
+   * @returns the byte representation
+   */
+  public static fromUnsignedInteger(value: number): Byte {
+    checkRange('8-bit unsigned integer', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
+    return new Byte(value)
+  }
+
+  /**
+   * Creates a new byte from a signed integer.
+   *
+   * @param value the signed integer value
+   * @returns the byte representation
+   */
+  public static fromSignedInteger(value: number): Byte {
+    checkRange(
+      '8-bit signed integer',
+      value,
+      Byte.MIN_SIGNED_VALUE,
+      Byte.MAX_SIGNED_VALUE
+    )
+    if (value < Byte.MIN_VALUE) {
+      return new Byte(Byte.MAX_VALUE + value + 1)
+    }
+    return new Byte(value)
+  }
+  /**
+   * Adds the specified number to the byte and returns the result as a new byte. In case the
+   * result exceeds the `Byte.MAX_VALUE` then it will overflow.
+   *
+   * @param value the number to be added to the byte
+   * @returns the new byte with the value added
+   */
+  public add(value: Byte | number): Byte {
+    return new Byte(
+      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
+    )
+  }
+  /**
+   * sets the bit with 0-indexed offset from right side to 1
+   * @param bitOffset
+   * @returns new Byte instance with changed value
+   */
+  public setBit(bitOffset: number): Byte {
+    return Byte.fromUnsignedInteger(this.setBitOnNumber(bitOffset))
+  }
+
+  /**
+   * sets the bit with 0-indexed offset from right side to 0
+   * @param bitOffset
+   * @returns new Byte instance with changed value
+   */
+  public clearBit(bitOffset: number): Byte {
+    return Byte.fromUnsignedInteger(this.clearBitOnNumber(bitOffset))
+  }
+  /**
+   * sets the bit to 1 when it was 0 or to 0 if it was 1 before
+   * @param bitOffset
+   * @returns new Byte instance with changed value
+   */
+  public toggleBit(bitOffset: number): Byte {
+    return Byte.fromUnsignedInteger(this.toggleBitOnNumber(bitOffset))
   }
 }
