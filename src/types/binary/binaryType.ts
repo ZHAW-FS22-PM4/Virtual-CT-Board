@@ -1,4 +1,4 @@
-import { Byte, Halfword, Word } from '.'
+import { Byte, Halfword } from '.'
 import { convertToUnsignedNumber } from './utils'
 
 export abstract class BinaryType {
@@ -50,7 +50,7 @@ export abstract class BinaryType {
    */
   public static toBytesGeneral(
     byteCount: number,
-    ...binaries: Word[] | Halfword[]
+    ...binaries: BinaryType[]
   ): Byte[] {
     const bytes: Byte[] = []
     for (const binary of binaries) {
@@ -151,13 +151,8 @@ export abstract class BinaryType {
    * @param value the number to be added
    * @returns the unsigned result of the addition
    */
-  public addToNumber(value: Byte | Halfword | Word | number): number {
-    //TODO tests for this method
-    if (
-      value instanceof Word ||
-      value instanceof Byte ||
-      value instanceof Halfword
-    ) {
+  public addToNumber(value: BinaryType | number): number {
+    if (!(typeof value == 'number')) {
       value = value.value
     }
     let result = value + this.value
