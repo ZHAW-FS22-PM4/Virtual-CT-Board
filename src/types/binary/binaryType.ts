@@ -1,4 +1,4 @@
-import { checkRange, limitValuesToBitCount } from './utils'
+import { checkRange } from './utils'
 
 import { convertToUnsignedNumber } from './utils'
 
@@ -167,6 +167,13 @@ export abstract class BinaryType {
     return convertToUnsignedNumber(result)
   }
 
+  protected limitValueToTypeRange(value: number) {
+    if (!Number.isSafeInteger(value)) {
+      throw new Error('value out of save integer range')
+    }
+    return convertToUnsignedNumber(this.maxValueForType & value)
+  }
+
   /**
    * sets the bit with 0-indexed offset from right side to 1
    * @param bitOffset
@@ -271,9 +278,7 @@ export class Byte extends BinaryType implements IByte {
    * @returns the new byte with the value added
    */
   public add(value: Byte | number): Byte {
-    return new Byte(
-      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
-    )
+    return new Byte(this.limitValueToTypeRange(this.addToNumber(value)))
   }
   /**
    * sets the bit with 0-indexed offset from right side to 1

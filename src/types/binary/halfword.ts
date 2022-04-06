@@ -1,4 +1,4 @@
-import { checkRange, limitValuesToBitCount } from './utils'
+import { checkRange } from './utils'
 import { BinaryType, Byte } from './binaryType'
 
 /**
@@ -90,9 +90,7 @@ export class Halfword extends BinaryType {
    * @returns the new halfword with the value added
    */
   public add(value: Halfword | number): Halfword {
-    return new Halfword(
-      limitValuesToBitCount(this.addToNumber(value), this.numberOfBitsForType)
-    )
+    return new Halfword(this.limitValueToTypeRange(this.addToNumber(value)))
   }
 
   /**
