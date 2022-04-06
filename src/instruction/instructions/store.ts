@@ -218,9 +218,9 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
  */
 export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
   public name: string = 'STRB'
-  public pattern: string = '01110XXXXXXXXXXX'
-  private rnPattern: string = '011100000XXX000'
-  private rtPattern: string = '0111000000000XXX'
+  public pattern: string =     '01110XXXXXXXXXXX'
+  private rnPattern: string =  '0111000000XXX000'
+  private rtPattern: string =  '0111000000000XXX'
   private immPattern: string = '01110XXXXX000000'
   private expectedOptionCount: number = 3
 

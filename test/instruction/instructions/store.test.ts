@@ -177,8 +177,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('StoreInstructionImmediateOffset', () => {
     // STR R1, [R2, #0x01]
     expect(
-        instructionStoreInstructionImmediateOffset
-        .encodeInstruction(
+        instructionStoreInstructionImmediateOffset.encodeInstruction(
           [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
           labelOffsetMock
         )
@@ -186,8 +185,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0110000001010001')
     // STR R1, [R2, #0x1F]
     expect(
-        instructionStoreInstructionImmediateOffset
-        .encodeInstruction(
+        instructionStoreInstructionImmediateOffset.encodeInstruction(
           [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
           labelOffsetMock
         )
@@ -196,32 +194,123 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // STR R1, [R2, R3]
     expect(() =>
         instructionStoreInstructionImmediateOffset.encodeInstruction(
-        [lowRegisterOption, invalidRegisterOption],
+        [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
-    // MOV R5, #0x5C
+    // STR R5, [R2
     expect(() =>
         instructionStoreInstructionImmediateOffset.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionLow],
+        [lowRegisterOption, lowRegisterOption2],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
-    // MOV R2, 5
+    // STR R1, [R2, 5]
     expect(() =>
         instructionStoreInstructionImmediateOffset.encodeInstruction(
-        [lowRegisterOption2, invalidImmediateOption],
+        [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // MOV R2
     expect(() =>
-        instructionStoreInstructionImmediateOffset.encodeInstruction([lowRegisterOption2], labelOffsetMock)
+        instructionStoreInstructionImmediateOffset.encodeInstruction(
+            [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
+            labelOffsetMock)
     ).toThrow(VirtualBoardError)
   })
 
+  test('StoreInstructionImmediateOffsetHalfword', () => {
+    // STR R1, [R2, #0x01]
+    expect(
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
+            labelOffsetMock
+        )
+            .toBinaryString()
+    ).toEqual('1000000001010001')
+    // STR R1, [R2, #0x1F]
+    expect(
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
+            labelOffsetMock
+        )
+            .toBinaryString()
+    ).toEqual('1000011111010001')
+    // STR R1, [R2, R3]
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // STR R5, [R2
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // STR R1, [R2, 5]
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // MOV R2
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(
+            [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
+            labelOffsetMock)
+    ).toThrow(VirtualBoardError)
+  })
 
-
+  test('StoreInstructionImmediateOffsetByte', () => {
+    // STR R1, [R2, #0x01]
+    expect(
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
+            labelOffsetMock
+        )
+            .toBinaryString()
+    ).toEqual('0111000001010001')
+    // STR R1, [R2, #0x1F]
+    expect(
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
+            labelOffsetMock
+        )
+            .toBinaryString()
+    ).toEqual('0111011111010001')
+    // STR R1, [R2, R3]
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // STR R5, [R2
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // STR R1, [R2, 5]
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
+            labelOffsetMock
+        )
+    ).toThrow(VirtualBoardError)
+    // MOV R2
+    expect(() =>
+        instructionStoreInstructionImmediateOffsetByte.encodeInstruction(
+            [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
+            labelOffsetMock)
+    ).toThrow(VirtualBoardError)
+  })
   // todo : test are copied from the mov tests. need to get changed accordingly.
 
 })
