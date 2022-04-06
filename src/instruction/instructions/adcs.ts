@@ -48,12 +48,21 @@ export class AdcsInstruction extends BaseInstruction {
 
     let rdnRegisterContent: Word = registers.readRegister(rdnRegister)
     let rmRegisterContent: Word = registers.readRegister(rmRegister)
-    let carry: number = registers.isFlagSet(Flag.C) ? 1 : 0
+    let carry: Word = Word.fromUnsignedInteger(
+      registers.isFlagSet(Flag.C) ? 1 : 0
+    )
 
-    let midResult = rmRegisterContent.add(carry)
-    let aluResult: AluResult = add(rdnRegisterContent, midResult)
+    let midResult: AluResult = add(rmRegisterContent, carry)
+    let finalResult: AluResult = add(midResult.result, rdnRegisterContent)
 
-    registers.writeRegister(rdnRegister, aluResult.result)
-    registers.setFlags(aluResult.flags)
+    registers.writeRegister(rdnRegister, finalResult.result)
+    registers.setFlags({
+      [Flag.N]: finalResult.flags.N,
+      [Flag.Z]: finalResult.flags.Z,
+      [Flag.C]: midResult.flags.C || finalResult.flags.C,
+      [Flag.V]:
+        (midResult.flags.V && !finalResult.flags.V) ||
+        (!midResult.flags.V && finalResult.flags.V)
+    })
   }
 }

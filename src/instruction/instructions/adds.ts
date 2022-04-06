@@ -81,7 +81,8 @@ export class AddsImmediate3Instruction extends BaseInstruction {
     return (
       super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionsCount) &&
-      isImmediate(options[2])
+      isImmediate(options[2]) &&
+      options[0] != options[1]
     )
   }
 

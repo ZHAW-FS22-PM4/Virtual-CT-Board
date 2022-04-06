@@ -73,7 +73,7 @@ export function sub(w1: Word, w2: Word): AluResult {
  */
 export function mul(w1: Word, w2: Word): AluResult {
   const mul = BigInt(w1.toUnsignedInteger()) * BigInt(w2.toUnsignedInteger())
-  const cut = mul & BigInt(4294967295)
+  const cut = mul & BigInt(Word.MAX_VALUE)
   const result: Word = Word.fromUnsignedInteger(Number(cut))
 
   return {
