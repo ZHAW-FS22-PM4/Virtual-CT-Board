@@ -44,7 +44,7 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(options[2],5))
+    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),5))
     return opcode
   }
   public executeInstruction(
@@ -97,7 +97,7 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
     memory: IMemory
   ): void {
     registers.writeRegister((getBits(opcode,this.rtPattern).value), memory.readWord(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-      Word.fromUnsignedInteger(getBits(opcode,this.rmPattern).value))))
+      registers.readRegister(getBits(opcode,this.rmPattern).value))))
 
   }
 }
@@ -110,8 +110,8 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
 export class LoadInstructionPointerOffset extends BaseInstruction {
   public name: string = 'LDR'
   public pattern: string = '0100100XXXXXXXXX'
-  private immPattern: string = '0100100000XXXXXX'
-  private rtPattern: string = '0100100XXX000000'
+  private immPattern: string = '01001000XXXXXXXX'
+  private rtPattern: string =  '01001XXX00000000'
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
@@ -132,7 +132,7 @@ export class LoadInstructionPointerOffset extends BaseInstruction {
     checkOptionCount(options,3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(options[1],8).add(Register.PC))
+    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),8))
     return opcode
   }
 
@@ -185,7 +185,7 @@ export class LoadInstructionRegisterOffsetByte extends BaseInstruction {
     memory: IMemory
   ): void {
     registers.writeRegister((getBits(opcode,this.rtPattern).value),Word.fromBytes(memory.readByte(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-      Word.fromUnsignedInteger(getBits(opcode,this.rmPattern).value)))) )
+      registers.readRegister(getBits(opcode,this.rmPattern).value)))) )
 
   }
 }
@@ -274,7 +274,7 @@ export class LoadInstructionRegisterOffsetHalfword extends BaseInstruction {
     memory: IMemory
   ): void {
     registers.writeRegister((getBits(opcode,this.rtPattern).value),Word.fromHalfwords(memory.readHalfword(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-      Word.fromUnsignedInteger(getBits(opcode,this.rmPattern).value)))) )
+      registers.readRegister(getBits(opcode,this.rmPattern).value)))) )
 
   }
 }
