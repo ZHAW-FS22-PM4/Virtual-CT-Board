@@ -110,6 +110,12 @@ $ npm run test
 $ npm run test -- assembler/encoder.test.ts
 ```
 
+- To see which functions or line are not covered by tests the following command can be run and missing lines are outlined in red:
+
+```
+$ npm run test -- --coverage
+```
+
 - or just watch for changes in tests. And then within use p option to filter for certain file. After that you can just start a run with <Enter>
 
 ```
