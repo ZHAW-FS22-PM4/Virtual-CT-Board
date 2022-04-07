@@ -4,7 +4,10 @@ import { mock } from 'ts-mockito'
 import { VirtualBoardError } from 'types/error'
 import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
-import {StoreInstructionImmediateOffset, StoreInstructionRegisterOffset} from 'instruction/instructions/str'
+import {
+  StoreInstructionImmediateOffset,
+  StoreInstructionRegisterOffset
+} from 'instruction/instructions/str'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 

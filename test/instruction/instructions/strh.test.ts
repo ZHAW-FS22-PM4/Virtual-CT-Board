@@ -4,7 +4,10 @@ import { mock } from 'ts-mockito'
 import { VirtualBoardError } from 'types/error'
 import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
-import {StoreInstructionImmediateOffsetHalfword, StoreInstructionRegisterOffsetHalfword} from 'instruction/instructions/strh'
+import {
+  StoreInstructionImmediateOffsetHalfword,
+  StoreInstructionRegisterOffsetHalfword
+} from 'instruction/instructions/strh'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -35,7 +38,6 @@ const instructionStoreInstructionImmediateOffsetHalfword =
   new StoreInstructionImmediateOffsetHalfword()
 const instructionStoreInstructionRegisterOffsetHalfword =
   new StoreInstructionRegisterOffsetHalfword()
-
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()

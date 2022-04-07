@@ -40,11 +40,7 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(
-      opcode,
-      this.rtPattern,
-      createLowRegisterBits(options[0])
-    )
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
       opcode,
       this.rnPattern,

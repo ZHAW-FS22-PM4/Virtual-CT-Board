@@ -43,12 +43,10 @@ const invalidImmediateOption: string = '5'
 const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
-
 const instructionLoadInstructionImmediateOffsetHalfword =
   new LoadInstructionImmediateOffsetHalfword()
 const instructionLoadInstructionRegisterOffsetHalfword =
   new LoadInstructionRegisterOffsetHalfword()
-
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -272,7 +270,6 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-
 })
 
 describe('test executeInstruction function', () => {
@@ -304,5 +301,4 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R7).value).toEqual(9)
     memory.reset()
   })
-
 })

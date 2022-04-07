@@ -33,7 +33,6 @@ const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
-
 const lowRegisterOption: string = 'R1'
 const lowRegisterOption2: string = '[R2'
 const lowRegisterOption3: string = 'R3]'
@@ -44,14 +43,11 @@ const invalidImmediateOption: string = '5'
 const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
-
-
-  new LoadInstructionRegisterOffsetHalfword()
+new LoadInstructionRegisterOffsetHalfword()
 const instructionLoadInstructionImmediateOffsetByte =
   new LoadInstructionImmediateOffsetByte()
 const instructionLoadInstructionRegisterOffsetByte =
   new LoadInstructionRegisterOffsetByte()
-
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
