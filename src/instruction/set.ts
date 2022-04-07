@@ -15,16 +15,18 @@ import {
   MovsFromLiteralInstruction
 } from './instructions/mov'
 import {
-  StoreInstructionImmediateOffset, StoreInstructionImmediateOffsetByte, StoreInstructionImmediateOffsetHalfword,
-  StoreInstructionRegisterOffset, StoreInstructionRegisterOffsetByte,
-  StoreInstructionRegisterOffsetHalfword
-} from "./instructions/store";
-import {
   LoadInstructionImmediateOffset,
   LoadInstructionImmediateOffsetByte, LoadInstructionImmediateOffsetHalfword, LoadInstructionPointerOffset,
   LoadInstructionRegisterOffset,
   LoadInstructionRegisterOffsetByte, LoadInstructionRegisterOffsetHalfword
 } from './instructions/load'
+import {StoreInstructionImmediateOffset, StoreInstructionRegisterOffset} from "./instructions/STR";
+import {
+  StoreInstructionImmediateOffsetByte,
+  StoreInstructionImmediateOffsetHalfword,
+  StoreInstructionRegisterOffsetByte,
+  StoreInstructionRegisterOffsetHalfword
+} from "./instructions/STRB";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]

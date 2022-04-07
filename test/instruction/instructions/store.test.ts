@@ -1,17 +1,18 @@
 import {Halfword, Word} from 'types/binary'
-import {
-  StoreInstructionImmediateOffset,
-  StoreInstructionImmediateOffsetByte,
-  StoreInstructionImmediateOffsetHalfword,
-  StoreInstructionRegisterOffset,
-  StoreInstructionRegisterOffsetByte,
-  StoreInstructionRegisterOffsetHalfword
-} from 'instruction/instructions/store'
 import {ILabelOffsets} from 'instruction/interfaces'
 import {mock} from 'ts-mockito'
 import {VirtualBoardError} from 'types/error'
 import {Register, Registers} from 'board/registers'
 import {Memory} from 'board/memory'
+import {
+    StoreInstructionImmediateOffset,
+    StoreInstructionRegisterOffset
+} from "../../../src/instruction/instructions/STR";
+import {
+  StoreInstructionImmediateOffsetByte,
+  StoreInstructionImmediateOffsetHalfword, StoreInstructionRegisterOffsetByte,
+  StoreInstructionRegisterOffsetHalfword
+} from "../../../src/instruction/instructions/STRB";
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
