@@ -9,15 +9,38 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 
-import {MovInstruction, MovsFromRegisterInstruction, MovsFromLiteralInstruction } from './instructions/mov'
-import {LoadInstructionImmediateOffset, LoadInstructionPointerOffset, LoadInstructionRegisterOffset} from './instructions/ldr'
-import {StoreInstructionImmediateOffset, StoreInstructionRegisterOffset} from "./instructions/str";
-import {StoreInstructionImmediateOffsetByte, StoreInstructionRegisterOffsetByte,} from "./instructions/strb";
-import {LoadInstructionImmediateOffsetHalfword, LoadInstructionRegisterOffsetHalfword} from "./instructions/ldrh";
-import {LoadInstructionImmediateOffsetByte, LoadInstructionRegisterOffsetByte} from "./instructions/ldrb";
-import {LoadInstructionSignedRegisterOffsetHalfword} from "./instructions/ldrsh";
-import {LoadInstructionSignRegisterOffsetByte} from "./instructions/ldrsb";
-import {StoreInstructionImmediateOffsetHalfword, StoreInstructionRegisterOffsetHalfword} from "./instructions/strh";
+import {
+  MovInstruction,
+  MovsFromRegisterInstruction,
+  MovsFromLiteralInstruction
+} from './instructions/mov'
+import {
+  LoadInstructionImmediateOffset,
+  LoadInstructionPointerOffset,
+  LoadInstructionRegisterOffset
+} from './instructions/ldr'
+import {
+  StoreInstructionImmediateOffset,
+  StoreInstructionRegisterOffset
+} from './instructions/str'
+import {
+  StoreInstructionImmediateOffsetByte,
+  StoreInstructionRegisterOffsetByte
+} from './instructions/strb'
+import {
+  LoadInstructionImmediateOffsetHalfword,
+  LoadInstructionRegisterOffsetHalfword
+} from './instructions/ldrh'
+import {
+  LoadInstructionImmediateOffsetByte,
+  LoadInstructionRegisterOffsetByte
+} from './instructions/ldrb'
+import { LoadInstructionSignedRegisterOffsetHalfword } from './instructions/ldrsh'
+import { LoadInstructionSignRegisterOffsetByte } from './instructions/ldrsb'
+import {
+  StoreInstructionImmediateOffsetHalfword,
+  StoreInstructionRegisterOffsetHalfword
+} from './instructions/strh'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]

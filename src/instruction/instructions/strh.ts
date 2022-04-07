@@ -1,4 +1,4 @@
-import {BaseInstruction} from "./baseInstruction";
+import { BaseInstruction } from './baseInstruction'
 import {
   checkOptionCount,
   create,
@@ -10,11 +10,11 @@ import {
   registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
-} from "../opcode";
-import {ILabelOffsets} from "../interfaces";
-import {Halfword, Word} from "../../types/binary";
-import {Registers} from "../../board/registers";
-import {IMemory} from "../../board/memory/interfaces";
+} from '../opcode'
+import { ILabelOffsets } from '../interfaces'
+import { Halfword, Word } from '../../types/binary'
+import { Registers } from '../../board/registers'
+import { IMemory } from '../../board/memory/interfaces'
 
 /**
  * Represents a 'STORE' instruction - STRH (immediate offset) - halfword
@@ -28,33 +28,43 @@ export class StoreInstructionImmediateOffsetHalfword extends BaseInstruction {
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (super.canEncodeInstruction(commandName, options)) && (
-            isOptionCountValid(options, this.expectedOptionCount) &&
-            isImmediate(options[2]) &&
-            registerStringHasBrackets(options[1], options[2])
-        )
+    return (
+      super.canEncodeInstruction(commandName, options) &&
+      isOptionCountValid(options, this.expectedOptionCount) &&
+      isImmediate(options[2]) &&
+      registerStringHasBrackets(options[1], options[2])
+    )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]), 5))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+    opcode = setBits(
+      opcode,
+      this.rnPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[1]))
+    )
+    opcode = setBits(
+      opcode,
+      this.immPattern,
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+    )
     return opcode
   }
 
   public executeInstruction(
-      opcode: Halfword,
-      registers: Registers,
-      memory: IMemory
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
   ): void {
-
     memory.writeHalfword(
-        registers.readRegister(getBits(opcode, this.rnPattern).value).add(
-            Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value)
-        ),
-        registers.readRegister(getBits(opcode, this.rtPattern).value).toHalfwords()[0]
+      registers
+        .readRegister(getBits(opcode, this.rnPattern).value)
+        .add(Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value)),
+      registers
+        .readRegister(getBits(opcode, this.rtPattern).value)
+        .toHalfwords()[0]
     )
   }
 }
@@ -71,31 +81,43 @@ export class StoreInstructionRegisterOffsetHalfword extends BaseInstruction {
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (super.canEncodeInstruction(commandName, options)) && (
-          isOptionCountValid(options, this.expectedOptionCount) &&
-          !isImmediate(options[2]) &&
-          registerStringHasBrackets(options[1], options[2]))
+    return (
+      super.canEncodeInstruction(commandName, options) &&
+      isOptionCountValid(options, this.expectedOptionCount) &&
+      !isImmediate(options[2]) &&
+      registerStringHasBrackets(options[1], options[2])
+    )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+    opcode = setBits(
+      opcode,
+      this.rnPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[1]))
+    )
+    opcode = setBits(
+      opcode,
+      this.rmPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[2]))
+    )
     return opcode
   }
 
   public executeInstruction(
-      opcode: Halfword,
-      registers: Registers,
-      memory: IMemory
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
   ): void {
     memory.writeHalfword(
-        registers.readRegister(getBits(opcode, this.rnPattern).value).add(
-            registers.readRegister(getBits(opcode, this.rmPattern).value)
-        ),
-        registers.readRegister(getBits(opcode, this.rtPattern).value).toHalfwords()[0]
+      registers
+        .readRegister(getBits(opcode, this.rnPattern).value)
+        .add(registers.readRegister(getBits(opcode, this.rmPattern).value)),
+      registers
+        .readRegister(getBits(opcode, this.rtPattern).value)
+        .toHalfwords()[0]
     )
   }
 }

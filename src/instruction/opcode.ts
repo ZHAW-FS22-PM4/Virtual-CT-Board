@@ -293,8 +293,10 @@ function getEnumValueForRegisterString(option: string): Register {
  * @returns the registerString without the brackets
  */
 
-export function removeBracketsFromRegisterString(registerString: string): string {
-  return registerString.replace('[', "").replace(']', "")
+export function removeBracketsFromRegisterString(
+  registerString: string
+): string {
+  return registerString.replace('[', '').replace(']', '')
 }
 
 /**
@@ -303,6 +305,9 @@ export function removeBracketsFromRegisterString(registerString: string): string
  * @param registerString2 where to check for the right bracket
  * @returns true if the brackets are set correct
  */
-export function registerStringHasBrackets(registerString1: string, registerString2: string): boolean {
+export function registerStringHasBrackets(
+  registerString1: string,
+  registerString2: string
+): boolean {
   return registerString1.startsWith('[') && registerString2.endsWith(']')
 }

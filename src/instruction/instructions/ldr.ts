@@ -1,4 +1,4 @@
-import {Halfword, Word} from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 import {
   checkOptionCount,
   create,
@@ -11,11 +11,11 @@ import {
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import {Register, Registers} from 'board/registers'
-import {IMemory} from 'board/memory/interfaces'
+import { Register, Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
 
-import {ILabelOffsets} from '../interfaces'
-import {BaseInstruction} from './baseInstruction'
+import { ILabelOffsets } from '../interfaces'
+import { BaseInstruction } from './baseInstruction'
 
 /**
  * Represents a 'LOAD' instruction - LDR (immediate offset) - word
@@ -29,18 +29,32 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (super.canEncodeInstruction(commandName, options)) && (
+    return (
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2]))
+      registerStringHasBrackets(options[1], options[2])
+    )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options,3)
+    checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),5))
+    opcode = setBits(
+      opcode,
+      this.rtPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[0]))
+    )
+    opcode = setBits(
+      opcode,
+      this.rnPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[1]))
+    )
+    opcode = setBits(
+      opcode,
+      this.immPattern,
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+    )
     return opcode
   }
   public executeInstruction(
@@ -48,11 +62,16 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-      registers.writeRegister((getBits(opcode,this.rtPattern).value), memory.readWord(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-        Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value))))
+    registers.writeRegister(
+      getBits(opcode, this.rtPattern).value,
+      memory.readWord(
+        registers
+          .readRegister(getBits(opcode, this.rnPattern).value)
+          .add(Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value))
+      )
+    )
   }
 }
-
 
 /**
  * Represents a 'LOAD' instruction - LDR (register offset) - word
@@ -66,19 +85,28 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (super.canEncodeInstruction(commandName, options)) && (
+    return (
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2]))
+      registerStringHasBrackets(options[1], options[2])
+    )
   }
 
-
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options,3)
+    checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+    opcode = setBits(
+      opcode,
+      this.rnPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[1]))
+    )
+    opcode = setBits(
+      opcode,
+      this.rmPattern,
+      createLowRegisterBits(removeBracketsFromRegisterString(options[2]))
+    )
     return opcode
   }
 
@@ -87,13 +115,16 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    registers.writeRegister((getBits(opcode,this.rtPattern).value), memory.readWord(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
-      registers.readRegister(getBits(opcode,this.rmPattern).value))))
-
+    registers.writeRegister(
+      getBits(opcode, this.rtPattern).value,
+      memory.readWord(
+        registers
+          .readRegister(getBits(opcode, this.rnPattern).value)
+          .add(registers.readRegister(getBits(opcode, this.rmPattern).value))
+      )
+    )
   }
 }
-
-
 
 /**
  * Represents a 'LOAD' instruction - LDR (pointer + offset) - word
@@ -102,23 +133,28 @@ export class LoadInstructionPointerOffset extends BaseInstruction {
   public name: string = 'LDR'
   public pattern: string = '0100100XXXXXXXXX'
   private immPattern: string = '01001000XXXXXXXX'
-  private rtPattern: string =  '01001XXX00000000'
+  private rtPattern: string = '01001XXX00000000'
   private expectedOptionCount: number = 3
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (super.canEncodeInstruction(commandName, options)) && (
+    return (
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2]) &&
-      'PC' === removeBracketsFromRegisterString(options[1]))
+      'PC' === removeBracketsFromRegisterString(options[1])
+    )
   }
 
-
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options,3)
+    checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
-    opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]),8))
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+    opcode = setBits(
+      opcode,
+      this.immPattern,
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 8)
+    )
     return opcode
   }
 
@@ -127,8 +163,13 @@ export class LoadInstructionPointerOffset extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    registers.writeRegister((getBits(opcode,this.rtPattern).value), memory.readWord(registers.readRegister(getBits(opcode,this.immPattern).value).add(Register.PC)))
+    registers.writeRegister(
+      getBits(opcode, this.rtPattern).value,
+      memory.readWord(
+        registers
+          .readRegister(getBits(opcode, this.immPattern).value)
+          .add(Register.PC)
+      )
+    )
   }
 }
-
-
