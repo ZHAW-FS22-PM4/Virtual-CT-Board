@@ -14,6 +14,33 @@ import {
   MovsFromRegisterInstruction,
   MovsFromLiteralInstruction
 } from './instructions/mov'
+import {
+  LoadInstructionImmediateOffset,
+  LoadInstructionPointerOffset,
+  LoadInstructionRegisterOffset
+} from './instructions/ldr'
+import {
+  StoreInstructionImmediateOffset,
+  StoreInstructionRegisterOffset
+} from './instructions/str'
+import {
+  StoreInstructionImmediateOffsetByte,
+  StoreInstructionRegisterOffsetByte
+} from './instructions/strb'
+import {
+  LoadInstructionImmediateOffsetHalfword,
+  LoadInstructionRegisterOffsetHalfword
+} from './instructions/ldrh'
+import {
+  LoadInstructionImmediateOffsetByte,
+  LoadInstructionRegisterOffsetByte
+} from './instructions/ldrb'
+import { LoadInstructionSignedRegisterOffsetHalfword } from './instructions/ldrsh'
+import { LoadInstructionSignRegisterOffsetByte } from './instructions/ldrsb'
+import {
+  StoreInstructionImmediateOffsetHalfword,
+  StoreInstructionRegisterOffsetHalfword
+} from './instructions/strh'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -49,5 +76,20 @@ export class InstructionSet implements IInstructionSet {
 export default new InstructionSet([
   new MovInstruction(),
   new MovsFromRegisterInstruction(),
-  new MovsFromLiteralInstruction()
+  new MovsFromLiteralInstruction(),
+  new StoreInstructionImmediateOffset(),
+  new StoreInstructionRegisterOffset(),
+  new StoreInstructionImmediateOffsetHalfword(),
+  new StoreInstructionRegisterOffsetHalfword(),
+  new StoreInstructionImmediateOffsetByte(),
+  new StoreInstructionRegisterOffsetByte(),
+  new LoadInstructionImmediateOffset(),
+  new LoadInstructionRegisterOffset(),
+  new LoadInstructionImmediateOffsetHalfword(),
+  new LoadInstructionRegisterOffsetHalfword(),
+  new LoadInstructionImmediateOffsetByte(),
+  new LoadInstructionRegisterOffsetByte(),
+  new LoadInstructionPointerOffset(),
+  new LoadInstructionSignedRegisterOffsetHalfword(),
+  new LoadInstructionSignRegisterOffsetByte()
 ])
