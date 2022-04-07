@@ -320,3 +320,89 @@ export class LoadInstructionImmediateOffsetHalfword extends BaseInstruction {
       Word.fromUnsignedInteger(getBits(opcode,this.immPattern).value)))))
   }
 }
+/**
+ * Represents a 'LOAD' instruction - LDRSH (register offset) - halfword
+ */
+export class LoadInstructionSignedRegisterOffsetHalfword extends BaseInstruction {
+  public name: string = 'LDRSH'
+  public pattern: string =    '0101111XXXXXXXXX'
+  private rnPattern: string = '0101111000XXX000'
+  private rmPattern: string = '0101111XXX000000'
+  private rtPattern: string = '0101111000000XXX'
+  private expectedOptionCount: number = 3
+
+  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+        isOptionCountValid(options, this.expectedOptionCount) &&
+        !isImmediate(options[2]) &&
+        registerStringHasBrackets(options[1],options[2])
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+    checkOptionCount(options,3)
+    let opcode: Halfword = create(this.pattern)
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
+    return opcode
+  }
+
+  public executeInstruction(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void {
+    registers.writeRegister((getBits(opcode,this.rtPattern).value),Word.fromHalfwords(memory.readHalfword(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+      registers.readRegister(getBits(opcode,this.rmPattern).value)))) )
+
+  }
+}
+/**
+ * Represents a 'LOAD' instruction - LDRSB (register offset) - byte
+ */
+export class LoadInstructionSignRegisterOffsetByte extends BaseInstruction {
+  public name: string = 'LDRSB'
+  public pattern: string =    '0101011XXXXXXXXX'
+  private rnPattern: string = '0101011000XXX000'
+  private rmPattern: string = '0101011XXX000000'
+  private rtPattern: string = '0101011000000XXX'
+  private expectedOptionCount: number = 3
+
+  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+    if (super.canEncodeInstruction(commandName, options)) {
+      if (
+        isOptionCountValid(options, this.expectedOptionCount) &&
+        !isImmediate(options[2]) &&
+        registerStringHasBrackets(options[1],options[2])
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+    checkOptionCount(options,3)
+    let opcode: Halfword = create(this.pattern)
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
+    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
+    return opcode
+  }
+
+  public executeInstruction(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void {
+    registers.writeRegister((getBits(opcode,this.rtPattern).value),Word.fromBytes(memory.readByte(registers.readRegister(getBits(opcode,this.rnPattern).value).add(
+      registers.readRegister(getBits(opcode,this.rmPattern).value)))) )
+
+  }
+}
