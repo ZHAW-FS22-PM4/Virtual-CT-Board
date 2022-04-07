@@ -43,7 +43,7 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.rtPattern,
-      createLowRegisterBits(removeBracketsFromRegisterString(options[0]))
+      createLowRegisterBits(options[0])
     )
     opcode = setBits(
       opcode,
