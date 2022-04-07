@@ -7,12 +7,12 @@ import {Memory} from 'board/memory'
 import {
     StoreInstructionImmediateOffset,
     StoreInstructionRegisterOffset
-} from "../../../src/instruction/instructions/STR";
+} from "../../../src/instruction/instructions/str";
 import {
   StoreInstructionImmediateOffsetByte,
   StoreInstructionImmediateOffsetHalfword, StoreInstructionRegisterOffsetByte,
   StoreInstructionRegisterOffsetHalfword
-} from "../../../src/instruction/instructions/STRB";
+} from "../../../src/instruction/instructions/strb";
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 

@@ -9,24 +9,15 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 
-import {
-  MovInstruction,
-  MovsFromRegisterInstruction,
-  MovsFromLiteralInstruction
-} from './instructions/mov'
-import {
-  LoadInstructionImmediateOffset,
-  LoadInstructionImmediateOffsetByte, LoadInstructionImmediateOffsetHalfword, LoadInstructionPointerOffset,
-  LoadInstructionRegisterOffset,
-  LoadInstructionRegisterOffsetByte, LoadInstructionRegisterOffsetHalfword
-} from './instructions/load'
-import {StoreInstructionImmediateOffset, StoreInstructionRegisterOffset} from "./instructions/STR";
-import {
-  StoreInstructionImmediateOffsetByte,
-  StoreInstructionImmediateOffsetHalfword,
-  StoreInstructionRegisterOffsetByte,
-  StoreInstructionRegisterOffsetHalfword
-} from "./instructions/STRB";
+import {MovInstruction, MovsFromRegisterInstruction, MovsFromLiteralInstruction } from './instructions/mov'
+import {LoadInstructionImmediateOffset, LoadInstructionPointerOffset, LoadInstructionRegisterOffset} from './instructions/ldr'
+import {StoreInstructionImmediateOffset, StoreInstructionRegisterOffset} from "./instructions/str";
+import {StoreInstructionImmediateOffsetByte, StoreInstructionRegisterOffsetByte,} from "./instructions/strb";
+import {LoadInstructionImmediateOffsetHalfword, LoadInstructionRegisterOffsetHalfword} from "./instructions/ldrh";
+import {LoadInstructionImmediateOffsetByte, LoadInstructionRegisterOffsetByte} from "./instructions/ldrb";
+import {LoadInstructionSignedRegisterOffsetHalfword} from "./instructions/ldrsh";
+import {LoadInstructionSignRegisterOffsetByte} from "./instructions/ldrsb";
+import {StoreInstructionImmediateOffsetHalfword, StoreInstructionRegisterOffsetHalfword} from "./instructions/strh";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -75,5 +66,7 @@ export default new InstructionSet([
   new LoadInstructionRegisterOffsetHalfword(),
   new LoadInstructionImmediateOffsetByte(),
   new LoadInstructionRegisterOffsetByte(),
-  new LoadInstructionPointerOffset()
+  new LoadInstructionPointerOffset(),
+  new LoadInstructionSignedRegisterOffsetHalfword(),
+  new LoadInstructionSignRegisterOffsetByte()
 ])

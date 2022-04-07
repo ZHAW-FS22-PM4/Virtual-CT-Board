@@ -28,16 +28,10 @@ export class StoreInstructionImmediateOffset extends BaseInstruction {
     private expectedOptionCount: number = 3
 
     public canEncodeInstruction(commandName: string, options: string[]): boolean {
-        if (super.canEncodeInstruction(commandName, options)) {
-            if (
+        return (super.canEncodeInstruction(commandName, options)) && (
                 isOptionCountValid(options, this.expectedOptionCount) &&
                 isImmediate(options[2]) &&
-                registerStringHasBrackets(options[1], options[2])
-            ) {
-                return true
-            }
-        }
-        return false
+                registerStringHasBrackets(options[1], options[2]))
     }
 
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
@@ -75,17 +69,12 @@ export class StoreInstructionRegisterOffset extends BaseInstruction {
     private expectedOptionCount: number = 3
 
     public canEncodeInstruction(commandName: string, options: string[]): boolean {
-        if (super.canEncodeInstruction(commandName, options)) {
-            if (
-                isOptionCountValid(options, this.expectedOptionCount) &&
-                !isImmediate(options[2]) &&
-                registerStringHasBrackets(options[1], options[2])
-            ) {
-                return true
-            }
-        }
-        return false
+        return (super.canEncodeInstruction(commandName, options)) && (
+            isOptionCountValid(options, this.expectedOptionCount) &&
+            !isImmediate(options[2]) &&
+            registerStringHasBrackets(options[1], options[2]))
     }
+
 
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
         checkOptionCount(options, 3)
