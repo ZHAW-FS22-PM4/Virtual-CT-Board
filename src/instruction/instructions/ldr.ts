@@ -28,9 +28,9 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
   private immPattern: string = '01101XXXXX000000'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2])
@@ -84,9 +84,9 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
   private rtPattern: string = '0101100000000XXX'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2])
@@ -136,9 +136,9 @@ export class LoadInstructionPointerOffset extends BaseInstruction {
   private rtPattern: string = '01001XXX00000000'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2]) &&

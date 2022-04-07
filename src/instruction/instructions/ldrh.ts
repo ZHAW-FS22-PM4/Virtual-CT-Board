@@ -27,9 +27,9 @@ export class LoadInstructionRegisterOffsetHalfword extends BaseInstruction {
   private rtPattern: string = '0101101000000XXX'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2])
@@ -82,9 +82,9 @@ export class LoadInstructionImmediateOffsetHalfword extends BaseInstruction {
   private immPattern: string = '10001XXXXX000000'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2])

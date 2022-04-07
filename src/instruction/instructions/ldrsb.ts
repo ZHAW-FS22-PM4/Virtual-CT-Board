@@ -26,9 +26,9 @@ export class LoadInstructionSignRegisterOffsetByte extends BaseInstruction {
   private rtPattern: string = '0101011000000XXX'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2]) &&
       registerStringHasBrackets(options[1], options[2])
