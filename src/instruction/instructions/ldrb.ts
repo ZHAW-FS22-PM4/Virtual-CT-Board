@@ -38,7 +38,7 @@ export class LoadInstructionRegisterOffsetByte extends BaseInstruction {
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
         checkOptionCount(options, 3)
         let opcode: Halfword = create(this.pattern)
-        opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+        opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
         opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
         opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[2])))
         return opcode
@@ -77,7 +77,7 @@ export class LoadInstructionImmediateOffsetByte extends BaseInstruction {
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
         checkOptionCount(options, 3)
         let opcode: Halfword = create(this.pattern)
-        opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[0])))
+        opcode = setBits(opcode, this.rtPattern, createLowRegisterBits((options[0])))
         opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(removeBracketsFromRegisterString(options[1])))
         opcode = setBits(opcode, this.immPattern, createImmediateBits(removeBracketsFromRegisterString(options[2]), 5))
         return opcode
