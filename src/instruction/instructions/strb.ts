@@ -1,4 +1,8 @@
-import { BaseInstruction } from './baseInstruction'
+import { Halfword, Word } from 'types/binary'
+
+import { Registers } from 'board/registers'
+import { IMemory } from 'board/memory/interfaces'
+
 import {
   checkOptionCount,
   create,
@@ -10,16 +14,15 @@ import {
   registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
-} from '../opcode'
-import { ILabelOffsets } from '../interfaces'
-import { Halfword, Word } from '../../types/binary'
-import { Registers } from '../../board/registers'
-import { IMemory } from '../../board/memory/interfaces'
+} from 'instruction/opcode'
+import { ILabelOffsets } from 'instruction/interfaces'
+
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'STORE' instruction - STRB (immediate offset) - byte
  */
-export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
+export class StrbImmediate5OffsetInstruction extends BaseInstruction {
   public name: string = 'STRB'
   public pattern: string = '01110XXXXXXXXXXX'
   private rnPattern: string = '0111000000XXX000'
@@ -70,7 +73,7 @@ export class StoreInstructionImmediateOffsetByte extends BaseInstruction {
 /**
  * Represents a 'STORE' instruction - STRB (register offset) - byte
  */
-export class StoreInstructionRegisterOffsetByte extends BaseInstruction {
+export class StrbRegisterOffsetInstruction extends BaseInstruction {
   public name: string = 'STRB'
   public pattern: string = '0101010XXXXXXXXX'
   private rnPattern: string = '0101010000XXX000'
