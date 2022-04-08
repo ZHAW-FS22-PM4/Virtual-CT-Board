@@ -16,6 +16,21 @@ import {
   AddsImmediate8Instruction,
   AddsRegistersInstruction
 } from './instructions/adds'
+import {
+  LdrImmediate5OffsetInstruction,
+  LdrRegisterInstruction,
+  LdrRegisterOffsetInstruction
+} from './instructions/ldr'
+import {
+  LdrbImmediate5OffsetInstruction,
+  LdrbRegisterOffsetInstruction
+} from './instructions/ldrb'
+import {
+  LdrhImmediate5OffsetInstruction,
+  LdrhRegisterOffsetInstruction
+} from './instructions/ldrh'
+import { LdrsbRegisterOffsetInstruction } from './instructions/ldrsb'
+import { LdrshRegisterOffsetInstruction } from './instructions/ldrsh'
 import { MovInstruction } from './instructions/mov'
 import {
   MovsImmediate8Instruction,
@@ -24,6 +39,18 @@ import {
 import { MulsInstruction } from './instructions/muls'
 import { RsbsInstruction } from './instructions/rsbs'
 import { SbcsInstruction } from './instructions/sbcs'
+import {
+  StrImmediate5OffsetInstruction,
+  StrRegisterOffsetInstruction
+} from './instructions/str'
+import {
+  StrbImmediate5OffsetInstruction,
+  StrbRegisterOffsetInstruction
+} from './instructions/strb'
+import {
+  StrhImmediate5OffsetInstruction,
+  StrhRegisterOffsetInstruction
+} from './instructions/strh'
 import {
   SubsImmediate3Instruction,
   SubsImmediate8Instruction,
@@ -67,12 +94,27 @@ export default new InstructionSet([
   new AddsRegistersInstruction(),
   new AddsImmediate3Instruction(),
   new AddsImmediate8Instruction(),
+  new LdrImmediate5OffsetInstruction(),
+  new LdrRegisterOffsetInstruction(),
+  new LdrhImmediate5OffsetInstruction(),
+  new LdrhRegisterOffsetInstruction(),
+  new LdrbImmediate5OffsetInstruction(),
+  new LdrbRegisterOffsetInstruction(),
+  new LdrRegisterInstruction(),
+  new LdrshRegisterOffsetInstruction(),
+  new LdrsbRegisterOffsetInstruction(),
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
   new MulsInstruction(),
   new RsbsInstruction(),
   new SbcsInstruction(),
+  new StrImmediate5OffsetInstruction(),
+  new StrRegisterOffsetInstruction(),
+  new StrhImmediate5OffsetInstruction(),
+  new StrhRegisterOffsetInstruction(),
+  new StrbImmediate5OffsetInstruction(),
+  new StrbRegisterOffsetInstruction(),
   new SubsRegistersInstruction(),
   new SubsImmediate3Instruction(),
   new SubsImmediate8Instruction()
