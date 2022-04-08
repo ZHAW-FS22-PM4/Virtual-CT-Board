@@ -58,6 +58,12 @@ export function sub(w1: Word, w2: Word): AluResult {
   flags[Flag.V] =
     w1.hasSign() != w2.hasSign() && w1.hasSign() != result.hasSign()
 
+  // Special case: In case carry happens during complement computation,
+  // the carry flag needs to be set. This can only happen for zero.
+  if (comp.value === 0) {
+    flags[Flag.C] = true
+  }
+
   return {
     result: result,
     flags: flags

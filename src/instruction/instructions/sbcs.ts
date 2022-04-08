@@ -2,7 +2,7 @@ import { Halfword, Word } from 'types/binary'
 
 import { Flag, Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
-import { add } from 'board/alu'
+import { sub } from 'board/alu'
 
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
@@ -39,12 +39,21 @@ export class SbcsInstruction extends BaseInstruction {
   ): void {
     const rdn = getBits(opcode, this.rdnPattern)
     const rm = getBits(opcode, this.rmPattern)
-    const carry = registers.isFlagSet(Flag.C) ? 1 : 0
-    const notRm = Word.fromUnsignedInteger(
-      ~registers.readRegister(rm.value).value >>> 0
+    const borrow = Word.fromUnsignedInteger(registers.isFlagSet(Flag.C) ? 0 : 1)
+    const midResult = sub(
+      registers.readRegister(rdn.value),
+      registers.readRegister(rm.value)
     )
-    const result = add(registers.readRegister(rdn.value), notRm.add(carry))
-    registers.setFlags(result.flags)
-    registers.writeRegister(rdn.value, result.result)
+    const finalResult = sub(midResult.result, borrow)
+    console.log(midResult, finalResult)
+    registers.writeRegister(rdn.value, finalResult.result)
+    registers.setFlags({
+      [Flag.N]: finalResult.flags.N,
+      [Flag.Z]: finalResult.flags.Z,
+      [Flag.C]: midResult.flags.C && finalResult.flags.C,
+      [Flag.V]:
+        (midResult.flags.V && !finalResult.flags.V) ||
+        (!midResult.flags.V && finalResult.flags.V)
+    })
   }
 }
