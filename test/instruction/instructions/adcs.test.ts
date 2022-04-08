@@ -1,5 +1,5 @@
 import { Word } from 'types/binary'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import { AdcsInstruction } from 'instruction/instructions/adcs'
 import { AddsRegistersInstruction } from 'instruction/instructions/adds'
@@ -40,12 +40,17 @@ describe('test encodeInstruction function for ADCS', () => {
 })
 
 describe('test executeInstruction function for ADCS', () => {
-  it('should return correct result from registers for ADDS R1, R3; ADCS R2, R4', () => {
-    let addsOpcode = addsInstruction.encodeInstruction(['R1', 'R3'], {})
+  it('should return correct result for addition with carry set', () => {
+    registers.setFlag(Flag.C, true)
     let adcsOpcode = adcsInstruction.encodeInstruction(['R2', 'R4'], {})
-    addsInstruction.executeInstruction(addsOpcode, registers, memory)
     adcsInstruction.executeInstruction(adcsOpcode, registers, memory)
-    expect(registers.readRegister(Register.R1).value).toEqual(0x00)
     expect(registers.readRegister(Register.R2).value).toEqual(0x02)
+  })
+
+  it('should return correct result for addition without carry set', () => {
+    registers.setFlag(Flag.C, false)
+    let adcsOpcode = adcsInstruction.encodeInstruction(['R2', 'R4'], {})
+    adcsInstruction.executeInstruction(adcsOpcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x01)
   })
 })
