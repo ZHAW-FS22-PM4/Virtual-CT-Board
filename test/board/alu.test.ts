@@ -311,7 +311,7 @@ describe('test sub() function', () => {
     expect(r.flags[Flag.Z]).toBe(true)
     expect(r.flags[Flag.N]).toBe(false)
     expect(r.flags[Flag.V]).toBe(false)
-    expect(r.flags[Flag.C]).toBe(false)
+    expect(r.flags[Flag.C]).toBe(true)
 
     w1 = Word.fromUnsignedInteger(12)
     w2 = Word.fromUnsignedInteger(3)
