@@ -1,4 +1,4 @@
-import { Word } from 'types/binary'
+import { Byte, Word } from 'types/binary'
 import { Device } from 'board/devices/device'
 
 export class LEDs extends Device {
@@ -7,7 +7,27 @@ export class LEDs extends Device {
   public isReadOnly = false
   public isVolatile = false
 
+  private static readonly MAX_LED_NUMBER: number = 31
+
+  /**
+   * Returns true if switch with given position is switched on.
+   *
+   * @param position switch position to check (0-31)
+   * @returns true if switch is turned on
+   */
   public isOn(position: number): boolean {
-    throw new Error('Device not yet implemented.')
+    if (this.invalidPosition(position)) {
+      throw new Error(`Position ${position} does not exist.`)
+    }
+    return this.findLedByte(position).isBitSet(position % 8)
   }
+
+  private findLedByte(position: number): Byte {
+    return this.memory.readByte(this.startAddress.add(position))
+  }
+
+  private invalidPosition(position: number): boolean {
+    return position < 0 || position > LEDs.MAX_LED_NUMBER
+  }
+
 }
