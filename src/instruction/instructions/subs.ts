@@ -65,8 +65,8 @@ export class SubsRegistersInstruction extends BaseInstruction {
 }
 
 /**
- * Represents a 'SUBS' instruction which substracts a register
- * from a small immediate value and stores the result in another register.
+ * Represents a 'SUBS' instruction which substracts a small immediate value
+ * from a register and stores the result in another register.
  */
 export class SubsImmediate3Instruction extends BaseInstruction {
   public name: string = 'SUBS'
@@ -115,8 +115,8 @@ export class SubsImmediate3Instruction extends BaseInstruction {
 }
 
 /**
- * Represents a 'SUBS' instruction which substracts a register
- * from a large immediate value and stores the result in the first register.
+ * Represents a 'SUBS' instruction which substracts a large immediate value
+ * from a register and stores the result in the first register.
  */
 export class SubsImmediate8Instruction extends BaseInstruction {
   public name: string = 'SUBS'
