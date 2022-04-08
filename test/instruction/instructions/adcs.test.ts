@@ -1,21 +1,17 @@
 import { Word } from 'types/binary'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import { AdcsInstruction } from 'instruction/instructions/adcs'
-import { AddsRegistersInstruction } from 'instruction/instructions/adds'
 
 const registers = new Registers()
 const memory = new Memory()
 
 const adcsInstruction = new AdcsInstruction()
-const addsInstruction = new AddsRegistersInstruction()
 
 beforeEach(function () {
   registers.reset()
-  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0xffffffff))
-  registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x01))
-  registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0x01))
-  registers.writeRegister(Register.R4, Word.fromUnsignedInteger(0x00))
+  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0x01))
+  registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x00))
 })
 
 describe('test encodeInstruction function for ADCS', () => {
@@ -40,12 +36,17 @@ describe('test encodeInstruction function for ADCS', () => {
 })
 
 describe('test executeInstruction function for ADCS', () => {
-  it('should return correct result from registers for ADDS R1, R3; ADCS R2, R4', () => {
-    let addsOpcode = addsInstruction.encodeInstruction(['R1', 'R3'], {})
-    let adcsOpcode = adcsInstruction.encodeInstruction(['R2', 'R4'], {})
-    addsInstruction.executeInstruction(addsOpcode, registers, memory)
+  it('should return correct result for addition with carry set', () => {
+    registers.setFlag(Flag.C, true)
+    let adcsOpcode = adcsInstruction.encodeInstruction(['R1', 'R2'], {})
     adcsInstruction.executeInstruction(adcsOpcode, registers, memory)
-    expect(registers.readRegister(Register.R1).value).toEqual(0x00)
-    expect(registers.readRegister(Register.R2).value).toEqual(0x02)
+    expect(registers.readRegister(Register.R1).value).toEqual(0x02)
+  })
+
+  it('should return correct result for addition without carry set', () => {
+    registers.setFlag(Flag.C, false)
+    let adcsOpcode = adcsInstruction.encodeInstruction(['R1', 'R2'], {})
+    adcsInstruction.executeInstruction(adcsOpcode, registers, memory)
+    expect(registers.readRegister(Register.R1).value).toEqual(0x01)
   })
 })
