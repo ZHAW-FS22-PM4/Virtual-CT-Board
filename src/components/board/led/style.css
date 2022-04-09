@@ -1,4 +1,4 @@
-.dip-switch-container {
+.led-container {
   border: 1px solid lightgrey;
   height: 4rem;
   border-radius: 10px;
@@ -7,22 +7,18 @@
   align-items: center;
 }
 
-.switch {
+.led {
   width: 1rem;
   height: 1.5rem;
   border: grey solid 1px;
 }
 
-.switch-on {
-  background: linear-gradient(0deg, var(--background-color) 65%, darkgrey 35%);
+.led-on {
+  background: green;
 }
 
-.switch-off {
-  background: linear-gradient(
-    180deg,
-    var(--background-color) 65%,
-    darkgrey 35%
-  );
+.led-off {
+  background: darkgray;
 }
 
 .label {
