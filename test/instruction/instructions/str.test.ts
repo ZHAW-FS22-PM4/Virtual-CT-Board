@@ -5,8 +5,8 @@ import { VirtualBoardError } from 'types/error'
 import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import {
-  StoreInstructionImmediateOffset,
-  StoreInstructionRegisterOffset
+  StrImmediate5OffsetInstruction,
+  StrRegisterOffsetInstruction
 } from 'instruction/instructions/str'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
@@ -35,9 +35,9 @@ const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
 const instructionStoreInstructionImmediateOffset =
-  new StoreInstructionImmediateOffset()
+  new StrImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffset =
-  new StoreInstructionRegisterOffset()
+  new StrRegisterOffsetInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -167,7 +167,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('StoreInstructionImmediateOffset', () => {
+  test('StrImmediate5OffsetInstruction', () => {
     // STR R1, [R2, #0x01]
     expect(
       instructionStoreInstructionImmediateOffset
@@ -215,7 +215,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('StoreInstructionRegisterOffset', () => {
+  test('StrRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffset
