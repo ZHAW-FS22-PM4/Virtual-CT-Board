@@ -1,14 +1,14 @@
 import {
-  match,
+  checkOptionCount,
   create,
-  setBits,
-  getBits,
+  createImmediateBits,
   createLowRegisterBits,
   createRegisterBits,
-  createImmediateBits,
-  checkOptionCount,
+  getBits,
+  isImmediate,
   isOptionCountValid,
-  isImmediate
+  match,
+  setBits
 } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'

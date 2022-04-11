@@ -1,15 +1,15 @@
-import { Halfword, Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Register, Registers } from 'board/registers'
 import {
   MovInstruction,
   MovsFromLiteralInstruction,
   MovsFromRegisterInstruction
 } from 'instruction/instructions/mov'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { anything, instance, mock, resetCalls, verify, when } from 'ts-mockito'
-import { VirtualBoardError } from 'types/error'
-import { Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
 import { $enum } from 'ts-enum-util'
+import { anything, instance, mock, resetCalls, verify, when } from 'ts-mockito'
+import { Halfword, Word } from 'types/binary'
+import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 const invalidInstructionOptions = ['R77', '#2#']

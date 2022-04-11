@@ -1,4 +1,7 @@
-import { BaseInstruction } from './baseInstruction'
+import { IMemory } from '../../board/memory/interfaces'
+import { Registers } from '../../board/registers'
+import { Halfword, Word } from '../../types/binary'
+import { ILabelOffsets } from '../interfaces'
 import {
   checkOptionCount,
   create,
@@ -11,10 +14,7 @@ import {
   removeBracketsFromRegisterString,
   setBits
 } from '../opcode'
-import { ILabelOffsets } from '../interfaces'
-import { Halfword, Word } from '../../types/binary'
-import { Registers } from '../../board/registers'
-import { IMemory } from '../../board/memory/interfaces'
+import { BaseInstruction } from './baseInstruction'
 
 /**
  * Represents a 'LOAD' instruction - LDRH (register offset) - halfword

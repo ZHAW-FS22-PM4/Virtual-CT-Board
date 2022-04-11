@@ -1,4 +1,5 @@
-import { Halfword, Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Register, Registers } from 'board/registers'
 import {
   LoadInstructionImmediateOffset,
   LoadInstructionPointerOffset,
@@ -6,17 +7,16 @@ import {
 } from 'instruction/instructions/ldr'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
+import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
-import { Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
-import {
-  LoadInstructionImmediateOffsetHalfword,
-  LoadInstructionRegisterOffsetHalfword
-} from '../../../src/instruction/instructions/ldrh'
 import {
   LoadInstructionImmediateOffsetByte,
   LoadInstructionRegisterOffsetByte
 } from '../../../src/instruction/instructions/ldrb'
+import {
+  LoadInstructionImmediateOffsetHalfword,
+  LoadInstructionRegisterOffsetHalfword
+} from '../../../src/instruction/instructions/ldrh'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 

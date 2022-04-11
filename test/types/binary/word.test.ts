@@ -1,7 +1,4 @@
-import { Byte } from 'types/binary'
-import { Halfword } from 'types/binary'
-import { Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+import { Byte, Halfword, Word } from 'types/binary'
 
 const word_ffffffff = Word.fromUnsignedInteger(4294967295)
 const word_00000000 = Word.fromUnsignedInteger(0)

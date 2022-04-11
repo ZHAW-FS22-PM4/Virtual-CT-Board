@@ -1,4 +1,5 @@
-import { Halfword, Word } from 'types/binary'
+import { IMemory } from 'board/memory/interfaces'
+import { Register, Registers } from 'board/registers'
 import {
   checkOptionCount,
   create,
@@ -11,9 +12,7 @@ import {
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { Register, Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-
+import { Halfword, Word } from 'types/binary'
 import { ILabelOffsets } from '../interfaces'
 import { BaseInstruction } from './baseInstruction'
 

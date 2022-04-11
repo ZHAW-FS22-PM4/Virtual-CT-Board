@@ -1,6 +1,4 @@
-import { checkRange } from './utils'
-
-import { convertToUnsignedNumber } from './utils'
+import { checkRange, convertToUnsignedNumber } from './utils'
 
 export interface IByte {
   readonly value: number

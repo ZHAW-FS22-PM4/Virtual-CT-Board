@@ -1,24 +1,25 @@
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-
-import {
-  IInstruction,
-  IInstructionEncoder,
-  IInstructionExecutor,
-  IInstructionSet
-} from './interfaces'
-import { match } from './opcode'
-
-import {
-  MovInstruction,
-  MovsFromRegisterInstruction,
-  MovsFromLiteralInstruction
-} from './instructions/mov'
 import {
   LoadInstructionImmediateOffset,
   LoadInstructionPointerOffset,
   LoadInstructionRegisterOffset
 } from './instructions/ldr'
+import {
+  LoadInstructionImmediateOffsetByte,
+  LoadInstructionRegisterOffsetByte
+} from './instructions/ldrb'
+import {
+  LoadInstructionImmediateOffsetHalfword,
+  LoadInstructionRegisterOffsetHalfword
+} from './instructions/ldrh'
+import { LoadInstructionSignRegisterOffsetByte } from './instructions/ldrsb'
+import { LoadInstructionSignedRegisterOffsetHalfword } from './instructions/ldrsh'
+import {
+  MovInstruction,
+  MovsFromLiteralInstruction,
+  MovsFromRegisterInstruction
+} from './instructions/mov'
 import {
   StoreInstructionImmediateOffset,
   StoreInstructionRegisterOffset
@@ -28,19 +29,16 @@ import {
   StoreInstructionRegisterOffsetByte
 } from './instructions/strb'
 import {
-  LoadInstructionImmediateOffsetHalfword,
-  LoadInstructionRegisterOffsetHalfword
-} from './instructions/ldrh'
-import {
-  LoadInstructionImmediateOffsetByte,
-  LoadInstructionRegisterOffsetByte
-} from './instructions/ldrb'
-import { LoadInstructionSignedRegisterOffsetHalfword } from './instructions/ldrsh'
-import { LoadInstructionSignRegisterOffsetByte } from './instructions/ldrsb'
-import {
   StoreInstructionImmediateOffsetHalfword,
   StoreInstructionRegisterOffsetHalfword
 } from './instructions/strh'
+import {
+  IInstruction,
+  IInstructionEncoder,
+  IInstructionExecutor,
+  IInstructionSet
+} from './interfaces'
+import { match } from './opcode'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]

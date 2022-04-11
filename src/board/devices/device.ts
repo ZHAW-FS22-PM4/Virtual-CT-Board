@@ -1,7 +1,6 @@
-import { Word, Halfword, Byte } from 'types/binary'
-import { IMemory } from 'board/memory/interfaces'
 import { Memory } from 'board/memory'
-
+import { IMemory } from 'board/memory/interfaces'
+import { Byte, Halfword, Word } from 'types/binary'
 import { IDevice } from './interfaces'
 
 export abstract class Device implements IDevice {

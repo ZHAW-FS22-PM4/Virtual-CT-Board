@@ -1,5 +1,5 @@
-import { checkRange } from './utils'
 import { BinaryType, Byte } from './binaryType'
+import { checkRange } from './utils'
 
 /**
  * Represents a halfword in range (0x0000 - 0xFFFF).

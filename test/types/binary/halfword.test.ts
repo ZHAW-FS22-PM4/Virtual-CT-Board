@@ -1,5 +1,4 @@
-import { Halfword } from 'types/binary'
-import { Byte } from 'types/binary'
+import { Byte, Halfword } from 'types/binary'
 
 const halfword_ffff = Halfword.fromUnsignedInteger(65535)
 const halfword_0000 = Halfword.fromUnsignedInteger(0)

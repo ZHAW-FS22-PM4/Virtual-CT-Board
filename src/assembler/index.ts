@@ -1,9 +1,9 @@
-import { IELF, SegmentType } from './elf'
-import { parse } from './parser'
-import { encode } from './encoder'
-import { Word } from 'types/binary'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
+import { Word } from 'types/binary'
+import { IELF, SegmentType } from './elf'
+import { encode } from './encoder'
+import { parse } from './parser'
 
 // Constant addresses required by the assembler/linker to create an executable file for the CT board.
 const FLASH_START = Word.fromUnsignedInteger(0x08000000)

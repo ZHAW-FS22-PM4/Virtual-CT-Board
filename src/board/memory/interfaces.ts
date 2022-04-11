@@ -1,4 +1,4 @@
-import { Word, Halfword, Byte } from 'types/binary'
+import { Byte, Halfword, Word } from 'types/binary'
 
 export interface IMemory {
   /**

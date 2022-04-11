@@ -1,9 +1,9 @@
-import { Halfword, Word } from 'types/binary'
-import { EventEmitter } from 'types/events/emitter'
 import { IMemory } from 'board/memory/interfaces'
-import { Registers, Register } from 'board/registers'
+import { Register, Registers } from 'board/registers'
 import { IInstructionSet } from 'instruction/interfaces'
 import { END_OF_CODE } from 'instruction/special'
+import { Halfword, Word } from 'types/binary'
+import { EventEmitter } from 'types/events/emitter'
 
 const cycleSpeed: number = 1000
 
