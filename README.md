@@ -33,6 +33,22 @@ Required software to develop project:
 - Editor of your choice, prefereably [Visual Studio Code](https://code.visualstudio.com) with following plugins installed and active:
   - Code formatting with [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
+### Example config for VS Code
+
+Add the following file to your local repo under /.vscode/settings.json (with / being project root)
+
+```
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative"
+}
+```
+
+### Auto Imports of IDE
+
+To force VS Code to use always absolute paths the setting for TypeScript > Preferences > Import Module Specifier has to be set to non-relative.
+
 ### Prettier Setup
 
 - In the used IDE the plugin prettier has to be installed and active.
@@ -41,6 +57,8 @@ Required software to develop project:
   - Configure prettier as formatter of IDE
 - So each file should be formatted uniform automatically before commiting the changes
 - Pipeline will verify if file formatting is conform with provided configuration file
+- as config the following npm package is used to apply javascript standard style [prettier-config-standard](https://www.npmjs.com/package/prettier-config-standard)
+- to uniform imports the following npm package is used to extend prettier config [prettier-plugin-organize-imports](https://www.npmjs.com/package/prettier-plugin-organize-imports)
 
 In .prettierignore is defined which files and folders should not get formatted
 
