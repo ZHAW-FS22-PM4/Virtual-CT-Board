@@ -45,7 +45,6 @@ export class SbcsInstruction extends BaseInstruction {
       registers.readRegister(rm.value)
     )
     const finalResult = sub(midResult.result, borrow)
-    console.log(midResult, finalResult)
     registers.writeRegister(rdn.value, finalResult.result)
     registers.setFlags({
       [Flag.N]: finalResult.flags.N,
