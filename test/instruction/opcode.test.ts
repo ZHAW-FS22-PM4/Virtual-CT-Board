@@ -97,6 +97,10 @@ describe('test setBits function', function () {
       '1111111111111111'
     )
   })
+  it('opcode should remain unchanged if pattern has no placeholder (X) defined', function () {
+    expect(setBits(opcode, '1111111111111111', value)).toBe(opcode)
+    expect(setBits(opcode, '0000000000000000', value)).toBe(opcode)
+  })
 
   it('should throw when pattern not 16 characters', function () {
     expect(() => setBits(opcode, '1111111111XXXXXXX', value)).toThrow(
@@ -136,6 +140,10 @@ describe('test getBits function', function () {
     expect(getBits(opcode, '0X0X0X0X0X0X0X0X').toBinaryString()).toBe(
       '0000000000000000'
     )
+  })
+  it('should get constant 0 if pattern has no placeholder (X) defined', function () {
+    expect(getBits(opcode, '1111111111111111').value).toBe(0)
+    expect(getBits(opcode, '0000000000000000').value).toBe(0)
   })
 
   it('should throw when pattern not 16 characters', function () {

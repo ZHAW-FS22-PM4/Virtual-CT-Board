@@ -79,7 +79,10 @@ export class Halfword extends BinaryType {
    * @returns the list of split bytes (in little endian)
    */
   public static toBytes(...halfwords: Halfword[]): Byte[] {
-    return BinaryType.toBytesGeneral(Halfword.NUMBER_OF_BITS / 8, ...halfwords)
+    return BinaryType.toBytesGeneral(
+      BinaryType.getByteCount(Halfword.NUMBER_OF_BITS),
+      ...halfwords
+    )
   }
 
   /**

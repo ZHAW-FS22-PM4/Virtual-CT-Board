@@ -29,7 +29,7 @@ export abstract class BinaryType {
     numberOfBitsForType: number,
     ...bytes: IByte[]
   ): number {
-    const maxByteCount = BinaryType.getHexCharCount(numberOfBitsForType)
+    const maxByteCount = BinaryType.getByteCount(numberOfBitsForType)
     if (bytes.length > maxByteCount) {
       throw new Error('too many bytes for type provided')
     }
@@ -75,11 +75,23 @@ export abstract class BinaryType {
    * @param numberOfBitsForType bit count used for type (divideable by 4)
    * @returns the length string for a hexadecimal representation for a type
    */
-  protected static getHexCharCount(numberOfBitsForType: number): number {
+  public static getHexCharCount(numberOfBitsForType: number): number {
     if (numberOfBitsForType % 4 !== 0) {
       throw new Error('provided bit count is not dividable by 4')
     }
     return numberOfBitsForType / 4
+  }
+
+  /**
+   * How many bytes are required at most to represent the value with bytes
+   * @param numberOfBitsForType bit count used for type (divideable by 8)
+   * @returns the number of bytes which can be used at most for representation of type
+   */
+  public static getByteCount(numberOfBitsForType: number): number {
+    if (numberOfBitsForType % 8 !== 0) {
+      throw new Error('provided bit count is not dividable by 8')
+    }
+    return numberOfBitsForType / 8
   }
 
   /**

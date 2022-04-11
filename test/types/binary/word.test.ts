@@ -1,4 +1,5 @@
 import { Byte, Halfword, Word } from 'types/binary'
+import { BinaryType } from 'types/binary/binaryType'
 
 const word_ffffffff = Word.fromUnsignedInteger(4294967295)
 const word_00000000 = Word.fromUnsignedInteger(0)
@@ -59,31 +60,44 @@ test('hasSign', () => {
   expect(word_f0000001.hasSign()).toBeTruthy()
 })
 
-test('fromBytes', () => {
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255)
-    )
-  ).toEqual(word_ffffffff)
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0)
-    )
-  ).toEqual(word_00000000)
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(15)
-    )
-  ).toEqual(word_0fffffff)
+describe('fromBytes method', () => {
+  test('fromBytes - valid values', () => {
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toEqual(word_ffffffff)
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0)
+      )
+    ).toEqual(word_00000000)
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(15)
+      )
+    ).toEqual(word_0fffffff)
+  })
+  test('fromBytes - invalid values', () => {
+    expect(() =>
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toThrowError('too many bytes for type provided')
+  })
 })
 
 test('fromHalfwords', () => {
@@ -107,17 +121,24 @@ test('fromHalfwords', () => {
   ).toEqual(word_0fffffff)
 })
 
-test('add', () => {
-  expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
-  expect(word_0fffffff.add(0xf0007000)).toEqual(
-    Word.fromUnsignedInteger(0x00006fff)
-  )
-  expect(word_0fffffff.add(word_0fffffff)).toEqual(
-    Word.fromUnsignedInteger(0x1ffffffe)
-  )
-  expect(word_ffffffff.add(word_00010000)).toEqual(
-    Word.fromUnsignedInteger(0xffff)
-  )
+describe('add method', () => {
+  test('add - valid values', () => {
+    expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
+    expect(word_0fffffff.add(0xf0007000)).toEqual(
+      Word.fromUnsignedInteger(0x00006fff)
+    )
+    expect(word_0fffffff.add(word_0fffffff)).toEqual(
+      Word.fromUnsignedInteger(0x1ffffffe)
+    )
+    expect(word_ffffffff.add(word_00010000)).toEqual(
+      Word.fromUnsignedInteger(0xffff)
+    )
+  })
+  test('add - to big number added (no longer in safe integer range)', () => {
+    expect(() => word_ffffffff.add(Math.pow(2, 54))).toThrowError(
+      'addition result is not within safe integer range'
+    )
+  })
 })
 
 test('toUnsignedInteger', () => {
@@ -300,5 +321,24 @@ describe('test toggleBit function', () => {
     result = word_00000000.toggleBit(10)
     expect(result).toEqual(Word.fromUnsignedInteger(0x00000400))
     expect(result.toggleBit(10)).toEqual(word_00000000)
+  })
+})
+
+describe('binaryType functions with invalid values', () => {
+  test('getHexCharCount not dividable by 4', () => {
+    expect(() => BinaryType.getHexCharCount(3)).toThrowError(
+      'provided bit count is not dividable by 4'
+    )
+    expect(() => BinaryType.getHexCharCount(6)).toThrowError(
+      'provided bit count is not dividable by 4'
+    )
+  })
+  test('getByteCount not dividable by 8', () => {
+    expect(() => BinaryType.getByteCount(7)).toThrowError(
+      'provided bit count is not dividable by 8'
+    )
+    expect(() => BinaryType.getByteCount(9)).toThrowError(
+      'provided bit count is not dividable by 8'
+    )
   })
 })

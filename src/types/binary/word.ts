@@ -73,7 +73,10 @@ export class Word extends BinaryType {
    * @returns list of split bytes (in little endian)
    */
   public static toBytes(...words: Word[]): Byte[] {
-    return BinaryType.toBytesGeneral(Word.NUMBER_OF_BITS / 8, ...words)
+    return BinaryType.toBytesGeneral(
+      this.getByteCount(Word.NUMBER_OF_BITS),
+      ...words
+    )
   }
 
   /**

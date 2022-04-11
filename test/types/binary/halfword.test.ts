@@ -119,22 +119,36 @@ test('toBytes', () => {
   ])
 })
 
-test('fromBytes', () => {
-  expect(
-    Halfword.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255)
-    )
-  ).toEqual(halfword_ffff)
-  expect(
-    Halfword.fromBytes(Byte.fromUnsignedInteger(0), Byte.fromUnsignedInteger(0))
-  ).toEqual(halfword_0000)
-  expect(
-    Halfword.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(127)
-    )
-  ).toEqual(halfword_7fff)
+describe('fromBytes method', () => {
+  test('fromBytes - valid values', () => {
+    expect(
+      Halfword.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toEqual(halfword_ffff)
+    expect(
+      Halfword.fromBytes(
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0)
+      )
+    ).toEqual(halfword_0000)
+    expect(
+      Halfword.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(127)
+      )
+    ).toEqual(halfword_7fff)
+  })
+  test('fromBytes - invalid values', () => {
+    expect(() =>
+      Halfword.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toThrowError('too many bytes for type provided')
+  })
 })
 
 describe('test isBitSet function', () => {
