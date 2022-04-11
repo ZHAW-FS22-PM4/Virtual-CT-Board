@@ -1,9 +1,6 @@
-import { Halfword } from 'types/binary'
-
-import { Registers } from 'board/registers'
+import { AluResult, mul } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
-import { mul, AluResult } from 'board/alu'
-
+import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -12,7 +9,7 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-
+import { Halfword } from 'types/binary'
 import { BaseInstruction } from './base'
 
 /**

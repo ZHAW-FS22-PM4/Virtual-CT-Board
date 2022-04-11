@@ -1,5 +1,5 @@
+import Board from 'board'
 import React from 'react'
-import Board from '../../../board'
 import './style.css'
 
 type DipSwitchState = {

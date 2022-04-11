@@ -1,10 +1,10 @@
-import { Halfword, Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Register, Registers } from 'board/registers'
 import { MulsInstruction } from 'instruction/instructions/muls'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { anything, instance, mock, verify, when } from 'ts-mockito'
-import { Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
 import { $enum } from 'ts-enum-util'
+import { anything, instance, mock, verify, when } from 'ts-mockito'
+import { Halfword, Word } from 'types/binary'
 
 const registerOption1: string = 'R1'
 const registerValue1: Word = Word.fromUnsignedInteger(0x5124)

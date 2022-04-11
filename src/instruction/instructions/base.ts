@@ -1,9 +1,7 @@
-import { Halfword } from 'types/binary'
-
-import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
-
-import { ILabelOffsets, IInstruction } from 'instruction/interfaces'
+import { Registers } from 'board/registers'
+import { IInstruction, ILabelOffsets } from 'instruction/interfaces'
+import { Halfword } from 'types/binary'
 
 export abstract class BaseInstruction implements IInstruction {
   public abstract name: string

@@ -1,11 +1,11 @@
-import { Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Flag, Register, Registers } from 'board/registers'
 import {
   AddsImmediate3Instruction,
   AddsImmediate8Instruction,
   AddsRegistersInstruction
 } from 'instruction/instructions/adds'
-import { Flag, Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
+import { Word } from 'types/binary'
 
 const registers = new Registers()
 const memory = new Memory()
