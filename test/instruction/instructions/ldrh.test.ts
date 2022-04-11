@@ -1,22 +1,13 @@
 import { Halfword, Word } from 'types/binary'
-import {
-  LoadInstructionImmediateOffset,
-  LoadInstructionPointerOffset,
-  LoadInstructionRegisterOffset
-} from 'instruction/instructions/ldr'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
 import { VirtualBoardError } from 'types/error'
 import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
 import {
-  LoadInstructionImmediateOffsetHalfword,
-  LoadInstructionRegisterOffsetHalfword
-} from '../../../src/instruction/instructions/ldrh'
-import {
-  LoadInstructionImmediateOffsetByte,
-  LoadInstructionRegisterOffsetByte
-} from '../../../src/instruction/instructions/ldrb'
+  LdrhImmediate5OffsetInstruction,
+  LdrhRegisterOffsetInstruction
+} from 'instruction/instructions/ldrh'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -44,9 +35,9 @@ const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
 const instructionLoadInstructionImmediateOffsetHalfword =
-  new LoadInstructionImmediateOffsetHalfword()
+  new LdrhImmediate5OffsetInstruction()
 const instructionLoadInstructionRegisterOffsetHalfword =
-  new LoadInstructionRegisterOffsetHalfword()
+  new LdrhRegisterOffsetInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -61,7 +52,7 @@ registers.writeRegister(Register.R6, registerValueR6)
 registers.writeRegister(Register.R5, registerValueR5)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
-  test('LOAD instruction - LDR (immediate offset) - halfword encoder', () => {
+  test('LOAD instruction - LDRH (immediate offset) - halfword encoder', () => {
     expect(
       instructionLoadInstructionImmediateOffsetHalfword.canEncodeInstruction(
         invalidInstructionName,
@@ -117,7 +108,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       )
     ).toBe(true)
   })
-  test('LOAD instruction - LDR (register offset) - halfword encoder', () => {
+  test('LOAD instruction - LDRH (register offset) - halfword encoder', () => {
     expect(
       instructionLoadInstructionRegisterOffsetHalfword.canEncodeInstruction(
         invalidInstructionName,
@@ -176,7 +167,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('LoadInstructionImmediateOffsetHalfword', () => {
+  test('LdrhImmediate5OffsetInstruction', () => {
     // LDRH R1, [R2, #0x01]
     expect(
       instructionLoadInstructionImmediateOffsetHalfword
@@ -224,7 +215,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('LoadInstructionRegisterOffsetHalfword', () => {
+  test('LdrhRegisterOffsetInstruction', () => {
     // LDRH R1, [R2, R3]
     expect(
       instructionLoadInstructionRegisterOffsetHalfword
@@ -273,7 +264,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('LDRH halfword immediate offset', () => {
+  test('LDRH immediate offset', () => {
     // LDRH R7, [R6, #0x01]
     memory.writeWord(
       registerValueR6.add(0x01),
@@ -287,7 +278,7 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R7).value).toEqual(9)
     memory.reset()
   })
-  test('LDRH halfword register offset', () => {
+  test('LDRH register offset', () => {
     // LDRB R7, [R6, R5]
     memory.writeWord(
       registerValueR6.add(registerValueR5),
