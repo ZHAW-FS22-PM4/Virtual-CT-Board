@@ -1,10 +1,10 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import {
-  StoreInstructionImmediateOffsetByte,
-  StoreInstructionRegisterOffsetByte
+  StrbImmediate5OffsetInstruction,
+  StrbRegisterOffsetInstruction
 } from 'instruction/instructions/strb'
-import { StoreInstructionRegisterOffsetHalfword } from 'instruction/instructions/strh'
+import { StrhRegisterOffsetInstruction } from 'instruction/instructions/strh'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
@@ -36,11 +36,11 @@ const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
 const instructionStoreInstructionRegisterOffsetHalfword =
-  new StoreInstructionRegisterOffsetHalfword()
+  new StrhRegisterOffsetInstruction()
 const instructionStoreInstructionImmediateOffsetByte =
-  new StoreInstructionImmediateOffsetByte()
+  new StrbImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffsetByte =
-  new StoreInstructionRegisterOffsetByte()
+  new StrbRegisterOffsetInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -55,7 +55,7 @@ registers.writeRegister(Register.R6, registerValueR6)
 registers.writeRegister(Register.R5, registerValueR5)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
-  test('STORE instruction - STR (immediate offset) - byte encoder', () => {
+  test('STORE instruction - STRB (immediate offset) - byte encoder', () => {
     expect(
       instructionStoreInstructionImmediateOffsetByte.canEncodeInstruction(
         invalidInstructionName,
@@ -111,7 +111,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       )
     ).toBe(true)
   })
-  test('STORE instruction - STR (register offset) - byte encoder', () => {
+  test('STORE instruction - STRB (register offset) - byte encoder', () => {
     expect(
       instructionStoreInstructionRegisterOffsetByte.canEncodeInstruction(
         invalidInstructionName,
@@ -164,7 +164,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('StoreInstructionImmediateOffsetByte', () => {
+  test('StrbImmediate5OffsetInstruction', () => {
     // STR R1, [R2, #0x01]
     expect(
       instructionStoreInstructionImmediateOffsetByte
@@ -212,7 +212,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('StoreInstructionRegisterOffsetByte', () => {
+  test('StrbRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffsetByte
@@ -261,7 +261,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('STR byte immediate offset', () => {
+  test('STRB immediate offset', () => {
     // STR R7, [R6, #0x01]
     instructionStoreInstructionImmediateOffsetByte.executeInstruction(
       Halfword.fromUnsignedInteger(0b0111000001111110),
@@ -273,7 +273,7 @@ describe('test executeInstruction function', () => {
     )
     memory.reset()
   })
-  test('STR byte register offset', () => {
+  test('STRB register offset', () => {
     // STR R7, [R6, R5]
     instructionStoreInstructionRegisterOffsetByte.executeInstruction(
       Halfword.fromUnsignedInteger(0b0101010101111110),

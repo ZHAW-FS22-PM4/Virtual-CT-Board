@@ -1,9 +1,9 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import {
-  LoadInstructionImmediateOffset,
-  LoadInstructionPointerOffset,
-  LoadInstructionRegisterOffset
+  LdrImmediate5OffsetInstruction,
+  LdrRegisterInstruction,
+  LdrRegisterOffsetInstruction
 } from 'instruction/instructions/ldr'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
@@ -37,11 +37,10 @@ const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
 const instructionLoadInstructionImmediateOffset =
-  new LoadInstructionImmediateOffset()
+  new LdrImmediate5OffsetInstruction()
 const instructionLoadInstructionRegisterOffset =
-  new LoadInstructionRegisterOffset()
-const instructionLoadInstructionPointerOffset =
-  new LoadInstructionPointerOffset()
+  new LdrRegisterOffsetInstruction()
+const instructionLoadInstructionPointerOffset = new LdrRegisterInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -227,7 +226,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('LoadInstructionImmediateOffset', () => {
+  test('LdrImmediate5OffsetInstruction', () => {
     // LDR R1, [R2, #0x01]
     expect(
       instructionLoadInstructionImmediateOffset
@@ -275,7 +274,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('LoadInstructionRegisterOffset', () => {
+  test('LdrRegisterOffsetInstruction', () => {
     // LDR R1, [R2, R3]
     expect(
       instructionLoadInstructionRegisterOffset
@@ -321,7 +320,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('LoadInstructionPointerOffset', () => {
+  test('LoadRegisterInstruction', () => {
     // LDR R1, [SP, #0x01]
     expect(
       instructionLoadInstructionPointerOffset
