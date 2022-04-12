@@ -2,6 +2,7 @@ import { IELF, SegmentType } from 'assembler/elf'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Switches } from './devices/input/switches'
+import { Buttons } from './devices/input/buttons'
 import { LEDs } from './devices/output/leds'
 import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
@@ -15,11 +16,13 @@ class Board {
 
   public readonly flash: Flash
   public readonly switches: Switches
+  public readonly buttons: Buttons
   public readonly leds: LEDs
 
   constructor() {
     this.flash = new Flash()
     this.switches = new Switches()
+    this.buttons = new Buttons()
     this.leds = new LEDs()
     this.registers = new Registers()
     this.memory = new MemoryBus([this.flash, this.switches, this.leds])
