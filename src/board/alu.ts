@@ -30,7 +30,7 @@ export function add(w1: Word, w2: Word): AluResult {
   const result: Word = w1.add(w2)
   const flags = evaluateZeroAndNegativeFlags(result)
   flags[Flag.C] =
-    w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE
+    w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_VALUE
   flags[Flag.V] =
     w1.hasSign() == w2.hasSign() && w1.hasSign() != result.hasSign()
 
@@ -54,7 +54,7 @@ export function sub(w1: Word, w2: Word): AluResult {
   const result: Word = w1.add(comp)
   const flags = evaluateZeroAndNegativeFlags(result)
   flags[Flag.C] =
-    w1.toUnsignedInteger() + comp.toUnsignedInteger() > Word.MAX_UNSIGNED_VALUE
+    w1.toUnsignedInteger() + comp.toUnsignedInteger() > Word.MAX_VALUE
   flags[Flag.V] =
     w1.hasSign() != w2.hasSign() && w1.hasSign() != result.hasSign()
 

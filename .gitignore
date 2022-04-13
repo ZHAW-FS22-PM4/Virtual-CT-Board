@@ -6,6 +6,8 @@ node_modules/
 .vs/
 .vscode/
 out/
+# jest generated report
+coverage/
 
 # files
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { DipSwitch } from './dip-switch'
-
 import './style.css'
 
 export class Board extends React.Component {

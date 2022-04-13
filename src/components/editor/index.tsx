@@ -1,12 +1,9 @@
-import React from 'react'
 import CodeMirror, { Text } from '@uiw/react-codemirror'
-
-import { Assembly } from './assembly'
-import Board from 'board'
 import { assemble } from 'assembler'
-
 import { IELF } from 'assembler/elf'
-
+import Board from 'board'
+import React from 'react'
+import { Assembly } from './assembly'
 import './style.css'
 
 interface EditorState {

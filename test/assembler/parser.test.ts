@@ -1,5 +1,5 @@
-import { IInstruction, ICodeFile, AreaType } from 'assembler/ast'
-import { removeNonCode, createInstruction, parse } from 'assembler/parser'
+import { AreaType, ICodeFile, IInstruction } from 'assembler/ast'
+import { createInstruction, parse, removeNonCode } from 'assembler/parser'
 
 //// create test data
 

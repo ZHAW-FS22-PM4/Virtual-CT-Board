@@ -2,7 +2,6 @@ export enum VirtualBoardErrorType {
   NoEncoderFound,
   InvalidAreaType,
   InvalidParamProvided,
-  BitOutOfTypeRange,
   InstructionWrongOptionCount,
   InvalidRegisterAsOption,
   ProvidedRegisterShouldBeLow,

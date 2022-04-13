@@ -1,21 +1,18 @@
-import { Halfword, Word } from 'types/binary'
-
-import { Registers } from 'board/registers'
+import { add, AluResult } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
-import { AluResult, add } from 'board/alu'
-
+import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
+  createImmediateBits,
   createLowRegisterBits,
   getBits,
-  setBits,
-  createImmediateBits,
   isImmediate,
-  isOptionCountValid
+  isOptionCountValid,
+  setBits
 } from 'instruction/opcode'
-
+import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from './base'
 
 /**

@@ -1,3 +1,5 @@
+// tslint:disable:ordered-imports
+
 // allows the discovery of dependencies from the node_modules directory
 import resolve from '@rollup/plugin-node-resolve'
 

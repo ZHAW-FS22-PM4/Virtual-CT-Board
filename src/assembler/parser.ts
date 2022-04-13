@@ -1,4 +1,4 @@
-import { ICodeFile, AreaType, IArea, IInstruction } from './ast'
+import { AreaType, IArea, ICodeFile, IInstruction } from './ast'
 
 const START_COMMENT: string = ';'
 const START_AREA: string = 'AREA'

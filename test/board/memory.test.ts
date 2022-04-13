@@ -2,8 +2,8 @@
  * Tests the memory representation of the board
  */
 
-import { Byte, Halfword, Word } from 'types/binary'
 import { Memory } from 'board/memory'
+import { Byte, Halfword, Word } from 'types/binary'
 
 let memory: Memory = new Memory()
 

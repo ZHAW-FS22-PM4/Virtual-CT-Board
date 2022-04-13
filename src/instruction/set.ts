@@ -1,14 +1,5 @@
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-
-import {
-  IInstruction,
-  IInstructionEncoder,
-  IInstructionExecutor,
-  IInstructionSet
-} from './interfaces'
-import { match } from './opcode'
-
 import { AdcsInstruction } from './instructions/adcs'
 import { AddInstruction } from './instructions/add'
 import {
@@ -56,6 +47,13 @@ import {
   SubsImmediate8Instruction,
   SubsRegistersInstruction
 } from './instructions/subs'
+import {
+  IInstruction,
+  IInstructionEncoder,
+  IInstructionExecutor,
+  IInstructionSet
+} from './interfaces'
+import { match } from './opcode'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]

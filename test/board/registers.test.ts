@@ -2,8 +2,8 @@
  * Tests the register representation of the board's cpu
  */
 
+import { Flag, IFlag, Register, Registers } from 'board/registers'
 import { Word } from 'types/binary'
-import { Register, Registers, Flag, IFlag } from 'board/registers'
 
 let flags: IFlag
 let registers: Registers = new Registers()
