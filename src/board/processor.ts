@@ -52,8 +52,8 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * @returns void
    */
   public execute(): void {
-    if (this.interval !== 0) return
-    this.interval = window.setInterval(this.cycle, cycleSpeed)
+    if (this.isRunning()) return
+    this.interval = window.setInterval(() => this.cycle(), cycleSpeed)
   }
 
   /**
@@ -63,6 +63,14 @@ export class Processor extends EventEmitter<ProcessorEvents> {
   public halt(): void {
     window.clearInterval(this.interval)
     this.interval = 0
+  }
+
+  /**
+   * Runs one processor cycle.
+   */
+  public step(): void {
+    if (this.isRunning()) return
+    this.cycle()
   }
 
   /**
@@ -91,7 +99,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     this.emit('afterReset')
   }
 
-  private cycle = (): void => {
+  private cycle() {
     const pc: Word = this.registers.readRegister(Register.PC)
     const opcode: Halfword = this.memory.readHalfword(pc)
     if (opcode.value === END_OF_CODE.value) {
