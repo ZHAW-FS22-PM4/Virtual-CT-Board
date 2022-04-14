@@ -1,6 +1,5 @@
-import React from 'react'
 import Board from 'board'
-
+import React from 'react'
 import './style.css'
 
 type ButtonState = {
