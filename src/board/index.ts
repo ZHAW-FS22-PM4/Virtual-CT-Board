@@ -25,7 +25,12 @@ class Board {
     this.buttons = new Buttons()
     this.leds = new LEDs()
     this.registers = new Registers()
-    this.memory = new MemoryBus([this.flash, this.switches, this.leds])
+    this.memory = new MemoryBus([
+      this.flash,
+      this.buttons,
+      this.switches,
+      this.leds
+    ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
   }
 

@@ -29,14 +29,10 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
   }
 
   private handleButton = (key: number): void => {
+    this.state[key] ? Board.buttons.release(key) : Board.buttons.press(key)
     this.setState((state) => ({
       [key]: !state[key]
     }))
-    if (this.state[key]) {
-      Board.buttons.press(key)
-    } else {
-      Board.buttons.release(key)
-    }
   }
 
   public render(): React.ReactNode {
