@@ -1,13 +1,12 @@
-import { Registers } from './registers'
-import { Processor } from './processor'
-import { IMemory } from './memory/interfaces'
-import { MemoryBus } from './memory/bus'
-
+import { IELF, SegmentType } from 'assembler/elf'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Switches } from './devices/input/switches'
 import { LEDs } from './devices/output/leds'
-import { IELF, SegmentType } from 'assembler/elf'
+import { MemoryBus } from './memory/bus'
+import { IMemory } from './memory/interfaces'
+import { Processor } from './processor'
+import { Registers } from './registers'
 
 class Board {
   public readonly registers: Registers

@@ -1,3 +1,3 @@
-export { Word } from './word'
+export { Byte } from './binaryType'
 export { Halfword } from './halfword'
-export { Byte } from './byte'
+export { Word } from './word'

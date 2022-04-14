@@ -1,7 +1,7 @@
-import { Halfword } from 'types/binary'
-import { IInstructionEncoder, IInstructionSet } from 'instruction/interfaces'
-import { ICodeFile, AreaType } from 'assembler/ast'
+import { AreaType, ICodeFile } from 'assembler/ast'
 import { encode } from 'assembler/encoder'
+import { IInstructionEncoder, IInstructionSet } from 'instruction/interfaces'
+import { Halfword } from 'types/binary'
 
 describe('encode', function () {
   it('should encode instruction', function () {

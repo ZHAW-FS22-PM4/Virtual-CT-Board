@@ -1,5 +1,5 @@
-import { Byte, Word } from 'types/binary'
 import { Device } from 'board/devices/device'
+import { Byte, Word } from 'types/binary'
 
 /**
  * Represents switches I/O in memory.

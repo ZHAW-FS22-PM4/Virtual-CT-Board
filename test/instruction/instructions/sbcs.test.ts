@@ -1,8 +1,7 @@
-import { Word } from 'types/binary'
-import { Flag, Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
-
+import { Flag, Register, Registers } from 'board/registers'
 import InstructionSet from 'instruction/set'
+import { Word } from 'types/binary'
 
 const registers = new Registers()
 const memory = new Memory()

@@ -1,6 +1,6 @@
-import { parser } from './assembly.grammar'
-import { LRLanguage, LanguageSupport } from '@codemirror/language'
 import { styleTags, tags as t } from '@codemirror/highlight'
+import { LanguageSupport, LRLanguage } from '@codemirror/language'
+import { parser } from './assembly.grammar'
 
 export const AssemblyLanguage = LRLanguage.define({
   parser: parser.configure({

@@ -1,10 +1,6 @@
-import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-
-import { Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
 import { sub } from 'board/alu'
-
+import { IMemory } from 'board/memory/interfaces'
+import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -14,7 +10,8 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-
+import { Halfword, Word } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from './base'
 
 /**

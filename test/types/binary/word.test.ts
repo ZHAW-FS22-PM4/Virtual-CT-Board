@@ -1,7 +1,5 @@
-import { Byte } from 'types/binary'
-import { Halfword } from 'types/binary'
-import { Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
+import { Byte, Halfword, Word } from 'types/binary'
+import { BinaryType } from 'types/binary/binaryType'
 
 const word_ffffffff = Word.fromUnsignedInteger(4294967295)
 const word_00000000 = Word.fromUnsignedInteger(0)
@@ -10,23 +8,47 @@ const word_0fffffff = Word.fromUnsignedInteger(268435455)
 const word_f0000000 = Word.fromUnsignedInteger(4026531840)
 const word_f0000001 = Word.fromUnsignedInteger(4026531841)
 
-test('fromUnsignedInteger_validValues', () => {
-  expect(Word.fromUnsignedInteger(4294967295).value).toBe(4294967295)
-  expect(Word.fromUnsignedInteger(65535).value).toBe(65535)
-  expect(Word.fromUnsignedInteger(0).value).toBe(0)
+describe('fromUnsignedInteger method', () => {
+  test('fromUnsignedInteger_validValues', () => {
+    expect(Word.fromUnsignedInteger(4294967295).value).toBe(4294967295)
+    expect(Word.fromUnsignedInteger(65535).value).toBe(65535)
+    expect(Word.fromUnsignedInteger(0).value).toBe(0)
+  })
+
+  test('fromUnsignedInteger_invalidValues', () => {
+    expect(() => {
+      Word.fromUnsignedInteger(-1)
+    }).toThrowError(
+      'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: -1).'
+    )
+    expect(() => {
+      Word.fromUnsignedInteger(4294967296)
+    }).toThrowError(
+      'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: 4294967296).'
+    )
+  })
 })
 
-test('fromUnsignedInteger_invalidValues', () => {
-  expect(() => {
-    Word.fromUnsignedInteger(-1)
-  }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: -1).'
-  )
-  expect(() => {
-    Word.fromUnsignedInteger(4294967296)
-  }).toThrowError(
-    'OutOfRange: 32-bit unsigned integer must be an integer in range 0 to 4294967295 (provided: 4294967296).'
-  )
+describe('fromSignedInteger method', () => {
+  test('fromSignedInteger validValues', () => {
+    expect(Word.fromSignedInteger(-1).value).toBe(4294967295)
+    expect(Word.fromSignedInteger(-122).value).toBe(4294967174)
+    expect(Word.fromSignedInteger(8456).value).toBe(8456)
+    expect(Word.fromSignedInteger(0).value).toBe(0)
+  })
+
+  test('fromSignedInteger invalidValues', () => {
+    expect(() => {
+      Word.fromSignedInteger(2147483648)
+    }).toThrowError(
+      'OutOfRange: 32-bit signed integer must be an integer in range -2147483648 to 2147483647 (provided: 2147483648).'
+    )
+    expect(() => {
+      Word.fromSignedInteger(-2147483649)
+    }).toThrowError(
+      'OutOfRange: 32-bit signed integer must be an integer in range -2147483648 to 2147483647 (provided: -2147483649).'
+    )
+  })
 })
 
 test('hasSign', () => {
@@ -38,31 +60,44 @@ test('hasSign', () => {
   expect(word_f0000001.hasSign()).toBeTruthy()
 })
 
-test('fromBytes', () => {
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255)
-    )
-  ).toEqual(word_ffffffff)
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0),
-      Byte.fromUnsignedInteger(0)
-    )
-  ).toEqual(word_00000000)
-  expect(
-    Word.fromBytes(
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(255),
-      Byte.fromUnsignedInteger(15)
-    )
-  ).toEqual(word_0fffffff)
+describe('fromBytes method', () => {
+  test('fromBytes - valid values', () => {
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toEqual(word_ffffffff)
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0),
+        Byte.fromUnsignedInteger(0)
+      )
+    ).toEqual(word_00000000)
+    expect(
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(15)
+      )
+    ).toEqual(word_0fffffff)
+  })
+  test('fromBytes - invalid values', () => {
+    expect(() =>
+      Word.fromBytes(
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255),
+        Byte.fromUnsignedInteger(255)
+      )
+    ).toThrowError('too many bytes for type provided')
+  })
 })
 
 test('fromHalfwords', () => {
@@ -86,8 +121,24 @@ test('fromHalfwords', () => {
   ).toEqual(word_0fffffff)
 })
 
-test('add', () => {
-  expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
+describe('add method', () => {
+  test('add - valid values', () => {
+    expect(word_00010000.add(2)).toEqual(Word.fromUnsignedInteger(65538))
+    expect(word_0fffffff.add(0xf0007000)).toEqual(
+      Word.fromUnsignedInteger(0x00006fff)
+    )
+    expect(word_0fffffff.add(word_0fffffff)).toEqual(
+      Word.fromUnsignedInteger(0x1ffffffe)
+    )
+    expect(word_ffffffff.add(word_00010000)).toEqual(
+      Word.fromUnsignedInteger(0xffff)
+    )
+  })
+  test('add - to big number added (no longer in safe integer range)', () => {
+    expect(() => word_ffffffff.add(Math.pow(2, 54))).toThrowError(
+      'addition result is not within safe integer range'
+    )
+  })
 })
 
 test('toUnsignedInteger', () => {
@@ -187,13 +238,12 @@ describe('test isBitSet function', () => {
     expect(word_f0000001.isBitSet(28)).toBe(true)
   })
   test('should throw error if out of range', () => {
-    let vbe = new VirtualBoardError(
-      'Offset is not within Word range',
-      VirtualBoardErrorType.BitOutOfTypeRange
+    let systemError = new Error(
+      'bit offset (tried to access) is not within type range'
     )
-    expect(() => word_00010000.isBitSet(32)).toThrow(vbe)
-    expect(() => word_00010000.isBitSet(66)).toThrow(vbe)
-    expect(() => word_00010000.isBitSet(-1)).toThrow(vbe)
+    expect(() => word_00010000.isBitSet(32)).toThrow(systemError)
+    expect(() => word_00010000.isBitSet(66)).toThrow(systemError)
+    expect(() => word_00010000.isBitSet(-1)).toThrow(systemError)
   })
 })
 
@@ -271,5 +321,24 @@ describe('test toggleBit function', () => {
     result = word_00000000.toggleBit(10)
     expect(result).toEqual(Word.fromUnsignedInteger(0x00000400))
     expect(result.toggleBit(10)).toEqual(word_00000000)
+  })
+})
+
+describe('binaryType functions with invalid values', () => {
+  test('getHexCharCount not dividable by 4', () => {
+    expect(() => BinaryType.getHexCharCount(3)).toThrowError(
+      'provided bit count is not dividable by 4'
+    )
+    expect(() => BinaryType.getHexCharCount(6)).toThrowError(
+      'provided bit count is not dividable by 4'
+    )
+  })
+  test('getByteCount not dividable by 8', () => {
+    expect(() => BinaryType.getByteCount(7)).toThrowError(
+      'provided bit count is not dividable by 8'
+    )
+    expect(() => BinaryType.getByteCount(9)).toThrowError(
+      'provided bit count is not dividable by 8'
+    )
   })
 })
