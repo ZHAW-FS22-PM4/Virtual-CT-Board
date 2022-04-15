@@ -14,11 +14,11 @@ import {
 import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
 
-export class AsrsRegisterInstruction extends BaseInstruction {
-  public name: string = 'ASRS'
-  public pattern: string = '0100000100XXXXXX'
-  private rdnPattern: string = '0100000100000XXX'
-  private rmPattern: string = '0100000100XXX000'
+export class LslsRegisterInstruction extends BaseInstruction {
+  public name: string = 'LSLS'
+  public pattern: string = '0100000010XXXXXX'
+  private rdnPattern: string = '0100000010000XXX'
+  private rmPattern: string = '0100000010XXX000'
   private expectedOptionCount: number = 3
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
@@ -41,22 +41,19 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     let rdnValue: Word = registers.readRegister(rdnBits.value)
     let rmValue: Word = registers.readRegister(rmBits.value)
 
-    let msb = rdnValue.isBitSet(Word.NUMBER_OF_BITS - 1) ? 1 : 0
-    let result = rdnValue.toUnsignedInteger() >> rmValue.toUnsignedInteger()
+    let result = Word.fromSignedInteger(
+      rdnValue.toUnsignedInteger() << rmValue.toUnsignedInteger()
+    )
     let isCarrySet: boolean =
       rmValue.value < Word.NUMBER_OF_BITS
-        ? rdnValue.isBitSet(rmValue.value - 1)
-        : msb === 1
+        ? rdnValue.isBitSet(Word.NUMBER_OF_BITS - rmValue.value)
+        : false
 
-    if (msb) {
-      Word.fromSignedInteger(result).setBit(Word.NUMBER_OF_BITS - 1)
-    }
-
-    registers.writeRegister(rdnBits.value, Word.fromSignedInteger(result))
+    registers.writeRegister(rdnBits.value, result)
 
     registers.setFlags({
-      N: msb === 1,
-      Z: result === 0,
+      N: result.hasSign(),
+      Z: result.toUnsignedInteger() === 0,
       C: isCarrySet
     })
   }
@@ -71,12 +68,12 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   }
 }
 
-export class AsrsImmediateInstruction extends BaseInstruction {
-  public name: string = 'ASRS'
-  public pattern: string = '00010XXXXXXXXXXX'
-  private rdPattern: string = '0001000000000XXX'
-  private rmPattern: string = '0001000000XXX000'
-  private immPattern: string = '00010XXXXX000000'
+export class LslsImmediateInstruction extends BaseInstruction {
+  public name: string = 'LSLS'
+  public pattern: string = '00000XXXXXXXXXXX'
+  private rdPattern: string = '0000000000000XXX'
+  private rmPattern: string = '0000000000XXX000'
+  private immPattern: string = '00000XXXXX000000'
   private expectedOptionCount: number = 3
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
@@ -99,18 +96,16 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     let rmValue: Word = registers.readRegister(rmBits.value)
     let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
 
-    let msb = rmValue.isBitSet(Word.NUMBER_OF_BITS - 1) ? 1 : 0
-    let result = rmValue.toUnsignedInteger() >> immValue.toUnsignedInteger()
+    let result = Word.fromSignedInteger(
+      rmValue.toUnsignedInteger() << immValue.toUnsignedInteger()
+    )
 
-    if (msb) {
-      Word.fromSignedInteger(result).setBit(Word.NUMBER_OF_BITS - 1)
-    }
+    registers.writeRegister(rdBits.value, result)
 
-    registers.writeRegister(rdBits.value, Word.fromSignedInteger(result))
     registers.setFlags({
-      N: msb === 1,
-      Z: result === 0,
-      C: rmValue.isBitSet(immValue.value - 1)
+      N: result.hasSign(),
+      Z: result.toUnsignedInteger() === 0,
+      C: rmValue.isBitSet(Word.NUMBER_OF_BITS - immValue.value)
     })
   }
 
