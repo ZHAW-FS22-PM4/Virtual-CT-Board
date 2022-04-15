@@ -1,5 +1,5 @@
 import { Memory } from 'board/memory'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
 import {
   AsrsImmediateInstruction,
   AsrsRegisterInstruction
@@ -60,6 +60,9 @@ describe('test executeInstruction function for ASRS with registers', () => {
     let opcode = asrsRegisterInstruction.encodeInstruction(registerArray, {})
     asrsRegisterInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(0xf8000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
   })
 
   it('should return correct result for ASRS R2, R2, R3; R2 = 1, R3 = 3', () => {
@@ -67,10 +70,11 @@ describe('test executeInstruction function for ASRS with registers', () => {
     let opcode = asrsRegisterInstruction.encodeInstruction(registerArray, {})
     asrsRegisterInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R2).value).toEqual(0x00)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
   })
 })
-
-///////////////////////////////////////////
 
 describe('test encodeInstruction function for ASRS with immediate', () => {
   it('should create correct opcode for ASRS R1, R1, #1', () => {
@@ -113,12 +117,18 @@ describe('test executeInstruction function for ASRS with immediate', () => {
     let opcode = asrsImmediateInstruction.encodeInstruction(registerArray, {})
     asrsImmediateInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R2).value).toEqual(0xff000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
   })
 
-  it('should return correct result for ASRS R1, R2, #3; R2 = 1', () => {
-    let registerArray = ['R1', 'R2', '#3']
+  it('should return correct result for ASRS R1, R2, #1; R2 = 1', () => {
+    let registerArray = ['R1', 'R2', '#1']
     let opcode = asrsImmediateInstruction.encodeInstruction(registerArray, {})
     asrsImmediateInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(0x00)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.C)).toBeTruthy()
   })
 })
