@@ -132,3 +132,5 @@ describe('test executeInstruction function for ASRS with immediate', () => {
     expect(registers.isFlagSet(Flag.C)).toBeTruthy()
   })
 })
+
+//TODO add tests with offset #0

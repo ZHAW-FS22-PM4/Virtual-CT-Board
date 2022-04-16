@@ -1,5 +1,5 @@
 import { Memory } from 'board/memory'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
 import { RorsInstruction } from 'instruction/instructions/shift_rotate/rors'
 import { Word } from 'types/binary'
 
@@ -45,5 +45,67 @@ describe('test encodeInstruction function for RORS', () => {
   it('should throw error for RORS R1, R1 because of too few params', () => {
     let registerArray = ['R1', 'R1']
     expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
+  })
+})
+
+describe('test executeInstruction function for RORS', () => {
+  it('should return correct result for RORS R2, R2, R2; R2 = 1', () => {
+    let registerArray = ['R2', 'R2', 'R2']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x80000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeTruthy()
+  })
+
+  it('should return correct result for RORS R4, R4, R2; R4 = 0xf0000000, R2 = 1', () => {
+    let registerArray = ['R4', 'R4', 'R2']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R4).value).toEqual(0x78000000)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for shifting value = 32 (RORS R4, R4, R3; R4 = 0xf0000000, R3 = 32)', () => {
+    let registerArray = ['R4', 'R4', 'R3']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R4).value).toEqual(0xf0000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeTruthy()
+  })
+
+  it('should return correct result for shifting value > 32 (RORS R4, R4, R5; R4 = 0xf0000000, R5 = 33)', () => {
+    let registerArray = ['R4', 'R4', 'R5']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R4).value).toEqual(0x78000000)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for shifting value = 31 (RORS R4, R4, R6; R4 = 0xf0000000, R6 = 31)', () => {
+    let registerArray = ['R4', 'R4', 'R6']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R4).value).toEqual(0xe0000001)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeTruthy()
+  })
+
+  it('should return correct result for shifting value = 0 (RORS R4, R4, R7; R4 = 0xf0000000, R7 = 0)', () => {
+    let registerArray = ['R4', 'R4', 'R7']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    rorsInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R4).value).toEqual(0xf0000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
   })
 })

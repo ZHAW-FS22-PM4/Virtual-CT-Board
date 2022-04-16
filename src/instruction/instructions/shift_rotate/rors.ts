@@ -5,11 +5,12 @@ import {
   checkOptionCount,
   create,
   createLowRegisterBits,
+  getBits,
   isImmediate,
   isOptionCountValid,
   setBits
 } from 'instruction/opcode'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 export class RorsInstruction extends BaseInstruction {
@@ -34,7 +35,27 @@ export class RorsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    throw new Error('Method not implemented.')
+    let rdnBits = getBits(opcode, this.rdnPattern)
+    let rmBits = getBits(opcode, this.rmPattern)
+    let rdnValue: Word = registers.readRegister(rdnBits.value)
+    let rmValue: Word = registers.readRegister(rmBits.value)
+
+    let shiftByBit: number = rmValue.value % Word.NUMBER_OF_BITS
+    let shift =
+      (rdnValue.toSignedInteger() >>> shiftByBit) |
+      (rdnValue.toSignedInteger() << (Word.NUMBER_OF_BITS - shiftByBit))
+
+    let result: Word = Word.fromSignedInteger(shift)
+    let isCarrySet: boolean =
+      rmValue.value !== 0 ? result.isBitSet(Word.NUMBER_OF_BITS - 1) : false
+
+    registers.writeRegister(rdnBits.value, result)
+
+    registers.setFlags({
+      N: result.hasSign(),
+      Z: result.toUnsignedInteger() === 0,
+      C: isCarrySet
+    })
   }
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
