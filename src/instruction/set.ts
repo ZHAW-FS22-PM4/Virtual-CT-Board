@@ -1,52 +1,52 @@
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-import { AdcsInstruction } from './instructions/adcs'
-import { AddInstruction } from './instructions/add'
+import { AdcsInstruction } from './instructions/add/adcs'
+import { AddInstruction } from './instructions/add/add'
 import {
   AddsImmediate3Instruction,
   AddsImmediate8Instruction,
   AddsRegistersInstruction
-} from './instructions/adds'
+} from './instructions/add/adds'
 import {
   LdrImmediate5OffsetInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
-} from './instructions/ldr'
+} from './instructions/load/ldr'
 import {
   LdrbImmediate5OffsetInstruction,
   LdrbRegisterOffsetInstruction
-} from './instructions/ldrb'
+} from './instructions/load/ldrb'
 import {
   LdrhImmediate5OffsetInstruction,
   LdrhRegisterOffsetInstruction
-} from './instructions/ldrh'
-import { LdrsbRegisterOffsetInstruction } from './instructions/ldrsb'
-import { LdrshRegisterOffsetInstruction } from './instructions/ldrsh'
-import { MovInstruction } from './instructions/mov'
+} from './instructions/load/ldrh'
+import { LdrsbRegisterOffsetInstruction } from './instructions/load/ldrsb'
+import { LdrshRegisterOffsetInstruction } from './instructions/load/ldrsh'
+import { MovInstruction } from './instructions/mov/mov'
 import {
   MovsImmediate8Instruction,
   MovsRegistersInstruction
-} from './instructions/movs'
-import { MulsInstruction } from './instructions/muls'
-import { RsbsInstruction } from './instructions/rsbs'
-import { SbcsInstruction } from './instructions/sbcs'
+} from './instructions/mov/movs'
+import { MulsInstruction } from './instructions/multiply/muls'
+import { RsbsInstruction } from './instructions/subtract/rsbs'
+import { SbcsInstruction } from './instructions/subtract/sbcs'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
-} from './instructions/str'
+} from './instructions/store/str'
 import {
   StrbImmediate5OffsetInstruction,
   StrbRegisterOffsetInstruction
-} from './instructions/strb'
+} from './instructions/store/strb'
 import {
   StrhImmediate5OffsetInstruction,
   StrhRegisterOffsetInstruction
-} from './instructions/strh'
+} from './instructions/store/strh'
 import {
   SubsImmediate3Instruction,
   SubsImmediate8Instruction,
   SubsRegistersInstruction
-} from './instructions/subs'
+} from './instructions/subtract/subs'
 import {
   IInstruction,
   IInstructionEncoder,
