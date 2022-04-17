@@ -1,7 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
-import {Flag, IFlag, Registers} from 'board/registers'
+import { Registers} from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { AluResult, mul } from 'board/alu'
 
 import {
     checkOptionCount,
@@ -15,7 +14,7 @@ import { BaseInstruction } from '../base'
 import {evaluateZeroAndNegativeFlags} from "../../../board/alu";
 
 /**
- * Represents a 'STORE' instruction - STR (immediate offset) - word
+ * Represents a 'Bitwise AND' instruction - ANDS
  */
 export class AndsInstruction extends BaseInstruction {
     public name: string = 'ANDS'
@@ -38,7 +37,7 @@ export class AndsInstruction extends BaseInstruction {
         checkOptionCount(options, 3)
         let opcode: Halfword = create(this.pattern)
         opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
-        opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[0]))
+        opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
         return opcode
     }
 
@@ -51,10 +50,8 @@ export class AndsInstruction extends BaseInstruction {
             (registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() &
                 registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
         )
-        let aluResult: IFlag = evaluateZeroAndNegativeFlags(valueToWrite)
 
-        registers.setFlags(aluResult)
-
+        registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
         registers.writeRegister(getBits(opcode, this.rdnPattern).value, valueToWrite)
     }
 }

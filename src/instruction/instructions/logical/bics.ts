@@ -10,16 +10,17 @@ import {
 } from 'instruction/opcode'
 import {Halfword, Word} from 'types/binary'
 import { BaseInstruction } from '../base'
+import {evaluateZeroAndNegativeFlags} from "../../../board/alu";
 
 /**
- * Represents a 'STORE' instruction - STR (immediate offset) - word
+ * Represents a 'Bit Clear' instruction - BICS
  */
-export class bics extends BaseInstruction {
+export class BicsInstruction extends BaseInstruction {
     public name: string = 'BICS'
     public pattern: string =        '0100001110XXXXXX'
     private rdnPattern: string =    '0100001110000XXX'
     private rmPattern: string =     '0100001110XXX000'
-    private expectedOptionCount: number = 2
+    private expectedOptionCount: number = 3
 
     public canEncodeInstruction(name: string, options: string[]): boolean {
         return (
@@ -32,7 +33,7 @@ export class bics extends BaseInstruction {
     }
 
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-        checkOptionCount(options, 2)
+        checkOptionCount(options, 3)
         let opcode: Halfword = create(this.pattern)
         opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
         opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
@@ -44,15 +45,13 @@ export class bics extends BaseInstruction {
         registers: Registers,
         memory: IMemory
     ): void {
-
-        let valueToWrite = registers.readRegister(getBits(opcode, this.rmPattern).value).toBinaryString()
-
-        // todo
-        let valueToWrie = Word.fromUnsignedInteger(
+        let valueToWrite = Word.fromUnsignedInteger(
             (registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() &
-                registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
+                ~registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
         )
-        //registers.writeRegister(getBits(opcode, this.rdnPattern).value, )
+
+        registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
+        registers.writeRegister(getBits(opcode, this.rdnPattern).value, valueToWrite)
     }
 }
 

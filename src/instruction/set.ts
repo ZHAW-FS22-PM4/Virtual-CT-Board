@@ -54,6 +54,10 @@ import {
   IInstructionSet
 } from './interfaces'
 import { match } from './opcode'
+import {MvnsInstruction} from "./instructions/logical/mvns";
+import {AndsInstruction} from "./instructions/logical/ands";
+import {BicsInstruction} from "./instructions/logical/bics";
+import {OrrsInstruction} from "./instructions/logical/orrs";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -92,6 +96,8 @@ export default new InstructionSet([
   new AddsRegistersInstruction(),
   new AddsImmediate3Instruction(),
   new AddsImmediate8Instruction(),
+  new AndsInstruction(),
+  new BicsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
   new LdrhImmediate5OffsetInstruction(),
@@ -105,6 +111,8 @@ export default new InstructionSet([
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
   new MulsInstruction(),
+  new MvnsInstruction(),
+  new OrrsInstruction(),
   new RsbsInstruction(),
   new SbcsInstruction(),
   new StrImmediate5OffsetInstruction(),
