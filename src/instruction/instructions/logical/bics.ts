@@ -1,8 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
-import {Flag, IFlag, Registers} from 'board/registers'
+import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { AluResult, mul } from 'board/alu'
-
 import {
     checkOptionCount,
     create,
@@ -12,17 +10,16 @@ import {
 } from 'instruction/opcode'
 import {Halfword, Word} from 'types/binary'
 import { BaseInstruction } from '../base'
-import {evaluateZeroAndNegativeFlags} from "../../../board/alu";
 
 /**
  * Represents a 'STORE' instruction - STR (immediate offset) - word
  */
-export class AndsInstruction extends BaseInstruction {
-    public name: string = 'ANDS'
-    public pattern: string =        '0100000000XXXXXX'
-    private rdnPattern: string =    '0100000000000XXX'
-    private rmPattern: string =     '0100000000XXX000'
-    private expectedOptionCount: number = 3
+export class bics extends BaseInstruction {
+    public name: string = 'BICS'
+    public pattern: string =        '0100001110XXXXXX'
+    private rdnPattern: string =    '0100001110000XXX'
+    private rmPattern: string =     '0100001110XXX000'
+    private expectedOptionCount: number = 2
 
     public canEncodeInstruction(name: string, options: string[]): boolean {
         return (
@@ -35,10 +32,10 @@ export class AndsInstruction extends BaseInstruction {
     }
 
     public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-        checkOptionCount(options, 3)
+        checkOptionCount(options, 2)
         let opcode: Halfword = create(this.pattern)
         opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
-        opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[0]))
+        opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
         return opcode
     }
 
@@ -47,15 +44,15 @@ export class AndsInstruction extends BaseInstruction {
         registers: Registers,
         memory: IMemory
     ): void {
-        let valueToWrite = Word.fromUnsignedInteger(
+
+        let valueToWrite = registers.readRegister(getBits(opcode, this.rmPattern).value).toBinaryString()
+
+        // todo
+        let valueToWrie = Word.fromUnsignedInteger(
             (registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() &
                 registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
         )
-        let aluResult: IFlag = evaluateZeroAndNegativeFlags(valueToWrite)
-
-        registers.setFlags(aluResult)
-
-        registers.writeRegister(getBits(opcode, this.rdnPattern).value, valueToWrite)
+        //registers.writeRegister(getBits(opcode, this.rdnPattern).value, )
     }
 }
 
