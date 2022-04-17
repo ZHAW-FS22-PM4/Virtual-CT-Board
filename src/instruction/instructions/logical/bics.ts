@@ -45,13 +45,13 @@ export class BicsInstruction extends BaseInstruction {
         registers: Registers,
         memory: IMemory
     ): void {
-        let valueToWrite = Word.fromUnsignedInteger(
+        let calculatedValue = Word.fromUnsignedInteger(
             (registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() &
                 ~registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
         )
 
-        registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
-        registers.writeRegister(getBits(opcode, this.rdnPattern).value, valueToWrite)
+        registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
+        registers.writeRegister(getBits(opcode, this.rdnPattern).value, calculatedValue)
     }
 }
 

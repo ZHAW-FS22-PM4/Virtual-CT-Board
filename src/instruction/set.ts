@@ -58,6 +58,8 @@ import {MvnsInstruction} from "./instructions/logical/mvns";
 import {AndsInstruction} from "./instructions/logical/ands";
 import {BicsInstruction} from "./instructions/logical/bics";
 import {OrrsInstruction} from "./instructions/logical/orrs";
+import {EorsInstruction} from "./instructions/logical/eors";
+import {TstInstruction} from "./instructions/logical/tst";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -98,6 +100,7 @@ export default new InstructionSet([
   new AddsImmediate8Instruction(),
   new AndsInstruction(),
   new BicsInstruction(),
+  new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
   new LdrhImmediate5OffsetInstruction(),
@@ -123,5 +126,6 @@ export default new InstructionSet([
   new StrbRegisterOffsetInstruction(),
   new SubsRegistersInstruction(),
   new SubsImmediate3Instruction(),
-  new SubsImmediate8Instruction()
+  new SubsImmediate8Instruction(),
+  new TstInstruction()
 ])

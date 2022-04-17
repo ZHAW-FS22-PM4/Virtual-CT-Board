@@ -1,6 +1,7 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers} from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
+
 import {
     checkOptionCount,
     create,
@@ -13,13 +14,13 @@ import { BaseInstruction } from '../base'
 import {evaluateZeroAndNegativeFlags} from "../../../board/alu";
 
 /**
- * Represents a 'Bitwise NOT' instruction - MVNS
+ * Represents a 'Compare and Test' instruction - TST
  */
-export class MvnsInstruction extends BaseInstruction {
-    public name: string = 'MVNS'
-    public pattern: string =        '0100001111XXXXXX'
-    private rdPattern: string =     '0100001111000XXX'
-    private rmPattern: string =     '0100001111XXX000'
+export class TstInstruction extends BaseInstruction {
+    public name: string = 'TST'
+    public pattern: string =        '0100001000XXXXXX'
+    private rnPattern: string =     '0100001000000XXX'
+    private rmPattern: string =     '0100001000XXX000'
     private expectedOptionCount: number = 2
 
     public canEncodeInstruction(name: string, options: string[]): boolean {
@@ -35,7 +36,7 @@ export class MvnsInstruction extends BaseInstruction {
         checkOptionCount(options, 2)
         let opcode: Halfword = create(this.pattern)
         opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
-        opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
+        opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))
         return opcode
     }
 
@@ -45,10 +46,11 @@ export class MvnsInstruction extends BaseInstruction {
         memory: IMemory
     ): void {
         let calculatedValue = Word.fromUnsignedInteger(
-            (~registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger()))
+            (registers.readRegister(getBits(opcode, this.rnPattern).value).toUnsignedInteger() &
+                registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
+        )
 
         registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
-        registers.writeRegister(getBits(opcode, this.rdPattern).value, calculatedValue)
     }
 }
 
