@@ -22,14 +22,18 @@ import {
 } from './instructions/load/ldrh'
 import { LdrsbRegisterOffsetInstruction } from './instructions/load/ldrsb'
 import { LdrshRegisterOffsetInstruction } from './instructions/load/ldrsh'
+import { AndsInstruction } from './instructions/logical/ands'
+import { BicsInstruction } from './instructions/logical/bics'
+import { EorsInstruction } from './instructions/logical/eors'
+import { MvnsInstruction } from './instructions/logical/mvns'
+import { OrrsInstruction } from './instructions/logical/orrs'
+import { TstInstruction } from './instructions/logical/tst'
 import { MovInstruction } from './instructions/mov/mov'
 import {
   MovsImmediate8Instruction,
   MovsRegistersInstruction
 } from './instructions/mov/movs'
 import { MulsInstruction } from './instructions/multiply/muls'
-import { RsbsInstruction } from './instructions/subtract/rsbs'
-import { SbcsInstruction } from './instructions/subtract/sbcs'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
@@ -42,6 +46,8 @@ import {
   StrhImmediate5OffsetInstruction,
   StrhRegisterOffsetInstruction
 } from './instructions/store/strh'
+import { RsbsInstruction } from './instructions/subtract/rsbs'
+import { SbcsInstruction } from './instructions/subtract/sbcs'
 import {
   SubsImmediate3Instruction,
   SubsImmediate8Instruction,
@@ -54,12 +60,6 @@ import {
   IInstructionSet
 } from './interfaces'
 import { match } from './opcode'
-import {MvnsInstruction} from "./instructions/logical/mvns";
-import {AndsInstruction} from "./instructions/logical/ands";
-import {BicsInstruction} from "./instructions/logical/bics";
-import {OrrsInstruction} from "./instructions/logical/orrs";
-import {EorsInstruction} from "./instructions/logical/eors";
-import {TstInstruction} from "./instructions/logical/tst";
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
