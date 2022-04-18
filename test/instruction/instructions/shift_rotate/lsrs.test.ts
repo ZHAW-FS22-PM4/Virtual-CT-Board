@@ -179,10 +179,8 @@ describe('test executeInstruction function for LSLS with immediate', () => {
   it('should return correct result for immediate zero (LSRS R1, R2, #0; R2 = 1)', () => {
     let registerArray = ['R1', 'R2', '#0']
     let opcode = lsrsImmediateInstruction.encodeInstruction(registerArray, {})
-    lsrsImmediateInstruction.executeInstruction(opcode, registers, memory)
-    expect(registers.readRegister(Register.R1).value).toEqual(0x01)
-    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
-    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
-    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+    expect(() =>
+      lsrsImmediateInstruction.executeInstruction(opcode, registers, memory)
+    ).toThrow()
   })
 })

@@ -20,7 +20,10 @@ export class RorsInstruction extends BaseInstruction {
   private rmPattern: string = '0100000111XXX000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     if (options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -30,7 +33,7 @@ export class RorsInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -42,8 +45,8 @@ export class RorsInstruction extends BaseInstruction {
 
     let shiftByBit: number = rmValue.value % Word.NUMBER_OF_BITS
     let shift =
-      (rdnValue.toSignedInteger() >>> shiftByBit) |
-      (rdnValue.toSignedInteger() << (Word.NUMBER_OF_BITS - shiftByBit))
+      (rdnValue.value >>> shiftByBit) |
+      (rdnValue.value << (Word.NUMBER_OF_BITS - shiftByBit))
 
     let result: Word = Word.fromSignedInteger(shift)
     let isCarrySet: boolean =
@@ -58,7 +61,10 @@ export class RorsInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(this.name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&

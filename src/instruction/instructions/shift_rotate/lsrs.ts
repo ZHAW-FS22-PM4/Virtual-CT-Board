@@ -21,7 +21,10 @@ export class LsrsRegisterInstruction extends BaseInstruction {
   private rmPattern: string = '0100000011XXX000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     if (options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -31,7 +34,7 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -41,10 +44,10 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     let rdnValue: Word = registers.readRegister(rdnBits.value)
     let rmValue: Word = registers.readRegister(rmBits.value)
 
-    let shift = rdnValue.toUnsignedInteger() >>> rmValue.toSignedInteger()
+    let shift = Word.fromUnsignedInteger(rdnValue.value >>> rmValue.value)
     let result =
       rmValue.value < Word.NUMBER_OF_BITS
-        ? Word.fromUnsignedInteger(shift)
+        ? shift
         : Word.fromUnsignedInteger(0x00)
     let isCarrySet: boolean =
       rmValue.value <= Word.NUMBER_OF_BITS && rmValue.value > 0
@@ -60,7 +63,10 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(this.name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
@@ -78,7 +84,10 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   private immPattern: string = '00001XXXXX000000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     let immBits = createImmediateBits(options[2], 5)
@@ -88,7 +97,7 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -98,7 +107,11 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     let rmValue: Word = registers.readRegister(rmBits.value)
     let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
 
-    let shift = rmValue.toUnsignedInteger() >>> immValue.toSignedInteger()
+    if (immValue.value === 0) {
+      throw new Error('Zero is not allowed as immediate in an LSRS operation!')
+    }
+
+    let shift = rmValue.value >>> immValue.value
     let result = Word.fromUnsignedInteger(shift)
     let isCarrySet: boolean =
       immValue.value > 0 ? rmValue.isBitSet(immValue.value - 1) : false
@@ -112,7 +125,10 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(this.name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&

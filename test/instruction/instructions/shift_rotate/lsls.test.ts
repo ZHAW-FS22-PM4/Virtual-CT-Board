@@ -17,6 +17,10 @@ beforeEach(() => {
   registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0xffffffff))
   registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0x01))
   registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0x04))
+  registers.writeRegister(Register.R4, Word.fromUnsignedInteger(31))
+  registers.writeRegister(Register.R5, Word.fromUnsignedInteger(32))
+  registers.writeRegister(Register.R6, Word.fromUnsignedInteger(33))
+  registers.writeRegister(Register.R7, Word.fromUnsignedInteger(0x00))
 })
 
 describe('test encodeInstruction function for LSLS with registers', () => {
@@ -70,6 +74,46 @@ describe('test executeInstruction function for LSLS with registers', () => {
     let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
     lslsRegisterInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R2).value).toEqual(0x00000010)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for shift value = 31 (LSLS R2, R2, R4; R2 = 1, R4 = 31)', () => {
+    let registerArray = ['R2', 'R2', 'R4']
+    let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
+    lslsRegisterInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x80000000)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for shift value = 32 (LSLS R2, R2, R5; R2 = 1, R5 = 32)', () => {
+    let registerArray = ['R2', 'R2', 'R5']
+    let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
+    lslsRegisterInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x00)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.C)).toBeTruthy()
+  })
+
+  it('should return correct result for shift value = 33 (LSLS R2, R2, R6; R2 = 1, R6 = 33)', () => {
+    let registerArray = ['R2', 'R2', 'R6']
+    let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
+    lslsRegisterInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x00)
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for shift value = 0 (LSLS R2, R2, R7; R2 = 1, R7 = 0x00)', () => {
+    let registerArray = ['R2', 'R2', 'R7']
+    let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
+    lslsRegisterInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R2).value).toEqual(0x01)
     expect(registers.isFlagSet(Flag.N)).toBeFalsy()
     expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
     expect(registers.isFlagSet(Flag.C)).toBeFalsy()
@@ -130,5 +174,16 @@ describe('test executeInstruction function for LSLS with immediate', () => {
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()
     expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
     expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+  })
+
+  it('should return correct result for LSLS R2, R1, #0; R1 = 0xffffffff', () => {
+    let registerArray = ['R2', 'R1', '#0']
+    let carry = registers.isFlagSet(Flag.C)
+    let opcode = lslsImmediateInstruction.encodeInstruction(registerArray, {})
+    lslsImmediateInstruction.executeInstruction(opcode, registers, memory)
+    expect(registers.readRegister(Register.R1).value).toEqual(0xffffffff)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toEqual(carry)
   })
 })

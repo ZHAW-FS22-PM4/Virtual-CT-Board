@@ -46,6 +46,7 @@ export class AsrsRegisterInstruction extends BaseInstruction {
 
     let result: Word
     let isCarrySet: boolean = false
+
     if (rmValue.value < Word.NUMBER_OF_BITS) {
       result = Word.fromSignedInteger(rdnValue.value >> rmValue.value)
       isCarrySet =
@@ -111,12 +112,10 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
 
     if (immValue.value === 0) {
-      throw new Error('Zero is not allowed as immediate iin an ASRS operation!')
+      throw new Error('Zero is not allowed as immediate in an ASRS operation!')
     }
 
-    let result: Word = Word.fromSignedInteger(
-      rmValue.toUnsignedInteger() >> immValue.toUnsignedInteger()
-    )
+    let result: Word = Word.fromSignedInteger(rmValue.value >> immValue.value)
 
     registers.writeRegister(rdBits.value, result)
     registers.setFlags({
