@@ -12,11 +12,10 @@ beforeEach(function () {
   registers.reset()
   registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0b00000000100010000000010010101101))
   registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0b00000000000000000000011110101011))
-  //registers.writeRegister(Register.R2, Word.fromUnsignedInteger(0b00000000100010000000000000000100))
   registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0b00000000000000000000000000000000))
   registers.writeRegister(Register.R4, Word.fromUnsignedInteger(0b00000000000000000000011110101011))
   registers.writeRegister(Register.R5, Word.fromUnsignedInteger(0b10000000000001000010011110101011))
-  registers.writeRegister(Register.R6, Word.fromUnsignedInteger(0b10000000000000000000011110101011))
+  registers.writeRegister(Register.R6, Word.fromUnsignedInteger(0b00000000000000000000011110101011))
   registers.writeRegister(Register.R8, Word.fromUnsignedInteger(0xb316))
 })
 
@@ -78,7 +77,7 @@ describe('test executeInstruction function for BICS', () => {
   it('should return correct value from register for BICS R5, R6 and set N flag.,', () => {
     let opcode = bicsInstruction.encodeInstruction(['R5', 'R6','R6'], {})
     bicsInstruction.executeInstruction(opcode, registers, memory)
-    expect(registers.readRegister(Register.R5).value).toEqual(0b10000000000000000000011110101011)
+    expect(registers.readRegister(Register.R5).value).toEqual(0b10000000000001000010000000000000)
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()
     expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
   })
