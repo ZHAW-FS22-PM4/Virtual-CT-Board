@@ -21,7 +21,10 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   private rmPattern: string = '0100000100XXX000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     if (options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -31,7 +34,7 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -41,27 +44,32 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     let rdnValue: Word = registers.readRegister(rdnBits.value)
     let rmValue: Word = registers.readRegister(rmBits.value)
 
-    let msb = rdnValue.isBitSet(Word.NUMBER_OF_BITS - 1) ? 1 : 0
-    let result = rdnValue.toUnsignedInteger() >> rmValue.toUnsignedInteger()
-    let isCarrySet: boolean =
-      rmValue.value < Word.NUMBER_OF_BITS
-        ? rdnValue.isBitSet(rmValue.value - 1)
-        : msb === 1
-
-    if (msb) {
-      Word.fromSignedInteger(result).setBit(Word.NUMBER_OF_BITS - 1)
+    let result: Word
+    let isCarrySet: boolean = false
+    if (rmValue.value < Word.NUMBER_OF_BITS) {
+      result = Word.fromSignedInteger(rdnValue.value >> rmValue.value)
+      isCarrySet =
+        rmValue.value > 0 ? rdnValue.isBitSet(rmValue.value - 1) : false
+    } else {
+      result = rdnValue.hasSign()
+        ? Word.fromUnsignedInteger(Word.MAX_VALUE)
+        : Word.fromUnsignedInteger(Word.MIN_VALUE)
+      isCarrySet = result.hasSign()
     }
 
-    registers.writeRegister(rdnBits.value, Word.fromSignedInteger(result))
+    registers.writeRegister(rdnBits.value, result)
 
     registers.setFlags({
-      N: msb === 1,
-      Z: result === 0,
+      N: result.hasSign(),
+      Z: result.value === 0,
       C: isCarrySet
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(this.name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
@@ -79,7 +87,10 @@ export class AsrsImmediateInstruction extends BaseInstruction {
   private immPattern: string = '00010XXXXX000000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     let immBits = createImmediateBits(options[2], 5)
@@ -89,7 +100,7 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -99,22 +110,26 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     let rmValue: Word = registers.readRegister(rmBits.value)
     let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
 
-    let msb = rmValue.isBitSet(Word.NUMBER_OF_BITS - 1) ? 1 : 0
-    let result = rmValue.toUnsignedInteger() >> immValue.toUnsignedInteger()
-
-    if (msb) {
-      Word.fromSignedInteger(result).setBit(Word.NUMBER_OF_BITS - 1)
+    if (immValue.value === 0) {
+      throw new Error('Zero is not allowed as immediate iin an ASRS operation!')
     }
 
-    registers.writeRegister(rdBits.value, Word.fromSignedInteger(result))
+    let result: Word = Word.fromSignedInteger(
+      rmValue.toUnsignedInteger() >> immValue.toUnsignedInteger()
+    )
+
+    registers.writeRegister(rdBits.value, result)
     registers.setFlags({
-      N: msb === 1,
-      Z: result === 0,
+      N: result.hasSign(),
+      Z: result.value === 0,
       C: rmValue.isBitSet(immValue.value - 1)
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(this.name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
