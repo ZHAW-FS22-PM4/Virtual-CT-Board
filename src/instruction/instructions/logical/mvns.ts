@@ -44,8 +44,9 @@ export class MvnsInstruction extends BaseInstruction {
         registers: Registers,
         memory: IMemory
     ): void {
-        let calculatedValue = Word.fromUnsignedInteger(
+        let calculatedValue = Word.fromUnsignedInteger((
             (~registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger()))
+            >>> 0) // need to shift 0 bits to right to get an unsigned number
 
         registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
         registers.writeRegister(getBits(opcode, this.rdPattern).value, calculatedValue)

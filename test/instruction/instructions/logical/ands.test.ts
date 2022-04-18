@@ -1,7 +1,7 @@
 import { Memory } from 'board/memory'
 import {Flag, Register, Registers} from 'board/registers'
 import { Word } from 'types/binary'
-import {AndsInstruction} from "../../../../src/instruction/instructions/logical/ands";
+import {AndsInstruction} from "instruction/instructions/logical/ands"
 
 const registers = new Registers()
 const memory = new Memory()
@@ -20,25 +20,22 @@ beforeEach(function () {
 })
 
 describe('test canEncodeInstruction function for ANDS', () => {
-  it('should encode Instruction with correct register information', () => {
+  it('should encode be able to instruction with correct register information', () => {
     expect(andsInstruction.canEncodeInstruction('ANDS',['R1', 'R1', 'R7'])).toBeTruthy()
   })
 
-  it('should not encode instruction with wrong register information', () => {
+  it('should not be able to encode instruction with wrong register information', () => {
     expect(andsInstruction.canEncodeInstruction('ANDS',['R1', 'R7', 'R7'])).toBeFalsy()
   })
 
-  it('should not encode instruction with wrong register information', () => {
+  it('should not be able to encode instruction with wrong register information', () => {
     expect(andsInstruction.canEncodeInstruction('ANDS',['R1', 'R7'])).toBeFalsy()
   })
 
-  it('should not encode instruction with wrong instruction name', () => {
+  it('should not be able to encode instruction with wrong instruction name', () => {
     expect(andsInstruction.canEncodeInstruction('AND',['R1', 'R1','R7'])).toBeFalsy()
   })
 
-  it('should not encode instruction with high register', () => {
-    expect(andsInstruction.canEncodeInstruction('AND',['R1', 'R1','R8'])).toBeFalsy()
-  })
 })
 
 describe('test encode instruction function for ANDS', () => {
@@ -73,15 +70,15 @@ describe('test executeInstruction function for ANDS', () => {
     let opcode = andsInstruction.encodeInstruction(['R3', 'R4','R4'], {})
     andsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R3).value).toEqual(0b00000000000000000000000000000000)
-    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
-    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
   })
 
   it('should return correct value from register for ANDS R5, R6 and set N flag.,', () => {
     let opcode = andsInstruction.encodeInstruction(['R5', 'R6','R6'], {})
     andsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R5).value).toEqual(0b10000000000000000000011110101011)
-    expect(registers.isFlagSet(Flag.N)).toBeFalsy()
-    expect(registers.isFlagSet(Flag.Z)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
   })
 })

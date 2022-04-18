@@ -47,9 +47,9 @@ export class OrrsInstruction extends BaseInstruction {
         memory: IMemory
     ): void {
         let calculatedValue = Word.fromUnsignedInteger(
-            (registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() |
-                registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger())
-        )
+            ((registers.readRegister(getBits(opcode, this.rdnPattern).value).toUnsignedInteger() |
+                registers.readRegister(getBits(opcode, this.rmPattern).value).toUnsignedInteger()))
+            >>> 0) // need to shift 0 bits to right to get an unsigned number
 
         registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
         registers.writeRegister(getBits(opcode, this.rdnPattern).value, calculatedValue)
