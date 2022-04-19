@@ -43,7 +43,9 @@ export class Led extends React.Component<LedProps, LedState> {
           .sort((n1, n2) => n2 - n1)
           .map((key) => (
             <div key={'led-' + key}>
-              <div className="label" style={{fontSize: 6}}>{'LED' + key}</div>
+              <div className="label" style={{ fontSize: 6 }}>
+                {'LED' + key}
+              </div>
               <div
                 className={`led ${this.state[key] ? 'led-on' : 'led-off'}`}
               />
