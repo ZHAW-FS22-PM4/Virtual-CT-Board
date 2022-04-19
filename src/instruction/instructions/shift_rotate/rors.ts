@@ -20,7 +20,10 @@ export class RorsInstruction extends BaseInstruction {
   private rmPattern: string = '0100000111XXX000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     if (options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -30,7 +33,7 @@ export class RorsInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -58,9 +61,12 @@ export class RorsInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
-      super.canEncodeInstruction(this.name, options) &&
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       options[0] == options[1] &&
       options.every((x) => !isImmediate(x))

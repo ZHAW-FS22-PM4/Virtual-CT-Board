@@ -21,7 +21,10 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   private rmPattern: string = '0100000100XXX000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     if (options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -31,7 +34,7 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -64,9 +67,12 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
-      super.canEncodeInstruction(this.name, options) &&
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       options[0] == options[1] &&
       options.every((x) => !isImmediate(x))
@@ -82,7 +88,10 @@ export class AsrsImmediateInstruction extends BaseInstruction {
   private immPattern: string = '00010XXXXX000000'
   private expectedOptionCount: number = 3
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction (
+    options: string[],
+    labels: ILabelOffsets
+  ): Halfword {
     checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     let immBits = createImmediateBits(options[2], 5)
@@ -92,7 +101,7 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     return opcode
   }
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
@@ -116,9 +125,12 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
-      super.canEncodeInstruction(this.name, options) &&
+      super.canEncodeInstruction(commandName, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       isImmediate(options[2])
     )
