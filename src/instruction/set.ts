@@ -35,6 +35,19 @@ import {
 } from './instructions/mov/movs'
 import { MulsInstruction } from './instructions/multiply/muls'
 import {
+  AsrsImmediateInstruction,
+  AsrsRegisterInstruction
+} from './instructions/shift_rotate/asrs'
+import {
+  LslsImmediateInstruction,
+  LslsRegisterInstruction
+} from './instructions/shift_rotate/lsls'
+import {
+  LsrsImmediateInstruction,
+  LsrsRegisterInstruction
+} from './instructions/shift_rotate/lsrs'
+import { RorsInstruction } from './instructions/shift_rotate/rors'
+import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
 } from './instructions/store/str'
@@ -99,6 +112,8 @@ export default new InstructionSet([
   new AddsImmediate3Instruction(),
   new AddsImmediate8Instruction(),
   new AndsInstruction(),
+  new AsrsRegisterInstruction(),
+  new AsrsImmediateInstruction(),
   new BicsInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
@@ -110,12 +125,17 @@ export default new InstructionSet([
   new LdrRegisterInstruction(),
   new LdrshRegisterOffsetInstruction(),
   new LdrsbRegisterOffsetInstruction(),
+  new LslsImmediateInstruction(),
+  new LslsRegisterInstruction(),
+  new LsrsImmediateInstruction(),
+  new LsrsRegisterInstruction(),
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
   new MulsInstruction(),
   new MvnsInstruction(),
   new OrrsInstruction(),
+  new RorsInstruction(),
   new RsbsInstruction(),
   new SbcsInstruction(),
   new StrImmediate5OffsetInstruction(),
