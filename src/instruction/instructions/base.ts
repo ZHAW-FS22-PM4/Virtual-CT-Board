@@ -4,19 +4,21 @@ import { IInstruction, ILabelOffsets } from 'instruction/interfaces'
 import { Halfword } from 'types/binary'
 
 export abstract class BaseInstruction implements IInstruction {
-  abstract name: string
-  abstract pattern: string
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return this.name === commandName
+  public abstract name: string
+  public abstract pattern: string
+
+  public canEncodeInstruction(name: string, options: string[]): boolean {
+    return this.name === name
   }
-  public abstract executeInstruction(
-    opcode: Halfword,
-    registers: Registers,
-    memory: IMemory
-  ): void
 
   public abstract encodeInstruction(
     options: string[],
     labels: ILabelOffsets
   ): Halfword
+
+  public abstract executeInstruction(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void
 }

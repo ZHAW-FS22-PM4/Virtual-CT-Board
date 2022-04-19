@@ -1,22 +1,13 @@
-import { Halfword, Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Register, Registers } from 'board/registers'
 import {
-  LoadInstructionImmediateOffset,
-  LoadInstructionPointerOffset,
-  LoadInstructionRegisterOffset
-} from 'instruction/instructions/ldr'
+  LdrbImmediate5OffsetInstruction,
+  LdrbRegisterOffsetInstruction
+} from 'instruction/instructions/ldrb'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
+import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
-import { Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
-import {
-  LoadInstructionImmediateOffsetHalfword,
-  LoadInstructionRegisterOffsetHalfword
-} from '../../../src/instruction/instructions/ldrh'
-import {
-  LoadInstructionImmediateOffsetByte,
-  LoadInstructionRegisterOffsetByte
-} from '../../../src/instruction/instructions/ldrb'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -43,11 +34,10 @@ const invalidImmediateOption: string = '5'
 const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
-new LoadInstructionRegisterOffsetHalfword()
 const instructionLoadInstructionImmediateOffsetByte =
-  new LoadInstructionImmediateOffsetByte()
+  new LdrbImmediate5OffsetInstruction()
 const instructionLoadInstructionRegisterOffsetByte =
-  new LoadInstructionRegisterOffsetByte()
+  new LdrbRegisterOffsetInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -62,7 +52,7 @@ registers.writeRegister(Register.R6, registerValueR6)
 registers.writeRegister(Register.R5, registerValueR5)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
-  test('LOAD instruction - LDR (immediate offset) - byte encoder', () => {
+  test('LOAD instruction - LDRB (immediate offset) - byte encoder', () => {
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
         invalidInstructionName,
@@ -118,7 +108,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       )
     ).toBe(true)
   })
-  test('LOAD instruction - LDR (register offset) - byte encoder', () => {
+  test('LOAD instruction - LDRB (register offset) - byte encoder', () => {
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
         invalidInstructionName,
@@ -171,7 +161,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('LoadInstructionImmediateOffsetByte', () => {
+  test('LdrbImmediate5OffsetInstruction', () => {
     // LDRB R1, [R2, #0x01]
     expect(
       instructionLoadInstructionImmediateOffsetByte
@@ -219,7 +209,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('LoadInstructionRegisterOffsetByte', () => {
+  test('LdrbRegisterOffsetInstruction', () => {
     // LDRB R1, [R2, R3]
     expect(
       instructionLoadInstructionRegisterOffsetByte
@@ -268,7 +258,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('LDR byte immediate offset', () => {
+  test('LDRB immediate offset', () => {
     // LDRB R7, [R6, #0x01]
     memory.writeWord(
       registerValueR6.add(0x01),
@@ -282,7 +272,7 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R7).value).toEqual(9)
     memory.reset()
   })
-  test('LDR byte register offset', () => {
+  test('LDRB register offset', () => {
     // LDRB R7, [R6, R5]
     memory.writeWord(
       registerValueR6.add(registerValueR5),

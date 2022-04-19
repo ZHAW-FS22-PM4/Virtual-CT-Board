@@ -1,10 +1,7 @@
-import React from 'react'
-
 import Board from 'board'
-
-import './style.css'
-
+import React from 'react'
 import { Word } from 'types/binary'
+import './style.css'
 
 interface IMemoryExplorerState {
   memory: Map<number, Word | undefined>

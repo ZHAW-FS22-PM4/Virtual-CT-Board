@@ -1,13 +1,13 @@
-import { Halfword, Word } from 'types/binary'
+import { Memory } from 'board/memory'
+import { Register, Registers } from 'board/registers'
+import {
+  StrhImmediate5OffsetInstruction,
+  StrhRegisterOffsetInstruction
+} from 'instruction/instructions/strh'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
+import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
-import { Register, Registers } from 'board/registers'
-import { Memory } from 'board/memory'
-import {
-  StoreInstructionImmediateOffsetHalfword,
-  StoreInstructionRegisterOffsetHalfword
-} from 'instruction/instructions/strh'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -35,9 +35,9 @@ const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
 const instructionStoreInstructionImmediateOffsetHalfword =
-  new StoreInstructionImmediateOffsetHalfword()
+  new StrhImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffsetHalfword =
-  new StoreInstructionRegisterOffsetHalfword()
+  new StrhRegisterOffsetInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -52,7 +52,7 @@ registers.writeRegister(Register.R6, registerValueR6)
 registers.writeRegister(Register.R5, registerValueR5)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
-  test('STORE instruction - STR (immediate offset) - halfword encoder', () => {
+  test('STORE instruction - STRH (immediate offset) - halfword encoder', () => {
     expect(
       instructionStoreInstructionImmediateOffsetHalfword.canEncodeInstruction(
         invalidInstructionName,
@@ -108,7 +108,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       )
     ).toBe(true)
   })
-  test('STORE instruction - STR (register offset) - halfword encoder', () => {
+  test('STORE instruction - STRH (register offset) - halfword encoder', () => {
     expect(
       instructionStoreInstructionRegisterOffsetHalfword.canEncodeInstruction(
         invalidInstructionName,
@@ -167,7 +167,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('StoreInstructionImmediateOffsetHalfword', () => {
+  test('StrhImmediate5OffsetInstruction', () => {
     // STR R1, [R2, #0x01]
     expect(
       instructionStoreInstructionImmediateOffsetHalfword
@@ -215,7 +215,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       )
     ).toThrow(VirtualBoardError)
   })
-  test('StoreInstructionRegisterOffsetHalfword', () => {
+  test('StrhRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffsetHalfword
@@ -264,7 +264,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('STR halfword immediate offset', () => {
+  test('STRH immediate offset', () => {
     // STR R7, [R6, #0x01]
     instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
       Halfword.fromUnsignedInteger(0b1000000001111110),
@@ -276,7 +276,7 @@ describe('test executeInstruction function', () => {
     )
     memory.reset()
   })
-  test('STR halfword register offset', () => {
+  test('STRH register offset', () => {
     // STR R7, [R6, R5]
     instructionStoreInstructionRegisterOffsetHalfword.executeInstruction(
       Halfword.fromUnsignedInteger(0b0101000101111110),

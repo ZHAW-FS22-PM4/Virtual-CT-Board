@@ -1,8 +1,7 @@
-import React from 'react'
-
 import { EditorComponent } from 'components/editor'
-import { RegisterComponent } from 'components/register'
 import { FlagsComponent } from 'components/flags'
+import { RegisterComponent } from 'components/register'
+import React from 'react'
 import { Board } from './board'
 import { MemoryExplorerComponent } from './memoryexplorer'
 

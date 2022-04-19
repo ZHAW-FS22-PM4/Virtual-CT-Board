@@ -1,4 +1,6 @@
-import { Halfword, Word } from 'types/binary'
+import { IMemory } from 'board/memory/interfaces'
+import { Register, Registers } from 'board/registers'
+import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -11,16 +13,13 @@ import {
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { Register, Registers } from 'board/registers'
-import { IMemory } from 'board/memory/interfaces'
-
-import { ILabelOffsets } from '../interfaces'
-import { BaseInstruction } from './baseInstruction'
+import { Halfword, Word } from 'types/binary'
+import { BaseInstruction } from './base'
 
 /**
  * Represents a 'LOAD' instruction - LDR (immediate offset) - word
  */
-export class LoadInstructionImmediateOffset extends BaseInstruction {
+export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   public name: string = 'LDR'
   public pattern: string = '01101XXXXXXXXXXX'
   private rnPattern: string = '0110100000XXX000'
@@ -72,7 +71,7 @@ export class LoadInstructionImmediateOffset extends BaseInstruction {
 /**
  * Represents a 'LOAD' instruction - LDR (register offset) - word
  */
-export class LoadInstructionRegisterOffset extends BaseInstruction {
+export class LdrRegisterOffsetInstruction extends BaseInstruction {
   public name: string = 'LDR'
   public pattern: string = '0101100XXXXXXXXX'
   private rnPattern: string = '0101100000XXX000'
@@ -125,7 +124,7 @@ export class LoadInstructionRegisterOffset extends BaseInstruction {
 /**
  * Represents a 'LOAD' instruction - LDR (pointer + offset) - word
  */
-export class LoadInstructionPointerOffset extends BaseInstruction {
+export class LdrRegisterInstruction extends BaseInstruction {
   public name: string = 'LDR'
   public pattern: string = '0100100XXXXXXXXX'
   private immPattern: string = '01001000XXXXXXXX'
