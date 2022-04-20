@@ -2,55 +2,53 @@ import Board from 'board'
 import React from 'react'
 import './style.css'
 
-type DipSwitchState = {
+type ButtonState = {
   [key: number]: boolean
 }
 
-type DipSwitchProps = {
+type ButtonProps = {
   startIndex: number
   size: number
 }
 
-export class DipSwitch extends React.Component<DipSwitchProps, DipSwitchState> {
+export class Button extends React.Component<ButtonProps, ButtonState> {
   private readonly endIndex: number
 
-  constructor(props: DipSwitchProps) {
+  constructor(props: ButtonProps) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
     this.state = this.getState()
   }
 
   private getState() {
-    const state: DipSwitchState = {}
-
+    const state: ButtonState = {}
     for (let i = this.props.startIndex; i <= this.endIndex; i++) {
-      state[i] = Board.switches.isOn(i)
+      state[i] = Board.buttons.isPressed(i)
     }
-
     return state
   }
 
-  private handleSwitch = (key: number): void => {
+  private handleButton = (key: number): void => {
+    this.state[key] ? Board.buttons.release(key) : Board.buttons.press(key)
     this.setState((state) => ({
       [key]: !state[key]
     }))
-    Board.switches.toggle(key)
   }
 
   public render(): React.ReactNode {
     return (
-      <div className="dip-switch-container">
+      <div className="button-container">
         {Object.keys(this.state)
           .map(Number)
           .sort((n1, n2) => n2 - n1)
           .map((key) => (
-            <div key={'switch-' + key}>
-              <div className="label">{'S' + key}</div>
+            <div key={'button-' + key}>
+              <div className="label">{'T' + key}</div>
               <button
-                className={`switch ${
-                  this.state[key] ? 'switch-on' : 'switch-off'
+                className={`button ${
+                  this.state[key] ? 'button-on' : 'button-off'
                 }`}
-                onClick={() => this.handleSwitch(key)}
+                onClick={() => this.handleButton(key)}
               />
             </div>
           ))}

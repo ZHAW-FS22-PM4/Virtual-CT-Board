@@ -1,7 +1,5 @@
-import { Byte, Halfword, Word } from 'types/binary'
-
 import { IInstructionSet } from 'instruction/interfaces'
-
+import { Byte, Halfword, Word } from 'types/binary'
 import { ICodeFile, IInstruction } from './ast'
 import { IELF } from './elf'
 

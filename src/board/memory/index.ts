@@ -1,5 +1,4 @@
-import { Word, Halfword, Byte } from 'types/binary'
-
+import { Byte, Halfword, Word } from 'types/binary'
 import { IMemory } from './interfaces'
 
 interface IMemoryData {

@@ -1,8 +1,5 @@
-import { Halfword } from 'types/binary'
-
-import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
-
+import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -11,7 +8,7 @@ import {
   getBits,
   setBits
 } from 'instruction/opcode'
-
+import { Halfword } from 'types/binary'
 import { BaseInstruction } from './base'
 
 /**

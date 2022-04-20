@@ -35,6 +35,7 @@
     "jest-junit": "^13.0.0",
     "prettier": "^2.6.0",
     "prettier-config-standard": "^5.0.0",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "rollup-plugin-clear": "^2.0.7",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-generate-html-template": "^1.7.0",

@@ -1,8 +1,7 @@
+import Board from 'board'
+import { Flag } from 'board/registers'
 import React from 'react'
 import { $enum } from 'ts-enum-util'
-import Board from 'board'
-import { Register, Flag } from 'board/registers'
-
 import './style.css'
 
 type FlagState = {

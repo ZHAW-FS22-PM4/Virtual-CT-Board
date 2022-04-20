@@ -1,6 +1,6 @@
-import { Halfword } from 'types/binary'
-import { Registers } from 'board/registers'
 import { IMemory } from 'board/memory/interfaces'
+import { Registers } from 'board/registers'
+import { Halfword } from 'types/binary'
 
 /**
  * Represents a list of label offsets.

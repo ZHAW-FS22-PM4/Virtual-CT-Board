@@ -1,9 +1,9 @@
 import {
-  AluResult,
   add,
-  sub,
+  AluResult,
   evaluateZeroAndNegativeFlags,
-  mul
+  mul,
+  sub
 } from 'board/alu'
 import { Flag, IFlag } from 'board/registers'
 import { Word } from 'types/binary'
