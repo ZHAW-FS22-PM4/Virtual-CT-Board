@@ -5,7 +5,7 @@ import { Registers, Register } from 'board/registers'
 import { IInstructionSet } from 'instruction/interfaces'
 import { END_OF_CODE } from 'instruction/special'
 
-const cycleSpeed: number = 1000
+const cycleSpeed: number = 200
 
 /**
  * The events which can be emitted by the processor.
@@ -13,6 +13,7 @@ const cycleSpeed: number = 1000
 type ProcessorEvents = {
   afterCycle: () => void
   afterReset: () => void
+  endOfCode: () => void
 }
 
 /**
@@ -104,6 +105,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     const opcode: Halfword = this.memory.readHalfword(pc)
     if (opcode.value === END_OF_CODE.value) {
       this.halt()
+      this.emit('endOfCode')
       return
     }
     this.instructions

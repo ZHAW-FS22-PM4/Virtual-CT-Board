@@ -1,18 +1,24 @@
 import React from 'react'
 import CodeMirror, { Text } from '@uiw/react-codemirror'
 
-import { Assembly } from './assembly'
-import Board from 'board'
 import { assemble } from 'assembler'
-
 import { IELF } from 'assembler/elf'
+
+import Board from 'board'
+
+import { Assembly } from './assembly'
 
 import './style.css'
 
+enum EditorMode {
+  EDIT,
+  RUN,
+  STEP
+}
+
 interface EditorState {
-  processorRunning: boolean
+  mode: EditorMode
   showInfoBox: boolean
-  editMode: boolean
   showError: boolean
   errorMessage: string
 }
@@ -21,62 +27,83 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   /** @see https://codemirror.net/6/docs/ref/#text */
   private editorContent: Text = Text.of([''])
 
+  constructor(props: {}) {
+    super(props)
+    Board.processor.on('endOfCode', () =>
+      this.setState({ mode: EditorMode.EDIT })
+    )
+  }
+
   state: EditorState = {
-    processorRunning: false,
+    mode: EditorMode.EDIT,
     showInfoBox: false,
-    editMode: true,
     showError: false,
     errorMessage: ''
   }
 
-  resetProcessor = (): void => {
+  resetProcessor(): void {
     Board.processor.reset()
-
     this.setState(() => ({
-      processorRunning: false,
-      editMode: true
+      mode: EditorMode.EDIT
     }))
   }
 
-  runOrHalt = (): void => {
-    if (this.state.processorRunning) {
+  runOrHalt(): void {
+    if (this.state.mode === EditorMode.EDIT) {
+      this.catchAndShowError(() => {
+        const executable: IELF = assemble(this.editorContent.toString())
+        Board.loadExecutable(executable)
+        Board.processor.execute()
+        this.setState({
+          mode: EditorMode.RUN
+        })
+      })
+    } else if (this.state.mode === EditorMode.RUN) {
       Board.processor.halt()
-    } else {
-      if (this.state.editMode) {
-        try {
-          const file: IELF = assemble(this.editorContent.toString())
-          Board.loadExecutable(file)
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            const errorMessage: string = err.message
-            this.setState(() => ({
-              showError: true,
-              errorMessage: errorMessage
-            }))
-
-            setTimeout(() => this.setState(() => ({ showError: false })), 2000)
-          }
-
-          return
-        }
-
-        this.setState(() => ({
-          editMode: false
-        }))
-      }
-
+      this.setState({
+        mode: EditorMode.STEP
+      })
+    } else if (this.state.mode === EditorMode.STEP) {
       Board.processor.execute()
+      this.setState({
+        mode: EditorMode.RUN
+      })
     }
-
-    this.setState((state) => ({
-      processorRunning: !state.processorRunning
-    }))
   }
 
-  toggleInfoBox = (): void => {
+  step(): void {
+    if (this.state.mode === EditorMode.EDIT) {
+      this.catchAndShowError(() => {
+        const executable: IELF = assemble(this.editorContent.toString())
+        Board.loadExecutable(executable)
+        this.setState({
+          mode: EditorMode.STEP
+        })
+      })
+    } else if (this.state.mode === EditorMode.STEP) {
+      Board.processor.step()
+    }
+  }
+
+  toggleInfoBox(): void {
     this.setState((state) => ({
       showInfoBox: !state.showInfoBox
     }))
+  }
+
+  catchAndShowError(action: () => void) {
+    try {
+      action()
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        const errorMessage: string = err.message
+        this.setState({
+          showError: true,
+          errorMessage: errorMessage
+        })
+        setTimeout(() => this.setState({ showError: false }), 5000)
+      }
+    }
   }
 
   render(): React.ReactNode {
@@ -87,28 +114,57 @@ export class EditorComponent extends React.Component<{}, EditorState> {
             <div className="col">
               <button
                 className="btn btn-sm btn-secondary"
-                onClick={this.toggleInfoBox}>
+                onClick={() => this.toggleInfoBox()}>
                 <i
                   className={
                     this.state.showInfoBox ? 'fa fa-times' : 'fa fa-info'
                   }
                   aria-hidden="true"></i>
               </button>
+              <span className="ms-3">Mode: {EditorMode[this.state.mode]}</span>
             </div>
             <div className="col text-end">
               <button
                 className="btn btn-primary btn-sm"
-                title="Reset Processor"
-                disabled={this.state.editMode}
-                onClick={this.resetProcessor}>
-                <i className="fa fa-refresh" aria-hidden="true" />
+                title="Reset"
+                disabled={this.state.mode == EditorMode.EDIT}
+                onClick={() => this.resetProcessor()}>
+                <i className="fa fa-stop" aria-hidden="true" />
               </button>
               <button
                 className="btn btn-primary btn-sm ms-1"
-                onClick={this.runOrHalt}>
+                title={
+                  this.state.mode == EditorMode.EDIT
+                    ? 'Run'
+                    : this.state.mode === EditorMode.STEP
+                    ? 'Continue'
+                    : 'Halt'
+                }
+                onClick={() => this.runOrHalt()}>
                 <i
                   className={
-                    this.state.processorRunning ? 'fa fa-pause' : 'fa fa-play'
+                    this.state.mode == EditorMode.EDIT ||
+                    this.state.mode == EditorMode.STEP
+                      ? 'fa fa-play'
+                      : 'fa fa-pause'
+                  }
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                className="btn btn-primary btn-sm ms-1"
+                title={
+                  this.state.mode === EditorMode.STEP
+                    ? 'Step Over'
+                    : 'Step Into'
+                }
+                disabled={this.state.mode == EditorMode.RUN}
+                onClick={() => this.step()}>
+                <i
+                  className={
+                    this.state.mode == EditorMode.STEP
+                      ? 'fa fa-forward'
+                      : 'fa fa-step-forward'
                   }
                   aria-hidden="true"
                 />
@@ -131,18 +187,17 @@ export class EditorComponent extends React.Component<{}, EditorState> {
               : 'info-container d-none'
           }>
           <p>
-            Intially, the code editor should be in edit mode so you should be
-            able to insert your code below. When ready, click on the execute
-            button on the top right to compile and execute your program. Editing
-            will then no longer be possible. You can now either halt the
-            execution of your program at a certain point or return to editing
-            mode by resetting the processor by using the reset button.
+            EDIT: You can edit the code and either run it or step into it <br />
+            RUN: Your code is being executed and you can either reset or halt
+            the execution <br />
+            STEP: Your code is halted and you can either step over the next
+            instruction or continue normal execution
           </p>
         </div>
         <CodeMirror
           height="700px"
           theme="dark"
-          editable={this.state.editMode}
+          editable={this.state.mode == EditorMode.EDIT}
           extensions={[Assembly()]}
           onChange={(value, viewUpdate) => {
             // a bit ugly but this ensures that the editor content is always up to date
