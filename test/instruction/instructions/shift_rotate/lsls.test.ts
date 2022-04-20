@@ -36,6 +36,12 @@ describe('test encodeInstruction function for LSLS with registers', () => {
     expect(opcode.toBinaryString()).toEqual('0100000010001010')
   })
 
+  it('should create correct opcode for LSLS R1, R2', () => {
+    let registerArray = ['R1', 'R2']
+    let opcode = lslsRegisterInstruction.encodeInstruction(registerArray, {})
+    expect(opcode.toBinaryString()).toEqual('0100000010010001')
+  })
+
   it('should throw error for LSLS R1, R1, R8 because of high register', () => {
     let registerArray = ['R1', 'R1', 'R8']
     expect(() =>
@@ -45,13 +51,6 @@ describe('test encodeInstruction function for LSLS with registers', () => {
 
   it('should throw error for LSLS R1, R2, R3 because of non-identical params 0 and 1', () => {
     let registerArray = ['R1', 'R2', 'R3']
-    expect(() =>
-      lslsRegisterInstruction.encodeInstruction(registerArray, {})
-    ).toThrow()
-  })
-
-  it('should throw error for LSLS R1, R1 because of too few params', () => {
-    let registerArray = ['R1', 'R1']
     expect(() =>
       lslsRegisterInstruction.encodeInstruction(registerArray, {})
     ).toThrow()
@@ -133,6 +132,12 @@ describe('test encodeInstruction function for LSLS with immediate', () => {
     expect(opcode.toBinaryString()).toEqual('0000011111010001')
   })
 
+  it('should create correct opcode for LSLS R1, #1', () => {
+    let registerArray = ['R1', '#1']
+    let opcode = lslsImmediateInstruction.encodeInstruction(registerArray, {})
+    expect(opcode.toBinaryString()).toEqual('0000000001001001')
+  })
+
   it('should throw error for LSLS R1, R8, #1 because of high register', () => {
     let registerArray = ['R1', 'R8', '#1']
     expect(() =>
@@ -142,13 +147,6 @@ describe('test encodeInstruction function for LSLS with immediate', () => {
 
   it('should throw error for LSLS R1, R2, #32 because of immediate too big', () => {
     let registerArray = ['R1', 'R2', '#32']
-    expect(() =>
-      lslsImmediateInstruction.encodeInstruction(registerArray, {})
-    ).toThrow()
-  })
-
-  it('should throw error for LSLS R1, #1 because of too few params', () => {
-    let registerArray = ['R1', '#1']
     expect(() =>
       lslsImmediateInstruction.encodeInstruction(registerArray, {})
     ).toThrow()

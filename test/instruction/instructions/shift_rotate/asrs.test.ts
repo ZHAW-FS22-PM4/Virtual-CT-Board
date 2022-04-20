@@ -36,6 +36,12 @@ describe('test encodeInstruction function for ASRS with registers', () => {
     expect(opcode.toBinaryString()).toEqual('0100000100001010')
   })
 
+  it('should create correct opcode for ASRS R1, R2', () => {
+    let registerArray = ['R1', 'R2']
+    let opcode = asrsRegisterInstruction.encodeInstruction(registerArray, {})
+    expect(opcode.toBinaryString()).toEqual('0100000100010001')
+  })
+
   it('should throw error for ASRS R1, R1, R8 because of high register', () => {
     let registerArray = ['R1', 'R1', 'R8']
     expect(() =>
@@ -45,13 +51,6 @@ describe('test encodeInstruction function for ASRS with registers', () => {
 
   it('should throw error for ASRS R1, R2, R3 because of non-identical params 0 and 1', () => {
     let registerArray = ['R1', 'R2', 'R3']
-    expect(() =>
-      asrsRegisterInstruction.encodeInstruction(registerArray, {})
-    ).toThrow()
-  })
-
-  it('should throw error for ASRS R1, R1 because of too few params', () => {
-    let registerArray = ['R1', 'R1']
     expect(() =>
       asrsRegisterInstruction.encodeInstruction(registerArray, {})
     ).toThrow()
@@ -123,6 +122,12 @@ describe('test encodeInstruction function for ASRS with immediate', () => {
     expect(opcode.toBinaryString()).toEqual('0001011111010001')
   })
 
+  it('should create correct opcode for ASRS R1, #1', () => {
+    let registerArray = ['R1', '#1']
+    let opcode = asrsImmediateInstruction.encodeInstruction(registerArray, {})
+    expect(opcode.toBinaryString()).toEqual('0001000001001001')
+  })
+
   it('should throw error for ASRS R1, R8, #1 because of high register', () => {
     let registerArray = ['R1', 'R8', '#1']
     expect(() =>
@@ -132,13 +137,6 @@ describe('test encodeInstruction function for ASRS with immediate', () => {
 
   it('should throw error for ASRS R1, R2, #32 because of immediate too big', () => {
     let registerArray = ['R1', 'R2', '#32']
-    expect(() =>
-      asrsImmediateInstruction.encodeInstruction(registerArray, {})
-    ).toThrow()
-  })
-
-  it('should throw error for ASRS R1, #1 because of too few params', () => {
-    let registerArray = ['R1', '#1']
     expect(() =>
       asrsImmediateInstruction.encodeInstruction(registerArray, {})
     ).toThrow()

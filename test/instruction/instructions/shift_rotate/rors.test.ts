@@ -32,6 +32,12 @@ describe('test encodeInstruction function for RORS', () => {
     expect(opcode.toBinaryString()).toEqual('0100000111001010')
   })
 
+  it('should create correct opcode for RORS R1, R2', () => {
+    let registerArray = ['R1', 'R2']
+    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    expect(opcode.toBinaryString()).toEqual('0100000111010001')
+  })
+
   it('should throw error for RORS R1, R1, R8 because of high register', () => {
     let registerArray = ['R1', 'R1', 'R8']
     expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
@@ -39,11 +45,6 @@ describe('test encodeInstruction function for RORS', () => {
 
   it('should throw error for RORS R1, R2, R3 because of non-identical params 0 and 1', () => {
     let registerArray = ['R1', 'R2', 'R3']
-    expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
-  })
-
-  it('should throw error for RORS R1, R1 because of too few params', () => {
-    let registerArray = ['R1', 'R1']
     expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
   })
 })

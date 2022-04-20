@@ -1,3 +1,4 @@
+import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
@@ -19,15 +20,18 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   public pattern: string = '0100000100XXXXXX'
   private rdnPattern: string = '0100000100000XXX'
   private rmPattern: string = '0100000100XXX000'
-  private expectedOptionCount: number = 3
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, this.expectedOptionCount)
-    if (options[0] !== options[1])
+    checkOptionCount(options, 2, 3)
+    if (options.length == 3 && options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
+
     let opcode: Halfword = create(this.pattern)
+    let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
+
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    opcode = setBits(opcode, this.rmPattern, rmBits)
+
     return opcode
   }
 
@@ -56,19 +60,14 @@ export class AsrsRegisterInstruction extends BaseInstruction {
     }
 
     registers.writeRegister(rdnBits.value, result)
-
-    registers.setFlags({
-      N: result.hasSign(),
-      Z: result.value === 0,
-      C: isCarrySet
-    })
+    registers.setFlags(evaluateZeroAndNegativeFlags(result))
+    registers.setFlags({ C: isCarrySet })
   }
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      options[0] == options[1] &&
+      isOptionCountValid(options, 2, 3) &&
       options.every((x) => !isImmediate(x))
     )
   }
@@ -80,15 +79,20 @@ export class AsrsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0001000000000XXX'
   private rmPattern: string = '0001000000XXX000'
   private immPattern: string = '00010XXXXX000000'
-  private expectedOptionCount: number = 3
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, this.expectedOptionCount)
+    checkOptionCount(options, 2, 3)
+
     let opcode: Halfword = create(this.pattern)
-    let immBits = createImmediateBits(options[2], 5)
+    let immBits = createImmediateBits(options[options.length - 1], 5)
+
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
     opcode = setBits(opcode, this.immPattern, immBits)
+    opcode =
+      options.length === 3
+        ? setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
+        : setBits(opcode, this.rmPattern, createLowRegisterBits(options[0]))
+
     return opcode
   }
 
@@ -109,18 +113,15 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     let result: Word = Word.fromSignedInteger(rmValue.value >> immValue.value)
 
     registers.writeRegister(rdBits.value, result)
-    registers.setFlags({
-      N: result.hasSign(),
-      Z: result.value === 0,
-      C: rmValue.isBitSet(immValue.value - 1)
-    })
+    registers.setFlags(evaluateZeroAndNegativeFlags(result))
+    registers.setFlags({ C: rmValue.isBitSet(immValue.value - 1) })
   }
 
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      isImmediate(options[2])
+      isOptionCountValid(options, 2, 3) &&
+      isImmediate(options[options.length - 1])
     )
   }
 }
