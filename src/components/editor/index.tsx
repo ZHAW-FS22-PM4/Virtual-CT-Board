@@ -1,5 +1,5 @@
 import React from 'react'
-import CodeMirror, { Text } from '@uiw/react-codemirror'
+import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 
 import { assemble } from 'assembler'
 import { IELF } from 'assembler/elf'
@@ -24,25 +24,27 @@ interface EditorState {
 }
 
 export class EditorComponent extends React.Component<{}, EditorState> {
-  /** @see https://codemirror.net/6/docs/ref/#text */
-  private editorContent: Text = Text.of([''])
+  private editor: React.RefObject<ReactCodeMirrorRef>
+  private executable: IELF | null
 
   constructor(props: {}) {
     super(props)
+    this.state = {
+      mode: EditorMode.EDIT,
+      showInfoBox: false,
+      showError: false,
+      errorMessage: ''
+    }
+    this.editor = React.createRef<ReactCodeMirrorRef>()
+    this.executable = null
     Board.processor.on('endOfCode', () =>
       this.setState({ mode: EditorMode.EDIT })
     )
   }
 
-  state: EditorState = {
-    mode: EditorMode.EDIT,
-    showInfoBox: false,
-    showError: false,
-    errorMessage: ''
-  }
-
   resetProcessor(): void {
     Board.processor.reset()
+    this.executable = null
     this.setState(() => ({
       mode: EditorMode.EDIT
     }))
@@ -51,8 +53,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   runOrHalt(): void {
     if (this.state.mode === EditorMode.EDIT) {
       this.catchAndShowError(() => {
-        const executable: IELF = assemble(this.editorContent.toString())
-        Board.loadExecutable(executable)
+        this.executable = assemble(this.getCode())
+        Board.loadExecutable(this.executable)
         Board.processor.execute()
         this.setState({
           mode: EditorMode.RUN
@@ -74,8 +76,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   step(): void {
     if (this.state.mode === EditorMode.EDIT) {
       this.catchAndShowError(() => {
-        const executable: IELF = assemble(this.editorContent.toString())
-        Board.loadExecutable(executable)
+        this.executable = assemble(this.getCode())
+        Board.loadExecutable(this.executable)
         this.setState({
           mode: EditorMode.STEP
         })
@@ -104,6 +106,11 @@ export class EditorComponent extends React.Component<{}, EditorState> {
         setTimeout(() => this.setState({ showError: false }), 5000)
       }
     }
+  }
+
+  getCode(): string {
+    const doc = this.editor.current?.view?.state.doc
+    return doc ? doc.toString() : ''
   }
 
   render(): React.ReactNode {
@@ -195,14 +202,11 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           </p>
         </div>
         <CodeMirror
+          ref={this.editor}
           height="700px"
           theme="dark"
           editable={this.state.mode == EditorMode.EDIT}
           extensions={[Assembly()]}
-          onChange={(value, viewUpdate) => {
-            // a bit ugly but this ensures that the editor content is always up to date
-            this.editorContent = viewUpdate.state.doc
-          }}
         />
       </div>
     )
