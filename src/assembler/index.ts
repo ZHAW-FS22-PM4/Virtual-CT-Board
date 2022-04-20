@@ -45,7 +45,7 @@ function createExecutable(objectFile: IELF): IELF {
     ],
     sourceMap: new Map<number, number>()
   }
-  objectFile.sourceMap.forEach((offset, line) => {
+  objectFile.sourceMap.forEach((line, offset) => {
     executable.sourceMap.set(FLASH_START.add(offset + 8).value, line)
   })
   return executable
