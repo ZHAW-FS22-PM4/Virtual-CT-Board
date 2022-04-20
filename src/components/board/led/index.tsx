@@ -11,7 +11,7 @@ type LedProps = {
   size: number
 }
 
-export class Led extends React.Component<LedProps, LedState> {
+export class LedComponent extends React.Component<LedProps, LedState> {
   private readonly endIndex: number
 
   constructor(props: LedProps) {

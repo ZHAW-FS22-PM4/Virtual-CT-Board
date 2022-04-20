@@ -1,7 +1,7 @@
 import { Device } from 'board/devices/device'
 import { Byte, Word } from 'types/binary'
 
-export class LEDs extends Device {
+export class LEDDevice extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000100)
   public endAddress = Word.fromUnsignedInteger(0x60000103)
   public isReadOnly = false
@@ -16,7 +16,7 @@ export class LEDs extends Device {
    * @returns true if led is turned on
    */
   public isOn(position: number): boolean {
-    if (LEDs.invalidPosition(position)) {
+    if (LEDDevice.invalidPosition(position)) {
       throw new Error(`Position ${position} does not exist.`)
     }
     return this.findLedByte(position).isBitSet(position % 8)
@@ -27,6 +27,6 @@ export class LEDs extends Device {
   }
 
   private static invalidPosition(position: number): boolean {
-    return position < 0 || position > LEDs.MAX_LED_NUMBER
+    return position < 0 || position > LEDDevice.MAX_LED_NUMBER
   }
 }
