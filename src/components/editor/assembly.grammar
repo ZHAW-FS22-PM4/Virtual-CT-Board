@@ -124,7 +124,8 @@ MachineInstructionName {
   kw<"SXTH"> |
   kw<"SXTB"> |
   kw<"UXTH"> |
-  kw<"UXTB">
+  kw<"UXTB"> |
+  kw<"MRS">
 }
 
 machineInstructionArg {
@@ -148,7 +149,7 @@ kw<term> { @specialize[@name="Keyword"]<identifier, term> }
 
 @tokens {
 
-  identifier { $[A-Za-z0-9]+ }
+  identifier { $[A-Za-z0-9_]+ }
 
   RegisterLiteral { "R" $[0-9] | "R1" $[1-2] | "SP" | "LR" | "PC" }
 
