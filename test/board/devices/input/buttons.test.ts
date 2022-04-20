@@ -4,6 +4,7 @@ import { Byte, Word } from 'types/binary'
 const address: Word = Word.fromUnsignedInteger(0x60000210)
 const byte_0000_0000: Byte = Byte.fromUnsignedInteger(0)
 const byte_0000_0101: Byte = Byte.fromUnsignedInteger(5)
+const byte_0000_0100: Byte = Byte.fromUnsignedInteger(4)
 const byte_0000_1111: Byte = Byte.fromUnsignedInteger(15)
 
 let buttons: Buttons
@@ -87,9 +88,9 @@ describe('test release() function', () => {
   test('test passing the same value to release() function again', () => {
     buttons.release(0)
     expect(buttons.isPressed(0)).toBe(false)
+    expect(buttons.readByte(address)).toEqual(byte_0000_0100)
     buttons.release(0)
     expect(buttons.isPressed(0)).toBe(false)
-
-    expect(buttons.readByte(address)).toEqual(byte_0000_0000)
+    expect(buttons.readByte(address)).toEqual(byte_0000_0100)
   })
 })
