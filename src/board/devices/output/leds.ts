@@ -5,7 +5,7 @@ export class LEDs extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000100)
   public endAddress = Word.fromUnsignedInteger(0x60000103)
   public isReadOnly = false
-  public isVolatile = false
+  public isVolatile = true
 
   private static readonly MAX_LED_NUMBER: number = 31
 
