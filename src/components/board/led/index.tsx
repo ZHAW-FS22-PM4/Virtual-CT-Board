@@ -17,12 +17,12 @@ export class Led extends React.Component<LedProps, LedState> {
   constructor(props: LedProps) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
-    Board.processor.on('afterCycle', this.update())
+    Board.processor.on('afterCycle', () => this.update())
     this.state = this.getState()
   }
 
   private update() {
-    return () => this.setState(this.getState())
+    return this.setState(this.getState())
   }
 
   private getState() {
