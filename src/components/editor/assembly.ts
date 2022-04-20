@@ -6,14 +6,15 @@ export const AssemblyLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       styleTags({
-        'MOV MOVS ADD ADDS ADCS SUBS RSBS SBCS MULS CMP CMN ANDS BICS EORS MVNS ORRS TST ASRS':
-          t.variableName,
-        ImmEight: t.number,
-        ImmFive: t.number,
-        ImmThree: t.number,
-        LowReg: t.variableName,
-        HighReg: t.variableName,
-        LineComment: t.lineComment,
+        Keyword: t.keyword,
+        Label: t.tagName,
+        CodeOrDataArea: t.variableName,
+        VariableName: t.variableName,
+        RegisterLiteral: t.variableName,
+        IntegerLiteral: t.number,
+        MachInstrIntegerLiteral: t.number,
+        MachInstrSymbolicLiteral: t.variableName,
+        comment: t.lineComment,
         ',': t.separator
       })
     ]
