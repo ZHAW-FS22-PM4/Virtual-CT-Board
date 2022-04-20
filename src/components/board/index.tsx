@@ -20,12 +20,11 @@ export class Board extends React.Component {
           </div>
         </div>
         <div className="row mx-2 my-1">
-          <div className="col-sm-3 offset-sm-6">
-            <Led startIndex={8} size={8} />
           <div className="col-sm-3">
             <Button startIndex={0} size={4} />
           </div>
           <div className="col-sm-3 offset-sm-3">
+            <Led startIndex={8} size={8} />
             <DipSwitch startIndex={8} size={8} />
           </div>
           <div className="col-sm-3">
