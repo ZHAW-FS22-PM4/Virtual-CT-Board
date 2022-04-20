@@ -66,11 +66,11 @@ describe('test press() function', () => {
 
 describe('test release() function', () => {
   test('test passing invalid positions to release() function', () => {
-    expect(() => buttons.press(4)).toThrow(
-      new Error('Button position 4 does not exist.')
+    expect(() => buttons.release(22)).toThrow(
+      new Error('Button position 22 does not exist.')
     )
-    expect(() => buttons.press(-2)).toThrow(
-      new Error('Button position -2 does not exist.')
+    expect(() => buttons.release(-1)).toThrow(
+      new Error('Button position -1 does not exist.')
     )
   })
   test('test passing valid positions to release() function', () => {
@@ -89,5 +89,7 @@ describe('test release() function', () => {
     expect(buttons.isPressed(0)).toBe(false)
     buttons.release(0)
     expect(buttons.isPressed(0)).toBe(false)
+
+    expect(buttons.readByte(address)).toEqual(byte_0000_0000)
   })
 })

@@ -53,7 +53,7 @@ export class Buttons extends Device {
    */
   public release(position: number): void {
     if (Buttons.invalidPosition(position)) {
-      throw new Error(`button position ${position} does not exist.`)
+      throw new Error(`Button position ${position} does not exist.`)
     }
 
     const updatedByte = this.memory
