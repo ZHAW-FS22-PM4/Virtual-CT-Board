@@ -1,50 +1,183 @@
-@top Program { expression* }
-
-@skip { space | LineComment }
-
-expression {
-  Area
+@top Program {
+  statement*
 }
 
-Area { "AREA" "," Label "," "DATA" "," ( "READONLY" | "READWRITE" ) Instruction+ }
+@skip { space | comment }
 
-Instruction {
-  InstructionGroup01 |
-  InstructionGroup02 |
-  InstructionGroup03 |
-  InstructionGroup04 |
-  InstructionGroup05 |
-  InstructionGroup06 |
-  InstructionGroup07 |
-  InstructionGroup08 |
-  InstructionGroup09
+statement {
+  AreaDeclaration
 }
 
-InstructionGroup01 { Label? InstructionName LowReg "," HighReg }
-InstructionGroup02 { Label? InstructionName LowReg "," LowReg }
-InstructionGroup03 { Label? InstructionName LowReg "," ImmEight }
-InstructionGroup04 { Label? InstructionName LowReg "," LowReg "," LowReg }
-InstructionGroup05 { Label? InstructionName LowReg "," LowReg "," ImmThree }
-InstructionGroup06 { Label? InstructionName LowReg "," LowReg "," ImmFive }
-InstructionGroup07 { Label? InstructionName LowReg "," "[" LowReg "," LowReg "]" }
-InstructionGroup08 { Label? InstructionName LowReg "," "[" LowReg "," ImmFive "]" }
-InstructionGroup09 { Label? InstructionName LowReg "," "[" "PC" "," ImmEight "]" }
+AreaDeclaration {
+  kw<"AREA"> commaSep<areaProps> instruction*
+}
+
+areaProps {
+  AreaName |
+  ReadOrWriteArea |
+  CodeOrDataArea
+}
+
+AreaName {
+  identifier
+}
+
+ReadOrWriteArea {
+  kw<"READWRITE"> | kw<"READONLY">
+}
+
+CodeOrDataArea {
+  kw<"CODE"> | kw<"DATA">
+}
+
+instruction {
+  MachineInstruction |
+  SymbolicDeclaration |
+  PushPopInstruction |
+  BranchInstruction
+}
+
+SymbolicDeclaration {
+  VariableName kw<"EQU"> IntegerLiteral
+}
+
+MachineInstruction {
+  Label? MachineInstructionName commaSep<machineInstructionArg>
+}
+
+PushPopInstruction {
+  (kw<"PUSH"> | kw<"POP">) "{" commaSep<RegisterLiteral> "}"
+}
+
+BranchInstruction {
+  BranchInstructionWithLabel |
+  BranchInstructionWithoutLabel
+}
+
+BranchInstructionWithLabel {
+  ( 
+    kw<"B"> |
+    kw<"BL"> |
+    kw<"BEQ"> |
+    kw<"BNE"> |
+    kw<"BCS"> |
+    kw<"BHS"> |
+    kw<"BCC"> |
+    kw<"BLO"> |
+    kw<"BMI"> |
+    kw<"BPL"> |
+    kw<"BVS"> |
+    kw<"BVC"> |
+    kw<"BHI"> |
+    kw<"BLS"> |
+    kw<"BGE"> |
+    kw<"BLT"> |
+    kw<"BGT"> |
+    kw<"BLE"> |
+    kw<"BAL">
+  )
+  Label
+}
+
+BranchInstructionWithoutLabel {
+  ( 
+    kw<"BX"> |
+    kw<"BLX">
+  )
+  RegisterLiteral
+}
+
+MachineInstructionName {
+  kw<"MOV"> | 
+  kw<"MOVS"> |
+  kw<"ADDS"> |
+  kw<"ADD"> |
+  kw<"ADCS"> |
+  kw<"ADR"> |
+  kw<"SUBS"> |
+  kw<"SBCS"> |
+  kw<"RSBS"> |
+  kw<"MULS"> |
+  kw<"CMP"> |
+  kw<"CMN"> |
+  kw<"CMP"> |
+  kw<"ANDS"> |
+  kw<"EORS"> |
+  kw<"ORRS"> |
+  kw<"BICS"> |
+  kw<"MVNS"> |
+  kw<"TST"> |
+  kw<"LSLS"> |
+  kw<"LSRS"> |
+  kw<"ASRS"> |
+  kw<"RORS"> |
+  kw<"LDR"> |
+  kw<"LDRH"> |
+  kw<"LDRB"> |
+  kw<"LDRSH"> |
+  kw<"LDRSB"> |
+  kw<"LDM"> |
+  kw<"STR"> |
+  kw<"STRH"> |
+  kw<"STRB"> |
+  kw<"STM"> |
+  kw<"SXTH"> |
+  kw<"SXTB"> |
+  kw<"UXTH"> |
+  kw<"UXTB"> |
+  kw<"MRS">
+}
+
+machineInstructionArg {
+  RegisterLiteral |
+  MachInstrIntegerLiteral |
+  MachInstrSymbolicLiteral |
+  "[" commaSep<machineInstructionArg> "]"
+}
+
+Label {
+  identifier
+}
+
+VariableName {
+  identifier
+}
+
+commaSep<expr> { expr ("," expr)* }
+
+kw<term> { @specialize[@name="Keyword"]<identifier, term> }
 
 @tokens {
-  ImmEight { "#" $[0-9] | "#" $[1-9] $[0-9] | "#1" $[0-9] $[0-9] | "#2" $[0-4] $[0-9] | "#25" $[0-6] }
-  ImmFive { "#" $[0-9] | "#" $[1-2] $[0-9] | "#3" $[0-2] }
-  ImmThree { "#" $[0-8] }
 
-  LowReg { "R" $[0-7] }
-  HighReg { "R" $[0-9] | "R1" $[0-2] | "SP" | "LR" | "PC" }
+  identifier { $[A-Za-z0-9_]+ }
 
-  InstructionName { $[A-Z]+ }
-  Label { std.asciiLetter+ }
+  RegisterLiteral { "R" $[0-9] | "R1" $[1-2] | "SP" | "LR" | "PC" }
 
-  @precedence { ImmThree, ImmFive, ImmEight, LowReg, HighReg, InstructionName, "AREA", "DATA", "READONLY", "READWRITE", Label }
+  digits {
+    $[0-9]+
+  }
 
-  LineComment { ";" ![\n]* }
-  space { $[ \t\n\r]+ }
+  hexDigits {
+    $[A-Fa-f0-9]+
+  }
+
+  MachInstrIntegerLiteral {
+    "#" digits | ("=0x" | "=0X") hexDigits
+  }
+
+  MachInstrSymbolicLiteral {
+    "=" identifier
+  }
+
+  IntegerLiteral {
+    "#" digits | ("0x" | "0X") hexDigits
+  }
+
+  @precedence { MachInstrIntegerLiteral MachInstrSymbolicLiteral }
+
+  comment { ";" ![\n]* }
+  space { (std.whitespace | "\t" )+ }
+
+  "[" "]"
+
 }
-
-@detectDelim
