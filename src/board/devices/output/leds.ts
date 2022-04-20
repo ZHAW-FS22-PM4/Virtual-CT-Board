@@ -1,5 +1,5 @@
-import { Byte, Word } from 'types/binary'
 import { Device } from 'board/devices/device'
+import { Byte, Word } from 'types/binary'
 
 export class LEDs extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000100)

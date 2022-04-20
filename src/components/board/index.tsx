@@ -1,7 +1,7 @@
 import React from 'react'
 import { DipSwitch } from './dip-switch'
-import './style.css'
 import { Led } from './led'
+import './style.css'
 
 export class Board extends React.Component {
   public render(): React.ReactNode {

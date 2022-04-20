@@ -1,6 +1,5 @@
-import React from 'react'
 import Board from 'board'
-
+import React from 'react'
 import './style.css'
 
 type LedState = {
@@ -38,19 +37,26 @@ export class Led extends React.Component<LedProps, LedState> {
   public render(): React.ReactNode {
     return (
       <div className="led-container">
-        {Object.keys(this.state)
-          .map(Number)
-          .sort((n1, n2) => n2 - n1)
-          .map((key) => (
-            <div key={'led-' + key}>
-              <div className="label" style={{ fontSize: 6 }}>
-                {'LED' + key}
+        <div className="led-label" style={{ fontSize: 10 }}>
+          <div className="led-label-left">
+            LED{this.props.startIndex + 7}...{this.props.startIndex + 4}
+          </div>
+          <div className="led-label-right" style={{ textAlign: 'right' }}>
+            LED{this.props.startIndex + 3}...{this.props.startIndex}
+          </div>
+        </div>
+        <div className="led-display">
+          {Object.keys(this.state)
+            .map(Number)
+            .sort((n1, n2) => n2 - n1)
+            .map((key) => (
+              <div className="led" key={'led-' + key}>
+                <div
+                  className={`led ${this.state[key] ? 'led-on' : 'led-off'}`}
+                />
               </div>
-              <div
-                className={`led ${this.state[key] ? 'led-on' : 'led-off'}`}
-              />
-            </div>
-          ))}
+            ))}
+        </div>
       </div>
     )
   }
