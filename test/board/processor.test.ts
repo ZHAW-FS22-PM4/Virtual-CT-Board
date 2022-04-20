@@ -1,13 +1,10 @@
-import { Halfword, Word } from 'types/binary'
-
-import { Register, Registers } from 'board/registers'
-import { MemoryBus } from 'board/memory/bus'
 import { Flash } from 'board/devices/flash'
+import { MemoryBus } from 'board/memory/bus'
 import { Processor } from 'board/processor'
-
-import { END_OF_CODE } from 'instruction/special'
-
+import { Register, Registers } from 'board/registers'
 import InstructionSet from 'instruction/set'
+import { END_OF_CODE } from 'instruction/special'
+import { Halfword, Word } from 'types/binary'
 
 const registers = new Registers()
 const memory = new MemoryBus([new Flash()])

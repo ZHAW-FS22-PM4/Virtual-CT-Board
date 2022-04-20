@@ -1,7 +1,6 @@
-import { ICodeFile, AreaType, IArea, IInstruction } from 'assembler/ast'
-
+import { AreaType, IArea, ICodeFile, IInstruction } from 'assembler/ast'
 import { ParseError } from './error'
-import { parseText, ITextParseRule, ITextMatch } from './text'
+import { ITextMatch, ITextParseRule, parseText } from './text'
 
 /**
  * Parses a given code string and return a parsed code file (AST representation).

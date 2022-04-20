@@ -1,5 +1,4 @@
 import { AreaType } from 'assembler/ast'
-
 import { parse } from 'assembler/parser'
 import { ITextParseRule, parseText } from 'assembler/parser/text'
 

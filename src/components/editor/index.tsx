@@ -1,4 +1,3 @@
-import React from 'react'
 import CodeMirror, {
   Compartment,
   Decoration,
@@ -6,16 +5,12 @@ import CodeMirror, {
   Extension,
   ReactCodeMirrorRef
 } from '@uiw/react-codemirror'
-
-import { Register } from 'board/registers'
-
 import { assemble } from 'assembler'
 import { IELF } from 'assembler/elf'
-
 import Board from 'board'
-
+import { Register } from 'board/registers'
+import React from 'react'
 import { Assembly } from './assembly'
-
 import './style.css'
 
 enum EditorMode {
