@@ -27,7 +27,7 @@ function createExecutable(objectFile: IELF): IELF {
     Word.fromUnsignedInteger(SRAM_START.value + STACK_SIZE.value),
     Word.fromUnsignedInteger(FLASH_START.value + 8)
   ]
-  return {
+  const executable = {
     segments: [
       {
         type: SegmentType.LOAD,
@@ -42,6 +42,11 @@ function createExecutable(objectFile: IELF): IELF {
       ...vectorTable.flatMap((x) => x.toBytes()),
       ...objectFile.content,
       ...END_OF_CODE.toBytes()
-    ]
+    ],
+    sourceMap: new Map<number, number>()
   }
+  objectFile.sourceMap.forEach((offset, line) => {
+    executable.sourceMap.set(FLASH_START.add(offset + 8).value, line)
+  })
+  return executable
 }

@@ -30,4 +30,5 @@ export interface IELF {
   sections: ISectionTable
   symbols: ISymbolTable
   content: Byte[]
+  sourceMap: Map<number, number>
 }

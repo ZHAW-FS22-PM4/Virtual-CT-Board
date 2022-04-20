@@ -16,6 +16,7 @@ describe('encode', function () {
       getExecutor: jest.fn()
     }
     const code: ICodeFile = {
+      symbols: {},
       areas: [
         {
           type: AreaType.Code,
@@ -24,7 +25,8 @@ describe('encode', function () {
           instructions: [
             {
               name: 'MOVS',
-              options: ['R1', 'R2']
+              options: ['R1', 'R2'],
+              line: 0
             }
           ]
         }
@@ -44,6 +46,7 @@ describe('encode', function () {
       getExecutor: jest.fn()
     }
     const code: ICodeFile = {
+      symbols: {},
       areas: [
         {
           type: AreaType.Data,
@@ -52,7 +55,8 @@ describe('encode', function () {
           instructions: [
             {
               name: 'DCB',
-              options: ['0x77', '0x44']
+              options: ['0x77', '0x44'],
+              line: 0
             }
           ]
         }
@@ -72,6 +76,7 @@ describe('encode', function () {
       getExecutor: jest.fn()
     }
     const code: ICodeFile = {
+      symbols: {},
       areas: [
         {
           type: AreaType.Data,
@@ -80,7 +85,8 @@ describe('encode', function () {
           instructions: [
             {
               name: 'DCW',
-              options: ['0x77', '0x44']
+              options: ['0x77', '0x44'],
+              line: 0
             }
           ]
         }
@@ -102,6 +108,7 @@ describe('encode', function () {
       getExecutor: jest.fn()
     }
     const code: ICodeFile = {
+      symbols: {},
       areas: [
         {
           type: AreaType.Data,
@@ -110,7 +117,8 @@ describe('encode', function () {
           instructions: [
             {
               name: 'DCD',
-              options: ['0x77', '0x44']
+              options: ['0x77', '0x44'],
+              line: 0
             }
           ]
         }
@@ -137,6 +145,7 @@ describe('encode', function () {
         getExecutor: jest.fn()
       }
       const code: ICodeFile = {
+        symbols: {},
         areas: [
           {
             type: AreaType.Data,
@@ -145,7 +154,8 @@ describe('encode', function () {
             instructions: [
               {
                 name: name,
-                options: ['16']
+                options: ['16'],
+                line: 0
               }
             ]
           }
