@@ -1,0 +1,27 @@
+.button-container {
+  border: 1px solid lightgrey;
+  height: 4rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.button {
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.button-on {
+  background-color: darkgrey;
+}
+
+.button-off {
+  border: 1px solid lightgrey;
+  background-color: none;
+}
+
+.label {
+  font-size: 0.6rem;
+  text-align: center;
+}
