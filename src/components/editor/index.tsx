@@ -1,5 +1,13 @@
 import React from 'react'
-import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import CodeMirror, {
+  Compartment,
+  Decoration,
+  EditorView,
+  Extension,
+  ReactCodeMirrorRef
+} from '@uiw/react-codemirror'
+
+import { Register } from 'board/registers'
 
 import { assemble } from 'assembler'
 import { IELF } from 'assembler/elf'
@@ -24,6 +32,7 @@ interface EditorState {
 }
 
 export class EditorComponent extends React.Component<{}, EditorState> {
+  private configuration: Compartment
   private editor: React.RefObject<ReactCodeMirrorRef>
   private executable: IELF | null
 
@@ -35,6 +44,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       showError: false,
       errorMessage: ''
     }
+    this.configuration = new Compartment()
     this.editor = React.createRef<ReactCodeMirrorRef>()
     this.executable = null
     Board.processor.on('endOfCode', () =>
@@ -45,32 +55,28 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   resetProcessor(): void {
     Board.processor.reset()
     this.executable = null
-    this.setState(() => ({
-      mode: EditorMode.EDIT
-    }))
+    this.setState({ mode: EditorMode.EDIT })
+    this.updateProgramCounterHighlighting(true)
   }
 
   runOrHalt(): void {
+    let nextMode = this.state.mode
     if (this.state.mode === EditorMode.EDIT) {
       this.catchAndShowError(() => {
         this.executable = assemble(this.getCode())
         Board.loadExecutable(this.executable)
         Board.processor.execute()
-        this.setState({
-          mode: EditorMode.RUN
-        })
+        nextMode = EditorMode.RUN
       })
     } else if (this.state.mode === EditorMode.RUN) {
       Board.processor.halt()
-      this.setState({
-        mode: EditorMode.STEP
-      })
+      nextMode = EditorMode.STEP
     } else if (this.state.mode === EditorMode.STEP) {
       Board.processor.execute()
-      this.setState({
-        mode: EditorMode.RUN
-      })
+      nextMode = EditorMode.RUN
     }
+    this.setState({ mode: nextMode })
+    this.updateProgramCounterHighlighting(nextMode != EditorMode.STEP)
   }
 
   step(): void {
@@ -85,12 +91,36 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     } else if (this.state.mode === EditorMode.STEP) {
       Board.processor.step()
     }
+    this.updateProgramCounterHighlighting()
   }
 
   toggleInfoBox(): void {
     this.setState((state) => ({
       showInfoBox: !state.showInfoBox
     }))
+  }
+
+  updateProgramCounterHighlighting(clear: boolean = false) {
+    const view = this.editor.current?.view
+    if (view) {
+      let line: number | undefined
+      if (this.executable && !clear) {
+        const pc = Board.registers.readRegister(Register.PC)
+        line = this.executable.sourceMap.get(pc.value)
+      }
+      const decorations: Extension[] = []
+      if (line) {
+        const decoration = Decoration.line({
+          class: 'current-program-counter'
+        })
+        const position = view.state.doc.line(line + 1).from
+        decorations.push(
+          EditorView.decorations.of(Decoration.set(decoration.range(position)))
+        )
+      }
+      const effect = this.configuration.reconfigure(decorations)
+      view.dispatch({ effects: [effect] })
+    }
   }
 
   catchAndShowError(action: () => void) {
@@ -206,7 +236,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           height="700px"
           theme="dark"
           editable={this.state.mode == EditorMode.EDIT}
-          extensions={[Assembly()]}
+          extensions={[this.configuration.of([]), Assembly()]}
         />
       </div>
     )
