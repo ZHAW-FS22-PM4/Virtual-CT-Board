@@ -57,7 +57,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=\s+${INSTRUCTION})`,
+      pattern: `(${SYMBOL})(?=\\s+${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(match.from, 'Label must be defined in area')

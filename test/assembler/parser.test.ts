@@ -5,10 +5,12 @@ import { ITextParseRule, parseText } from 'assembler/parser/text'
 const code = `
 MY_CONSTANT EQU 0x123
 AREA |.data|, DATA, READWRITE
+  ; A comment
   DCD 0xFF ; A comment
 AREA |.text|, CODE, READONLY
          MOVS R1, #123
   label1 MOVS R2, #456
+
   label2
          MOVS R3, #789
 `
