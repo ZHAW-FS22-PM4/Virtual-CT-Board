@@ -27,6 +27,7 @@ interface EditorState {
 }
 
 export class EditorComponent extends React.Component<{}, EditorState> {
+  private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
   private configuration: Compartment
   private editor: React.RefObject<ReactCodeMirrorRef>
   private executable: IELF | null
@@ -230,8 +231,15 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           ref={this.editor}
           height="700px"
           theme="dark"
+          value={
+            sessionStorage.getItem(EditorComponent.SESSION_STORAGE_KEY) ||
+            undefined
+          }
           editable={this.state.mode == EditorMode.EDIT}
           extensions={[this.configuration.of([]), Assembly()]}
+          onChange={(value: string) => {
+            sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
+          }}
         />
       </div>
     )

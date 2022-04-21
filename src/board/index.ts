@@ -3,7 +3,7 @@ import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
 import { Switches } from './devices/input/switches'
-import { LEDs } from './devices/output/leds'
+import { LEDDevice } from './devices/output/leds'
 import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
 import { Processor } from './processor'
@@ -17,13 +17,13 @@ class Board {
   public readonly flash: Flash
   public readonly switches: Switches
   public readonly buttons: Buttons
-  public readonly leds: LEDs
+  public readonly leds: LEDDevice
 
   constructor() {
     this.flash = new Flash()
     this.switches = new Switches()
     this.buttons = new Buttons()
-    this.leds = new LEDs()
+    this.leds = new LEDDevice()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,
