@@ -2,7 +2,7 @@ import { EditorComponent } from 'components/editor'
 import { FlagsComponent } from 'components/flags'
 import { RegisterComponent } from 'components/register'
 import React from 'react'
-import { Board } from './board'
+import { BoardComonent } from './board'
 import { MemoryExplorerComponent } from './memoryexplorer'
 
 export class App extends React.Component {
@@ -18,7 +18,7 @@ export class App extends React.Component {
             <FlagsComponent />
           </div>
           <div className="col-md-6">
-            <Board />
+            <BoardComonent />
           </div>
         </div>
         <MemoryExplorerComponent />
