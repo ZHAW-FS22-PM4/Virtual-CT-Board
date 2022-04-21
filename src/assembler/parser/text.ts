@@ -22,7 +22,7 @@ export interface ITextMatch {
  */
 export interface ITextParseRule {
   name: string
-  pattern: RegExp
+  pattern: string | RegExp
   onMatch?(match: ITextMatch): void
 }
 

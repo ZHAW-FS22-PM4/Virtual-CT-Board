@@ -2,6 +2,12 @@ import { AreaType, IArea, ICodeFile, IInstruction } from 'assembler/ast'
 import { ParseError } from './error'
 import { ITextMatch, ITextParseRule, parseText } from './text'
 
+const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
+const VALUE = `[0-9a-z#]+`
+
+const OPTION = `[0-9a-z#\\[\\]]+`
+const INSTRUCTION = `([a-z]+) +(${OPTION}( *, *${OPTION})*)`
+
 /**
  * Parses a given code string and return a parsed code file (AST representation).
  *
@@ -26,7 +32,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'LiteralSymbolDeclaration',
-      pattern: /([a-z\|\._]+) +EQU +([0-9a-z#]+)/,
+      pattern: `(${SYMBOL}) +EQU +(${VALUE})`,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
         label = null
@@ -34,7 +40,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
-      pattern: /AREA +([a-z\|\._]+) *, *(DATA|CODE) *, *(READ(WRITE|ONLY))/,
+      pattern: `AREA +(${SYMBOL}) *, *(DATA|CODE) *, *(READ(WRITE|ONLY))`,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
@@ -51,8 +57,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern:
-        /([a-z0-9]+)(?=\s+([a-z]+) +([0-9a-z#\[\]]+(, *[0-9a-z#\[\]]+)))/,
+      pattern: `(${SYMBOL})(?=\s+${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(match.from, 'Label must be defined in area')
@@ -62,7 +67,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Instruction',
-      pattern: /([a-z]+) +([0-9a-z#\[\]]+(, *[0-9a-z#\[\]]+)*)/,
+      pattern: INSTRUCTION,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(
