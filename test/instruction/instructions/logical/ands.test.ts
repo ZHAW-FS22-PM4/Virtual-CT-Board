@@ -77,7 +77,7 @@ describe('test encode instruction function for ANDS', () => {
 
 describe('test executeInstruction function for ANDS', () => {
   it('should return correct value from register for ANDS R1, R2,', () => {
-    let opcode = andsInstruction.encodeInstruction(['R1', 'R2', 'R2'], {})
+    let opcode = andsInstruction.encodeInstruction(['R1', 'R1', 'R2'], {})
     andsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(
       0b00000000000000000000010010101001
@@ -87,7 +87,7 @@ describe('test executeInstruction function for ANDS', () => {
   })
 
   it('should return correct value from register for ANDS R3, R4 and set Z flag', () => {
-    let opcode = andsInstruction.encodeInstruction(['R3', 'R4', 'R4'], {})
+    let opcode = andsInstruction.encodeInstruction(['R3', 'R3', 'R4'], {})
     andsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R3).value).toEqual(
       0b00000000000000000000000000000000
@@ -97,7 +97,7 @@ describe('test executeInstruction function for ANDS', () => {
   })
 
   it('should return correct value from register for ANDS R5, R6 and set N flag.,', () => {
-    let opcode = andsInstruction.encodeInstruction(['R5', 'R6', 'R6'], {})
+    let opcode = andsInstruction.encodeInstruction(['R5', 'R5', 'R6'], {})
     andsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R5).value).toEqual(
       0b10000000000000000000011110101011

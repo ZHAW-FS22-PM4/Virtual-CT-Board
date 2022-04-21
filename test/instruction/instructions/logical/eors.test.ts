@@ -53,7 +53,7 @@ describe('test canEncodeInstruction function for EORS', () => {
 
 describe('test encode instruction function for EORS', () => {
   it('should create correct opcode for EORS R1, R7', () => {
-    let opcode = eorsInstruction.encodeInstruction(['R1', 'R7', 'R7'], {})
+    let opcode = eorsInstruction.encodeInstruction(['R1', 'R1', 'R7'], {})
     expect(opcode.toBinaryString()).toEqual('0100000001111001')
   })
 
@@ -64,7 +64,7 @@ describe('test encode instruction function for EORS', () => {
 
   it('should throw an error for high register params', () => {
     expect(() =>
-        eorsInstruction.encodeInstruction(['R1', 'R8', 'R8'], {})
+        eorsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
     ).toThrow()
   })
 
@@ -77,7 +77,7 @@ describe('test encode instruction function for EORS', () => {
 
 describe('test executeInstruction function for EORS', () => {
   it('should return correct value from register for EORS R1, R2,', () => {
-    let opcode = eorsInstruction.encodeInstruction(['R1', 'R2', 'R2'], {})
+    let opcode = eorsInstruction.encodeInstruction(['R1', 'R1', 'R2'], {})
     eorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(
       0b00000001010010000000001100000110
@@ -87,7 +87,7 @@ describe('test executeInstruction function for EORS', () => {
   })
 
   it('should return correct value from register for EORS R3, R4 and set Z flag', () => {
-    let opcode = eorsInstruction.encodeInstruction(['R3', 'R4', 'R4'], {})
+    let opcode = eorsInstruction.encodeInstruction(['R3', 'R3', 'R4'], {})
     eorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R3).value).toEqual(
       0b00000000000000000000000000000000
@@ -97,7 +97,7 @@ describe('test executeInstruction function for EORS', () => {
   })
 
   it('should return correct value from register for EORS R5, R6 and set N flag.,', () => {
-    let opcode = eorsInstruction.encodeInstruction(['R5', 'R6', 'R6'], {})
+    let opcode = eorsInstruction.encodeInstruction(['R5', 'R5', 'R6'], {})
     eorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R5).value).toEqual(
       0b10000000000001000010000000000000

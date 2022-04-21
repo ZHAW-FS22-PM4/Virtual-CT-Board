@@ -77,7 +77,7 @@ describe('test encode instruction function for BICS', () => {
 
 describe('test executeInstruction function for BICS', () => {
   it('should return correct value from register for BICS R1, R2,', () => {
-    let opcode = bicsInstruction.encodeInstruction(['R1', 'R2', 'R2'], {})
+    let opcode = bicsInstruction.encodeInstruction(['R1', 'R1', 'R2'], {})
     bicsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(
       0b00000000100010000000000000000100
