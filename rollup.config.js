@@ -41,7 +41,8 @@ let plugins = [
     targets: ['dist'],
     watch: false
   }),
-  resolve(),
+  //preferBuiltins: use local node packages over browserspecific global ones
+  resolve({ preferBuiltins: false }),
   commonjs(),
   replace({
     'process.env.NODE_ENV': JSON.stringify(environment),
