@@ -13,6 +13,7 @@ import {
 import { Halfword, Word } from 'types/binary'
 import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
 import { BaseInstruction } from '../base'
+import {convertToUnsignedNumber} from "../../../types/binary/utils";
 
 /**
  * Represents a 'Compare and Test' instruction - TST
@@ -46,14 +47,13 @@ export class TstInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(
-      (registers
+    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
+      registers
         .readRegister(getBits(opcode, this.rnPattern).value)
         .toUnsignedInteger() &
         registers
           .readRegister(getBits(opcode, this.rmPattern).value)
-          .toUnsignedInteger()) >>>
-        0 // need to shift 0 bits to right to get an unsigned number
+          .toUnsignedInteger())
     )
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))

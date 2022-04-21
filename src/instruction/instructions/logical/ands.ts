@@ -1,6 +1,7 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
+
 import {
   checkOptionCount,
   create,
@@ -11,8 +12,9 @@ import {
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
-import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
+import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { BaseInstruction } from '../base'
+import {convertToUnsignedNumber} from "types/binary/utils";
 
 /**
  * Represents a 'Bitwise AND' instruction - ANDS
@@ -35,9 +37,10 @@ export class AndsInstruction extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, 2,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
+    opcode = setBits(opcode, this.rmPattern, rmBits)
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     return opcode
   }
@@ -47,15 +50,13 @@ export class AndsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(
-      (registers
-        .readRegister(getBits(opcode, this.rdnPattern).value)
-        .toUnsignedInteger() &
+    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
+  registers
+            .readRegister(getBits(opcode, this.rdnPattern).value)
+            .toUnsignedInteger() &
         registers
-          .readRegister(getBits(opcode, this.rmPattern).value)
-          .toUnsignedInteger()) >>>
-        0 // need to shift 0 bits to right to get an unsigned number
-    )
+            .readRegister(getBits(opcode, this.rmPattern).value)
+            .toUnsignedInteger()))
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
     registers.writeRegister(
