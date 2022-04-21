@@ -18,7 +18,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   /** @see https://codemirror.net/6/docs/ref/#text */
   private editorContent: Text = Text.of([''])
   private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
-  private static BASE64_LINE_SEPARATOR: string = '\n'
+  private static SESSION_LINE_SEPARATOR: string = '\n'
 
   state: EditorState = {
     processorRunning: false,
@@ -158,7 +158,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   writeEditorContentToSession(): void {
     const allEditorLinesSeparated: string = this.editorContent
       .toJSON()
-      .join(EditorComponent.BASE64_LINE_SEPARATOR)
+      .join(EditorComponent.SESSION_LINE_SEPARATOR)
     sessionStorage.setItem(
       EditorComponent.SESSION_STORAGE_KEY,
       allEditorLinesSeparated
@@ -173,7 +173,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       return
     }
     this.editorContent = Text.of(
-      editorContentInSession.split(EditorComponent.BASE64_LINE_SEPARATOR)
+      editorContentInSession.split(EditorComponent.SESSION_LINE_SEPARATOR)
     )
   }
 }
