@@ -2,7 +2,6 @@ import CodeMirror, { Text } from '@uiw/react-codemirror'
 import { assemble } from 'assembler'
 import { IELF } from 'assembler/elf'
 import Board from 'board'
-import { Buffer } from 'buffer'
 import React from 'react'
 import { Assembly } from './assembly'
 import './style.css'
@@ -19,7 +18,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   /** @see https://codemirror.net/6/docs/ref/#text */
   private editorContent: Text = Text.of([''])
   private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
-  private static BASE64_LINE_SEPARATOR: string = '_-_'
+  private static BASE64_LINE_SEPARATOR: string = '\n'
 
   state: EditorState = {
     processorRunning: false,
@@ -162,7 +161,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       .join(EditorComponent.BASE64_LINE_SEPARATOR)
     sessionStorage.setItem(
       EditorComponent.SESSION_STORAGE_KEY,
-      Buffer.from(allEditorLinesSeparated).toString('base64')
+      allEditorLinesSeparated
     )
   }
 
@@ -173,12 +172,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     if (!editorContentInSession) {
       return
     }
-    let plainEditorContent = Buffer.from(
-      editorContentInSession,
-      'base64'
-    ).toString('utf8')
     this.editorContent = Text.of(
-      plainEditorContent.split(EditorComponent.BASE64_LINE_SEPARATOR)
+      editorContentInSession.split(EditorComponent.BASE64_LINE_SEPARATOR)
     )
   }
 }
