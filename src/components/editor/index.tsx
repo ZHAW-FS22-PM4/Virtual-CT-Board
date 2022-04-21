@@ -17,6 +17,8 @@ interface EditorState {
 export class EditorComponent extends React.Component<{}, EditorState> {
   /** @see https://codemirror.net/6/docs/ref/#text */
   private editorContent: Text = Text.of([''])
+  private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
+  private static SESSION_LINE_SEPARATOR: string = '\n'
 
   state: EditorState = {
     processorRunning: false,
@@ -77,6 +79,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   }
 
   render(): React.ReactNode {
+    this.readEditorContentFromSession()
     return (
       <div>
         <div className="pt-1 pb-1">
@@ -139,14 +142,38 @@ export class EditorComponent extends React.Component<{}, EditorState> {
         <CodeMirror
           height="700px"
           theme="dark"
+          value={`${this.editorContent}`}
           editable={this.state.editMode}
           extensions={[Assembly()]}
           onChange={(value, viewUpdate) => {
             // a bit ugly but this ensures that the editor content is always up to date
             this.editorContent = viewUpdate.state.doc
+            this.writeEditorContentToSession()
           }}
         />
       </div>
+    )
+  }
+
+  writeEditorContentToSession(): void {
+    const allEditorLinesSeparated: string = this.editorContent
+      .toJSON()
+      .join(EditorComponent.SESSION_LINE_SEPARATOR)
+    sessionStorage.setItem(
+      EditorComponent.SESSION_STORAGE_KEY,
+      allEditorLinesSeparated
+    )
+  }
+
+  readEditorContentFromSession(): void {
+    const editorContentInSession = sessionStorage.getItem(
+      EditorComponent.SESSION_STORAGE_KEY
+    )
+    if (!editorContentInSession) {
+      return
+    }
+    this.editorContent = Text.of(
+      editorContentInSession.split(EditorComponent.SESSION_LINE_SEPARATOR)
     )
   }
 }
