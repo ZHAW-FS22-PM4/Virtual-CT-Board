@@ -53,7 +53,7 @@ describe('test canEncodeInstruction function for ANDS', () => {
   it('should not be able to encode instruction with wrong register information', () => {
     expect(
       andsInstruction.canEncodeInstruction('ANDS', ['R1', 'R7'])
-    ).toBeFalsy()
+    ).toBeTruthy()
   })
 
   it('should not be able to encode instruction with wrong instruction name', () => {
@@ -69,13 +69,20 @@ describe('test encode instruction function for ANDS', () => {
     expect(opcode.toBinaryString()).toEqual('0100000000111001')
   })
 
-  it('should throw an error for 2 params', () => {
-    expect(() => andsInstruction.encodeInstruction(['R1', 'R7'], {})).toThrow()
+  it('should encode instruction as well with only two arguments', () => {
+    let opcode = andsInstruction.encodeInstruction(['R1', 'R7'], {})
+    expect(opcode.toBinaryString()).toEqual('0100000000111001')
   })
 
   it('should throw an error for high register params', () => {
     expect(() =>
       andsInstruction.encodeInstruction(['R1', 'R8', 'R8'], {})
+    ).toThrow()
+  })
+
+  it('should throw an error for high register params', () => {
+    expect(() =>
+        andsInstruction.encodeInstruction(['R1', 'R8'], {})
     ).toThrow()
   })
 })
