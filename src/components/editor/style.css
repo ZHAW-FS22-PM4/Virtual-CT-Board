@@ -6,3 +6,11 @@
   padding: 1rem;
   text-align: justify;
 }
+
+.cm-line.current-program-counter {
+  background-color: #8c2c34 !important;
+}
+
+.cm-activeLine.current-program-counter {
+  background-color: #90313a !important;
+}
