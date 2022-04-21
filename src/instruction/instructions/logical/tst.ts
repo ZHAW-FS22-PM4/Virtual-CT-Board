@@ -23,14 +23,12 @@ export class TstInstruction extends BaseInstruction {
   public pattern: string = '0100001000XXXXXX'
   private rnPattern: string = '0100001000000XXX'
   private rmPattern: string = '0100001000XXX000'
-  private expectedOptionCount: number = 2
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      !isImmediate(options[0]) &&
-      !isImmediate(options[1])
+        super.canEncodeInstruction(name, options) &&
+        isOptionCountValid(options, 2,3) &&
+        options.every((x) => !isImmediate(x))
     )
   }
 

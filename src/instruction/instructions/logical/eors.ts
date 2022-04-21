@@ -23,15 +23,12 @@ export class EorsInstruction extends BaseInstruction {
   public pattern: string = '0100000001XXXXXX'
   private rdnPattern: string = '0100000001000XXX'
   private rmPattern: string = '0100000001XXX000'
-  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      options[0] == options[1] &&
-      !isImmediate(options[0]) &&
-      !isImmediate(options[2])
+        super.canEncodeInstruction(name, options) &&
+        isOptionCountValid(options, 2,3) &&
+        options.every((x) => !isImmediate(x))
     )
   }
 

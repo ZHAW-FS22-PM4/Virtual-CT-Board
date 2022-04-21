@@ -15,6 +15,8 @@ import { Halfword, Word } from 'types/binary'
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { BaseInstruction } from '../base'
 import {convertToUnsignedNumber} from "types/binary/utils";
+import {util} from "prettier";
+import isNextLineEmptyAfterIndex = util.isNextLineEmptyAfterIndex;
 
 /**
  * Represents a 'Bitwise AND' instruction - ANDS
@@ -24,15 +26,12 @@ export class AndsInstruction extends BaseInstruction {
   public pattern: string = '0100000000XXXXXX'
   private rdnPattern: string = '0100000000000XXX'
   private rmPattern: string = '0100000000XXX000'
-  private expectedOptionCount: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      options[0] == options[1] &&
-      !isImmediate(options[0]) &&
-      !isImmediate(options[2])
+      isOptionCountValid(options, 2,3) &&
+      options.every((x) => !isImmediate(x))
     )
   }
 
