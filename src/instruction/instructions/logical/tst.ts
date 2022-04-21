@@ -24,14 +24,6 @@ export class TstInstruction extends BaseInstruction {
   private rnPattern: string = '0100001000000XXX'
   private rmPattern: string = '0100001000XXX000'
 
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-        super.canEncodeInstruction(name, options) &&
-        isOptionCountValid(options, 2,3) &&
-        options.every((x) => !isImmediate(x))
-    )
-  }
-
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2)
     let opcode: Halfword = create(this.pattern)

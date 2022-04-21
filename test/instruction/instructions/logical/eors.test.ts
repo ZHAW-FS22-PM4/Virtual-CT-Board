@@ -44,18 +44,6 @@ describe('test canEncodeInstruction function for EORS', () => {
     ).toBeTruthy()
   })
 
-  it('should not be able to encode instruction with wrong register information', () => {
-    expect(
-      eorsInstruction.canEncodeInstruction('EORS', ['R1', 'R7', 'R7'])
-    ).toBeFalsy()
-  })
-
-  it('should not be able to encode instruction with wrong register information', () => {
-    expect(
-      eorsInstruction.canEncodeInstruction('EORS', ['R1', 'R7'])
-    ).toBeTruthy()
-  })
-
   it('should not be able to encode instruction with wrong instruction name', () => {
     expect(
       eorsInstruction.canEncodeInstruction('EOR', ['R1', 'R1', 'R7'])

@@ -24,20 +24,17 @@ export class EorsInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000001000XXX'
   private rmPattern: string = '0100000001XXX000'
 
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-        super.canEncodeInstruction(name, options) &&
-        isOptionCountValid(options, 2,3) &&
-        options.every((x) => !isImmediate(x))
-    )
-  }
-
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
     checkOptionCount(options, 2,3)
+    if (options.length == 3 && options[0] !== options[1])
+      throw new Error('Parameter 1 and 2 must be identical!')
+
     let opcode: Halfword = create(this.pattern)
     let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
+
     opcode = setBits(opcode, this.rmPattern, rmBits)
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
+
     return opcode
   }
 

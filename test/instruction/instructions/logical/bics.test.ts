@@ -44,18 +44,6 @@ describe('test canEncodeInstruction function for BICS', () => {
     ).toBeTruthy()
   })
 
-  it('should not be able to encode instruction with wrong register information', () => {
-    expect(
-      bicsInstruction.canEncodeInstruction('BICS', ['R1', 'R7', 'R7'])
-    ).toBeFalsy()
-  })
-
-  it('should not be able to encode instruction with wrong register information', () => {
-    expect(
-      bicsInstruction.canEncodeInstruction('BICS', ['R1', 'R7'])
-    ).toBeTruthy()
-  })
-
   it('should not be able to encode instruction with wrong instruction name', () => {
     expect(
       bicsInstruction.canEncodeInstruction('BIC', ['R1', 'R1', 'R7'])
@@ -65,7 +53,7 @@ describe('test canEncodeInstruction function for BICS', () => {
 
 describe('test encode instruction function for BICS', () => {
   it('should create correct opcode for BICS R1, R7', () => {
-    let opcode = bicsInstruction.encodeInstruction(['R1', 'R7', 'R7'], {})
+    let opcode = bicsInstruction.encodeInstruction(['R1', 'R1', 'R7'], {})
     expect(opcode.toBinaryString()).toEqual('0100001110111001')
   })
 
@@ -76,7 +64,7 @@ describe('test encode instruction function for BICS', () => {
 
   it('should throw an error for high register params', () => {
     expect(() =>
-        bicsInstruction.encodeInstruction(['R1', 'R8', 'R8'], {})
+        bicsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
     ).toThrow()
   })
 
@@ -99,7 +87,7 @@ describe('test executeInstruction function for BICS', () => {
   })
 
   it('should return correct value from register for BICS R3, R4 and set Z flag', () => {
-    let opcode = bicsInstruction.encodeInstruction(['R3', 'R4', 'R4'], {})
+    let opcode = bicsInstruction.encodeInstruction(['R3', 'R3', 'R4'], {})
     bicsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R3).value).toEqual(
       0b00000000000000000000000000000000
@@ -109,7 +97,7 @@ describe('test executeInstruction function for BICS', () => {
   })
 
   it('should return correct value from register for BICS R5, R6 and set N flag.,', () => {
-    let opcode = bicsInstruction.encodeInstruction(['R5', 'R6', 'R6'], {})
+    let opcode = bicsInstruction.encodeInstruction(['R5', 'R5', 'R6'], {})
     bicsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R5).value).toEqual(
       0b10000000000001000010000000000000

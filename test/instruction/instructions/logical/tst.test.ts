@@ -44,12 +44,6 @@ describe('test canEncodeInstruction function for TST', () => {
     ).toBeTruthy()
   })
 
-  it('should not be able to encode instruction with wrong register information', () => {
-    expect(
-      tstInstruction.canEncodeInstruction('TST', ['R1', 'R1', 'R7'])
-    ).toBeFalsy()
-  })
-
   it('should not be able to encode instruction with wrong instruction name', () => {
     expect(
       tstInstruction.canEncodeInstruction('TSTS', ['R1', 'R1', 'R7'])
