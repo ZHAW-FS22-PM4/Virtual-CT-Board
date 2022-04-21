@@ -1,0 +1,49 @@
+.led-container {
+  border: 1px solid lightgrey;
+  height: 4rem;
+  border-radius: 10px;
+  display: grid;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.led {
+  width: 1rem;
+  height: 1.5rem;
+  border: grey solid 1px;
+  margin-right: 0.2rem;
+}
+
+.led-on {
+  background: green;
+}
+
+.led-off {
+  background: darkgray;
+}
+
+.led-label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.led-label-right {
+  position: relative;
+}
+.led-label-left {
+  position: relative;
+}
+
+.led-display {
+  clear: both;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: -20px;
+}
+
+.label {
+  font-size: 0.6rem;
+  text-align: center;
+  position: relative;
+}

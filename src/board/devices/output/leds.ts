@@ -1,13 +1,32 @@
 import { Device } from 'board/devices/device'
-import { Word } from 'types/binary'
+import { Byte, Word } from 'types/binary'
 
-export class LEDs extends Device {
-  public startAddress = Word.fromUnsignedInteger(0x08000000)
-  public endAddress = Word.fromUnsignedInteger(0x081fffff)
+export class LEDDevice extends Device {
+  public startAddress = Word.fromUnsignedInteger(0x60000100)
+  public endAddress = Word.fromUnsignedInteger(0x60000103)
   public isReadOnly = false
-  public isVolatile = false
+  public isVolatile = true
 
+  private static readonly MAX_LED_NUMBER: number = 31
+
+  /**
+   * Returns true if led with given position is on.
+   *
+   * @param position led position to check (0-31)
+   * @returns true if led is turned on
+   */
   public isOn(position: number): boolean {
-    throw new Error('Device not yet implemented.')
+    if (LEDDevice.invalidPosition(position)) {
+      throw new Error(`Position ${position} does not exist.`)
+    }
+    return this.findLedByte(position).isBitSet(position % 8)
+  }
+
+  private findLedByte(position: number): Byte {
+    return this.memory.readByte(this.startAddress.add(Math.floor(position / 8)))
+  }
+
+  private static invalidPosition(position: number): boolean {
+    return position < 0 || position > LEDDevice.MAX_LED_NUMBER
   }
 }
