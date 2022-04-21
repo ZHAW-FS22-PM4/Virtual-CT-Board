@@ -13,6 +13,7 @@ import {
 import { Halfword, Word } from 'types/binary'
 import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
 import { BaseInstruction } from '../base'
+import {convertToUnsignedNumber} from "../../../types/binary/utils";
 
 /**
  * Represents a 'Bitwise OR' instruction - ORRS
@@ -35,9 +36,10 @@ export class OrrsInstruction extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, 2,3)
     let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+    let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
+    opcode = setBits(opcode, this.rmPattern, rmBits)
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     return opcode
   }
@@ -47,15 +49,14 @@ export class OrrsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(
-      (registers
+    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
+      registers
         .readRegister(getBits(opcode, this.rdnPattern).value)
         .toUnsignedInteger() |
         registers
           .readRegister(getBits(opcode, this.rmPattern).value)
-          .toUnsignedInteger()) >>>
-        0
-    ) // need to shift 0 bits to right to get an unsigned number
+          .toUnsignedInteger())
+    )
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
     registers.writeRegister(
