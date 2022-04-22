@@ -8,7 +8,6 @@ import {
   createLowRegisterBits,
   getBits,
   isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
@@ -58,7 +57,6 @@ export class RorsInstruction extends BaseInstruction {
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isOptionCountValid(options, 2, 3) &&
       options.every((x) => !isImmediate(x))
     )
   }

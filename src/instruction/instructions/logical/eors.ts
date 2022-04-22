@@ -6,14 +6,12 @@ import {
   create,
   createLowRegisterBits,
   getBits,
-  isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
 import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
+import { convertToUnsignedNumber } from '../../../types/binary/utils'
 import { BaseInstruction } from '../base'
-import {convertToUnsignedNumber} from "../../../types/binary/utils";
 
 /**
  * Represents a 'Exclusive OR' instruction - EORS
@@ -25,7 +23,7 @@ export class EorsInstruction extends BaseInstruction {
   private rmPattern: string = '0100000001XXX000'
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 2,3)
+    checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
 
@@ -43,13 +41,15 @@ export class EorsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
+    let calculatedValue = Word.fromUnsignedInteger(
+      convertToUnsignedNumber(
         registers
-        .readRegister(getBits(opcode, this.rdnPattern).value)
-        .toUnsignedInteger() ^
-        registers
-          .readRegister(getBits(opcode, this.rmPattern).value)
-          .toUnsignedInteger())
+          .readRegister(getBits(opcode, this.rdnPattern).value)
+          .toUnsignedInteger() ^
+          registers
+            .readRegister(getBits(opcode, this.rmPattern).value)
+            .toUnsignedInteger()
+      )
     )
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))

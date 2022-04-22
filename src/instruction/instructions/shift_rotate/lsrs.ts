@@ -9,7 +9,6 @@ import {
   createLowRegisterBits,
   getBits,
   isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
@@ -63,7 +62,6 @@ export class LsrsRegisterInstruction extends BaseInstruction {
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isOptionCountValid(options, 2, 3) &&
       options.every((x) => !isImmediate(x))
     )
   }
@@ -116,7 +114,6 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isOptionCountValid(options, 2, 3) &&
       isImmediate(options[length - 1])
     )
   }

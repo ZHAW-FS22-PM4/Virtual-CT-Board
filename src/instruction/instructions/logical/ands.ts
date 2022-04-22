@@ -1,22 +1,20 @@
+import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
-
 import {
   checkOptionCount,
   create,
   createLowRegisterBits,
   getBits,
-  isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
+import { util } from 'prettier'
 import { Halfword, Word } from 'types/binary'
-import { evaluateZeroAndNegativeFlags } from 'board/alu'
+import { convertToUnsignedNumber } from 'types/binary/utils'
 import { BaseInstruction } from '../base'
-import {convertToUnsignedNumber} from "types/binary/utils";
-import {util} from "prettier";
-import isNextLineEmptyAfterIndex = util.isNextLineEmptyAfterIndex;
+
+import isNextLineEmptyAfterIndex = util.isNextLineEmptyAfterIndex
 
 /**
  * Represents a 'Bitwise AND' instruction - ANDS
@@ -28,7 +26,7 @@ export class AndsInstruction extends BaseInstruction {
   private rmPattern: string = '0100000000XXX000'
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 2,3)
+    checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
 
@@ -46,13 +44,16 @@ export class AndsInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
-  registers
-            .readRegister(getBits(opcode, this.rdnPattern).value)
-            .toUnsignedInteger() &
+    let calculatedValue = Word.fromUnsignedInteger(
+      convertToUnsignedNumber(
         registers
+          .readRegister(getBits(opcode, this.rdnPattern).value)
+          .toUnsignedInteger() &
+          registers
             .readRegister(getBits(opcode, this.rmPattern).value)
-            .toUnsignedInteger()))
+            .toUnsignedInteger()
+      )
+    )
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))
     registers.writeRegister(

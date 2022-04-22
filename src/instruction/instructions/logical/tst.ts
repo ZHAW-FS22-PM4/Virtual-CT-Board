@@ -6,14 +6,12 @@ import {
   create,
   createLowRegisterBits,
   getBits,
-  isImmediate,
-  isOptionCountValid,
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
 import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
+import { convertToUnsignedNumber } from '../../../types/binary/utils'
 import { BaseInstruction } from '../base'
-import {convertToUnsignedNumber} from "../../../types/binary/utils";
 
 /**
  * Represents a 'Compare and Test' instruction - TST
@@ -37,13 +35,15 @@ export class TstInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    let calculatedValue = Word.fromUnsignedInteger(convertToUnsignedNumber(
-      registers
-        .readRegister(getBits(opcode, this.rnPattern).value)
-        .toUnsignedInteger() &
+    let calculatedValue = Word.fromUnsignedInteger(
+      convertToUnsignedNumber(
         registers
-          .readRegister(getBits(opcode, this.rmPattern).value)
-          .toUnsignedInteger())
+          .readRegister(getBits(opcode, this.rnPattern).value)
+          .toUnsignedInteger() &
+          registers
+            .readRegister(getBits(opcode, this.rmPattern).value)
+            .toUnsignedInteger()
+      )
     )
 
     registers.setFlags(evaluateZeroAndNegativeFlags(calculatedValue))

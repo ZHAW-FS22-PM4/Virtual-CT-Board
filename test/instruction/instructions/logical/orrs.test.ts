@@ -64,14 +64,12 @@ describe('test encode instruction function for ORRS', () => {
 
   it('should throw an error for high register params', () => {
     expect(() =>
-        orrsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
+      orrsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
     ).toThrow()
   })
 
   it('should throw an error for high register params', () => {
-    expect(() =>
-        orrsInstruction.encodeInstruction(['R1', 'R8'], {})
-    ).toThrow()
+    expect(() => orrsInstruction.encodeInstruction(['R1', 'R8'], {})).toThrow()
   })
 })
 

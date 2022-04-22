@@ -47,7 +47,7 @@ describe('test canEncodeInstruction function for ANDS', () => {
   it('should not be able to encode instruction with wrong instruction name', () => {
     expect(
       andsInstruction.canEncodeInstruction('AND', ['R1', 'R1', 'R7'])
-  ).toBeFalsy()
+    ).toBeFalsy()
   })
 })
 
@@ -65,13 +65,11 @@ describe('test encode instruction function for ANDS', () => {
   it('should throw an error for high register params', () => {
     expect(() =>
       andsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
-  ).toThrow()
+    ).toThrow()
   })
 
   it('should throw an error for high register params', () => {
-    expect(() =>
-        andsInstruction.encodeInstruction(['R1', 'R8'], {})
-    ).toThrow()
+    expect(() => andsInstruction.encodeInstruction(['R1', 'R8'], {})).toThrow()
   })
 })
 

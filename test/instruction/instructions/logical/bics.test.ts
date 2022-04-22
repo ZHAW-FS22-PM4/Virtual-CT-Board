@@ -64,14 +64,12 @@ describe('test encode instruction function for BICS', () => {
 
   it('should throw an error for high register params', () => {
     expect(() =>
-        bicsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
+      bicsInstruction.encodeInstruction(['R1', 'R1', 'R8'], {})
     ).toThrow()
   })
 
   it('should throw an error for high register params', () => {
-    expect(() =>
-        bicsInstruction.encodeInstruction(['R1', 'R8'], {})
-    ).toThrow()
+    expect(() => bicsInstruction.encodeInstruction(['R1', 'R8'], {})).toThrow()
   })
 })
 
