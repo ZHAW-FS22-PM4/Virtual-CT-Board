@@ -1,3 +1,4 @@
+import { EncoderError } from 'assembler/parser/error'
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
@@ -9,6 +10,8 @@ import {
   getBits,
   isImmediate,
   isOptionCountValid,
+  isPCRegister,
+  registerStringEnclosedInBrackets,
   registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
@@ -25,19 +28,45 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '0110100000XXX000'
   private rtPattern: string = '0110100000000XXX'
   private immPattern: string = '01101XXXXX000000'
-  private expectedOptionCount: number = 3
+  private otherInstructionWithSameName: BaseInstruction[] = [
+    new LdrRegisterOffsetInstruction(),
+    new LdrRegisterInstruction()
+  ]
+
+  private expectedOptionCountMin: number = 2
+  private expectedOptionCountMax: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2])
+      !this.otherInstructionWithSameName.some((instr) => {
+        return instr.canEncodeInstruction(name, options)
+      })
     )
   }
 
   public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
-    checkOptionCount(options, 3)
+    checkOptionCount(
+      options,
+      this.expectedOptionCountMin,
+      this.expectedOptionCountMax
+    )
+    if (options.length == this.expectedOptionCountMin) {
+      if (!registerStringEnclosedInBrackets(options[1])) {
+        throw new EncoderError(
+          'opening or closing bracket missing for 2nd param'
+        )
+      }
+      //just add fix value 0 as immediate
+      options.push('#0')
+    } else {
+      if (!registerStringHasBrackets(options[1], options[2])) {
+        throw new EncoderError(
+          'opening bracket on 2nd param or closing bracket on 3rd param'
+        )
+      }
+    }
+
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
@@ -84,6 +113,7 @@ export class LdrRegisterOffsetInstruction extends BaseInstruction {
       super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
       !isImmediate(options[2]) &&
+      !isPCRegister(options[1]) &&
       registerStringHasBrackets(options[1], options[2])
     )
   }
@@ -122,7 +152,7 @@ export class LdrRegisterOffsetInstruction extends BaseInstruction {
 }
 
 /**
- * Represents a 'LOAD' instruction - LDR (pointer + offset) - word
+ * Represents a 'LOAD' instruction - LDR (programm counter + offset) - word
  */
 export class LdrRegisterInstruction extends BaseInstruction {
   public name: string = 'LDR'

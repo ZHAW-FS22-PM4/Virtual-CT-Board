@@ -263,6 +263,15 @@ export function isOptionCountValid(
 }
 
 /**
+ * Determine if string is PC register or not
+ * @param possiblePCRegister immedate to check
+ * @returns true if it is an immediate
+ */
+export function isPCRegister(possiblePCRegister: string): boolean {
+  return possiblePCRegister.includes('PC')
+}
+
+/**
  * Determine if string is immediate or not
  * @param possibleImmediate immedate to check
  * @returns true if it is an immediate
@@ -310,4 +319,15 @@ export function registerStringHasBrackets(
   registerString2: string
 ): boolean {
   return registerString1.startsWith('[') && registerString2.endsWith(']')
+}
+
+/**
+ * Checks if the brackets are set correct on the register string.
+ * @param registerString where to check for the left bracket and right bracket
+ * @returns true if the brackets are set correct
+ */
+export function registerStringEnclosedInBrackets(
+  registerString: string
+): boolean {
+  return registerString.startsWith('[') && registerString.endsWith(']')
 }

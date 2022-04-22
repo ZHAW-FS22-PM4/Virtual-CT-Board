@@ -28,7 +28,7 @@ const lowRegisterOption: string = 'R1'
 const lowRegisterOption2: string = '[R2'
 const lowRegisterOption3: string = 'R3]'
 const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F'
+const validImmediateOptionHigh: string = '#0x1F]'
 const invalidImmediateOption: string = '5'
 
 const highRegisterOption: string = 'SP'
