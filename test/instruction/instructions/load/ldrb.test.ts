@@ -13,16 +13,16 @@ const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
 const invalidInstructionOptions = ['R77', '#2#']
 
-const strName = 'LDR'
-const strbName = 'LDRB'
-const strhName = 'LDRH'
+const ldrName = 'LDR'
+const ldrbName = 'LDRB'
+const ldrhName = 'LDRH'
 
-const strRegisterOptionsValid = ['R0', '[R1', 'R2]']
-const strRegisterOptionsInvalid = ['R0', 'R1', 'R2']
-const strRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
-const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
-const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
-const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
+const ldrRegisterOptionsValid = ['R0', '[R1', 'R2]']
+const ldrRegisterOptionsInvalid = ['R0', 'R1', 'R2']
+const ldrRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
+const ldrLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
+const ldrLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
+const ldrLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
 const lowRegisterOption: string = 'R1'
 const lowRegisterOption2: string = '[R2'
@@ -61,50 +61,50 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strName,
-        strLiteralOptionsValid
+        ldrName,
+        ldrLiteralOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strLiteralOptionsValid
+        ldrhName,
+        ldrLiteralOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsValid
+        ldrbName,
+        ldrRegisterOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsInvalid
+        ldrhName,
+        ldrRegisterOptionsInvalid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsInvalid2
+        ldrhName,
+        ldrRegisterOptionsInvalid2
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid
+        ldrbName,
+        ldrLiteralOptionsInvalid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid2
+        ldrbName,
+        ldrLiteralOptionsInvalid2
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsValid
+        ldrbName,
+        ldrLiteralOptionsValid
       )
     ).toBe(true)
   })
@@ -117,44 +117,44 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strName,
-        strRegisterOptionsValid
+        ldrName,
+        ldrRegisterOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsValid
+        ldrhName,
+        ldrRegisterOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsValid
+        ldrbName,
+        ldrLiteralOptionsValid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsInvalid
+        ldrbName,
+        ldrRegisterOptionsInvalid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsInvalid2
+        ldrbName,
+        ldrRegisterOptionsInvalid2
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid
+        ldrbName,
+        ldrLiteralOptionsInvalid
       )
     ).toBe(false)
     expect(
       instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsValid
+        ldrbName,
+        ldrRegisterOptionsValid
       )
     ).toBe(true)
   })
