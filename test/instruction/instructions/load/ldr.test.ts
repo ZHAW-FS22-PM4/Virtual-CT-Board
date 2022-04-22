@@ -40,11 +40,9 @@ const invalidImmediateOption: string = '5'
 const highRegisterOption: string = 'SP'
 const invalidRegisterOption: string = 'R22'
 
-const instructionLoadInstructionImmediateOffset =
-  new LdrImmediate5OffsetInstruction()
-const instructionLoadInstructionRegisterOffset =
-  new LdrRegisterOffsetInstruction()
-const instructionLoadInstructionPointerOffset = new LdrRegisterInstruction()
+const instrLdrImm = new LdrImmediate5OffsetInstruction()
+const instrLdrReg = new LdrRegisterOffsetInstruction()
+const instrLdrPointer = new LdrRegisterInstruction()
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -68,217 +66,127 @@ registers.writeRegister(Register.R5, registerValueR5)
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
   test('LdrImmediate5OffsetInstruction - LDR (immediate offset) - word encoder', () => {
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
+      instrLdrImm.canEncodeInstruction(
         invalidInstructionName,
         invalidInstructionOptions
       )
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrbName,
-        ldrLiteralOptionsValid
-      )
+      instrLdrImm.canEncodeInstruction(ldrbName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrhName,
-        ldrLiteralOptionsValid
-      )
+      instrLdrImm.canEncodeInstruction(ldrhName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(false)
 
     //TODO check invalid options in encodeMethod of instructionLoadInstructionImmediateOffset
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsInvalid
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsInvalid2
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid2)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsInvalid
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsInvalid2
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid2)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrOptionsWriteToPCInvalid
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrOptionsWriteToPCInvalid)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsValid
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsValid)
     ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsValidShort
-      )
+      instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsValidShort)
     ).toBe(true)
   })
   test('LdrRegisterOffsetInstruction - LDR (register offset) - word encoder', () => {
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
+      instrLdrReg.canEncodeInstruction(
         invalidInstructionName,
         invalidInstructionOptions
       )
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrbName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrReg.canEncodeInstruction(ldrbName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrhName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrReg.canEncodeInstruction(ldrhName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsValid
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsInvalid
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsInvalid2
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid2)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsInvalid
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrLiteralOptionsInvalid2
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid2)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsValidShort
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValidShort)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrOptionsWriteToPCInvalid
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrOptionsWriteToPCInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(true)
   })
   test('LdrRegisterInstruction - LDR (programm counter + offset) - word', () => {
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
+      instrLdrPointer.canEncodeInstruction(
         invalidInstructionName,
         invalidInstructionOptions
       )
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrName,
-        ldrPCOptionsValid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrPCOptionsValid)
     ).toBe(true)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrhName,
-        ldrRegisterOptionsValid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrhName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrbName,
-        ldrLiteralOptionsValid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrbName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrbName,
-        ldrRegisterOptionsInvalid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrbName, ldrRegisterOptionsInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrbName,
-        ldrRegisterOptionsInvalid2
-      )
+      instrLdrPointer.canEncodeInstruction(ldrbName, ldrRegisterOptionsInvalid2)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrbName,
-        ldrLiteralOptionsInvalid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrbName, ldrLiteralOptionsInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrbName,
-        ldrPCOptionsValid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrbName, ldrPCOptionsValid)
     ).toBe(false)
 
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
+      instrLdrPointer.canEncodeInstruction(
         ldrName,
         ldrRegisterOptionsValidShort
       )
     ).toBe(false)
 
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrName,
-        ldrOptionsWriteToPCInvalid
-      )
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrOptionsWriteToPCInvalid)
     ).toBe(false)
 
     expect(
-      instructionLoadInstructionPointerOffset.canEncodeInstruction(
-        ldrName,
-        ldrPCOptionsValid2
-      )
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrPCOptionsValid2)
     ).toBe(true)
   })
 })
@@ -287,7 +195,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('LdrImmediate5OffsetInstruction', () => {
     // LDR R1, [R2, #0x01]
     expect(
-      instructionLoadInstructionImmediateOffset
+      instrLdrImm
         .encodeInstruction(
           [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
           labelOffsetMock
@@ -296,7 +204,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0110100001010001')
     // LDR R1, [R2, #0x1F]
     expect(
-      instructionLoadInstructionImmediateOffset
+      instrLdrImm
         .encodeInstruction(
           [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
           labelOffsetMock
@@ -305,34 +213,34 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0110111111010001')
     // LDR R3, [R6]
     expect(
-      instructionLoadInstructionImmediateOffset
+      instrLdrImm
         .encodeInstruction(['R3', '[R6]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110100000110011')
     // LDR R1, [R2, R3]
     expect(() =>
-      instructionLoadInstructionImmediateOffset.encodeInstruction(
+      instrLdrImm.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
     expect(() =>
-      instructionLoadInstructionImmediateOffset.encodeInstruction(
+      instrLdrImm.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2],
         labelOffsetMock
       )
     ).toThrow(encodingErrorWrongBracketsOn2nd)
     // LDR R1, [R2, 5
     expect(() =>
-      instructionLoadInstructionImmediateOffset.encodeInstruction(
+      instrLdrImm.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
         labelOffsetMock
       )
     ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instructionLoadInstructionImmediateOffset.encodeInstruction(
+      instrLdrImm.encodeInstruction(
         [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
         labelOffsetMock
       )
@@ -341,7 +249,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('LdrRegisterOffsetInstruction', () => {
     // LDR R1, [R2, R3]
     expect(
-      instructionLoadInstructionRegisterOffset
+      instrLdrReg
         .encodeInstruction(
           [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
           labelOffsetMock
@@ -350,35 +258,35 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0101100011010001')
     // LDR R1, [R2, #0x1F]
     expect(() =>
-      instructionLoadInstructionRegisterOffset.encodeInstruction(
+      instrLdrReg.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, SP]
     expect(() =>
-      instructionLoadInstructionRegisterOffset.encodeInstruction(
+      instrLdrReg.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, highRegisterOption],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, R22]
     expect(() =>
-      instructionLoadInstructionRegisterOffset.encodeInstruction(
+      instrLdrReg.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, invalidRegisterOption],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
     expect(() =>
-      instructionLoadInstructionRegisterOffset.encodeInstruction(
+      instrLdrReg.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instructionLoadInstructionRegisterOffset.encodeInstruction(
+      instrLdrReg.encodeInstruction(
         [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
         labelOffsetMock
       )
@@ -387,7 +295,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('LoadRegisterInstruction', () => {
     // LDR R1, [SP, #0x01]
     expect(
-      instructionLoadInstructionPointerOffset
+      instrLdrPointer
         .encodeInstruction(
           [lowRegisterOption, highRegisterOption, validImmediateOptionLow],
           labelOffsetMock
@@ -396,7 +304,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0100100100000001')
     // LDR R1, [SP, #0x1F]
     expect(
-      instructionLoadInstructionPointerOffset
+      instrLdrPointer
         .encodeInstruction(
           [lowRegisterOption, highRegisterOption, validImmediateOptionHigh],
           labelOffsetMock
@@ -405,28 +313,28 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0100100100011111')
     // LDR R1, [R2, R3]
     expect(() =>
-      instructionLoadInstructionPointerOffset.encodeInstruction(
+      instrLdrPointer.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
     expect(() =>
-      instructionLoadInstructionPointerOffset.encodeInstruction(
+      instrLdrPointer.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, 5]
     expect(() =>
-      instructionLoadInstructionPointerOffset.encodeInstruction(
+      instrLdrPointer.encodeInstruction(
         [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instructionLoadInstructionPointerOffset.encodeInstruction(
+      instrLdrPointer.encodeInstruction(
         [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
         labelOffsetMock
       )
@@ -442,7 +350,7 @@ describe('test executeInstruction function', () => {
       registerValueR6.add(0x01),
       Word.fromUnsignedInteger(0x0009)
     )
-    instructionLoadInstructionImmediateOffset.executeInstruction(
+    instrLdrImm.executeInstruction(
       Halfword.fromUnsignedInteger(0b0110100001110111),
       registers,
       memory
@@ -456,7 +364,7 @@ describe('test executeInstruction function', () => {
       registerValueR6.add(registerValueR5),
       Word.fromUnsignedInteger(0x0009)
     )
-    instructionLoadInstructionRegisterOffset.executeInstruction(
+    instrLdrReg.executeInstruction(
       Halfword.fromUnsignedInteger(0b0101100101110111),
       registers,
       memory
