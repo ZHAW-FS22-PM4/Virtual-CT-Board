@@ -9,7 +9,7 @@ import {
 import { ILabelOffsets } from 'instruction/interfaces'
 import { mock } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -27,22 +27,21 @@ const ldrLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const ldrLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const ldrLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 const ldrPCOptionsValid = ['R0', '[PC', '#0xe6]']
-const ldrPCOptionsValid2 = ['R7', '[PC', '#0x00]']
+const ldrPCOptionsValid2 = ['R7', '[PC]']
 const ldrOptionsWriteToPCInvalid = ['PC', '[R3', '#0x8]']
-
-const lowRegisterOption: string = 'R1'
-const lowRegisterOption2: string = '[R2'
-const lowRegisterOption3: string = 'R3]'
-const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F]'
-const invalidImmediateOption: string = '5'
-
-const highRegisterOption: string = 'SP'
-const invalidRegisterOption: string = 'R22'
 
 const instrLdrImm = new LdrImmediate5OffsetInstruction()
 const instrLdrReg = new LdrRegisterOffsetInstruction()
 const instrLdrPointer = new LdrRegisterInstruction()
+
+const encodingErrorWrongBracketsOn2nd = new EncoderError(
+  'opening or closing bracket missing for 2. param',
+  VirtualBoardErrorType.InvalidParamProvided
+)
+const encodingErrorWrongBracketsOn2ndOr3rd = new EncoderError(
+  'opening bracket on 2. param or closing bracket on 3. param',
+  VirtualBoardErrorType.InvalidParamProvided
+)
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -51,13 +50,6 @@ const memory: Memory = new Memory()
 const registerValueR7: Word = Word.fromUnsignedInteger(0x00000000)
 const registerValueR6: Word = Word.fromUnsignedInteger(0x12345678)
 const registerValueR5: Word = Word.fromUnsignedInteger(0x00000100)
-
-const encodingErrorWrongBracketsOn2nd = new EncoderError(
-  'opening or closing bracket missing for 2nd param'
-)
-const encodingErrorWrongBracketsOn2ndOr3rd = new EncoderError(
-  'opening bracket on 2nd param or closing bracket on 3rd param'
-)
 
 registers.writeRegister(Register.R7, registerValueR7)
 registers.writeRegister(Register.R6, registerValueR6)
@@ -84,10 +76,10 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     //TODO check invalid options in encodeMethod of instructionLoadInstructionImmediateOffset
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid)
-    ).toBe(true)
+    ).toBe(false)
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid2)
-    ).toBe(true)
+    ).toBe(false)
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(true)
@@ -122,10 +114,10 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     ).toBe(false)
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid)
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid2)
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(false)
@@ -193,149 +185,96 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('LdrImmediate5OffsetInstruction', () => {
-    // LDR R1, [R2, #0x01]
     expect(
       instrLdrImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R7', '[R2', '#0x16]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('0110100001010001')
-    // LDR R1, [R2, #0x1F]
+    ).toEqual('0110110110010111')
     expect(
       instrLdrImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[R2', '#0x1F]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110111111010001')
-    // LDR R3, [R6]
     expect(
       instrLdrImm
         .encodeInstruction(['R3', '[R6]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110100000110011')
-    // LDR R1, [R2, R3]
     expect(() =>
-      instrLdrImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-        labelOffsetMock
-      )
+      instrLdrImm.encodeInstruction(['R7', '[R2', 'R3]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
-    // LDR R5, [R2
     expect(() =>
-      instrLdrImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrImm.encodeInstruction(['R5', '[R2'], labelOffsetMock)
     ).toThrow(encodingErrorWrongBracketsOn2nd)
-    // LDR R1, [R2, 5
     expect(() =>
-      instrLdrImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instrLdrImm.encodeInstruction(['R1', '[R2', '#5'], labelOffsetMock)
     ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
-    // LDR R5, 0x1F], [R2
     expect(() =>
-      instrLdrImm.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrImm.encodeInstruction(['R5', '0x1F]', '[R2'], labelOffsetMock)
     ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
   })
   test('LdrRegisterOffsetInstruction', () => {
-    // LDR R1, [R2, R3]
+    // LDR R4, [R2, R3]
     expect(
       instrLdrReg
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R4', '[R2', 'R3]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('0101100011010001')
+    ).toEqual('0101100011010100')
+
+    expect(
+      instrLdrReg
+        .encodeInstruction(['R0', '[R2', 'R5]'], labelOffsetMock)
+        .toBinaryString()
+    ).toEqual('0101100101010000')
     // LDR R1, [R2, #0x1F]
     expect(() =>
-      instrLdrReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-        labelOffsetMock
-      )
+      instrLdrReg.encodeInstruction(['R1', '[R2', '#0x1F]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, SP]
     expect(() =>
-      instrLdrReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, highRegisterOption],
-        labelOffsetMock
-      )
+      instrLdrReg.encodeInstruction(['R1', '[R2', 'SP]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, R22]
     expect(() =>
-      instrLdrReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidRegisterOption],
-        labelOffsetMock
-      )
+      instrLdrReg.encodeInstruction(['R1', '[R2', 'R22]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
     expect(() =>
-      instrLdrReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrReg.encodeInstruction(['R1', '[R2'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instrLdrReg.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrReg.encodeInstruction(['R1', '#0x1F]', '[R2'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
   })
   test('LoadRegisterInstruction', () => {
     // LDR R1, [SP, #0x01]
     expect(
       instrLdrPointer
-        .encodeInstruction(
-          [lowRegisterOption, highRegisterOption, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[SP', '#0x01]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0100100100000001')
     // LDR R1, [SP, #0x1F]
     expect(
       instrLdrPointer
-        .encodeInstruction(
-          [lowRegisterOption, highRegisterOption, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[SP', '#0x1F]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0100100100011111')
     // LDR R1, [R2, R3]
     expect(() =>
-      instrLdrPointer.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-        labelOffsetMock
-      )
+      instrLdrPointer.encodeInstruction(['R1', '[R2', 'R3]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
     expect(() =>
-      instrLdrPointer.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrPointer.encodeInstruction(['R1', '[R2'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
-    // LDR R1, [R2, 5]
     expect(() =>
-      instrLdrPointer.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instrLdrPointer.encodeInstruction(['R1', '[R2', '5'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
     // LDR R5, 0x1F], [R2
     expect(() =>
       instrLdrPointer.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
+        ['R5', '#0x1F]', '[R2'],
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)

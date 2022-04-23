@@ -7,6 +7,12 @@ export abstract class BaseInstruction implements IInstruction {
   public abstract name: string
   public abstract pattern: string
 
+  /**
+   * To distinguish which encoder is responsible if multiple commands with same name are possible
+   * @param name name of instruction
+   * @param options parameter provided for instruction
+   * @returns true if the encoder is resposible for given instruction
+   */
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return this.name === name
   }

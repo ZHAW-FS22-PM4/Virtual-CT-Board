@@ -1,3 +1,4 @@
+import { EncoderError } from 'assembler/parser/error'
 import { Register, Registers } from 'board/registers'
 import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
@@ -245,6 +246,50 @@ export function checkOptionCount(
 }
 
 /**
+ * Convenience method to throw a vbe if encoder is not called with correctly set brackets.
+ * If only min count is provided last param has to have opening and closing brackets and
+ * other wise opening on second last and closing on last param.
+ * @param options parameter provided to encodeInstruction method
+ * @param optionCountMin count of options
+ * @param optionCountMax if immediate can be ommited on higher than min count
+ */
+export function checkBracketsOnLastOptions(
+  options: string[],
+  optionCountMin: number,
+  optionCountMax: number = optionCountMin
+): void {
+  if (
+    optionCountMax - optionCountMin !== 0 &&
+    optionCountMax - optionCountMin !== 1
+  ) {
+    throw Error(
+      'provided option count is more than one apart or max is smaller than min'
+    )
+  }
+  if (optionCountMin != optionCountMax && options.length == optionCountMin) {
+    if (!registerStringEnclosedInBrackets(options[optionCountMin - 1])) {
+      throw new EncoderError(
+        `opening or closing bracket missing for ${optionCountMin}. param`,
+        VirtualBoardErrorType.InvalidParamProvided
+      )
+    }
+  } else if (
+    options.length == optionCountMax &&
+    !registerStringHasBrackets(
+      options[optionCountMax - 2],
+      options[optionCountMax - 1]
+    )
+  ) {
+    throw new EncoderError(
+      `opening bracket on ${
+        optionCountMax - 1
+      }. param or closing bracket on ${optionCountMax}. param`,
+      VirtualBoardErrorType.InvalidParamProvided
+    )
+  }
+}
+
+/**
  * Convenience method to return boolean wheter the option count is satisfied or not
  * @param options parameter provided to canEncodeInstruction method
  * @param minCount how many options were expected by the assembly command
@@ -277,7 +322,7 @@ export function isPCRegister(possiblePCRegister: string): boolean {
  * @returns true if it is an immediate
  */
 export function isImmediate(possibleImmediate: string): boolean {
-  return possibleImmediate.startsWith('#')
+  return removeBracketsFromRegisterString(possibleImmediate).startsWith('#')
 }
 
 /**
@@ -305,7 +350,7 @@ function getEnumValueForRegisterString(option: string): Register {
 export function removeBracketsFromRegisterString(
   registerString: string
 ): string {
-  return registerString.replace('[', '').replace(']', '')
+  return registerString.replace('[', '').replace(']', '').trim()
 }
 
 /**
