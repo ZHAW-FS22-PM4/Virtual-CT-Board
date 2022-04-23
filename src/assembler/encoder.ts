@@ -1,7 +1,9 @@
 import { IInstructionSet } from 'instruction/interfaces'
 import { Byte, Halfword, Word } from 'types/binary'
+import { VirtualBoardError } from 'types/error'
 import { ICodeFile, IInstruction } from './ast'
 import { IELF } from './elf'
+import { CompileError } from './parser/error'
 
 /**
  * Encodes a code file (AST representation) into an object file.
@@ -27,7 +29,14 @@ export function encode(code: ICodeFile, instructionSet: IInstructionSet): IELF {
         section.offset.add(elf.content.length).value,
         instruction.line
       )
-      elf.content.push(...encodeInstruction(instruction, instructionSet))
+
+      try {
+        elf.content.push(...encodeInstruction(instruction, instructionSet))
+      } catch (e: any) {
+        if (e instanceof VirtualBoardError) {
+          throw new CompileError(instruction.line, e.message, e.type)
+        }
+      }
     }
     section.size = Word.fromUnsignedInteger(
       elf.content.length - section.offset.value
