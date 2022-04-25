@@ -7,6 +7,7 @@ import {
   createImmediateBits,
   createLowRegisterBits,
   getBits,
+  getImmediateBits,
   isImmediate,
   isOptionCountValid,
   registerStringHasBrackets,
@@ -103,7 +104,7 @@ export class LdrhImmediate5OffsetInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 1)
     )
     return opcode
   }
@@ -119,9 +120,7 @@ export class LdrhImmediate5OffsetInstruction extends BaseInstruction {
         memory.readHalfword(
           registers
             .readRegister(getBits(opcode, this.rnPattern).value)
-            .add(
-              Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value)
-            )
+            .add(getImmediateBits(opcode, this.immPattern, 1).value)
         )
       )
     )

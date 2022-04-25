@@ -8,13 +8,14 @@ import {
   createImmediateBits,
   createLowRegisterBits,
   getBits,
+  getImmediateBits,
   isImmediate,
   isOptionCountValid,
   isPCRegister,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { Halfword, Word } from 'types/binary'
+import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 /**
@@ -69,7 +70,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 2)
     )
     return opcode
   }
@@ -82,8 +83,8 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
       getBits(opcode, this.rtPattern).value,
       memory.readWord(
         registers
-          .readRegister(getBits(opcode, this.rnPattern).value)
-          .add(Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value))
+          .readRegister(getBits(opcode, this.immPattern).value)
+          .add(getImmediateBits(opcode, this.rnPattern, 2).value)
       )
     )
   }
@@ -182,12 +183,13 @@ export class LdrRegisterInstruction extends BaseInstruction {
       //just add fix value 0 as immediate
       options.push('#0')
     }
+
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
       opcode,
       this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 8)
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 8, 2)
     )
     return opcode
   }
@@ -201,8 +203,9 @@ export class LdrRegisterInstruction extends BaseInstruction {
       getBits(opcode, this.rtPattern).value,
       memory.readWord(
         registers
-          .readRegister(getBits(opcode, this.immPattern).value)
-          .add(Register.PC)
+          .readRegister(Register.PC)
+          .add(getImmediateBits(opcode, this.immPattern, 2).value)
+          .add(2) // .add(2) not needed if PC counter is increased before calling executeInstruction
       )
     )
   }

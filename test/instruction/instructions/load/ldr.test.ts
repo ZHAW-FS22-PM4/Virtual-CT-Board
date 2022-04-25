@@ -42,6 +42,10 @@ const encodingErrorWrongBracketsOn2ndOr3rd = new EncoderError(
   'opening bracket on 2. param or closing bracket on 3. param',
   VirtualBoardErrorType.InvalidParamProvided
 )
+const offsetNotWordAligned = new VirtualBoardError(
+  'immediate offset not word aligned',
+  VirtualBoardErrorType.InvalidParamProvided
+)
 
 const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
@@ -187,12 +191,12 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('LdrImmediate5OffsetInstruction', () => {
     expect(
       instrLdrImm
-        .encodeInstruction(['R7', '[R2', '#0x16]'], labelOffsetMock)
+        .encodeInstruction(['R7', '[R2', '#0x28]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('0110110110010111')
+    ).toEqual('0110101010010111')
     expect(
       instrLdrImm
-        .encodeInstruction(['R1', '[R2', '#0x1F]'], labelOffsetMock)
+        .encodeInstruction(['R1', '[R2', '#0x7C]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110111111010001')
     expect(
@@ -200,6 +204,21 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         .encodeInstruction(['R3', '[R6]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110100000110011')
+    expect(
+      instrLdrImm
+        .encodeInstruction(['R2', '[R3', '#0x1C]'], labelOffsetMock)
+        .toHexString()
+    ).toEqual('69da')
+    expect(
+      instrLdrImm
+        .encodeInstruction(['R1', '[R5', '#0x20]'], labelOffsetMock)
+        .toHexString()
+    ).toEqual('6a29')
+    expect(
+      instrLdrImm
+        .encodeInstruction(['R6', '[R7', '#0x7C]'], labelOffsetMock)
+        .toHexString()
+    ).toEqual('6ffe')
     expect(() =>
       instrLdrImm.encodeInstruction(['R7', '[R2', 'R3]'], labelOffsetMock)
     ).toThrow(VirtualBoardError)
@@ -212,6 +231,12 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     expect(() =>
       instrLdrImm.encodeInstruction(['R5', '0x1F]', '[R2'], labelOffsetMock)
     ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
+    expect(() =>
+      instrLdrImm.encodeInstruction(['R1', '[R2', '#0x3]'], labelOffsetMock)
+    ).toThrow(offsetNotWordAligned)
+    expect(() =>
+      instrLdrImm.encodeInstruction(['R1', '[R2', '#0x2]'], labelOffsetMock)
+    ).toThrow(offsetNotWordAligned)
   })
   test('LdrRegisterOffsetInstruction', () => {
     // LDR R4, [R2, R3]
@@ -251,13 +276,13 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // LDR R1, [SP, #0x01]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x01]'], labelOffsetMock)
+        .encodeInstruction(['R1', '[SP', '#0x0c]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('0100100100000001')
+    ).toEqual('0100100100000011')
     // LDR R1, [SP, #0x1F]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x1F]'], labelOffsetMock)
+        .encodeInstruction(['R1', '[SP', '#0x7c]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0100100100011111')
     // LDR R1, [R2, R3]
@@ -278,19 +303,26 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         labelOffsetMock
       )
     ).toThrow(VirtualBoardError)
+
+    expect(() =>
+      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x6]'], labelOffsetMock)
+    ).toThrow(offsetNotWordAligned)
+    expect(() =>
+      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x7]'], labelOffsetMock)
+    ).toThrow(offsetNotWordAligned)
   })
 })
 
 describe('test executeInstruction function', () => {
   test('LdrImmediate5OffsetInstruction - LDR word immediate offset', () => {
-    // LDR R7, [R6, #0x01]
+    // LDR R7, [R6, #0x14]
 
     memory.writeWord(
-      registerValueR6.add(0x01),
+      registerValueR6.add(0x14 * 4),
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrImm.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0110100001110111),
+      Halfword.fromUnsignedInteger(0b0110100101110111),
       registers,
       memory
     )
@@ -300,7 +332,7 @@ describe('test executeInstruction function', () => {
   test('LdrRegisterOffsetInstruction - LDR word register offset', () => {
     // LDR R7, [R6, R5]
     memory.writeWord(
-      registerValueR6.add(registerValueR5),
+      registerValueR6.add(registerValueR5.value),
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrReg.executeInstruction(
@@ -308,8 +340,34 @@ describe('test executeInstruction function', () => {
       registers,
       memory
     )
-    //expect(memory.readWord(registerValueR6.add(registerValueR5)).value).toEqual(9)
+    expect(
+      memory.readWord(registerValueR6.add(registerValueR5.value)).value
+    ).toEqual(9)
     expect(registers.readRegister(Register.R7).value).toEqual(9)
+    memory.reset()
+  })
+  test('LdrRegisterInstruction - LDR word pc offset', () => {
+    const pcAddress = Word.fromUnsignedInteger(0x08123456f)
+    registers.writeRegister(Register.PC, pcAddress)
+    memory.writeWord(pcAddress, Word.fromUnsignedInteger(0x12345678))
+    memory.writeWord(pcAddress.add(4), Word.fromUnsignedInteger(0x9abcdeff))
+
+    //LDR R3, [PC]
+    instrLdrPointer.executeInstruction(
+      Halfword.fromUnsignedInteger(0x4b00),
+      registers,
+      memory
+    )
+    expect(memory.readWord(pcAddress.add(2)).value).toEqual(0xdeff1234)
+    expect(registers.readRegister(Register.R3).value).toEqual(0xdeff1234)
+    //LDR R3, [PC]
+    instrLdrPointer.executeInstruction(
+      Halfword.fromUnsignedInteger(0x4b00),
+      registers,
+      memory
+    )
+    expect(memory.readWord(pcAddress.add(2)).value).toEqual(0xdeff1234)
+    expect(registers.readRegister(Register.R3).value).toEqual(0xdeff1234)
     memory.reset()
   })
 })

@@ -168,24 +168,21 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('StrImmediate5OffsetInstruction', () => {
-    // STR R1, [R2, #0x01]
     expect(
       instructionStoreInstructionImmediateOffset
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[R2', '#0x04'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('0110000001010001')
-    // STR R1, [R2, #0x1F]
     expect(
       instructionStoreInstructionImmediateOffset
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R7', '[R4', '#16]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('0110011111010001')
+    ).toEqual('0110000100100111')
+    expect(
+      instructionStoreInstructionImmediateOffset
+        .encodeInstruction(['R6', '[R6', '#0x7c]'], labelOffsetMock)
+        .toBinaryString()
+    ).toEqual('0110011111110110')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction(
@@ -271,7 +268,7 @@ describe('test executeInstruction function', () => {
       registers,
       memory
     )
-    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual(
+    expect(memory.readWord(registerValueR7.add(0x04)).toHexString()).toEqual(
       '12345678'
     )
     memory.reset()
@@ -284,7 +281,9 @@ describe('test executeInstruction function', () => {
       memory
     )
     expect(
-      memory.readWord(registerValueR7.add(registerValueR5)).toHexString()
+      memory
+        .readWord(registerValueR7.add(registerValueR5.value * 4))
+        .toHexString()
     ).toEqual('12345678')
     memory.reset()
   })

@@ -118,24 +118,26 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('LdrhImmediate5OffsetInstruction', () => {
-    // LDRH R1, [R2, #0x01]
     expect(
       instrLdrhImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[R2', '#0x2]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('1000100001010001')
-    // LDRH R1, [R2, #0x1F]
     expect(
       instrLdrhImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[R2', '#0x3e]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('1000111111010001')
+    expect(
+      instrLdrhImm
+        .encodeInstruction(['R0', '[R4', '#0x1a]'], labelOffsetMock)
+        .toHexString()
+    ).toEqual('8b60')
+    expect(
+      instrLdrhImm
+        .encodeInstruction(['R7', '[R5', '#0x3e]'], labelOffsetMock)
+        .toHexString()
+    ).toEqual('8fef')
     // LDRH R1, [R2, R3]
     expect(() =>
       instrLdrhImm.encodeInstruction(

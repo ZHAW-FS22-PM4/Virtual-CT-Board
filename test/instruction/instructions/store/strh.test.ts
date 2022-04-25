@@ -168,24 +168,22 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('StrhImmediate5OffsetInstruction', () => {
-    // STR R1, [R2, #0x01]
+    // STR R1, [R2, #0x02]
     expect(
       instructionStoreInstructionImmediateOffsetHalfword
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R1', '[R2', '#0x2]'], labelOffsetMock)
         .toBinaryString()
     ).toEqual('1000000001010001')
-    // STR R1, [R2, #0x1F]
     expect(
       instructionStoreInstructionImmediateOffsetHalfword
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction(['R3', '[R7', '#0x3e]'], labelOffsetMock)
         .toBinaryString()
-    ).toEqual('1000011111010001')
+    ).toEqual('1000011111111011')
+    expect(
+      instructionStoreInstructionImmediateOffsetHalfword
+        .encodeInstruction(['R4', '[R4', '#20]'], labelOffsetMock)
+        .toBinaryString()
+    ).toEqual('1000001010100100')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction(

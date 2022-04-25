@@ -142,6 +142,23 @@ export function getBits(opcode: Halfword, pattern: string): Halfword {
 }
 
 /**
+ * Gets defined bits of an opcode and multiplies value by given factor (needed for immediate which are stored with shift)
+ *
+ * @param opcode opcode to get the bits from
+ * @param pattern defines which bits are returned (has to be 16 bits digits long)
+ * @param lsbZeroBitCount the value will be left shifted by specified amount (multiplied)
+ * @returns the chosen bits as halfword multiplied by correct amount
+ */
+export function getImmediateBits(
+  opcode: Halfword,
+  pattern: string,
+  lsbZeroBitCount: number = 0
+): Halfword {
+  const valueOnPattern = getBits(opcode, pattern)
+  return Halfword.fromUnsignedInteger(valueOnPattern.value << lsbZeroBitCount)
+}
+
+/**
  * creates opcode for low register or throws a vbe if string is not a valid register
  * @param option register string to convert to opcode
  * @returns halfword with bits set for a low register
@@ -171,11 +188,13 @@ export function createRegisterBits(option: string): Halfword {
  * creates opcode for immediate or throws a vbe if string is not a valid immediate
  * @param option immediate string to convert to opcode
  * @param immediateBitCount how many bits can be used to represent the immediate value
+ * @param lsbZeroBitCount the value must have at least specified amount of zeros on the right side (LSB)
  * @returns halfword with bits set for an immediate
  */
 export function createImmediateBits(
   option: string,
-  immediateBitCount: number
+  immediateBitCount: number,
+  lsbZeroBitCount: number = 0
 ): Halfword {
   if (!isImmediate(option)) {
     throw new VirtualBoardError(
@@ -185,6 +204,24 @@ export function createImmediateBits(
   }
 
   let immediateBits = Halfword.fromUnsignedInteger(+option.substring(1))
+  if (lsbZeroBitCount !== 0) {
+    if (immediateBits.value % (lsbZeroBitCount * 2) !== 0) {
+      throw new VirtualBoardError(
+        `immediate offset not ${
+          lsbZeroBitCount == 2
+            ? 'word'
+            : lsbZeroBitCount == 1
+            ? 'halfword'
+            : lsbZeroBitCount + ' bytes'
+        } aligned`,
+        VirtualBoardErrorType.ProvidedImmediateIsInvalid
+      )
+    }
+
+    immediateBits = Halfword.fromUnsignedInteger(
+      immediateBits.value >> lsbZeroBitCount
+    )
+  }
   if (
     immediateBits
       .toBinaryString()
