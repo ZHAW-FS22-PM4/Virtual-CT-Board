@@ -111,7 +111,6 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     this.instructions
       .getExecutor(opcode)
       .executeInstruction(opcode, this.registers, this.memory)
-    this.registers.writeRegister(Register.PC, pc.add(2))
     this.emit('afterCycle')
   }
 }

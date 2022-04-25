@@ -1,5 +1,5 @@
 import { IMemory } from 'board/memory/interfaces'
-import { Registers } from 'board/registers'
+import { Register, Registers } from 'board/registers'
 import { IInstruction, ILabelOffsets } from 'instruction/interfaces'
 import { Halfword } from 'types/binary'
 
@@ -16,9 +16,27 @@ export abstract class BaseInstruction implements IInstruction {
     labels: ILabelOffsets
   ): Halfword
 
-  public abstract executeInstruction(
+  public executeInstruction(
     opcode: Halfword,
     registers: Registers,
     memory: IMemory
-  ): void
+  ): void {
+    this.onExecuteInstruction(opcode, registers, memory)
+    this.onIncrementProgramCounter(opcode, registers, memory)
+  }
+
+  protected onExecuteInstruction(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void {}
+
+  protected onIncrementProgramCounter(
+    opcode: Halfword,
+    registers: Registers,
+    memory: IMemory
+  ): void {
+    const pc = registers.readRegister(Register.PC)
+    registers.writeRegister(Register.PC, pc.add(2))
+  }
 }
