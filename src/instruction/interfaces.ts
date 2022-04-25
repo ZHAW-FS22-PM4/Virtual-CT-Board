@@ -31,9 +31,9 @@ export interface IInstructionEncoder {
    *
    * @param options the options of the instruction
    * @param labels the offsets (as halfwords) of the labels
-   * @returns the encoded opcode as a halfword
+   * @returns the encoded opcode as an array of halfwords
    */
-  encodeInstruction: (options: string[], labels: ILabelOffsets) => Halfword
+  encodeInstruction: (options: string[], labels: ILabelOffsets) => Halfword[]
 }
 
 /**
@@ -46,12 +46,17 @@ export interface IInstructionExecutor {
   pattern: string
 
   /**
+   * The length of the opcode.
+   */
+  opcodeLength: number
+
+  /**
    * Executes the instruction represented by the specified opcode.
    *
    * @param opcode the opcode of the instruction to be executed
    */
   executeInstruction: (
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ) => void

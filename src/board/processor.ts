@@ -108,9 +108,11 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       this.emit('endOfCode')
       return
     }
-    this.instructions
-      .getExecutor(opcode)
-      .executeInstruction(opcode, this.registers, this.memory)
+    const executor = this.instructions.getExecutor(opcode)
+    if (executor.opcodeLength > 1) {
+      // Read additional halfwords and pass to 'executeInstruction'
+    }
+    executor.executeInstruction([opcode], this.registers, this.memory)
     this.emit('afterCycle')
   }
 }

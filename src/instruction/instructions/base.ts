@@ -11,17 +11,19 @@ export abstract class BaseInstruction implements IInstruction {
     return this.name === name
   }
 
+  public opcodeLength: number = 1 // by default the length is one
+
   public abstract encodeInstruction(
     options: string[],
     labels: ILabelOffsets
-  ): Halfword
+  ): Halfword[]
 
   public executeInstruction(
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    this.onExecuteInstruction(opcode, registers, memory)
+    this.onExecuteInstruction(opcode[0], registers, memory)
     this.onIncrementProgramCounter(opcode, registers, memory)
   }
 
@@ -32,7 +34,7 @@ export abstract class BaseInstruction implements IInstruction {
   ): void {}
 
   protected onIncrementProgramCounter(
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
