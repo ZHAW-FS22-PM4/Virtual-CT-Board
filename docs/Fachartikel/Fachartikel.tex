@@ -5,6 +5,8 @@
 \usepackage[german]{babel} % Since we write our text in German
 \usepackage{amsmath,amssymb,amsthm} % For including math equations, theorems, symbols, etc
 \usepackage{quotes} % for quotation marks
+\usepackage{caption}
+\captionsetup{font=footnotesize}
 
 \title{Fachartikel}
 
@@ -52,12 +54,19 @@
 Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq, die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{ctboard}
+\includegraphics[width=10cm]{ctboard}
+\centering
 \caption{Das CT Board, das den Studenten im Modul \glqq Computertechnik 1\grqq{} als Hardware zur Verfügung gestellt wird. (Quelle: ennis.zhaw.ch)}
 \label{ctboard}
 \end{figure}
 
-Im 21. Jahrhundert noch Hardware an Studierende auszuleihen, mutet schon fast archaisch an. Insbesondere, wenn sich die Hardware leicht als Software simulieren liesse. Und genau hier setzt die vorliegend umgesetzte Idee an: Es soll eine Web-Applikation entwickelt werden, die ein CT Board simuliert und in den \glqq Computertechnik 1\grqq-Praktika an dessen Stelle tritt. Die Studierenden können die Übungen mit dem leichtgewichtigen \glqq Virtual CT Board\grqq{} genauso gut wie mit dem echten Board lösen und brauchen dafür fortan keine Hardware mehr. Die ZHAW kann sich somit die Beschaffung und Wartung von CT Boards sparen.
+Im 21. Jahrhundert noch Hardware an Studierende auszuleihen, mutet schon fast archaisch an. Insbesondere, wenn sich die Hardware leicht als Software simulieren liesse. Und genau hier setzt die vorliegend umgesetzte Idee an: Es wird eine Web-Applikation entwickelt, die ein CT Board simuliert und in den \glqq Computertechnik 1\grqq-Praktika an dessen Stelle tritt. Die Studierenden können die Übungen mit dem leichtgewichtigen \glqq Virtual CT Board\grqq{} genauso gut wie mit dem echten Board lösen und brauchen dafür fortan keine Hardware mehr. Ausserdem wird auch die bisher für die Kommunikation mit dem physischen CT Board eingesetzte Software Keil ersetzt. Das virtuelle CT Board umfasst sowohl einen Texteditor für das Schreiben von Assembly-Programmen und eine Anzeige für Register- und Memoryinhalte (bisher Keil-Funktionen) als auch eine Abbildung des CT Boards mit allen fürs  \glqq Computertechnik 1\grqq-Modul relevanten Input-/Output-Funktionen. Eine Skizze der geplanten Grafikoberfläche findet sich in Abbildung \ref{draft}.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{draft}
+\caption[size=8pt]{Skizze der geplanten Webbrowser-Grafikoberfläche des virtuellen CT Boards.}
+\label{draft}
+\end{figure}
 
 \subsection{Der Nutzen}
 
