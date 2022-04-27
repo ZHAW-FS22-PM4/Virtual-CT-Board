@@ -81,7 +81,7 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 
 \paragraph{Für die ZHAW:}
 \begin{itemize}
-\item Die Lizenz für die vorliegend entwickelte Software ist um einiges preiswerter als die Beschaffung physischer CT Boards. Ausserdemm müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
+\item Die Lizenz für die vorliegend entwickelte Software ist um einiges preiswerter als die Beschaffung physischer CT Boards. Ausserdem müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
 \item Die Dozierenden müssen für die Praktika nicht mehr mühsam Keil-Projekte konfigurieren. Es genügt, die Assembler-Files ins \glqq Virtual CT Board\grqq{} hochzuladen.
 \end{itemize}
 
@@ -100,19 +100,30 @@ Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und
 
 \paragraph{Physisches CT Board} 
 
-Das physische CT Board soll hier noch einmal erwähnt werden, da es die Hauptkonkurrenz zum vorliegend entwickelten Produkt darstellt. Es erfüllt die funktionalen Anforderungen der \glqq Computertechnik 1\grqq-Praktika vollumfänglich und ist ausserdem im Schulbetrieb bereits etabliert. Seine Nachteile bestehen insbesondere in seiner Unhandlichkeit. Das \glqq Virtual CT Board\grqq{} soll diesen Nachteil durch seine Virtualität beheben und gleichzeitig dem realen CT Board bzgl. Funktionalität in nichts nachstehen. Damit liegt es im Trend der Zeit, denn Studien belegen, dass die \emph{Digital Natives} der Generation Z den Einsatz aktueller Technologien zur Effizienzsteigerung im beruflichen Umfeld erwarten (West 2018, Wirthman 2020). Somit verhilft das virtuelle CT Board dem Modul \glqq Computertechnik 1\grqq{} bei nachfolgenden Studentengenerationen zu neuer Attraktivität.
+Das physische CT Board soll hier noch einmal erwähnt werden, da es die Hauptkonkurrenz zum vorliegend entwickelten Produkt darstellt. Es erfüllt die funktionalen Anforderungen der \glqq Computertechnik 1\grqq-Praktika vollumfänglich und ist ausserdem im Schulbetrieb bereits etabliert. Seine Nachteile bestehen insbesondere in seiner Unhandlichkeit. Das \glqq Virtual CT Board\grqq{} soll diesen Nachteil durch seine Virtualität beheben und gleichzeitig dem realen CT Board bzgl. Funktionalität in nichts nachstehen. Damit liegt es im Trend der Zeit, denn Studien belegen, dass die \emph{Digital Natives} der Generation Z den Einsatz aktueller Technologien zur Effizienzsteigerung im beruflichen Umfeld geradezu fordern (West 2018, Wirthman 2020). Somit verhilft das virtuelle CT Board dem Modul \glqq Computertechnik 1\grqq{} bei nachfolgenden Studentengenerationen zu neuer Attraktivität.
 
 
 \subsection{Risiken}
 Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs des physischen CT Boards bestehen bei dessen virtuellen Nachbau einige Risiken:
 \begin{itemize}
-\item Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. 
+\item Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. Insbesondere die Simulation von Interrupts könnte eine Herausforderung darstellen.
 \item Der Funktionsumfang des virtuellen Boards könnte aufgrund knapper Projektlaufzeit eingeschränkt werden. 
-\item Das physische Board besitzt im Verhältnis zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
+\item Das physische Board besitzt im Vergleich zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
 \end{itemize}
 
 \section{Resultate}
 
+Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{} ist die Grafikoberfläche unseres Endprodukts ersichtlich.
+
+\subsection{Funktionen des \glqq Virtual CT Boards\grqq}
+
+- Instructions/Code ausführen
+- Register/Flags
+- Memory
+- Input: Dip Switches, Rotary Switch, Tx Buttons
+- Output: LEDs, 7-Segment-Display, LCD-Display
+- Debugging
+- File laden und speichern
 
 
 \section{Diskussion und Ausblick}
