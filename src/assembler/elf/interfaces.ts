@@ -159,7 +159,7 @@ export interface IRelocation {
   offset: number
 
   /**
-   * The lenth of the code or data (in bytes).
+   * The length of the code or data (in bytes).
    */
   length: number
 

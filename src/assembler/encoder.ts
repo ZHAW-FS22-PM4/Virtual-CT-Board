@@ -58,14 +58,14 @@ interface ILiteralPool {
 export function encode(code: ICodeFile): IELF {
   const file = createFile()
   const writer = new FileWriter(file)
-  collectSymbols(writer, code.symbols)
+  addSymbols(writer, code.symbols)
   for (const area of code.areas) {
     const type = $enum(SectionType).asValueOrThrow(area.type)
     writer.startSection(type, area.name)
     const pool: ILiteralPool = { entries: [] }
     for (const instruction of area.instructions) {
       writer.mapLine(instruction.line)
-      collectLabel(writer, instruction)
+      addLabel(writer, instruction)
       writeInstruction(writer, instruction, pool)
     }
     writeLiteralPool(writer, pool)
@@ -74,7 +74,13 @@ export function encode(code: ICodeFile): IELF {
   return file
 }
 
-function collectSymbols(writer: FileWriter, symbols: ISymbols): void {
+/**
+ * Adds the specified symbols to the file.
+ *
+ * @param writer the file writer
+ * @param symbols the symbols to be added
+ */
+function addSymbols(writer: FileWriter, symbols: ISymbols): void {
   for (const name in symbols) {
     writer.addSymbol({
       type: SymbolType.Constant,
@@ -84,7 +90,14 @@ function collectSymbols(writer: FileWriter, symbols: ISymbols): void {
   }
 }
 
-function collectLabel(writer: FileWriter, instruction: IInstruction): void {
+/**
+ * Adds the label of the specified instruction (if any) to
+ * the file.
+ *
+ * @param writer the file writer
+ * @param instruction the instruction
+ */
+function addLabel(writer: FileWriter, instruction: IInstruction): void {
   if (instruction.label) {
     writer.addSymbol({
       type: SymbolType.Address,
@@ -95,6 +108,13 @@ function collectLabel(writer: FileWriter, instruction: IInstruction): void {
   }
 }
 
+/**
+ * Writes the specified instruction to the file.
+ *
+ * @param writer the file writer
+ * @param instruction the instruction
+ * @param pool the literal pool to be used for pseudo instructions
+ */
 function writeInstruction(
   writer: FileWriter,
   instruction: IInstruction,
@@ -107,6 +127,13 @@ function writeInstruction(
   else writeCodeInstruction(writer, instruction)
 }
 
+/**
+ * Determines whether the specified instruction is a
+ * pseudo instruction.
+ *
+ * @param instruction the instruction to check
+ * @returns whether the instruction is a pseudo instruction
+ */
 function isPseudoInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name === 'LDR' &&
@@ -115,6 +142,13 @@ function isPseudoInstruction(instruction: IInstruction): boolean {
   )
 }
 
+/**
+ * Writes a pseudo instruction to the specified file writer.
+ *
+ * @param writer the file writer
+ * @param instruction the pseudo instruction
+ * @param pool the literal pool to be used
+ */
 function writePseudoInstruction(
   writer: FileWriter,
   instruction: IInstruction,
@@ -137,10 +171,23 @@ function writePseudoInstruction(
   writer.writeBytes(bytes)
 }
 
+/**
+ * Determines whether the specified instruction is a data instruction.
+ *
+ * @param instruction the instruction to check
+ * @returns whether the instruction is a data instruction
+ */
 function isDataInstruction(instruction: IInstruction): boolean {
   return ['DCB', 'DCW', 'DCD', 'SPACE', 'FILL', '%'].includes(instruction.name)
 }
 
+/**
+ * Determines whether the specified instruction is a data instruction which is
+ * defined using a symbol.
+ *
+ * @param instruction the instruction to check
+ * @returns whether the instruction is using a symbol
+ */
 function isSymbolDataInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name == 'DCD' &&
@@ -149,6 +196,12 @@ function isSymbolDataInstruction(instruction: IInstruction): boolean {
   )
 }
 
+/**
+ * Writes a data instruction to the file writer.
+ *
+ * @param writer the file writer
+ * @param instruction the data instruction to write
+ */
 function writeDataInsruction(
   writer: FileWriter,
   instruction: IInstruction
@@ -182,6 +235,12 @@ function writeDataInsruction(
   writer.writeBytes(bytes)
 }
 
+/**
+ * Writes a code instruction to the specified file writer.
+ *
+ * @param writer the file writer
+ * @param instruction the code instruction to write
+ */
 function writeCodeInstruction(
   writer: FileWriter,
   instruction: IInstruction
@@ -198,6 +257,12 @@ function writeCodeInstruction(
   writer.writeBytes(bytes)
 }
 
+/**
+ * Writes a literal pool to the file writer.
+ *
+ * @param writer the file writer
+ * @param pool the literal pool to write
+ */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
     writer.writeBytes(END_OF_CODE.toBytes())

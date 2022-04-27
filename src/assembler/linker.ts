@@ -3,6 +3,7 @@ import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
 import {
   IELF,
+  IRelocation,
   ISection,
   RelocationType,
   SectionType,
@@ -49,15 +50,21 @@ const VECTOR_TABLE = [STACK_START, CODE_START].flatMap((x) => x.toBytes())
  */
 export function link(objectFile: IELF): IELF {
   const file = createFile()
-  mapConstantSymbols(file, objectFile)
+  addConstantSymbols(file, objectFile)
   writeSegments(file, objectFile)
-  processRelocations(file, objectFile)
+  applyRelocations(file, objectFile)
   mapSource(file, objectFile)
   clearSections(file)
   return file
 }
 
-function mapConstantSymbols(file: IELF, objectFile: IELF) {
+/**
+ * Adds the constant symbols from the object file to the file
+ *
+ * @param file the file
+ * @param objectFile the object file
+ */
+function addConstantSymbols(file: IELF, objectFile: IELF): void {
   for (const { type, name, value } of getSymbolsOfType(
     objectFile,
     SymbolType.Constant
@@ -66,12 +73,26 @@ function mapConstantSymbols(file: IELF, objectFile: IELF) {
   }
 }
 
+/**
+ * Writes the segments to the file by using the sections from the
+ * specified object file.
+ *
+ * @param file the file
+ * @param objectFile the object file
+ */
 function writeSegments(file: IELF, objectFile: IELF): void {
   const writer = new FileWriter(file)
   writeCodeSegment(writer, objectFile)
   writeDataSegment(writer, objectFile)
 }
 
+/**
+ * Writes all code sections from the object file to
+ * the file writer.
+ *
+ * @param writer the file writer
+ * @param objectFile the object file
+ */
 function writeCodeSegment(writer: FileWriter, objectFile: IELF): void {
   writer.startSegment(SegmentType.Load, FLASH_START)
   writer.writeBytes(VECTOR_TABLE)
@@ -82,6 +103,13 @@ function writeCodeSegment(writer: FileWriter, objectFile: IELF): void {
   writer.endSegment()
 }
 
+/**
+ * Writes all data sections from the object file to
+ * the file writer.
+ *
+ * @param writer the file writer
+ * @param objectFile the object file
+ */
 function writeDataSegment(writer: FileWriter, objectFile: IELF): void {
   const sections = getSectionsOfType(objectFile, SectionType.Data)
   if (sections.length > 0) {
@@ -93,6 +121,13 @@ function writeDataSegment(writer: FileWriter, objectFile: IELF): void {
   }
 }
 
+/**
+ * Writes a section from an object file to the current segment.
+ *
+ * @param writer the file writer
+ * @param objectFile the object file
+ * @param section the section to write
+ */
 function writeSection(
   writer: FileWriter,
   objectFile: IELF,
@@ -104,6 +139,22 @@ function writeSection(
     section.offset + section.size
   )
   writer.writeBytes(bytes)
+  addAddressSymbols(writer, objectFile, section)
+  writer.endSection()
+}
+
+/**
+ * Adds the address symbols of the object file to the file writer.
+ *
+ * @param writer the file writer
+ * @param objectFile the object file
+ * @param section the section from which the symbols are added
+ */
+function addAddressSymbols(
+  writer: FileWriter,
+  objectFile: IELF,
+  section: ISection
+) {
   const segment = writer.getCurrentSegment()
   for (const symbol of getSymbolsFromSection(objectFile, section.name)) {
     const offset =
@@ -115,38 +166,72 @@ function writeSection(
       value: getAddressInSegment(segment, offset)
     })
   }
-  writer.endSection()
 }
 
-function processRelocations(file: IELF, objectFile: IELF): void {
+/**
+ * Applies all re-locations from an object file so that all the
+ * code and data instructions which depend on symbols are updated.
+ *
+ * @param file the file
+ * @param objectFile the object file
+ */
+function applyRelocations(file: IELF, objectFile: IELF): void {
   for (const relocation of objectFile.relocations) {
     if (relocation.type === RelocationType.Code) {
-      const instruction = relocation.instruction!
-      const section = getSection(file, relocation.section)
-      const encoder = InstructionSet.getEncoder(
-        instruction.name,
-        instruction.options
-      )
-      const address = getAddressInFile(file, section.offset + relocation.offset)
-      const vpc = address.add(relocation.length)
-      const labels = getLabelOffsets(file, vpc)
-      const opcode = encoder.encodeInstruction(instruction.options, labels)
-      const offset = section.offset + relocation.offset
-      const bytes = opcode.flatMap((x) => x.toBytes())
-      setBytes(file, offset, bytes)
+      applyCodeRelocation(file, relocation)
     } else if (relocation.type === RelocationType.Data) {
-      if (relocation.symbol! in file.symbols) {
-        const symbol = file.symbols[relocation.symbol!]
-        const section = getSection(file, relocation.section)
-        const offset = section.offset + relocation.offset
-        setBytes(file, offset, symbol.value.toBytes())
-      } else {
-        throw new Error(`Symbol '${relocation.symbol!}' is not defined.`)
-      }
+      applyDataRelocation(file, relocation)
     }
   }
 }
 
+/**
+ * Applies the specified code re-location in the file by re-encoding
+ * the affected instruction with the label offsets.
+ *
+ * @param file the file
+ * @param relocation the code re-location
+ */
+function applyCodeRelocation(file: IELF, relocation: IRelocation) {
+  const instruction = relocation.instruction!
+  const section = getSection(file, relocation.section)
+  const encoder = InstructionSet.getEncoder(
+    instruction.name,
+    instruction.options
+  )
+  const address = getAddressInFile(file, section.offset + relocation.offset)
+  const vpc = address.add(relocation.length)
+  const labels = getLabelOffsets(file, vpc)
+  const opcode = encoder.encodeInstruction(instruction.options, labels)
+  const offset = section.offset + relocation.offset
+  const bytes = opcode.flatMap((x) => x.toBytes())
+  setBytes(file, offset, bytes)
+}
+
+/**
+ * Applies the specified data re-location in the file by writing
+ * the symbol value to the affected location.
+ *
+ * @param file the file
+ * @param relocation the data re-location
+ */
+function applyDataRelocation(file: IELF, relocation: IRelocation) {
+  if (relocation.symbol! in file.symbols) {
+    const symbol = file.symbols[relocation.symbol!]
+    const section = getSection(file, relocation.section)
+    const offset = section.offset + relocation.offset
+    setBytes(file, offset, symbol.value.toBytes())
+  } else {
+    throw new Error(`Symbol '${relocation.symbol!}' is not defined.`)
+  }
+}
+
+/**
+ * Maps the source mapping from the specified object file into the file.
+ *
+ * @param file the file
+ * @param objectFile the object file
+ */
 function mapSource(file: IELF, objectFile: IELF): void {
   for (const mapping of objectFile.sourceMap.getMappings()) {
     const section = getSection(file, mapping.section)
@@ -155,6 +240,11 @@ function mapSource(file: IELF, objectFile: IELF): void {
   }
 }
 
+/**
+ * Clears all section informations from the file.
+ *
+ * @param file the file to be cleared
+ */
 function clearSections(file: IELF): void {
   file.sections = []
   file.symbols = {}

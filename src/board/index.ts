@@ -44,7 +44,7 @@ class Board {
   /**
    * Gets the executable which is currently loaded to the board
    *
-   * @returns
+   * @returns the executable or undefined if none is loaded
    */
   public getExecutable(): IELF | undefined {
     return this.executable
