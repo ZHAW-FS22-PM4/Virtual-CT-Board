@@ -4,8 +4,6 @@ import {
   LdrhImmediate5OffsetInstruction,
   LdrhRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrh'
-import { ILabelOffsets } from 'instruction/interfaces'
-import { mock } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
 
@@ -39,7 +37,6 @@ const instructionLoadInstructionImmediateOffsetHalfword =
 const instructionLoadInstructionRegisterOffsetHalfword =
   new LdrhRegisterOffsetInstruction()
 
-const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
@@ -171,94 +168,104 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // LDRH R1, [R2, #0x01]
     expect(
       instructionLoadInstructionImmediateOffsetHalfword
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          validImmediateOptionLow
+        ])[0]
         .toBinaryString()
     ).toEqual('1000100001010001')
     // LDRH R1, [R2, #0x1F]
     expect(
       instructionLoadInstructionImmediateOffsetHalfword
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          validImmediateOptionHigh
+        ])[0]
         .toBinaryString()
     ).toEqual('1000111111010001')
     // LDRH R1, [R2, R3]
     expect(() =>
-      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-        labelOffsetMock
-      )
+      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        lowRegisterOption3
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R5, [R2
     expect(() =>
-      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R1, [R2, 5]
     expect(() =>
-      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        invalidImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R5, 0x1F], [R2
     expect(() =>
-      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        validImmediateOptionHigh,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
   })
   test('LdrhRegisterOffsetInstruction', () => {
     // LDRH R1, [R2, R3]
     expect(
       instructionLoadInstructionRegisterOffsetHalfword
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          lowRegisterOption3
+        ])[0]
         .toBinaryString()
     ).toEqual('0101101011010001')
     // LDRH R1, [R2, #0x1F]
     expect(() =>
-      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-        labelOffsetMock
-      )
+      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        validImmediateOptionHigh
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R1, [R2, SP]
     expect(() =>
-      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, highRegisterOption],
-        labelOffsetMock
-      )
+      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        highRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R1, [R2, R22]
     expect(() =>
-      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidRegisterOption],
-        labelOffsetMock
-      )
+      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        invalidRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R5, [R2
     expect(() =>
-      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
     // LDRH R5, 0x1F], [R2
     expect(() =>
-      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
+        lowRegisterOption,
+        validImmediateOptionHigh,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
   })
 })
@@ -271,7 +278,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instructionLoadInstructionImmediateOffsetHalfword.executeInstruction(
-      Halfword.fromUnsignedInteger(0b1000100001110111),
+      [Halfword.fromUnsignedInteger(0b1000100001110111)],
       registers,
       memory
     )
@@ -285,7 +292,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instructionLoadInstructionRegisterOffsetHalfword.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0101101101110111),
+      [Halfword.fromUnsignedInteger(0b0101101101110111)],
       registers,
       memory
     )

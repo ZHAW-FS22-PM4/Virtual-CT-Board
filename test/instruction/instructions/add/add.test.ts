@@ -19,25 +19,23 @@ beforeEach(function () {
 
 describe('test encodeInstruction function for ADD', () => {
   it('should create correct opcode for ADD R1, R8', () => {
-    let opcode = addInstruction.encodeInstruction(['R1', 'R8'], {})
-    expect(opcode.toBinaryString()).toEqual('0100010001000001')
+    let opcode = addInstruction.encodeInstruction(['R1', 'R8'])
+    expect(opcode[0].toBinaryString()).toEqual('0100010001000001')
   })
 
   it('should create correct opcode for ADD R8, R1', () => {
-    let opcode = addInstruction.encodeInstruction(['R8', 'R1'], {})
-    expect(opcode.toBinaryString()).toEqual('0100010010001000')
+    let opcode = addInstruction.encodeInstruction(['R8', 'R1'])
+    expect(opcode[0].toBinaryString()).toEqual('0100010010001000')
   })
 
   it('should throw an error for 3 params', () => {
-    expect(() =>
-      addInstruction.encodeInstruction(['R1', 'R1', 'R1'], {})
-    ).toThrow()
+    expect(() => addInstruction.encodeInstruction(['R1', 'R1', 'R1'])).toThrow()
   })
 })
 
 describe('test executeInstruction function for ADD', () => {
   it('should return correct value from register for ADD R1, R8, opcode 0100010001000001', () => {
-    let opcode = addInstruction.encodeInstruction(['R1', 'R8'], {})
+    let opcode = addInstruction.encodeInstruction(['R1', 'R8'])
     addInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toEqual(0xb3ba)
     //expect(registers.setFlags()).not.toHaveBeenCalled()
