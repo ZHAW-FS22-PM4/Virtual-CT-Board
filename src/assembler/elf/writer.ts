@@ -19,7 +19,7 @@ export class FileWriter {
   }
 
   public getCurrentSegment(): ISegment {
-    return this.file.segments.at(-1)!
+    return this.file.segments[this.file.segments.length - 1]
   }
 
   public startSegment(type: SegmentType, address: Word): void {
@@ -37,7 +37,7 @@ export class FileWriter {
   }
 
   public getCurrentSection(): ISection {
-    return this.file.sections.at(-1)!
+    return this.file.sections[this.file.sections.length - 1]
   }
 
   public getCurrentSectionOffset(): number {

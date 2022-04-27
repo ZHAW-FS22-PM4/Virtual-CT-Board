@@ -1,5 +1,5 @@
 import { ILabelOffsets } from 'instruction/interfaces'
-import { Byte, Halfword, Word } from 'types/binary'
+import { Byte, Word } from 'types/binary'
 import { SourceMap } from './debug'
 import {
   IELF,
@@ -34,10 +34,10 @@ export function createFile(): IELF {
  * @returns the segment at this offset
  */
 export function getSegment(file: IELF, offset: number): ISegment {
-  const segment = file.segments.filter((x) => x.offset <= offset).at(-1)
-  if (!segment)
+  const segments = file.segments.filter((x) => x.offset <= offset)
+  if (segments.length < 1)
     throw new Error(`Could not find segment at offset ${offset} in file.`)
-  return segment
+  return segments[segments.length - 1]
 }
 
 /**
@@ -119,7 +119,7 @@ export function getSymbolsOfType(file: IELF, type: SymbolType): ISymbol[] {
 export function getLabelOffsets(file: IELF, address: Word): ILabelOffsets {
   const labels: ILabelOffsets = {}
   for (const symbol of getSymbolsOfType(file, SymbolType.Address)) {
-    labels[symbol.name] = Halfword.fromUnsignedInteger(
+    labels[symbol.name] = Word.fromSignedInteger(
       symbol.value.value - address.value
     )
   }

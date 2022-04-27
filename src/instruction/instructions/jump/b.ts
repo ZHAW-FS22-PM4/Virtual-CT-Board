@@ -24,7 +24,9 @@ export class BInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.imm11Pattern,
-      labels ? labels[options[0]] : Halfword.fromUnsignedInteger(0x00)
+      labels
+        ? Halfword.fromUnsignedInteger(labels[options[0]].value)
+        : Halfword.fromUnsignedInteger(0x00)
     )
     return [opcode]
   }

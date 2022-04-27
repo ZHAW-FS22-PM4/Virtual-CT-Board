@@ -1,12 +1,15 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 
 /**
  * Represents a list of label offsets.
  */
 export interface ILabelOffsets {
-  [name: string]: Halfword
+  /**
+   * The offset to the label in range -2147483648 to 2147483647 (signed 32 bit).
+   */
+  [name: string]: Word
 }
 
 /**

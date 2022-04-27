@@ -199,7 +199,9 @@ export class LdrLabelInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.immPattern,
-      labels ? labels[options[1]] : Halfword.fromUnsignedInteger(0x0)
+      labels
+        ? Halfword.fromUnsignedInteger(labels[options[1]].value)
+        : Halfword.fromUnsignedInteger(0x0)
     )
     return [opcode]
   }
