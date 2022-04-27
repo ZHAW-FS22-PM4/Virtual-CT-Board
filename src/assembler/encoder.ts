@@ -206,9 +206,10 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
         entry.instruction.name,
         entry.instruction.options
       )
+      const vpc = entry.offset + entry.length
       const opcode = encoder.encodeInstruction(entry.instruction.options, {
         literal: Halfword.fromUnsignedInteger(
-          writer.getCurrentSectionOffset() - (entry.offset + entry.length)
+          writer.getCurrentSectionOffset() - vpc
         )
       })
       writer.setBytes(

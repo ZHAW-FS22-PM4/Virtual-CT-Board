@@ -127,11 +127,9 @@ function processRelocations(file: IELF, objectFile: IELF): void {
         instruction.name,
         instruction.options
       )
-      const address = getAddressInFile(
-        file,
-        section.offset + relocation.offset
-      ).add(relocation.length)
-      const labels = getLabelOffsets(file, address)
+      const address = getAddressInFile(file, section.offset + relocation.offset)
+      const vpc = address.add(relocation.length)
+      const labels = getLabelOffsets(file, vpc)
       const opcode = encoder.encodeInstruction(instruction.options, labels)
       const offset = section.offset + relocation.offset
       const bytes = opcode.flatMap((x) => x.toBytes())
