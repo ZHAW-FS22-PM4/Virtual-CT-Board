@@ -113,25 +113,52 @@ Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs 
 
 \section{Resultate}
 
-Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{} ist die Grafikoberfläche unseres Endprodukts ersichtlich.
+Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{} ist die Grafikoberfläche unseres Endprodukts ersichtlich. Im Nachfolgenden werden die in der virtualisierten Variante umgesetzten Funktionen des physischen CT Boards erläutert.
+
+%%% Screenshot des Virtual CT Boards einfügen
 
 \subsection{Funktionen des \glqq Virtual CT Boards\grqq}
 
-- Instructions/Code ausführen
-- Register/Flags
-- Memory
-- Input: Dip Switches, Rotary Switch, Tx Buttons
-- Output: LEDs, 7-Segment-Display, LCD-Display
-- Debugging
-- File laden und speichern
+Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards gemäss der vermittelten Inhalte der \glqq Computertechnik 1\grqq-Vorlesung so simpel wie möglich und so genau wie nötig nachzubauen.
 
+\paragraph{Prozessor} Wie auch das physische CT Board verfügt das virtuelle Board über einen Prozessor samt \emph{Arithmetic Logic Unit} und Registern. Dieser bildet das Kernstück der Anwendung, denn dort finden die Ausführung des Programmcodes und die Berechnungen statt. 
+
+\paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form des sogenannten Opcodes sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen.
+
+\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die \emph{Dip Switches} und die Tx-Buttons als binäre On-/Off-Schalter und der \emph{Rotary Switch}, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
+
+\paragraph{Assembler-Befehle} Alle für die \glqq Computertechnik 1\grqq-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
+\begin{itemize}
+	\item[$-$] Datentransfer-Operationen: \emph{Move}, \emph{Load} und \emph{Store}
+	\item[$-$] arithmetische Operationen: \emph{Add}, \emph{Subtract} und \emph{Multiply}
+	\item[$-$] \emph{Logical} und \emph{Shift/rotate} Operationen
+	\item[$-$] Vergleichsoperationen: \emph{Compare} und \emph{Test}
+	\item[$-$] Stack-Operationen: \emph{Push} und \emph{Pop} %%% Wurden diese tatsächlich noch umgesetzt?
+	\item[$-$] Kontrollstrukturen: \emph{Conditional} und \emph{Unconditional branches}
+\end{itemize}
+
+\paragraph{Debugging} Der Debug-Modus erlaubt es, Schritt für Schritt durch den Programmcode zu gehen und jede Zeile einzeln auszuführen.
+
+\subsection{Ausführbare Praktika}
+
+%%% Welche Praktika sind ausführbar? Sind überhaupt welche ausführbar?
 
 \section{Diskussion und Ausblick}
 
-\subsection{Weitere Anforderungen}
-Die erste Version der Software wird ermöglichen, einen Grossteil der Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq{} virtuell durchzuführen. Sollte die ZHAW eine Weiterentwicklung der Software anstreben, könnten zukünftig auch folgende Funktionalitäten umgesetzt werden: 
+Die erste Version der Software ermöglicht es, einige der Praktika des Moduls \glqq Computertechnik 1\grqq{} virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Jedoch bleibt zum vollständigen Erreichen dieses Ziels noch einiges offen, wofür die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
+
 \begin{itemize}
-\item Implementierung fehlender Funktionen für alle Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq. 
+	\item Einige Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
+	\item Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
+	\item Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
+
+%%% Allenfalls Weiteres
+
+\end{itemize}
+
+
+Sollte die ZHAW zudem eine Weiterentwicklung der Software anstreben, könnten zukünftig auch folgende Funktionalitäten umgesetzt werden: 
+\begin{itemize}
 \item Implementierung einer vorbereiteten Bibliothek aller Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq. 
 \item Implementierung der Funktionalitäten, welche für das Modul \glqq Computertechnik 2\grqq{} vorausgesetzt sind. 
 \item Implementierung einer virtuellen Darstellung von Signalen auf einem Oszilloskop.
