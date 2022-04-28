@@ -1,6 +1,5 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import { isImmediate, isLowRegister } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
@@ -16,12 +15,12 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     throw new Error('Method not implemented.')
   }
 
   public executeInstruction(
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
@@ -29,7 +28,7 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
   }
 }
 
-export class CmpInstructionWithoutLowRegisters extends BaseInstruction {
+export class CmpInstructionWithHighRegisters extends BaseInstruction {
   public name: string = 'CMP'
   public pattern: string = '01000101XXXXXXXX'
 
@@ -40,12 +39,12 @@ export class CmpInstructionWithoutLowRegisters extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     throw new Error('Method not implemented.')
   }
 
   public executeInstruction(
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
@@ -65,12 +64,12 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     throw new Error('Method not implemented.')
   }
 
   public executeInstruction(
-    opcode: Halfword,
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
