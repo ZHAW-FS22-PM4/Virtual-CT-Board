@@ -4,18 +4,20 @@ export interface IByte {
   readonly value: number
 }
 
-export abstract class BinaryType {
+export class BinaryType {
   public static MIN_UNSIGNED_VALUE: number = 0
   /**
    * The unsigned integer representation of the type as a number (IEEE double precision floating point).
    * Has to be always positive use toSignedInteger method to get interpretation of negative values
    */
-  abstract readonly value: number
-  abstract readonly numberOfBitsForType: number
-  abstract readonly maxValueForType: number
+  public readonly value: number
+  public readonly numberOfBitsForType: number
+  public readonly maxValueForType: number
 
-  constructor() {
-    //since value here is sometimes undefined, abstract properties are used
+  constructor(value: number, numberOfBitsForType: number) {
+    this.value = value
+    this.numberOfBitsForType = numberOfBitsForType
+    this.maxValueForType = Math.pow(2, numberOfBitsForType) - 1
   }
 
   /**
@@ -235,20 +237,11 @@ export class Byte extends BinaryType implements IByte {
   public static MAX_VALUE: number = 0xff //decimal: 255
   public static MIN_SIGNED_VALUE: number = -128
   public static MAX_SIGNED_VALUE: number = 127
-  public static readonly ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
-
-  readonly numberOfBitsForType: number = 8
-  readonly maxValueForType: number = 0xff
-
-  /**
-   * The unsigned integer representation of the byte as a number (IEEE double precision floating point).
-   */
-  public readonly value: number
+  public static NUMBER_OF_BITS: number = 8
 
   private constructor(value: number) {
-    super()
+    super(value, Byte.NUMBER_OF_BITS)
     checkRange('Byte', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
-    this.value = value
   }
 
   /**

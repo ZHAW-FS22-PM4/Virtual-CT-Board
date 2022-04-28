@@ -4,7 +4,7 @@ import { ILabelOffsets } from 'instruction/interfaces'
 import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
-import { Imm11 } from 'types/binary/imm11'
+import { BinaryType } from 'types/binary/binaryType'
 
 /**
  * Represents a 'B' instruction.
@@ -12,7 +12,6 @@ import { Imm11 } from 'types/binary/imm11'
 export class BInstruction extends BaseInstruction {
   public name: string = 'B'
   public pattern: string = '11100XXXXXXXXXXX'
-  private imm11Pattern: string = '11100XXXXXXXXXXX'
 
   public needsLabels: boolean = true
 
@@ -24,7 +23,7 @@ export class BInstruction extends BaseInstruction {
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(
       opcode,
-      this.imm11Pattern,
+      this.pattern,
       labels
         ? Word.fromUnsignedInteger(labels[options[0]].value).toHalfwords()[0]
         : Halfword.fromUnsignedInteger(0x00)
@@ -37,8 +36,9 @@ export class BInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    const imm11 = Imm11.fromUnsignedInteger(
-      getBits(opcode[0], this.imm11Pattern).toUnsignedInteger()
+    const imm11 = new BinaryType(
+      getBits(opcode[0], this.pattern).toUnsignedInteger(),
+      11
     )
     registers.writeRegister(
       Register.PC,
