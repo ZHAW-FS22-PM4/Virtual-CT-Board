@@ -76,6 +76,7 @@ import {
 } from './interfaces'
 import { match } from './opcode'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
+import { BlxInstruction } from 'instruction/instructions/jump/blx'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
@@ -120,6 +121,7 @@ export default new InstructionSet([
   new BicsInstruction(),
   new BInstruction(),
   new BxInstruction(),
+  new BlxInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
