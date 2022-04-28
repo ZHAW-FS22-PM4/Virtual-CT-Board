@@ -1,3 +1,6 @@
+import { BlInstruction } from 'instruction/instructions/jump/bl'
+import { BlxInstruction } from 'instruction/instructions/jump/blx'
+import { BxInstruction } from 'instruction/instructions/jump/bx'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
@@ -75,9 +78,6 @@ import {
   IInstructionSet
 } from './interfaces'
 import { match } from './opcode'
-import { BxInstruction } from 'instruction/instructions/jump/bx'
-import { BlxInstruction } from 'instruction/instructions/jump/blx'
-import { BlInstruction } from 'instruction/instructions/jump/bl'
 
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]

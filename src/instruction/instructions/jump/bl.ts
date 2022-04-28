@@ -3,8 +3,8 @@ import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
-import { BaseInstruction } from '../base'
 import { BinaryType } from 'types/binary/binaryType'
+import { BaseInstruction } from '../base'
 
 /**
  * Represents a 'BL' instruction.

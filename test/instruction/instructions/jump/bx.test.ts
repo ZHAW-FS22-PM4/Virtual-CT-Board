@@ -1,7 +1,7 @@
-import { Register, Registers } from 'board/registers'
 import { Memory } from 'board/memory'
-import { Word } from 'types/binary'
+import { Register, Registers } from 'board/registers'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
+import { Word } from 'types/binary'
 
 const registers = new Registers()
 const memory = new Memory()
