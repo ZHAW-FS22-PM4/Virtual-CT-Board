@@ -51,16 +51,16 @@
 
 \subsection{Die Idee}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq, die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
 \includegraphics[width=10cm]{ctboard}
 \centering
-\caption{Das CT Board, das den Studenten im Modul \glqq Computertechnik 1\grqq{} als Hardware zur Verfügung gestellt wird. (Quelle: ennis.zhaw.ch)}
+\caption{Das CT Board, das den Studenten im CT1-Modul als Hardware zur Verfügung gestellt wird. (Quelle: ennis.zhaw.ch)}
 \label{ctboard}
 \end{figure}
 
-Im 21. Jahrhundert noch Hardware an Studierende auszuleihen, mutet schon fast archaisch an. Insbesondere, wenn sich die Hardware leicht als Software simulieren liesse. Und genau hier setzt die vorliegend umgesetzte Idee an: Es wird eine Web-Applikation entwickelt, die ein CT Board simuliert und in den \glqq Computertechnik 1\grqq-Praktika an dessen Stelle tritt. Die Studierenden können die Übungen mit dem leichtgewichtigen \glqq Virtual CT Board\grqq{} genauso gut wie mit dem echten Board lösen und brauchen dafür fortan keine Hardware mehr. Ausserdem wird auch die bisher für die Kommunikation mit dem physischen CT Board eingesetzte Software Keil ersetzt. Das virtuelle CT Board umfasst sowohl einen Texteditor für das Schreiben von Assembly-Programmen und eine Anzeige für Register- und Memoryinhalte (bisher Keil-Funktionen) als auch eine Abbildung des CT Boards mit allen fürs  \glqq Computertechnik 1\grqq-Modul relevanten Input-/Output-Funktionen. Eine Skizze der geplanten Grafikoberfläche findet sich in Abbildung \ref{draft}.
+Im 21. Jahrhundert noch Hardware an Studierende auszuleihen, mutet schon fast archaisch an. Insbesondere, wenn sich die Hardware leicht als Software simulieren liesse. Und genau hier setzt die vorliegend umgesetzte Idee an: Es wird eine Web-Applikation entwickelt, die ein CT Board simuliert und in den CT1-Praktika an dessen Stelle tritt. Die Studierenden können die Übungen mit dem leichtgewichtigen \glqq Virtual CT Board\grqq{} genauso gut wie mit dem echten Board lösen und brauchen dafür fortan keine Hardware mehr. Ausserdem wird auch die bisher für die Kommunikation mit dem physischen CT Board eingesetzte Software Keil ersetzt. Das virtuelle CT Board umfasst sowohl einen Texteditor für das Schreiben von Assembly-Programmen und eine Anzeige für Register- und Memoryinhalte (bisher Keil-Funktionen) als auch eine Abbildung des CT Boards mit allen fürs  CT1-Modul relevanten Input-/Output-Funktionen. Eine Skizze der geplanten Grafikoberfläche findet sich in Abbildung \ref{draft}.
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{draft}
@@ -74,20 +74,20 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 
 \paragraph{Für die Studierenden:}
 \begin{itemize}
-\item Die Studierenden des Moduls \glqq Computertechnik 1\grqq{} haben eine elegante Alternative zu den physischen CT Boards und müssen jene nicht mehr nach Hause tragen und für ihre Erhaltung besorgt sein.
-\item Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen Strom und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
-\item Alle Praktika des \glqq Computertechnik 1\grqq-Moduls lassen sich mit dem \glqq Virtual CT Board\grqq{} umsetzen.
+\item[$-$] Die Studierenden des CT1-Moduls haben eine elegante Alternative zu den physischen CT Boards und müssen jene nicht mehr nach Hause tragen und für ihre Erhaltung besorgt sein.
+\item[$-$] Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen Strom und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
+\item[$-$] Alle Praktika des CT1-Moduls lassen sich mit dem \glqq Virtual CT Board\grqq{} umsetzen.
 \end{itemize}
 
 \paragraph{Für die ZHAW:}
 \begin{itemize}
-\item Die Lizenz für die vorliegend entwickelte Software ist um einiges preiswerter als die Beschaffung physischer CT Boards. Ausserdem müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
-\item Die Dozierenden müssen für die Praktika nicht mehr mühsam Keil-Projekte konfigurieren. Es genügt, die Assembler-Files ins \glqq Virtual CT Board\grqq{} hochzuladen.
+\item[$-$] Die Lizenz für die vorliegend entwickelte Software ist um einiges preiswerter als die Beschaffung physischer CT Boards. Ausserdem müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
+\item[$-$] Die Dozierenden müssen für die Praktika nicht mehr mühsam Keil-Projekte konfigurieren. Es genügt, die Assembler-Files ins \glqq Virtual CT Board\grqq{} hochzuladen.
 \end{itemize}
 
 \subsection{Abgrenzung zur Konkurrenz}
 
-Es existieren bereits verschiedene Produkte, die den Studenten des Moduls \glqq Computertechnik 1\grqq{} beim Erlernen ihrer Fertigkeiten behilflich sein können.
+Es existieren bereits verschiedene Produkte, die den Studenten des CT1-Moduls beim Erlernen ihrer Fertigkeiten behilflich sein können.
 
 \paragraph{Virtuelle Emulatoren}
 Der Emulator VisUAL von Alman Sarif soll hier stellvertretend für andere virtuelle Emulatoren für die Assembly-Programmiersprache vorgestellt werden. Er wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
@@ -96,19 +96,19 @@ Der Emulator VisUAL von Alman Sarif soll hier stellvertretend für andere virtue
 \caption{Der Emulator VisUAL samt seiner grafischen Oberfläche. (Quelle: https://salmanarif.bitbucket.io/visual/index.html)}
 \label{emulator}
 \end{figure}
-Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die \glqq Computertechnik 1\grqq{}-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der \glqq Computertechnik 1\grqq-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem das komplette physische CT Board virtuell visualisiert wird und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
+Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die CT1-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der CT1-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem das komplette physische CT Board virtuell visualisiert wird und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
 
 \paragraph{Physisches CT Board} 
 
-Das physische CT Board soll hier noch einmal erwähnt werden, da es die Hauptkonkurrenz zum vorliegend entwickelten Produkt darstellt. Es erfüllt die funktionalen Anforderungen der \glqq Computertechnik 1\grqq-Praktika vollumfänglich und ist ausserdem im Schulbetrieb bereits etabliert. Seine Nachteile bestehen insbesondere in seiner Unhandlichkeit. Das \glqq Virtual CT Board\grqq{} soll diesen Nachteil durch seine Virtualität beheben und gleichzeitig dem realen CT Board bzgl. Funktionalität in nichts nachstehen. Damit liegt es im Trend der Zeit, denn Studien belegen, dass die \emph{Digital Natives} der Generation Z den Einsatz aktueller Technologien zur Effizienzsteigerung im beruflichen Umfeld geradezu fordern (West 2018, Wirthman 2020). Somit verhilft das virtuelle CT Board dem Modul \glqq Computertechnik 1\grqq{} bei nachfolgenden Studentengenerationen zu neuer Attraktivität.
+Das physische CT Board soll hier noch einmal erwähnt werden, da es die Hauptkonkurrenz zum vorliegend entwickelten Produkt darstellt. Es erfüllt die funktionalen Anforderungen der CT1-Praktika vollumfänglich und ist ausserdem im Schulbetrieb bereits etabliert. Seine Nachteile bestehen insbesondere in seiner Unhandlichkeit. Das \glqq Virtual CT Board\grqq{} soll diesen Nachteil durch seine Virtualität beheben und gleichzeitig dem realen CT Board bzgl. Funktionalität in nichts nachstehen. Damit liegt es im Trend der Zeit, denn Studien belegen, dass die \emph{Digital Natives} der Generation Z den Einsatz aktueller Technologien zur Effizienzsteigerung im beruflichen Umfeld geradezu fordern (West 2018, Wirthman 2020). Somit verhilft das virtuelle CT Board dem CT1-Modul bei nachfolgenden Studentengenerationen zu neuer Attraktivität.
 
 
 \subsection{Risiken}
 Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs des physischen CT Boards bestehen bei dessen virtuellen Nachbau einige Risiken:
 \begin{itemize}
-\item Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. Insbesondere die Simulation von Interrupts könnte eine Herausforderung darstellen.
-\item Der Funktionsumfang des virtuellen Boards könnte aufgrund knapper Projektlaufzeit eingeschränkt werden. 
-\item Das physische Board besitzt im Vergleich zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
+\item[$-$] Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. Insbesondere die Simulation von Interrupts könnte eine Herausforderung darstellen.
+\item[$-$] Der Funktionsumfang des virtuellen Boards könnte aufgrund knapper Projektlaufzeit eingeschränkt werden. 
+\item[$-$] Das physische Board besitzt im Vergleich zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
 \end{itemize}
 
 \section{Resultate}
@@ -119,7 +119,7 @@ Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umges
 
 \subsection{Funktionen des \glqq Virtual CT Boards\grqq}
 
-Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards gemäss der vermittelten Inhalte der \glqq Computertechnik 1\grqq-Vorlesung so simpel wie möglich und so genau wie nötig nachzubauen.
+Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards gemäss der vermittelten Inhalte der CT1-Vorlesung so simpel wie möglich und so genau wie nötig nachzubauen.
 
 \paragraph{Prozessor} Wie auch das physische CT Board verfügt das virtuelle Board über einen Prozessor samt \emph{Arithmetic Logic Unit} und Registern. Dieser bildet das Kernstück der Anwendung, denn dort finden die Ausführung des Programmcodes und die Berechnungen statt. 
 
@@ -127,7 +127,7 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 \paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die \emph{Dip Switches} und die Tx-Buttons als binäre On-/Off-Schalter und der \emph{Rotary Switch}, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
 
-\paragraph{Assembler-Befehle} Alle für die \glqq Computertechnik 1\grqq-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
+\paragraph{Assembler-Befehle} Alle für die CT1-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
 \begin{itemize}
 	\item[$-$] Datentransfer-Operationen: \emph{Move}, \emph{Load} und \emph{Store}
 	\item[$-$] arithmetische Operationen: \emph{Add}, \emph{Subtract} und \emph{Multiply}
@@ -145,12 +145,13 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 \section{Diskussion und Ausblick}
 
-Die erste Version der Software ermöglicht es, einige der Praktika des Moduls \glqq Computertechnik 1\grqq{} virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Jedoch bleibt zum vollständigen Erreichen dieses Ziels noch einiges offen, wofür die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
+Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt - diese können jedoch nicht, wie als Projektziel definiert, bereits vollständig aus dem Betrieb genommen werden. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, bleibt noch einiges offen, wofür die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
 
 \begin{itemize}
-	\item Einige Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
-	\item Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
-	\item Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
+	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
+	\item[$-$] Für die ersten beiden Praktika müsste auch C-Code interpretier- und ausführbar sein.
+	\item[$-$] Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
+	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
 
 %%% Allenfalls Weiteres
 
@@ -159,9 +160,9 @@ Die erste Version der Software ermöglicht es, einige der Praktika des Moduls \g
 
 Sollte die ZHAW zudem eine Weiterentwicklung der Software anstreben, könnten zukünftig auch folgende Funktionalitäten umgesetzt werden: 
 \begin{itemize}
-\item Implementierung einer vorbereiteten Bibliothek aller Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq. 
-\item Implementierung der Funktionalitäten, welche für das Modul \glqq Computertechnik 2\grqq{} vorausgesetzt sind. 
-\item Implementierung einer virtuellen Darstellung von Signalen auf einem Oszilloskop.
+\item[$-$] Implementierung einer vorbereiteten Bibliothek aller Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq. 
+\item[$-$] Implementierung der Funktionalitäten, welche für das Modul \glqq Computertechnik 2\grqq{} vorausgesetzt sind. 
+\item[$-$] Implementierung einer virtuellen Darstellung von Signalen auf einem Oszilloskop.
 \end{itemize}
 
 \subsection{Wirtschaftlichkeit}
