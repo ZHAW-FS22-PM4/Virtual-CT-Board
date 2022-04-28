@@ -33,8 +33,10 @@ export class BlxInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    const pcRegister = registers.readRegister(Register.PC)
-    registers.writeRegister(Register.LR, pcRegister.add(-2))
+    registers.writeRegister(
+      Register.LR,
+      registers.readRegister(Register.PC).add(-2)
+    )
 
     const rmRegister = getBits(opcode[0], this.pattern).value
     const content = registers.readRegister(rmRegister)
