@@ -2,6 +2,7 @@ import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { Word } from 'types/binary'
+import { VirtualBoardError } from 'types/error'
 
 const registers = new Registers()
 const memory = new Memory()
@@ -11,8 +12,9 @@ const blxInstruction = new BlxInstruction()
 beforeEach(function () {
   registers.reset()
   registers.writeRegister(Register.PC, Word.fromUnsignedInteger(20))
-  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(25))
+  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(26))
   registers.writeRegister(Register.R12, Word.fromUnsignedInteger(2))
+  registers.writeRegister(Register.R0, Word.fromUnsignedInteger(11))
 })
 
 describe('test encodeInstruction function for BLX', () => {
@@ -41,7 +43,7 @@ describe('test onExecuteInstruction function for BLX', () => {
     let opcode = blxInstruction.encodeInstruction(['R1'])
     blxInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.LR).value).toEqual(18)
-    expect(registers.readRegister(Register.PC).value).toEqual(25)
+    expect(registers.readRegister(Register.PC).value).toEqual(26)
   })
 
   it('should set the pc and lr registers to correct value with R12', () => {
@@ -56,5 +58,12 @@ describe('test onExecuteInstruction function for BLX', () => {
     blxInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.LR).value).toEqual(18)
     expect(registers.readRegister(Register.PC).value).toEqual(20)
+  })
+
+  it('should throw on invalid content of register', () => {
+    let opcode = blxInstruction.encodeInstruction(['R0'])
+    expect(() =>
+      blxInstruction.executeInstruction(opcode, registers, memory)
+    ).toThrow(VirtualBoardError)
   })
 })

@@ -2,6 +2,7 @@ import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
+import { getBinaryValue } from 'instruction/utils'
 import { Halfword, Word } from 'types/binary'
 import { BinaryType } from 'types/binary/binaryType'
 import { BaseInstruction } from '../base'
@@ -89,9 +90,9 @@ export class BlInstruction extends BaseInstruction {
     const i2Bit = !(j2Bit !== sBit)
 
     let imm =
-      BlInstruction.getBinaryValue(sBit) +
-      BlInstruction.getBinaryValue(i1Bit) +
-      BlInstruction.getBinaryValue(i2Bit) +
+      getBinaryValue(sBit) +
+      getBinaryValue(i1Bit) +
+      getBinaryValue(i2Bit) +
       imm10 +
       imm11 +
       '0'
@@ -108,9 +109,5 @@ export class BlInstruction extends BaseInstruction {
         .readRegister(Register.PC)
         .add(Word.fromUnsignedInteger(parseInt(imm, 2)))
     )
-  }
-
-  private static getBinaryValue(value: boolean): string {
-    return value ? '1' : '0'
   }
 }
