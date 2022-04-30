@@ -30,6 +30,14 @@ describe('test encodeInstruction function for BL', () => {
     expect(opcode[1].toBinaryString()).toEqual('1101011111111111')
   })
 
+  it('should create correct opcode for BL label1 with offset 2103298', () => {
+    let opcode = blInstruction.encodeInstruction(['label1'], {
+      label1: Word.fromUnsignedInteger(2103298)
+    })
+    expect(opcode[0].toBinaryString()).toEqual('1111001000000001')
+    expect(opcode[1].toBinaryString()).toEqual('1111110000000001')
+  })
+
   it('should create correct opcode for BL label1 with offset -10', () => {
     let opcode = blInstruction.encodeInstruction(['label1'], {
       label1: Word.fromSignedInteger(-10)

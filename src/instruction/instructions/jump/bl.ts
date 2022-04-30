@@ -43,7 +43,7 @@ export class BlInstruction extends BaseInstruction {
       opcodeFirstPart,
       this.imm10Pattern,
       Halfword.fromUnsignedInteger(
-        parseInt(offsetBinaryString.substring(9, 20), 2)
+        parseInt(offsetBinaryString.substring(10, 20), 2)
       )
     )
 
@@ -60,7 +60,7 @@ export class BlInstruction extends BaseInstruction {
       opcodeSecondPart,
       this.imm11Pattern,
       Halfword.fromUnsignedInteger(
-        parseInt(offsetBinaryString.substring(19, 31), 2)
+        parseInt(offsetBinaryString.substring(20, 31), 2)
       )
     )
 
@@ -90,16 +90,12 @@ export class BlInstruction extends BaseInstruction {
     const i2Bit = !(j2Bit !== sBit)
 
     let imm =
-      getBinaryValue(sBit) +
+      getBinaryValue(sBit).repeat(8) +
       getBinaryValue(i1Bit) +
       getBinaryValue(i2Bit) +
       imm10 +
       imm11 +
       '0'
-
-    for (let i = 0; i < 7; i++) {
-      imm = (sBit ? '1' : '0') + imm
-    }
 
     registers.writeRegister(Register.LR, registers.readRegister(Register.PC))
 
