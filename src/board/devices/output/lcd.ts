@@ -97,14 +97,16 @@ export class LcdDisplay extends Device {
   }
 
   /**
-   * Returns the actual set colour of the lcd screen
+   * Returns the actual set colour brightness of the lcd screen
    *
-   * @returns an array of halfwords with the rgb values in the order red, green, blue
+   * @returns an array of halfwords with the colour brightness values in the order red, green, blue
    */
   public getColour(): Halfword[] {
     let colour: Halfword[] = []
     for (let i = 0; i < LcdDisplay.LCD_COLOUR_ADRESS_LIST.length; i += 2) {
-      colour[i] = this.memory.readHalfword(LcdDisplay.LCD_COLOUR_ADRESS_LIST[i])
+      colour[i / 2] = this.memory.readHalfword(
+        LcdDisplay.LCD_COLOUR_ADRESS_LIST[i]
+      )
     }
     return colour
   }
