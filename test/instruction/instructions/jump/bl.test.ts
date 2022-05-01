@@ -46,7 +46,15 @@ describe('test encodeInstruction function for BL', () => {
     expect(opcode[1].toBinaryString()).toEqual('1111111111111011')
   })
 
-  it('should create correct opcode for B label1 with offset -16777216', () => {
+  it('should create correct opcode for BL abc with offset -2 (all placeholders filled with 1)', () => {
+    let opcode = blInstruction.encodeInstruction(['abc'], {
+      abc: Word.fromSignedInteger(-2)
+    })
+    expect(opcode[0].toBinaryString()).toEqual('1111011111111111')
+    expect(opcode[1].toBinaryString()).toEqual('1111111111111111')
+  })
+
+  it('should create correct opcode for B label1 with offset -16777216 (all placeholders except sign filled with 0)', () => {
     let opcode = blInstruction.encodeInstruction(['label1'], {
       label1: Word.fromSignedInteger(-16777216)
     })
