@@ -48,8 +48,6 @@ describe('test encodeInstruction function for CMP with low registers', () => {
   })
 })
 
-/////////////////////////////////////////
-
 describe('test executeInstruction function for CMP with low registers', () => {
   it('should return correct result for CMP R1, R2; R1 = 0x01, R2 = 0x02', () => {
     let registerArray = ['R1', 'R2']
@@ -120,8 +118,6 @@ describe('test encodeInstruction function for CMP with high registers', () => {
     expect(() => cmpHighInstruction.encodeInstruction(registerArray)).toThrow()
   })
 })
-
-/////////////////////////////////
 
 describe('test executeInstruction function for CMP with high registers', () => {
   it('should return correct result for CMP R8, R9; R8 = 0x01, R9 = 0x02', () => {

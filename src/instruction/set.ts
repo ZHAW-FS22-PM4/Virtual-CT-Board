@@ -7,6 +7,7 @@ import {
   AddsImmediate8Instruction,
   AddsRegistersInstruction
 } from './instructions/add/adds'
+import { CmnInstruction } from './instructions/compare/cmn'
 import { CmpInstructionWithLowRegisters } from './instructions/compare/cmp'
 import { BInstruction } from './instructions/jump/b'
 import {
@@ -120,6 +121,7 @@ export default new InstructionSet([
   new BicsInstruction(),
   new BInstruction(),
   new CmpInstructionWithLowRegisters(),
+  new CmnInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
