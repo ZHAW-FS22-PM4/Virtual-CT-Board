@@ -1,3 +1,4 @@
+import { sub } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import {
@@ -6,11 +7,12 @@ import {
   createImmediateBits,
   createLowRegisterBits,
   createRegisterBits,
+  getBits,
   isImmediate,
   isLowRegister,
   setBits
 } from 'instruction/opcode'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 export class CmpInstructionWithLowRegisters extends BaseInstruction {
@@ -20,14 +22,14 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
   private rmPattern: string = '0100001010XXX000'
   private optionCount: number = 2
 
-  public canEncodeInstruction (name: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
       options.every((x) => !isImmediate(x) && isLowRegister(x))
     )
   }
 
-  public encodeInstruction (options: string[]): Halfword[] {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.optionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))
@@ -35,12 +37,18 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
     return [opcode]
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    throw new Error('Method not implemented.')
+    const rn = getBits(opcode[0], this.rnPattern)
+    const rm = getBits(opcode[0], this.rmPattern)
+    const result = sub(
+      registers.readRegister(rn.value),
+      registers.readRegister(rm.value)
+    )
+    registers.setFlags(result.flags)
   }
 }
 
@@ -51,14 +59,14 @@ export class CmpInstructionWithHighRegisters extends BaseInstruction {
   private rmPattern: string = '010001010XXXX000'
   private optionCount: number = 2
 
-  public canEncodeInstruction (name: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
       options.find((x) => !isImmediate(x) && !isLowRegister(x)) !== undefined
     )
   }
 
-  public encodeInstruction (options: string[]): Halfword[] {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.optionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rnPattern, createRegisterBits(options[0]))
@@ -66,12 +74,18 @@ export class CmpInstructionWithHighRegisters extends BaseInstruction {
     return [opcode]
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    throw new Error('Method not implemented.')
+    const rn = getBits(opcode[0], this.rnPattern)
+    const rm = getBits(opcode[0], this.rmPattern)
+    const result = sub(
+      registers.readRegister(rn.value),
+      registers.readRegister(rm.value)
+    )
+    registers.setFlags(result.flags)
   }
 }
 
@@ -82,7 +96,7 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
   private immPattern: string = '00101000XXXXXXXX'
   private optionCount: number = 2
 
-  public canEncodeInstruction (name: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
       isLowRegister(options[0]) &&
@@ -90,7 +104,7 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
     )
   }
 
-  public encodeInstruction (options: string[]): Halfword[] {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.optionCount)
     let opcode: Halfword = create(this.pattern)
     let immBits: Halfword = createImmediateBits(options[1], 8)
@@ -99,11 +113,17 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
     return [opcode]
   }
 
-  public executeInstruction (
+  public executeInstruction(
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    throw new Error('Method not implemented.')
+    const rn = getBits(opcode[0], this.rnPattern)
+    const imm = getBits(opcode[0], this.immPattern)
+    const result = sub(
+      registers.readRegister(rn.value),
+      Word.fromUnsignedInteger(imm.value)
+    )
+    registers.setFlags(result.flags)
   }
 }
