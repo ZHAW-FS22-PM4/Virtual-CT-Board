@@ -1,0 +1,13 @@
+.lcd-container {
+  border: 1px solid lightgrey;
+  height: 4rem;
+  border-radius: 10px;
+  display: grid;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.col-md-auto {
+  width: 2rem;
+  text-align: center;
+}
