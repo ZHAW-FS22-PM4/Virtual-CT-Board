@@ -49,14 +49,14 @@ export class LcdComponent extends React.Component<{}, LcdState> {
         style={{ backgroundColor: this.state.backgroundColor }}>
         <div className="row justify-content-md-center">
           {Object.keys(this.state.displayValueRow0).map((key) => (
-            <div key={'lcd_row0_val_' + key} className="col-md-auto">
+            <div key={'lcd_row0_val_' + key} className="lcdChar">
               {this.state.displayValueRow0[parseInt(key)]}
             </div>
           ))}
         </div>
         <div className="row justify-content-md-center">
           {Object.keys(this.state.displayValueRow1).map((key) => (
-            <div key={'lcd_row1_val_' + key} className="col-md-auto">
+            <div key={'lcd_row1_val_' + key} className="lcdChar">
               {this.state.displayValueRow1[parseInt(key)]}
             </div>
           ))}
