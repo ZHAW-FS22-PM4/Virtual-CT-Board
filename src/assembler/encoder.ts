@@ -14,18 +14,23 @@ export function encode(code: ICodeFile, instructionSet: IInstructionSet): IELF {
     segments: [],
     sections: {},
     symbols: {},
-    content: []
+    content: [],
+    sourceMap: new Map<number, number>()
   }
   for (let area of code.areas) {
-    elf.sections[area.name] = {
+    const section = (elf.sections[area.name] = {
       offset: Word.fromUnsignedInteger(elf.content.length),
       size: Word.fromUnsignedInteger(0)
-    }
+    })
     for (let instruction of area.instructions) {
+      elf.sourceMap.set(
+        section.offset.add(elf.content.length).value,
+        instruction.line
+      )
       elf.content.push(...encodeInstruction(instruction, instructionSet))
     }
-    elf.sections[area.name].size = Word.fromUnsignedInteger(
-      elf.content.length - elf.sections[area.name].offset.value
+    section.size = Word.fromUnsignedInteger(
+      elf.content.length - section.offset.value
     )
   }
   return elf
