@@ -3,6 +3,7 @@ import { Button } from './button'
 import { DipSwitch } from './dip-switch'
 import { LedComponent } from './led'
 import './style.css'
+import {SevenSegComponent} from "./7seg";
 
 export class BoardComonent extends React.Component {
   public render(): React.ReactNode {
@@ -18,6 +19,12 @@ export class BoardComonent extends React.Component {
             <LedComponent startIndex={16} size={8} />
             <DipSwitch startIndex={16} size={8} />
           </div>
+        </div>
+        <div className="row mx-2 my-1">
+          <SevenSegComponent  />
+          <SevenSegComponent  />
+          <SevenSegComponent  />
+          <SevenSegComponent  />
         </div>
         <div className="row mx-2 my-1">
           <div className="col-sm-3">
