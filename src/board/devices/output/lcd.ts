@@ -151,17 +151,30 @@ export class LcdDisplay extends Device {
   }
 
   private writeAtPosition(address: Word): void {
-    if (LcdDisplay.LCD_ASCII_ADRESS_LIST.includes(address)) {
-      this.setLcdPositionInfoBlock(
-        LcdDisplay.LCD_ASCII_ADRESS_LIST.indexOf(address),
-        LcdPositionType.Ascii
-      )
-    } else if (LcdDisplay.LCD_BINARY_ADRESS_LIST.includes(address)) {
-      this.setLcdPositionInfoBlock(
-        LcdDisplay.LCD_BINARY_ADRESS_LIST.indexOf(address),
-        LcdPositionType.Binary
-      )
+    for (let i = 0; i < LcdDisplay.LCD_ASCII_ADRESS_LIST.length; i++) {
+      if (LcdDisplay.LCD_ASCII_ADRESS_LIST[i].value == address.value) {
+        this.setLcdPositionInfoBlock(i, LcdPositionType.Ascii)
+        return
+      }
     }
+    for (let i = 0; i < LcdDisplay.LCD_BINARY_ADRESS_LIST.length; i++) {
+      if (LcdDisplay.LCD_BINARY_ADRESS_LIST[i].value == address.value) {
+        this.setLcdPositionInfoBlock(
+          this.getPositionFromBinaryOffset(i),
+          LcdPositionType.Binary
+        )
+        return
+      }
+    }
+  }
+
+  private getPositionFromBinaryOffset(offset: number): number {
+    for (let i = 0; i <= LcdDisplay.MAX_LCD_POSITION; i++) {
+      if (LcdDisplay.LCD_BINARY_FIELD_CONFIGURATION[i][0] == offset) {
+        return i
+      }
+    }
+    throw new Error('Binary Offset not found.')
   }
 
   private setLcdPositionInfoBlock(
@@ -186,7 +199,7 @@ export class LcdDisplay extends Device {
       i < lowestPositionOfBlock + LcdDisplay.BLOCK_SIZE;
       i++
     ) {
-      this.lcdPositionInfo[position] = type
+      this.lcdPositionInfo[i] = type
     }
   }
 

@@ -40,6 +40,29 @@ test('get display value function', () => {
     Byte.fromSignedInteger('E'.charCodeAt(0))
   )
   expect(lcdDisplay.getDisplayValue(0)).toBe('E')
+
+  lcdDisplay.writeHalfword(
+    lcdDisplayBinaryBaseAdress.add(14),
+    Halfword.fromSignedInteger(0x1234)
+  )
+  expect(lcdDisplay.getDisplayValue(0)).toBe('')
+  expect(lcdDisplay.getDisplayValue(1)).toBe('1')
+  expect(lcdDisplay.getDisplayValue(2)).toBe('2')
+  expect(lcdDisplay.getDisplayValue(3)).toBe('3')
+  expect(lcdDisplay.getDisplayValue(4)).toBe('4')
+  expect(lcdDisplay.getDisplayValue(5)).toBe('')
+
+  lcdDisplay.writeByte(
+    lcdDisplayAsciiBaseAdress.add(1),
+    Byte.fromSignedInteger('F'.charCodeAt(0))
+  )
+  expect(lcdDisplay.getDisplayValue(0)).toBe('E')
+  expect(lcdDisplay.getDisplayValue(1)).toBe('F')
+  expect(lcdDisplay.getDisplayValue(2)).toBe('')
+  expect(lcdDisplay.getDisplayValue(3)).toBe('')
+  expect(lcdDisplay.getDisplayValue(4)).toBe('')
+  expect(lcdDisplay.getDisplayValue(5)).toBe('')
+  expect(lcdDisplay.getDisplayValue(20)).toBe('')
 })
 
 test('get display value function should throw error with invalid position', () => {
