@@ -1,4 +1,5 @@
 import { Byte, Word } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { IInstruction } from '../ast'
 import {
   IELF,
@@ -103,7 +104,10 @@ export class FileWriter {
    */
   public addSymbol(symbol: ISymbol): void {
     if (symbol.name in this.file.symbols)
-      throw new Error(`Symbol with name '${symbol.name}' already exists.`)
+      throw new VirtualBoardError(
+        `Symbol with name '${symbol.name}' already exists.`,
+        VirtualBoardErrorType.DuplicateSymbolDefinition
+      )
     this.file.symbols[symbol.name] = symbol
   }
 
@@ -168,6 +172,7 @@ export class FileWriter {
    * @param bytes the bytes to write
    */
   public setBytes(offset: number, bytes: Byte[]): void {
+    if (offset < 0) throw new Error('Negative offset is not valid.')
     const section = this.getCurrentSection()
     setBytes(this.file, section.offset + offset, bytes)
   }

@@ -123,7 +123,7 @@ function writeInstruction(
   if (isPseudoInstruction(instruction))
     writePseudoInstruction(writer, instruction, pool)
   else if (isDataInstruction(instruction))
-    writeDataInsruction(writer, instruction)
+    writeDataInstruction(writer, instruction)
   else writeCodeInstruction(writer, instruction)
 }
 
@@ -202,7 +202,7 @@ function isSymbolDataInstruction(instruction: IInstruction): boolean {
  * @param writer the file writer
  * @param instruction the data instruction to write
  */
-function writeDataInsruction(
+function writeDataInstruction(
   writer: FileWriter,
   instruction: IInstruction
 ): void {
@@ -279,7 +279,7 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
         entry.offset,
         opcode.flatMap((x) => x.toBytes())
       )
-      writeDataInsruction(writer, {
+      writeDataInstruction(writer, {
         name: 'DCD',
         options: [entry.value],
         line: entry.instruction.line
