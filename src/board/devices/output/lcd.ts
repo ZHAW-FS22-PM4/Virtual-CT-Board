@@ -66,11 +66,14 @@ export class LcdDisplay extends Device {
         return ''
       }
       case LcdPositionType.Ascii: {
-        return String.fromCharCode(
-          this.memory
-            .readByte(LcdDisplay.LCD_ASCII_ADRESS_LIST[position])
-            .toUnsignedInteger()
+        let val = this.memory.readByte(
+          LcdDisplay.LCD_ASCII_ADRESS_LIST[position]
         )
+        if (val.value == 0) {
+          return ''
+        } else {
+          return String.fromCharCode(val.toUnsignedInteger())
+        }
       }
       case LcdPositionType.Binary: {
         // Check if this position is an empty field (offset = -1)
@@ -84,6 +87,9 @@ export class LcdDisplay extends Device {
             ]
           )
           .toBinaryString()
+        if (parseInt(binaryString) == 0) {
+          return ''
+        }
         // Check if position is the first half of the byte
         let s: string
         if (LcdDisplay.LCD_BINARY_FIELD_CONFIGURATION[position][1] == 1) {
