@@ -1,0 +1,17 @@
+.rotaryswitch-container {
+}
+
+.rotaryswitch {
+  alignment: center;
+  color: black;
+}
+
+.rotaryswitch-button {
+  padding: 30px;
+  border-radius: 50%;
+}
+
+.rotary-display {
+  text-align: left;
+  color: black;
+}

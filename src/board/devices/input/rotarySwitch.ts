@@ -8,22 +8,27 @@ export class RotarySwitch extends Device {
   public endAddress = Word.fromUnsignedInteger(0x60000211)
   public isReadOnly = false
   public isVolatile = false
-
+  private maxValue = 256 //todo: Need to get fixed with correct value
 
   /**
    * increase the rotary switch
    *
    */
   public increase(): void {
-    this.memory.writeByte(this.RotarySwitch_ADDRESS, this.RotarySwitch_ADDRESS)
+    let newValue = this.RotarySwitch_ADDRESS.value + 1
+    if (newValue < this.maxValue) {
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Word.fromUnsignedInteger(newValue))
+    }
   }
-
 
   /**
    * decrease the rotary switch
    *
    */
   public decrease(): void {
-    this.memory.writeByte(this.RotarySwitch_ADDRESS, this.RotarySwitch_ADDRESS)
+    let newValue = this.RotarySwitch_ADDRESS.value-1
+    if (newValue > 0){
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Word.fromUnsignedInteger(newValue))
+    }
   }
 }
