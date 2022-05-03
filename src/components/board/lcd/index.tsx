@@ -5,7 +5,9 @@ import './style.css'
 type LcdState = {
   displayValueRow0: String[]
   displayValueRow1: String[]
-  backgroundColor: string
+  greenOpacity: number
+  redOpacity: number
+  blueOpacity: number
 }
 
 export class LcdComponent extends React.Component<{}, LcdState> {
@@ -34,32 +36,79 @@ export class LcdComponent extends React.Component<{}, LcdState> {
     for (let i = LcdComponent.LCD_POSITION_COUNT / 2 - 1; i >= 0; i--) {
       allValuesRow1.push(Board.lcdDisplay.getDisplayValue(i))
     }
+    const brightness = Board.lcdDisplay.getColour()
+    let redBright = this.byteValueToPercent(
+      this.scaleDownToByteValue(brightness[0].value)
+    )
+    let greenBright = this.byteValueToPercent(
+      this.scaleDownToByteValue(brightness[1].value)
+    )
+    let blueBright = this.byteValueToPercent(
+      this.scaleDownToByteValue(brightness[2].value)
+    )
+    let sumAllBright = greenBright + redBright + blueBright
+
+    if (sumAllBright != 0 && sumAllBright > 1.0) {
+      redBright = redBright / sumAllBright
+      greenBright = greenBright / sumAllBright
+      blueBright = blueBright / sumAllBright
+    }
     const state: LcdState = {
       displayValueRow0: allValuesRow0,
       displayValueRow1: allValuesRow1,
-      backgroundColor: Board.lcdDisplay.getColourHex()
+      greenOpacity: greenBright,
+      redOpacity: redBright,
+      blueOpacity: blueBright
     }
     return state
   }
 
+  private scaleDownToByteValue(value: number): number {
+    return value / 255
+  }
+  private byteValueToPercent(value: number): number {
+    return value / 255
+  }
+
   public render(): React.ReactNode {
+    //<colour>Background divs in this order since human eye most sensitive to green and then red
+    //opacity with rgba here in component so display text is not affected by it
     return (
-      <div
-        className="lcd-container"
-        style={{ backgroundColor: this.state.backgroundColor }}>
-        <div className="row justify-content-md-center">
-          {Object.keys(this.state.displayValueRow0).map((key) => (
-            <div key={'lcd_row0_val_' + key} className="lcdChar">
-              {this.state.displayValueRow0[parseInt(key)]}
+      <div className="lcd-container">
+        <div
+          className="h-100"
+          id="blueBackground"
+          style={{
+            background: 'rgb(0,0,255,' + this.getState().blueOpacity + ')'
+          }}>
+          <div
+            className="h-100"
+            id="redBackground"
+            style={{
+              background: 'rgb(255,0,0,' + this.getState().redOpacity + ')'
+            }}>
+            <div
+              className="h-100"
+              id="greenBackground"
+              style={{
+                background: 'rgb(0,255,0,' + this.getState().greenOpacity + ')'
+              }}>
+              <div className="row justify-content-md-center">
+                {Object.keys(this.state.displayValueRow0).map((key) => (
+                  <div key={'lcd_row0_val_' + key} className="lcdChar">
+                    {this.state.displayValueRow0[parseInt(key)]}
+                  </div>
+                ))}
+              </div>
+              <div className="row justify-content-md-center">
+                {Object.keys(this.state.displayValueRow1).map((key) => (
+                  <div key={'lcd_row1_val_' + key} className="lcdChar">
+                    {this.state.displayValueRow1[parseInt(key)]}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-        <div className="row justify-content-md-center">
-          {Object.keys(this.state.displayValueRow1).map((key) => (
-            <div key={'lcd_row1_val_' + key} className="lcdChar">
-              {this.state.displayValueRow1[parseInt(key)]}
-            </div>
-          ))}
+          </div>
         </div>
       </div>
     )
