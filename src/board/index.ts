@@ -23,6 +23,7 @@ class Board {
   public readonly switches: Switches
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
+  public readonly sevenSeg: SEVENseg
   public readonly rotaryswitch: RotarySwitch
   public readonly lcdDisplay: LcdDisplay
   public readonly sevenSeg: SEVENseg
