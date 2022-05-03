@@ -157,11 +157,30 @@ export class FileWriter {
   }
 
   /**
+   * Aligns the content to be specified alignment.
+   *
+   * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
+   */
+  public align(alignment: number): void {
+    if (alignment > 1) {
+      const offset = this.file.content.length
+      const off = offset % alignment
+      if (off) {
+        const fill = alignment - off
+        this.file.content.push(
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0x00))
+        )
+      }
+    }
+  }
+
+  /**
    * Writes the specified bytes to the file in little endian order.
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[]): void {
+  public writeBytes(bytes: Byte[], alignment: number): void {
+    this.align(alignment)
     this.file.content.push(...bytes)
   }
 

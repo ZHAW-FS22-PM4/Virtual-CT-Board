@@ -168,7 +168,7 @@ function writePseudoInstruction(
     length: bytes.length,
     value: instruction.options[1].slice(1)
   })
-  writer.writeBytes(bytes)
+  writer.writeBytes(bytes, 2)
 }
 
 /**
@@ -178,7 +178,9 @@ function writePseudoInstruction(
  * @returns whether the instruction is a data instruction
  */
 function isDataInstruction(instruction: IInstruction): boolean {
-  return ['DCB', 'DCW', 'DCD', 'SPACE', 'FILL', '%'].includes(instruction.name)
+  return ['DCB', 'DCW', 'DCD', 'SPACE', 'FILL', '%', 'ALIGN'].includes(
+    instruction.name
+  )
 }
 
 /**
@@ -209,30 +211,40 @@ function writeDataInstruction(
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
     writer.addDataRelocation(instruction.options[0], bytes.length)
-    writer.writeBytes(bytes)
+    writer.writeBytes(bytes, 4)
+    return
+  } else if (instruction.name === 'ALIGN') {
+    const alignment =
+      instruction.options.length > 0 ? Number(instruction.options[0]) : 4
+    writer.align(alignment)
     return
   }
   let bytes: Byte[] = []
+  let alignment: number = 0
   const values = instruction.options.map((x) => +x)
   switch (instruction.name) {
     case 'DCB':
       bytes = values.map(Byte.fromUnsignedInteger)
+      alignment = 1
       break
     case 'DCW':
       bytes = values
         .map(Halfword.fromUnsignedInteger)
         .flatMap((x) => x.toBytes())
+      alignment = 2
       break
     case 'DCD':
       bytes = values.map(Word.fromUnsignedInteger).flatMap((x) => x.toBytes())
+      alignment = 4
       break
     case 'SPACE':
     case 'FILL':
     case '%':
       bytes = Array(values[0]).fill(Byte.fromUnsignedInteger(0x00))
+      alignment = 1
       break
   }
-  writer.writeBytes(bytes)
+  writer.writeBytes(bytes, alignment)
 }
 
 /**
@@ -254,7 +266,7 @@ function writeCodeInstruction(
   if (encoder.needsLabels) {
     writer.addCodeRelocation(instruction, bytes.length)
   }
-  writer.writeBytes(bytes)
+  writer.writeBytes(bytes, 2)
 }
 
 /**
@@ -265,7 +277,7 @@ function writeCodeInstruction(
  */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
-    writer.writeBytes(END_OF_CODE.toBytes())
+    writer.writeBytes(END_OF_CODE.toBytes(), 2)
     for (const entry of pool.entries) {
       const encoder = InstructionSet.getEncoder(
         entry.instruction.name,

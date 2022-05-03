@@ -95,11 +95,11 @@ function writeSegments(file: IELF, objectFile: IELF): void {
  */
 function writeCodeSegment(writer: FileWriter, objectFile: IELF): void {
   writer.startSegment(SegmentType.Load, FLASH_START)
-  writer.writeBytes(VECTOR_TABLE)
+  writer.writeBytes(VECTOR_TABLE, 4)
   for (const section of getSectionsOfType(objectFile, SectionType.Code)) {
     writeSection(writer, objectFile, section)
   }
-  writer.writeBytes(END_OF_CODE.toBytes())
+  writer.writeBytes(END_OF_CODE.toBytes(), 2)
   writer.endSegment()
 }
 
@@ -138,7 +138,7 @@ function writeSection(
     section.offset,
     section.offset + section.size
   )
-  writer.writeBytes(bytes)
+  writer.writeBytes(bytes, 0)
   addAddressSymbols(writer, objectFile, section)
   writer.endSection()
 }
