@@ -1,4 +1,5 @@
 import React from 'react'
+import Board from '../../../board'
 import './style.css'
 
 type SevenSegState = {
@@ -20,7 +21,10 @@ export class SevenSegComponent extends React.Component<
 
   private getState() {
     const state: SevenSegState = {}
-    state[0] = false
+    let startIndex: number = this.props.displayId * 8
+    for (let i = startIndex; i <= startIndex + 7; i++) {
+      state[i] = Board.sevenSeg.isOn(i)
+    }
     return state
   }
 
