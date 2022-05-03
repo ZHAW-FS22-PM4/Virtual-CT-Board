@@ -1,6 +1,8 @@
 import Board from 'board'
 import React from 'react'
 import './style.css'
+import {Simulate} from "react-dom/test-utils";
+import mouseDown = Simulate.mouseDown;
 
 type RotaryState = {
   [key: number]: boolean
@@ -13,7 +15,7 @@ type RotaryProbs = {
 
 export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
   private readonly endIndex: number
-  private rotaryValue: number
+  private rotaryValue: number // only temporary for testing.
 
   constructor(props: RotaryProbs) {
     super(props)
@@ -31,9 +33,16 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
   }
 
   private handleRotarySwitch = (key: number): void => {
-    this.rotaryValue = this.rotaryValue + 1;
+    this.rotaryValue = this.rotaryValue + 1; // only temporary for testing.
 
-    this.state[key] ? Board.buttons.release(key) : Board.buttons.press(key)
+    //while (mouseright) {
+    //  Board.rotaryswitch.increase()
+    //}
+
+    //while (mouseleft) {
+    //  Board.rotaryswitch.decrease()
+    //}
+
     this.setState((state) => ({
       [key]: !state[key]
     }))

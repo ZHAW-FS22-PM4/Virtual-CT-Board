@@ -8,6 +8,7 @@ import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
 import { Processor } from './processor'
 import { Registers } from './registers'
+import {RotarySwitch} from "./devices/input/rotarySwitch";
 
 class Board {
   public readonly registers: Registers
@@ -18,12 +19,14 @@ class Board {
   public readonly switches: Switches
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
+  public readonly rotaryswitch: RotarySwitch
 
   constructor() {
     this.flash = new Flash()
     this.switches = new Switches()
     this.buttons = new Buttons()
     this.leds = new LEDDevice()
+    this.rotaryswitch = new RotarySwitch()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,
