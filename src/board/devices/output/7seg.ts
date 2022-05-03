@@ -47,9 +47,9 @@ export class SEVENseg extends Device {
     if( this.isBin()){
      return this.getBinDisplay(display)
     }else{
-
+      return this.getDisplay(display)
     }
-    return [true,false,true,false,true,true,true,true]
+    return []
   }
   /**
    * Returns true if seg with given position is on.
@@ -60,14 +60,25 @@ export class SEVENseg extends Device {
     return (this.memory.readWord(this.startAddressBin)!=this.oldBin)||(this.memory.readWord(this.endAddressBin)!=this.oldBin)
   }
 
-  private toSevensegNr(inByte: Byte):boolean[]{
-    return []
+  private toSevensegNrBin(inByte: Byte):boolean[]{
+
+    let arr: boolean[] = []
+
+   let code: String = SEVENsegNr[inByte.toUnsignedInteger()]
+    for (let i = 0; i < code.length; i++) {
+      const character = code.charAt(i);
+      if (character=='0'){arr.push(false)}
+      if (character=='1'){arr.push(true)}
+      if (character=='_'){}
+    }
+
+    return arr
   }
   private getBinDisplay(display: number): boolean[]{
     let arr: boolean[] = []
     switch ( display ) {
       case 0:
-        arr = this.toSevensegNr(this.memory.readByte(this.startAddressBin))
+        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin))
         break;
       case 1:
         this.memory.readByte(this.startAddressBin)
@@ -83,15 +94,26 @@ export class SEVENseg extends Device {
         break;
     }
 
-
 return arr
   }
+  private toSevensegNr(inByte: Byte):boolean[]{
 
+    let arr: boolean[] = []
+    let code: String = inByte.toBinaryString()
+    for (let i = 0; i < code.length; i++) {
+      const character = code.charAt(i);
+      if (character=='0'){arr.push(false)}
+      if (character=='1'){arr.push(true)}
+    }
 
+    return arr
+  }
+  private getRegDisplay(display: number): boolean[]{
+    let arr: boolean[] = []
+    arr = this.toSevensegNr(this.memory.readByte(this.startAddress.add(display)))
 
-
-
-
+    return arr
+  }
 
 
   private findSegByte(position: number): Byte {
