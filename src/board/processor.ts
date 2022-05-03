@@ -113,7 +113,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     }
     const executor = this.instructions.getExecutor(opcode[0])
     for (let i = 1; i < executor.opcodeLength; i++) {
-      opcode.push(this.memory.readHalfword(pc.add(i)))
+      opcode.push(this.memory.readHalfword(pc.add(i * 2)))
     }
     this.registers.writeRegister(Register.PC, pc.add(executor.opcodeLength * 2))
     executor.executeInstruction(opcode, this.registers, this.memory)
