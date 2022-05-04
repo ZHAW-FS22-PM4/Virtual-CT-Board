@@ -1,7 +1,6 @@
 import { add, AluResult } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Flag, Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -18,7 +17,7 @@ export class AdcsInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000101000XXX'
   private rmPattern: string = '0100000101XXX000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length === 3 && options[0] !== options[1]) {
       throw new Error(
@@ -32,16 +31,16 @@ export class AdcsInstruction extends BaseInstruction {
       this.rmPattern,
       createLowRegisterBits(options[options.length - 1])
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rdnRegister: number = getBits(opcode, this.rdnPattern).value
-    let rmRegister: number = getBits(opcode, this.rmPattern).value
+    let rdnRegister: number = getBits(opcode[0], this.rdnPattern).value
+    let rmRegister: number = getBits(opcode[0], this.rmPattern).value
 
     let rdnRegisterContent: Word = registers.readRegister(rdnRegister)
     let rmRegisterContent: Word = registers.readRegister(rmRegister)

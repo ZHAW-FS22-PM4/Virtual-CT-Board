@@ -1,7 +1,6 @@
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -20,7 +19,7 @@ export class LsrsRegisterInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000011000XXX'
   private rmPattern: string = '0100000011XXX000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -31,16 +30,16 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, rmBits)
 
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rdnBits = getBits(opcode, this.rdnPattern)
-    let rmBits = getBits(opcode, this.rmPattern)
+    let rdnBits = getBits(opcode[0], this.rdnPattern)
+    let rmBits = getBits(opcode[0], this.rmPattern)
     let rdnValue: Word = registers.readRegister(rdnBits.value)
     let rmValue: Word = registers.readRegister(rmBits.value)
 
@@ -74,7 +73,14 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   private rmPattern: string = '0000100000XXX000'
   private immPattern: string = '00001XXXXX000000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+    return (
+      super.canEncodeInstruction(commandName, options) &&
+      isImmediate(options[length - 1])
+    )
+  }
+
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     let opcode: Halfword = create(this.pattern)
     let immBits = createImmediateBits(options[options.length - 1], 5)
@@ -84,18 +90,18 @@ export class LsrsImmediateInstruction extends BaseInstruction {
       options.length == 3
         ? setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
         : setBits(opcode, this.rmPattern, createLowRegisterBits(options[0]))
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rdBits = getBits(opcode, this.rdPattern)
-    let rmBits = getBits(opcode, this.rmPattern)
+    let rdBits = getBits(opcode[0], this.rdPattern)
+    let rmBits = getBits(opcode[0], this.rmPattern)
     let rmValue: Word = registers.readRegister(rmBits.value)
-    let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
+    let immValue: Word = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
 
     if (immValue.value === 0) {
       throw new Error('Zero is not allowed as immediate in an LSRS operation!')
@@ -109,12 +115,5 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     registers.writeRegister(rdBits.value, result)
     registers.setFlags(evaluateZeroAndNegativeFlags(result))
     registers.setFlags({ C: isCarrySet })
-  }
-
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[length - 1])
-    )
   }
 }

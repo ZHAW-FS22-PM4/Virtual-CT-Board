@@ -1,6 +1,6 @@
+import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -9,8 +9,7 @@ import {
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
-import { evaluateZeroAndNegativeFlags } from '../../../board/alu'
-import { convertToUnsignedNumber } from '../../../types/binary/utils'
+import { convertToUnsignedNumber } from 'types/binary/utils'
 import { BaseInstruction } from '../base'
 
 /**
@@ -22,26 +21,26 @@ export class TstInstruction extends BaseInstruction {
   private rnPattern: string = '0100001000000XXX'
   private rmPattern: string = '0100001000XXX000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     let calculatedValue = Word.fromUnsignedInteger(
       convertToUnsignedNumber(
         registers
-          .readRegister(getBits(opcode, this.rnPattern).value)
+          .readRegister(getBits(opcode[0], this.rnPattern).value)
           .toUnsignedInteger() &
           registers
-            .readRegister(getBits(opcode, this.rmPattern).value)
+            .readRegister(getBits(opcode[0], this.rmPattern).value)
             .toUnsignedInteger()
       )
     )

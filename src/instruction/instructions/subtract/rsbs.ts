@@ -1,7 +1,6 @@
 import { sub } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -23,22 +22,22 @@ export class RsbsInstruction extends BaseInstruction {
   private rdPattern: string = '0100001001000XXX'
   private rnPattern: string = '0100001001XXX000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     RsbsInstruction.checkConstImmediate(options)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    const rd = getBits(opcode, this.rdPattern)
-    const rn = getBits(opcode, this.rnPattern)
+    const rd = getBits(opcode[0], this.rdPattern)
+    const rn = getBits(opcode[0], this.rnPattern)
     const result = sub(
       Word.fromSignedInteger(0),
       registers.readRegister(rn.value)

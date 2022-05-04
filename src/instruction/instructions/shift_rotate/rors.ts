@@ -1,7 +1,6 @@
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -19,7 +18,7 @@ export class RorsInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000111000XXX'
   private rmPattern: string = '0100000111XXX000'
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
       throw new Error('Parameter 1 and 2 must be identical!')
@@ -27,16 +26,16 @@ export class RorsInstruction extends BaseInstruction {
     let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, rmBits)
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rdnBits = getBits(opcode, this.rdnPattern)
-    let rmBits = getBits(opcode, this.rmPattern)
+    let rdnBits = getBits(opcode[0], this.rdnPattern)
+    let rmBits = getBits(opcode[0], this.rmPattern)
     let rdnValue: Word = registers.readRegister(rdnBits.value)
     let rmValue: Word = registers.readRegister(rmBits.value)
 
