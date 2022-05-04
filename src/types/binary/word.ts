@@ -12,18 +12,9 @@ export class Word extends BinaryType {
   public static MAX_SIGNED_VALUE: number = 2147483647
   public static NUMBER_OF_BITS: number = 32
 
-  readonly numberOfBitsForType: number = Word.NUMBER_OF_BITS
-  readonly maxValueForType: number = 0xffffffff
-
-  /**
-   * The unsigned integer representation of the word as a number (IEEE double precision floating point).
-   */
-  public readonly value: number
-
   private constructor(value: number) {
-    super()
+    super(value, Word.NUMBER_OF_BITS)
     checkRange('Word', value, Word.MIN_VALUE, Word.MAX_VALUE)
-    this.value = value
   }
 
   /**
