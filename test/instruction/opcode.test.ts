@@ -6,6 +6,7 @@ import {
   createRegisterBits,
   getBits,
   isImmediate,
+  isLowRegister,
   isOptionCountValid,
   match,
   setBits
@@ -368,5 +369,30 @@ describe('test isImmediate function', function () {
     expect(isImmediate('78')).toBe(false)
     expect(isImmediate('abc')).toBe(false)
     expect(isImmediate('0x5d5')).toBe(false)
+  })
+})
+
+describe('test isLowRegister function', () => {
+  it('should return true for isLowRegister', () => {
+    expect(isLowRegister('R0')).toBe(true)
+    expect(isLowRegister('R1')).toBe(true)
+    expect(isLowRegister('R2')).toBe(true)
+    expect(isLowRegister('R3')).toBe(true)
+    expect(isLowRegister('R4')).toBe(true)
+    expect(isLowRegister('R5')).toBe(true)
+    expect(isLowRegister('R6')).toBe(true)
+    expect(isLowRegister('R7')).toBe(true)
+  })
+  it('should return false for isLowRegister', () => {
+    expect(isLowRegister('R8')).toBe(false)
+    expect(isLowRegister('R9')).toBe(false)
+    expect(isLowRegister('R10')).toBe(false)
+    expect(isLowRegister('R11')).toBe(false)
+    expect(isLowRegister('R12')).toBe(false)
+    expect(isLowRegister('SP')).toBe(false)
+    expect(isLowRegister('LR')).toBe(false)
+    expect(isLowRegister('PC')).toBe(false)
+    expect(isLowRegister('APSR')).toBe(false)
+    expect(isLowRegister('TEST')).toBe(false)
   })
 })
