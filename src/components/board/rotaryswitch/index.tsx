@@ -1,8 +1,7 @@
 import Board from 'board'
 import React from 'react'
 import './style.css'
-import {Simulate} from "react-dom/test-utils";
-import mouseDown = Simulate.mouseDown;
+
 
 type RotaryState = {
   [key: number]: boolean
@@ -17,12 +16,14 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
   private readonly endIndex: number
   private rotaryValue: number // only temporary for testing.
   private mouseClicked: boolean
+  private serotaryValue: number
 
   constructor(props: RotaryProbs) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
     this.state = this.getState()
     this.rotaryValue = 0
+    this.serotaryValue = 0
     this.mouseClicked = false
   }
 
@@ -31,6 +32,7 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
     for (let i = this.props.startIndex; i <= this.endIndex; i++) {
       state[i] = Board.buttons.isPressed(i)
     }
+    //let serotaryValue = Board.rotaryswitch.getRotaryValue()
     return state
   }
 
@@ -44,10 +46,7 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
         this.rotaryValue = this.rotaryValue - 1;
       }
     }
-
-    this.setState((state) => ({
-      [key]: !state[key]
-    }))
+    this.setState(this.getState())
   }
 
   private mouseDown = (): void => {

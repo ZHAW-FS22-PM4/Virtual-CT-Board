@@ -31,4 +31,13 @@ export class RotarySwitch extends Device {
       this.memory.writeByte(this.RotarySwitch_ADDRESS, Word.fromUnsignedInteger(newValue))
     }
   }
+
+  /**
+   * Returns the current set value of the rotary switch
+   *
+   * @returns: the current value of the rotary switch
+   */
+  public getRotaryValue(): number {
+    return this.memory.readWord(this.RotarySwitch_ADDRESS).value
+  }
 }
