@@ -1,6 +1,5 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -36,7 +35,7 @@ export class StrbImmediate5OffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
@@ -50,19 +49,23 @@ export class StrbImmediate5OffsetInstruction extends BaseInstruction {
       this.immPattern,
       createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     memory.writeByte(
       registers
-        .readRegister(getBits(opcode, this.rnPattern).value)
-        .add(Word.fromUnsignedInteger(getBits(opcode, this.immPattern).value)),
-      registers.readRegister(getBits(opcode, this.rtPattern).value).toBytes()[0]
+        .readRegister(getBits(opcode[0], this.rnPattern).value)
+        .add(
+          Word.fromUnsignedInteger(getBits(opcode[0], this.immPattern).value)
+        ),
+      registers
+        .readRegister(getBits(opcode[0], this.rtPattern).value)
+        .toBytes()[0]
     )
   }
 }
@@ -87,7 +90,7 @@ export class StrbRegisterOffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
@@ -101,19 +104,21 @@ export class StrbRegisterOffsetInstruction extends BaseInstruction {
       this.rmPattern,
       createLowRegisterBits(removeBracketsFromRegisterString(options[2]))
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     memory.writeByte(
       registers
-        .readRegister(getBits(opcode, this.rnPattern).value)
-        .add(registers.readRegister(getBits(opcode, this.rmPattern).value)),
-      registers.readRegister(getBits(opcode, this.rtPattern).value).toBytes()[0]
+        .readRegister(getBits(opcode[0], this.rnPattern).value)
+        .add(registers.readRegister(getBits(opcode[0], this.rmPattern).value)),
+      registers
+        .readRegister(getBits(opcode[0], this.rtPattern).value)
+        .toBytes()[0]
     )
   }
 }

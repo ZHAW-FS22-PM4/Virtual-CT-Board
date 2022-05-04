@@ -22,37 +22,37 @@ beforeEach(() => {
 describe('test encodeInstruction function for RORS', () => {
   it('should create correct opcode for RORS R1, R1, R2', () => {
     let registerArray = ['R1', 'R1', 'R2']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
-    expect(opcode.toBinaryString()).toEqual('0100000111010001')
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
+    expect(opcode[0].toBinaryString()).toEqual('0100000111010001')
   })
 
   it('should create correct opcode for RORS R2, R2, R1', () => {
     let registerArray = ['R2', 'R2', 'R1']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
-    expect(opcode.toBinaryString()).toEqual('0100000111001010')
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
+    expect(opcode[0].toBinaryString()).toEqual('0100000111001010')
   })
 
   it('should create correct opcode for RORS R1, R2', () => {
     let registerArray = ['R1', 'R2']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
-    expect(opcode.toBinaryString()).toEqual('0100000111010001')
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
+    expect(opcode[0].toBinaryString()).toEqual('0100000111010001')
   })
 
   it('should throw error for RORS R1, R1, R8 because of high register', () => {
     let registerArray = ['R1', 'R1', 'R8']
-    expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
+    expect(() => rorsInstruction.encodeInstruction(registerArray)).toThrow()
   })
 
   it('should throw error for RORS R1, R2, R3 because of non-identical params 0 and 1', () => {
     let registerArray = ['R1', 'R2', 'R3']
-    expect(() => rorsInstruction.encodeInstruction(registerArray, {})).toThrow()
+    expect(() => rorsInstruction.encodeInstruction(registerArray)).toThrow()
   })
 })
 
 describe('test executeInstruction function for RORS', () => {
   it('should return correct result for RORS R2, R2, R2; R2 = 1', () => {
     let registerArray = ['R2', 'R2', 'R2']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R2).value).toEqual(0x80000000)
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()
@@ -62,7 +62,7 @@ describe('test executeInstruction function for RORS', () => {
 
   it('should return correct result for RORS R4, R4, R2; R4 = 0xf0000000, R2 = 1', () => {
     let registerArray = ['R4', 'R4', 'R2']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R4).value).toEqual(0x78000000)
     expect(registers.isFlagSet(Flag.N)).toBeFalsy()
@@ -72,7 +72,7 @@ describe('test executeInstruction function for RORS', () => {
 
   it('should return correct result for shifting value = 32 (RORS R4, R4, R3; R4 = 0xf0000000, R3 = 32)', () => {
     let registerArray = ['R4', 'R4', 'R3']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R4).value).toEqual(0xf0000000)
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()
@@ -82,7 +82,7 @@ describe('test executeInstruction function for RORS', () => {
 
   it('should return correct result for shifting value > 32 (RORS R4, R4, R5; R4 = 0xf0000000, R5 = 33)', () => {
     let registerArray = ['R4', 'R4', 'R5']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R4).value).toEqual(0x78000000)
     expect(registers.isFlagSet(Flag.N)).toBeFalsy()
@@ -92,7 +92,7 @@ describe('test executeInstruction function for RORS', () => {
 
   it('should return correct result for shifting value = 31 (RORS R4, R4, R6; R4 = 0xf0000000, R6 = 31)', () => {
     let registerArray = ['R4', 'R4', 'R6']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R4).value).toEqual(0xe0000001)
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()
@@ -102,7 +102,7 @@ describe('test executeInstruction function for RORS', () => {
 
   it('should return correct result for shifting value = 0 (RORS R4, R4, R7; R4 = 0xf0000000, R7 = 0)', () => {
     let registerArray = ['R4', 'R4', 'R7']
-    let opcode = rorsInstruction.encodeInstruction(registerArray, {})
+    let opcode = rorsInstruction.encodeInstruction(registerArray)
     rorsInstruction.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R4).value).toEqual(0xf0000000)
     expect(registers.isFlagSet(Flag.N)).toBeTruthy()

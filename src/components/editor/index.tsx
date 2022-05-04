@@ -6,7 +6,6 @@ import CodeMirror, {
   ReactCodeMirrorRef
 } from '@uiw/react-codemirror'
 import { assemble } from 'assembler'
-import { IELF } from 'assembler/elf'
 import Board from 'board'
 import { Register } from 'board/registers'
 import React from 'react'
@@ -30,7 +29,6 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
   private configuration: Compartment
   private editor: React.RefObject<ReactCodeMirrorRef>
-  private executable: IELF | null
 
   constructor(props: {}) {
     super(props)
@@ -42,7 +40,6 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }
     this.configuration = new Compartment()
     this.editor = React.createRef<ReactCodeMirrorRef>()
-    this.executable = null
     Board.processor.on('endOfCode', () =>
       this.setState({ mode: EditorMode.EDIT })
     )
@@ -50,7 +47,6 @@ export class EditorComponent extends React.Component<{}, EditorState> {
 
   resetProcessor(): void {
     Board.processor.reset()
-    this.executable = null
     this.setState({ mode: EditorMode.EDIT })
     this.updateProgramCounterHighlighting(true)
   }
@@ -59,8 +55,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     let nextMode = this.state.mode
     if (this.state.mode === EditorMode.EDIT) {
       this.catchAndShowError(() => {
-        this.executable = assemble(this.getCode())
-        Board.loadExecutable(this.executable)
+        const executable = assemble(this.getCode())
+        Board.loadExecutable(executable)
         Board.processor.execute()
         nextMode = EditorMode.RUN
       })
@@ -78,8 +74,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   step(): void {
     if (this.state.mode === EditorMode.EDIT) {
       this.catchAndShowError(() => {
-        this.executable = assemble(this.getCode())
-        Board.loadExecutable(this.executable)
+        const executable = assemble(this.getCode())
+        Board.loadExecutable(executable)
         this.setState({
           mode: EditorMode.STEP
         })
@@ -99,10 +95,11 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   updateProgramCounterHighlighting(clear: boolean = false) {
     const view = this.editor.current?.view
     if (view) {
+      const executable = Board.getExecutable()
       let line: number | undefined
-      if (this.executable && !clear) {
+      if (executable && !clear) {
         const pc = Board.registers.readRegister(Register.PC)
-        line = this.executable.sourceMap.get(pc.value)
+        line = executable.sourceMap.getLine(pc)
       }
       const decorations: Extension[] = []
       if (line) {

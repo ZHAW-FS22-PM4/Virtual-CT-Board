@@ -21,7 +21,7 @@ describe('SUBS instruction', function () {
     const options = ['R1', 'R3', 'R2']
     const encoder = InstructionSet.getEncoder(name, options)
     const opcode = encoder.encodeInstruction(options, {})
-    const executor = InstructionSet.getExecutor(opcode)
+    const executor = InstructionSet.getExecutor(opcode[0])
     executor.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).value).toBe(12)
   })
@@ -29,7 +29,7 @@ describe('SUBS instruction', function () {
     const options = ['R2', 'R2', '#2']
     const encoder = InstructionSet.getEncoder(name, options)
     const opcode = encoder.encodeInstruction(options, {})
-    const executor = InstructionSet.getExecutor(opcode)
+    const executor = InstructionSet.getExecutor(opcode[0])
     executor.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R2).value).toBe(2)
   })
@@ -37,7 +37,7 @@ describe('SUBS instruction', function () {
     const options = ['R3', '#12']
     const encoder = InstructionSet.getEncoder(name, options)
     const opcode = encoder.encodeInstruction(options, {})
-    const executor = InstructionSet.getExecutor(opcode)
+    const executor = InstructionSet.getExecutor(opcode[0])
     executor.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R3).value).toBe(4)
   })
