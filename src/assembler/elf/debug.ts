@@ -10,11 +10,11 @@ export interface ISourceLineMapping {
 }
 
 /**
- * Represents a source map which maps
+ * Represents a source map which maps source lines to addresses.
  */
 export class SourceMap {
-  private mappings: Array<ISourceLineMapping>
-  private addresses: Map<number, number>
+  private readonly mappings: Array<ISourceLineMapping>
+  private readonly addresses: Map<number, number>
 
   public constructor() {
     this.mappings = []

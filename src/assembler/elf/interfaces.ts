@@ -1,5 +1,5 @@
+import { IInstruction } from 'assembler/ast'
 import { Byte, Word } from 'types/binary'
-import { IInstruction } from '../ast'
 import { SourceMap } from './debug'
 
 /**
@@ -159,7 +159,7 @@ export interface IRelocation {
   offset: number
 
   /**
-   * The lenth of the code or data (in bytes).
+   * The length of the code or data (in bytes).
    */
   length: number
 
