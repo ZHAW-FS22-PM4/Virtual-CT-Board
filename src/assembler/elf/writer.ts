@@ -163,12 +163,12 @@ export class FileWriter {
    */
   public align(alignment: number): void {
     if (alignment > 1) {
-      const offset = this.file.content.length
+      const offset = this.getCurrentSectionOffset()
       const off = offset % alignment
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0x00))
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
         )
       }
     }
@@ -179,8 +179,8 @@ export class FileWriter {
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[], alignment: number): void {
-    this.align(alignment)
+  public writeBytes(bytes: Byte[], alignment?: number): void {
+    if (alignment) this.align(alignment)
     this.file.content.push(...bytes)
   }
 
