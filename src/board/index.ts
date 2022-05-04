@@ -25,6 +25,8 @@ class Board {
 
   private executable?: IELF
 
+  private executable?: IELF
+
   constructor() {
     this.flash = new Flash()
     this.ram = new SRAM()
