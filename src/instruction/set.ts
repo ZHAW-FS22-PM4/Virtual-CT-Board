@@ -1,52 +1,73 @@
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-import { AdcsInstruction } from './instructions/adcs'
-import { AddInstruction } from './instructions/add'
+import { AdcsInstruction } from './instructions/add/adcs'
+import { AddInstruction } from './instructions/add/add'
 import {
   AddsImmediate3Instruction,
   AddsImmediate8Instruction,
   AddsRegistersInstruction
-} from './instructions/adds'
+} from './instructions/add/adds'
+import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
+  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
-} from './instructions/ldr'
+} from './instructions/load/ldr'
 import {
   LdrbImmediate5OffsetInstruction,
   LdrbRegisterOffsetInstruction
-} from './instructions/ldrb'
+} from './instructions/load/ldrb'
 import {
   LdrhImmediate5OffsetInstruction,
   LdrhRegisterOffsetInstruction
-} from './instructions/ldrh'
-import { LdrsbRegisterOffsetInstruction } from './instructions/ldrsb'
-import { LdrshRegisterOffsetInstruction } from './instructions/ldrsh'
-import { MovInstruction } from './instructions/mov'
+} from './instructions/load/ldrh'
+import { LdrsbRegisterOffsetInstruction } from './instructions/load/ldrsb'
+import { LdrshRegisterOffsetInstruction } from './instructions/load/ldrsh'
+import { AndsInstruction } from './instructions/logical/ands'
+import { BicsInstruction } from './instructions/logical/bics'
+import { EorsInstruction } from './instructions/logical/eors'
+import { MvnsInstruction } from './instructions/logical/mvns'
+import { OrrsInstruction } from './instructions/logical/orrs'
+import { TstInstruction } from './instructions/logical/tst'
+import { MovInstruction } from './instructions/mov/mov'
 import {
   MovsImmediate8Instruction,
   MovsRegistersInstruction
-} from './instructions/movs'
-import { MulsInstruction } from './instructions/muls'
-import { RsbsInstruction } from './instructions/rsbs'
-import { SbcsInstruction } from './instructions/sbcs'
+} from './instructions/mov/movs'
+import { MulsInstruction } from './instructions/multiply/muls'
+import {
+  AsrsImmediateInstruction,
+  AsrsRegisterInstruction
+} from './instructions/shift_rotate/asrs'
+import {
+  LslsImmediateInstruction,
+  LslsRegisterInstruction
+} from './instructions/shift_rotate/lsls'
+import {
+  LsrsImmediateInstruction,
+  LsrsRegisterInstruction
+} from './instructions/shift_rotate/lsrs'
+import { RorsInstruction } from './instructions/shift_rotate/rors'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
-} from './instructions/str'
+} from './instructions/store/str'
 import {
   StrbImmediate5OffsetInstruction,
   StrbRegisterOffsetInstruction
-} from './instructions/strb'
+} from './instructions/store/strb'
 import {
   StrhImmediate5OffsetInstruction,
   StrhRegisterOffsetInstruction
-} from './instructions/strh'
+} from './instructions/store/strh'
+import { RsbsInstruction } from './instructions/subtract/rsbs'
+import { SbcsInstruction } from './instructions/subtract/sbcs'
 import {
   SubsImmediate3Instruction,
   SubsImmediate8Instruction,
   SubsRegistersInstruction
-} from './instructions/subs'
+} from './instructions/subtract/subs'
 import {
   IInstruction,
   IInstructionEncoder,
@@ -92,8 +113,15 @@ export default new InstructionSet([
   new AddsRegistersInstruction(),
   new AddsImmediate3Instruction(),
   new AddsImmediate8Instruction(),
+  new AndsInstruction(),
+  new AsrsRegisterInstruction(),
+  new AsrsImmediateInstruction(),
+  new BicsInstruction(),
+  new BInstruction(),
+  new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
+  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),
@@ -101,10 +129,17 @@ export default new InstructionSet([
   new LdrRegisterInstruction(),
   new LdrshRegisterOffsetInstruction(),
   new LdrsbRegisterOffsetInstruction(),
+  new LslsImmediateInstruction(),
+  new LslsRegisterInstruction(),
+  new LsrsImmediateInstruction(),
+  new LsrsRegisterInstruction(),
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
   new MulsInstruction(),
+  new MvnsInstruction(),
+  new OrrsInstruction(),
+  new RorsInstruction(),
   new RsbsInstruction(),
   new SbcsInstruction(),
   new StrImmediate5OffsetInstruction(),
@@ -115,5 +150,6 @@ export default new InstructionSet([
   new StrbRegisterOffsetInstruction(),
   new SubsRegistersInstruction(),
   new SubsImmediate3Instruction(),
-  new SubsImmediate8Instruction()
+  new SubsImmediate8Instruction(),
+  new TstInstruction()
 ])

@@ -9,7 +9,7 @@ import { Halfword, Word } from 'types/binary'
 const registers = new Registers()
 const memory = new MemoryBus([new Flash()])
 
-function MOVS(...options: string[]) {
+function MOVS(...options: string[]): Halfword[] {
   return InstructionSet.getEncoder('MOVS', options).encodeInstruction(
     options,
     {}
@@ -40,7 +40,7 @@ beforeEach(function () {
 
 describe('execute', function () {
   it('should execute code', function () {
-    WRITE_CODE([MOVS('R1', '#1')])
+    WRITE_CODE(MOVS('R1', '#1'))
     const processor: Processor = new Processor(
       registers,
       memory,
@@ -53,7 +53,7 @@ describe('execute', function () {
 
 describe('halt', function () {
   it('should halt execution', function () {
-    WRITE_CODE([MOVS('R1', '#1')])
+    WRITE_CODE(MOVS('R1', '#1'))
     const processor: Processor = new Processor(
       registers,
       memory,
@@ -68,7 +68,7 @@ describe('halt', function () {
 
 describe('step', function () {
   it('should execute one instruction per step', function () {
-    WRITE_CODE([MOVS('R1', '#1'), MOVS('R2', '#2')])
+    WRITE_CODE([...MOVS('R1', '#1'), ...MOVS('R2', '#2')])
     const processor: Processor = new Processor(
       registers,
       memory,
