@@ -143,22 +143,30 @@ export class LcdDisplay extends Device {
   }
 
   private writeAtPosition(address: Word): void {
-    let asciiAddresses: number[] = LcdDisplay.LCD_ASCII_ADRESS_LIST.map(
-      (a) => a.value
-    )
-    if (asciiAddresses.includes(address.value)) {
+    if (
+      address.value >= LcdDisplay.LCD_ASCII_ADRESS_LIST[0].value &&
+      address.value <=
+        LcdDisplay.LCD_ASCII_ADRESS_LIST[
+          LcdDisplay.LCD_ASCII_ADRESS_LIST.length - 1
+        ].value
+    ) {
       this.setLcdPositionInfoBlock(
-        address.value - asciiAddresses[0],
+        address.value - LcdDisplay.LCD_ASCII_ADRESS_LIST[0].value,
         LcdPositionType.Ascii
       )
       return
     }
-    let binaryAddresses: number[] = LcdDisplay.LCD_BINARY_ADRESS_LIST.map(
-      (a) => a.value
-    )
-    if (binaryAddresses.includes(address.value)) {
+    if (
+      address.value >= LcdDisplay.LCD_BINARY_ADRESS_LIST[0].value &&
+      address.value <=
+        LcdDisplay.LCD_BINARY_ADRESS_LIST[
+          LcdDisplay.LCD_BINARY_ADRESS_LIST.length - 1
+        ].value
+    ) {
       this.setLcdPositionInfoBlock(
-        this.getPositionFromBinaryOffset(address.value - binaryAddresses[0]),
+        this.getPositionFromBinaryOffset(
+          address.value - LcdDisplay.LCD_BINARY_ADRESS_LIST[0].value
+        ),
         LcdPositionType.Binary
       )
     }
