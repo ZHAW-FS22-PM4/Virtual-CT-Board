@@ -17,6 +17,9 @@ import {
   BVCConditionalJumpInstruction,
   BVSConditionalJumpInstruction
 } from 'instruction/instructions/jump/bconditional'
+import { BlInstruction } from 'instruction/instructions/jump/bl'
+import { BlxInstruction } from 'instruction/instructions/jump/blx'
+import { BxInstruction } from 'instruction/instructions/jump/bx'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
@@ -147,6 +150,9 @@ export default new InstructionSet([
   new CmpInstructionWithHighRegisters(),
   new CmpInstructionWithImmediateOffset(),
   new CmnInstruction(),
+  new BlInstruction(),
+  new BlxInstruction(),
+  new BxInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),

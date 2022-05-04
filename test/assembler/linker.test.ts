@@ -171,4 +171,44 @@ describe('linker', function () {
     )
     expect(file.content[14]).toEqual(Byte.fromUnsignedInteger(0x22))
   })
+  it('should apply data relocations', function () {
+    const code: ICodeFile = {
+      symbols: {
+        LITERAL_CONSTANT: '0x33'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.text|',
+          instructions: [
+            {
+              name: 'LDR',
+              options: ['R1', '=LITERAL_CONSTANT'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = link(encode(code))
+    expect(file.segments.length).toBe(1)
+    expect(file.segments[0].type).toBe(SegmentType.Load)
+    expect(file.segments[0].offset).toBe(0)
+    expect(file.segments[0].size).toBe(18)
+    expect(file.segments[0].address).toEqual(Word.fromSignedInteger(0x08000000))
+    expect(file.sections.length).toBe(0)
+    expect(Object.keys(file.symbols).length).toBe(0)
+    expect(file.relocations.length).toBe(0)
+    expect(file.sourceMap.getLine(Word.fromSignedInteger(0x08000008))).toBe(0)
+    expect(file.content.length).toBe(18)
+    expect(
+      Word.fromBytes(
+        file.content[12],
+        file.content[13],
+        file.content[14],
+        file.content[15]
+      )
+    ).toEqual(Word.fromUnsignedInteger(0x33))
+  })
 })
