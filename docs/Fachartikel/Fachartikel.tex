@@ -40,6 +40,8 @@
 \section*{Abstract}
 \thispagestyle{empty}
 
+
+
 \newpage
 
 \tableofcontents
@@ -98,7 +100,7 @@ Der Emulator VisUAL von Alman Sarif soll hier stellvertretend für andere virtue
 \caption{Der Emulator VisUAL samt seiner grafischen Oberfläche. (Quelle: https://salmanarif.bitbucket.io/visual/index.html)}
 \label{emulator}
 \end{figure}
-Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die CT1-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der CT1-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem das komplette physische CT Board virtuell visualisiert wird und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
+Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die CT1-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der CT1-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem auch die fürs CT1-Modul notwendigen Hardware-Bestandteile des physischen CT Boards visualisiert werden und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
 
 \paragraph{Physisches CT Board} 
 
@@ -147,7 +149,7 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 \section{Diskussion und Ausblick}
 
-Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt - diese können jedoch nicht, wie als Projektziel definiert, bereits vollständig aus dem Betrieb genommen werden. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, bleibt noch einiges offen, wofür die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
+Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Die Studierenden können nach und nach auf das \glqq Virtual CT Board\grqq{} umsteigen - wenn auch noch nicht vollständig. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, könnten im CT1-Unterricht die physischen Boards neben dem virtuellen eingesetzt und damit die bestehenden Ressourcen ideal ausgeschöpft werden. Falls die ZHAW Interesse daran hat, das \glqq Virtual CT Board\grqq{} weiter zu entwickeln und auch finanziell zu unterstützen, bietet sich die Umsetzung folgender Punkte an, für die die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
 
 \begin{itemize}
 	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
