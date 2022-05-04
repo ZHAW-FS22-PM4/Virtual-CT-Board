@@ -1,6 +1,3 @@
-.rotaryswitch-container {
-}
-
 .rotaryswitch {
   alignment: center;
   color: black;
@@ -10,19 +7,29 @@
   padding: 30px;
   border-radius: 50%;
   position:absolute;
+  margin-left:127px;
+  margin-top:3px;
 }
 
+.rotaryswitch-button-clicked {
+  background-color: #000000;
+}
+
+.rotaryswitch-button-notclicked {
+  background-color: #313030;
+}
 
 .rotaryswitch-canvas {
-  border: 1px solid black;
-  width: 120px;
+  width: 300px;
   height: 70px;
-  border-radius: 10%;
-  position:relative;
-
+  position:absolute;
 }
 
-.rotary-display {
-  text-align: left;
+.rotary-text {
+  text-align: right;
+  margin-left:150px;
+  margin-top:20px;
   color: black;
+  position:absolute;
+  color: white;
 }

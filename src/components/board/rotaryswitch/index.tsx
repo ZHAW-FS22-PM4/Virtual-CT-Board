@@ -50,11 +50,11 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
     }))
   }
 
-  private mouseDown = (key:number): void => {
+  private mouseDown = (): void => {
     this.mouseClicked = true
   }
 
-  private mouseUp = (key:number): void => {
+  private mouseUp = (): void => {
     this.mouseClicked = false
   }
 
@@ -64,15 +64,17 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
         {Object.keys(this.state).map(Number)
           .map((key) => (
             <div key={'rotaryswitch'}>
-              <div className="rotary-display">{"Rotary Value: " + this.rotaryValue}</div>
+              <button
+                  className={`rotaryswitch-button ${
+                this.mouseClicked ? 'rotaryswitch-button-clicked' : 'rotaryswitch-button-notclicked'}`}
+              />
+              <div className="rotary-text">{this.rotaryValue}</div>
               <canvas
                   className={`rotaryswitch-canvas`}
-                  onMouseDown={() => this.mouseDown(key)}
-                  onMouseUp={() => this.mouseUp(key)}
+                  onMouseOut={() => this.mouseUp()}
+                  onMouseDown={() => this.mouseDown()}
+                  onMouseUp={() => this.mouseUp()}
                   onMouseMove={(e) => this.handleRotarySwitch(key, e)}
-                />
-              <button
-                className={`rotaryswitch-button`}
               />
             </div>
           ))}
