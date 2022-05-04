@@ -2,36 +2,26 @@ import Board from 'board'
 import React from 'react'
 import './style.css'
 
-
 type RotaryState = {
-  [key: number]: boolean
+  [key: number]: number
 }
 
-type RotaryProbs = {
-  startIndex: number
-  size: number
-}
-
-export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
-  private readonly endIndex: number
+export class RotarySwitch extends React.Component<RotaryState> {
   private rotaryValue: number // only temporary for testing.
   private mouseClicked: boolean
-  private serotaryValue: number
 
-  constructor(props: RotaryProbs) {
+  constructor(props: {}) {
     super(props)
-    this.endIndex = this.props.startIndex + this.props.size - 1
     this.state = this.getState()
     this.rotaryValue = 0
-    this.serotaryValue = 0
     this.mouseClicked = false
   }
 
   private getState() {
     const state: RotaryState = {}
-    for (let i = this.props.startIndex; i <= this.endIndex; i++) {
-      state[i] = Board.buttons.isPressed(i)
-    }
+    state[1] = 2//Board.rotaryswitch.getRotaryValue()
+
+    this.rotaryValue = state[1]
     //let serotaryValue = Board.rotaryswitch.getRotaryValue()
     return state
   }
