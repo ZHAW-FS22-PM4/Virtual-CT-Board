@@ -9,6 +9,17 @@
 .rotaryswitch-button {
   padding: 30px;
   border-radius: 50%;
+  position:absolute;
+}
+
+
+.rotaryswitch-canvas {
+  border: 1px solid black;
+  width: 120px;
+  height: 70px;
+  border-radius: 10%;
+  position:relative;
+
 }
 
 .rotary-display {

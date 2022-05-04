@@ -16,12 +16,14 @@ type RotaryProbs = {
 export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
   private readonly endIndex: number
   private rotaryValue: number // only temporary for testing.
+  private mouseClicked: boolean
 
   constructor(props: RotaryProbs) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
     this.state = this.getState()
     this.rotaryValue = 0
+    this.mouseClicked = false
   }
 
   private getState() {
@@ -32,20 +34,28 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
     return state
   }
 
-  private handleRotarySwitch = (key: number): void => {
-    this.rotaryValue = this.rotaryValue + 1; // only temporary for testing.
-
-    //while (mouseright) {
-    //  Board.rotaryswitch.increase()
-    //}
-
-    //while (mouseleft) {
-    //  Board.rotaryswitch.decrease()
-    //}
+  private handleRotarySwitch = (key: number, e: React.MouseEvent<HTMLCanvasElement>): void => {
+    if (this.mouseClicked) {
+      if (e.movementX > 0) {
+        Board.rotaryswitch.increase()
+        this.rotaryValue = this.rotaryValue + 1;
+      } else {
+        Board.rotaryswitch.decrease()
+        this.rotaryValue = this.rotaryValue - 1;
+      }
+    }
 
     this.setState((state) => ({
       [key]: !state[key]
     }))
+  }
+
+  private mouseDown = (key:number): void => {
+    this.mouseClicked = true
+  }
+
+  private mouseUp = (key:number): void => {
+    this.mouseClicked = false
   }
 
   public render(): React.ReactNode {
@@ -55,9 +65,14 @@ export class RotarySwitch extends React.Component<RotaryProbs, RotaryState> {
           .map((key) => (
             <div key={'rotaryswitch'}>
               <div className="rotary-display">{"Rotary Value: " + this.rotaryValue}</div>
+              <canvas
+                  className={`rotaryswitch-canvas`}
+                  onMouseDown={() => this.mouseDown(key)}
+                  onMouseUp={() => this.mouseUp(key)}
+                  onMouseMove={(e) => this.handleRotarySwitch(key, e)}
+                />
               <button
                 className={`rotaryswitch-button`}
-                onClick={() => this.handleRotarySwitch(key)}
               />
             </div>
           ))}
