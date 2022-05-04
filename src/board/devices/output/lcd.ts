@@ -117,20 +117,6 @@ export class LcdDisplay extends Device {
     return colour
   }
 
-  /**
-   * Returns the actual set colour brightness of the lcd screen in hex value
-   *
-   * @returns an string of hex color code to use in css
-   */
-  public getColourHex(): string {
-    let colourHex = '#'
-    const colours = this.getColour()
-    for (let col of colours) {
-      colourHex += col.toHexString().substring(2)
-    }
-    return colourHex
-  }
-
   public writeByte(address: Word, byte: Byte): void {
     super.writeByte(address, byte)
     this.writeAtPosition(address)
