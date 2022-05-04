@@ -48,7 +48,7 @@ export class LcdComponent extends React.Component<{}, LcdState> {
     )
     let sumAllBright = greenBright + redBright + blueBright
 
-    if (sumAllBright != 0 && sumAllBright > 1.0) {
+    if (sumAllBright > 1.0) {
       redBright = redBright / sumAllBright
       greenBright = greenBright / sumAllBright
       blueBright = blueBright / sumAllBright

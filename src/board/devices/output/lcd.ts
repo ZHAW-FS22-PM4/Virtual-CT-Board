@@ -7,11 +7,11 @@ enum LcdPositionType {
   Binary = 2
 }
 
-type ILcdPositionInfo = {
+type LcdPositionInfo = {
   [index: number]: LcdPositionType
 }
 
-type ILcdBinaryFields = {
+type LcdBinaryFields = {
   [index: number]: [offset: number, bytePosition: number]
 }
 
@@ -41,10 +41,10 @@ export class LcdDisplay extends Device {
     The first column (offset) defines, which offset the position belongs to and the second one (bytePosition) shows,
     if the position shows the first or the second char of the byte
   */
-  private static readonly LCD_BINARY_FIELD_CONFIGURATION: ILcdBinaryFields =
-    LcdDisplay.createLcdBinaryFieldConfigruation()
+  private static readonly LCD_BINARY_FIELD_CONFIGURATION: LcdBinaryFields =
+    LcdDisplay.createLcdBinaryFieldConfiguration()
 
-  private lcdPositionInfo: ILcdPositionInfo = this.createLcdPositionInfo()
+  private lcdPositionInfo: LcdPositionInfo = this.createLcdPositionInfo()
 
   public startAddress = LcdDisplay.LCD_ASCII_ADRESS_LIST[0]
   public endAddress = LcdDisplay.LCD_COLOUR_ADRESS_LIST[5]
@@ -217,8 +217,8 @@ export class LcdDisplay extends Device {
     return adresslist
   }
 
-  private static createLcdBinaryFieldConfigruation(): ILcdBinaryFields {
-    let fields: ILcdBinaryFields = []
+  private static createLcdBinaryFieldConfiguration(): LcdBinaryFields {
+    let fields: LcdBinaryFields = []
     let nextBytePosition: number = 1
     let nextOffset: number = LcdDisplay.MAX_BINARY_OFFSET
 
@@ -242,8 +242,8 @@ export class LcdDisplay extends Device {
     return position < 0 || position > LcdDisplay.MAX_LCD_POSITION
   }
 
-  private createLcdPositionInfo(): ILcdPositionInfo {
-    let lcdPos: ILcdPositionInfo = []
+  private createLcdPositionInfo(): LcdPositionInfo {
+    let lcdPos: LcdPositionInfo = []
     for (let i = 0; i <= LcdDisplay.MAX_LCD_POSITION; i++) {
       lcdPos[i] = LcdPositionType.NotSet
     }
