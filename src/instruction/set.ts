@@ -1,3 +1,6 @@
+import { BlInstruction } from 'instruction/instructions/jump/bl'
+import { BlxInstruction } from 'instruction/instructions/jump/blx'
+import { BxInstruction } from 'instruction/instructions/jump/bx'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
@@ -118,6 +121,9 @@ export default new InstructionSet([
   new AsrsImmediateInstruction(),
   new BicsInstruction(),
   new BInstruction(),
+  new BlInstruction(),
+  new BlxInstruction(),
+  new BxInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),

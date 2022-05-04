@@ -2,16 +2,16 @@ import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
+import { BinaryType } from 'types/binary/binaryType'
 import { BaseInstruction } from '../base'
 
 /**
- * Represents a 'MOV' instruction.
+ * Represents a 'B' instruction.
  */
 export class BInstruction extends BaseInstruction {
   public name: string = 'B'
   public pattern: string = '11100XXXXXXXXXXX'
-  private imm11Pattern: string = '11100XXXXXXXXXXX'
 
   public needsLabels: boolean = true
 
@@ -23,9 +23,9 @@ export class BInstruction extends BaseInstruction {
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(
       opcode,
-      this.imm11Pattern,
+      this.pattern,
       labels
-        ? Halfword.fromUnsignedInteger(labels[options[0]].value)
+        ? Word.fromUnsignedInteger(labels[options[0]].value).toHalfwords()[0]
         : Halfword.fromUnsignedInteger(0x00)
     )
     return [opcode]
@@ -36,11 +36,13 @@ export class BInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
+    const imm11 = new BinaryType(
+      getBits(opcode[0], this.pattern).toUnsignedInteger(),
+      11
+    )
     registers.writeRegister(
       Register.PC,
-      registers
-        .readRegister(Register.PC)
-        .add(getBits(opcode[0], this.imm11Pattern).value)
+      registers.readRegister(Register.PC).add(imm11.toSignedInteger())
     )
   }
 }
