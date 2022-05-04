@@ -7,8 +7,10 @@ import {
   AddsImmediate8Instruction,
   AddsRegistersInstruction
 } from './instructions/add/adds'
+import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
+  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from './instructions/load/ldr'
@@ -115,9 +117,11 @@ export default new InstructionSet([
   new AsrsRegisterInstruction(),
   new AsrsImmediateInstruction(),
   new BicsInstruction(),
+  new BInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
+  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),

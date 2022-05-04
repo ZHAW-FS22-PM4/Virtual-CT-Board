@@ -1,7 +1,6 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import { MovInstruction } from 'instruction/instructions/mov/mov'
-import { ILabelOffsets } from 'instruction/interfaces'
 import { $enum } from 'ts-enum-util'
 import { instance, mock, resetCalls, verify, when } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
@@ -27,7 +26,6 @@ const invalidImmediateOption: string = '5'
 
 const instructionMov = new MovInstruction()
 
-const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const memoryMock: Memory = mock<Memory>()
 const registerMock: Registers = mock<Registers>()
 const registers: Registers = instance(registerMock)
@@ -40,6 +38,9 @@ when(
 when(
   registerMock.readRegister($enum(Register).getValueOrThrow(highRegisterOption))
 ).thenReturn(highRegisterValue)
+when(registerMock.readRegister(Register.PC)).thenReturn(
+  Word.fromUnsignedInteger(0x0)
+)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
   test('MOV encoder', () => {
@@ -61,45 +62,39 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // MOV SP, R5
     expect(
       instructionMov
-        .encodeInstruction(
-          [highRegisterOption, lowRegisterOption],
-          labelOffsetMock
-        )
+        .encodeInstruction([highRegisterOption, lowRegisterOption])[0]
         .toBinaryString()
     ).toEqual('0100011010101101')
     // MOV R5, SP
     expect(
       instructionMov
-        .encodeInstruction(
-          [lowRegisterOption, highRegisterOption],
-          labelOffsetMock
-        )
+        .encodeInstruction([lowRegisterOption, highRegisterOption])[0]
         .toBinaryString()
     ).toEqual('0100011001101101')
     // MOV R5, R22
     expect(() =>
-      instructionMov.encodeInstruction(
-        [lowRegisterOption, invalidRegisterOption],
-        labelOffsetMock
-      )
+      instructionMov.encodeInstruction([
+        lowRegisterOption,
+        invalidRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOV R5, #0x5C
     expect(() =>
-      instructionMov.encodeInstruction(
-        [lowRegisterOption, validImmediateOption],
-        labelOffsetMock
-      )
+      instructionMov.encodeInstruction([
+        lowRegisterOption,
+        validImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOV R2, 5
     expect(() =>
-      instructionMov.encodeInstruction(
-        [lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instructionMov.encodeInstruction([
+        lowRegisterOption2,
+        invalidImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOV R2
     expect(() =>
-      instructionMov.encodeInstruction([lowRegisterOption2], labelOffsetMock)
+      instructionMov.encodeInstruction([lowRegisterOption2])
     ).toThrow(VirtualBoardError)
   })
 })
@@ -108,7 +103,7 @@ describe('test executeInstruction function', () => {
   test('MOV handler', () => {
     // MOV SP, R5
     instructionMov.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0100011010101101),
+      [Halfword.fromUnsignedInteger(0b0100011010101101)],
       registers,
       memoryMock
     )
@@ -133,7 +128,7 @@ describe('test executeInstruction function', () => {
 
     // MOV R5, SP
     instructionMov.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0100011001101101),
+      [Halfword.fromUnsignedInteger(0b0100011001101101)],
       registers,
       memoryMock
     )
