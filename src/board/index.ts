@@ -1,4 +1,4 @@
-import { IELF, SegmentType } from 'assembler/elf/interfaces'
+import { IELF, SegmentType } from 'assembler/elf'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
@@ -30,6 +30,8 @@ class Board {
 
   private executable?: IELF
 
+  private executable?: IELF
+
   constructor() {
     this.flash = new Flash()
     this.ram = new SRAM()
@@ -44,6 +46,7 @@ class Board {
       this.flash,
       this.ram,
       this.rotaryswitch,
+      this.ram,
       this.buttons,
       this.switches,
       this.leds,
