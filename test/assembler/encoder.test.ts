@@ -3,7 +3,7 @@ import { getSection } from 'assembler/elf/utils'
 import { encode } from 'assembler/encoder'
 
 describe('encode', function () {
-  it('should encode instruction', function () {
+  it('should encode code instruction', function () {
     const code: ICodeFile = {
       symbols: {},
       areas: [
@@ -140,5 +140,71 @@ describe('encode', function () {
       expect(getSection(file, '|.data|').size).toBe(16)
       expect(file.content.length).toBe(16)
     }
+  })
+  it('should encode ALIGN instruction', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'DCB',
+              options: ['0x0'],
+              line: 0
+            },
+            {
+              name: 'ALIGN',
+              options: ['4'],
+              line: 1
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(4)
+    expect(file.content.length).toBe(4)
+    expect(file.content[0].value).toBe(0x00)
+    expect(file.content[1].value).toBe(0xff)
+    expect(file.content[2].value).toBe(0xff)
+    expect(file.content[3].value).toBe(0xff)
+  })
+  it('should should align code instruction', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.text|',
+          instructions: [
+            {
+              name: 'DCB',
+              options: ['0x0'],
+              line: 0
+            },
+            {
+              name: 'MOVS',
+              options: ['R1', 'R2'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.text|').offset).toBe(0)
+    expect(getSection(file, '|.text|').size).toBe(4)
+    expect(file.content.length).toBe(4)
+    expect(file.content[0].value).toBe(0x00)
+    expect(file.content[1].value).toBe(0xff)
+    expect(file.content[2].value).toBe(0x11)
+    expect(file.content[3].value).toBe(0x0)
   })
 })

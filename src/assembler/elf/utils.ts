@@ -102,7 +102,7 @@ export function getSymbolsFromSection(file: IELF, section: string): ISymbol[] {
  * Gets all the symbols of a specific type.
  *
  * @param file the file
- * @param file the filearam type the type of symbol
+ * @param file the type of symbol to get
  * @returns all symbols of the specified type
  */
 export function getSymbolsOfType(file: IELF, type: SymbolType): ISymbol[] {

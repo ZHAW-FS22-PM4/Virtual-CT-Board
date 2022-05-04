@@ -1,5 +1,5 @@
+import { IInstruction } from 'assembler/ast'
 import { Byte, Word } from 'types/binary'
-import { IInstruction } from '../ast'
 import { SourceMap } from './debug'
 
 /**

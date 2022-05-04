@@ -1,4 +1,5 @@
 import { Byte, Word } from 'types/binary'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { IInstruction } from '../ast'
 import {
   IELF,
@@ -103,7 +104,10 @@ export class FileWriter {
    */
   public addSymbol(symbol: ISymbol): void {
     if (symbol.name in this.file.symbols)
-      throw new Error(`Symbol with name '${symbol.name}' already exists.`)
+      throw new VirtualBoardError(
+        `Symbol with name '${symbol.name}' already exists.`,
+        VirtualBoardErrorType.DuplicateSymbolDefinition
+      )
     this.file.symbols[symbol.name] = symbol
   }
 
@@ -153,11 +157,30 @@ export class FileWriter {
   }
 
   /**
+   * Aligns the content to be specified alignment.
+   *
+   * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
+   */
+  public align(alignment: number): void {
+    if (alignment > 1) {
+      const offset = this.getCurrentSectionOffset()
+      const off = offset % alignment
+      if (off) {
+        const fill = alignment - off
+        this.file.content.push(
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
+        )
+      }
+    }
+  }
+
+  /**
    * Writes the specified bytes to the file in little endian order.
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[]): void {
+  public writeBytes(bytes: Byte[], alignment?: number): void {
+    if (alignment) this.align(alignment)
     this.file.content.push(...bytes)
   }
 
@@ -168,6 +191,7 @@ export class FileWriter {
    * @param bytes the bytes to write
    */
   public setBytes(offset: number, bytes: Byte[]): void {
+    if (offset < 0) throw new Error('Negative offset is not valid.')
     const section = this.getCurrentSection()
     setBytes(this.file, section.offset + offset, bytes)
   }

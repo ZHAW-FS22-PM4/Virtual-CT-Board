@@ -68,6 +68,8 @@ export interface IInstructionExecutor {
    * Executes the instruction represented by the specified opcode.
    *
    * @param opcode the opcode of the instruction to be executed
+   * @param registers the registers to be used during execution
+   * @param memory the memory to be used during execution
    */
   executeInstruction(
     opcode: Halfword[],
