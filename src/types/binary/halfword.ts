@@ -11,18 +11,9 @@ export class Halfword extends BinaryType {
   public static MAX_SIGNED_VALUE: number = 32767
   public static NUMBER_OF_BITS: number = 16
 
-  readonly numberOfBitsForType: number = Halfword.NUMBER_OF_BITS
-  readonly maxValueForType: number = 0xffff
-
-  /**
-   * The unsigned integer representation of the halfword as a number (IEEE double precision floating point).
-   */
-  public readonly value: number
-
   private constructor(value: number) {
-    super()
+    super(value, Halfword.NUMBER_OF_BITS)
     checkRange('Halfword', value, Halfword.MIN_VALUE, Halfword.MAX_VALUE)
-    this.value = value
   }
 
   /**
