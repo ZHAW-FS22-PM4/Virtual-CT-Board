@@ -2,22 +2,26 @@ import { Device } from 'board/devices/device'
 import {Byte, Word} from 'types/binary'
 
 export class RotarySwitch extends Device {
-  public RotarySwitch_ADDRESS = Word.fromUnsignedInteger(0x60000211)
+  private RotarySwitch_ADDRESS = Word.fromUnsignedInteger(0x60000211)
+  private maxValue = 255
+  private minValue = 0
 
-  public startAddress = Word.fromUnsignedInteger(0x60000211)
-  public endAddress = Word.fromUnsignedInteger(0x60000211)
   public isReadOnly = false
   public isVolatile = false
-  private maxValue = 256 //todo: Need to get fixed with correct value
+  public startAddress = this.RotarySwitch_ADDRESS
+  public endAddress = this.RotarySwitch_ADDRESS
+
 
   /**
    * increase the rotary switch
    *
    */
   public increase(): void {
-    let newValue = this.RotarySwitch_ADDRESS.value + 1
+    let newValue = this.memory.readByte(this.RotarySwitch_ADDRESS).value + 1
     if (newValue < this.maxValue) {
-      this.memory.writeByte(this.RotarySwitch_ADDRESS, Word.fromUnsignedInteger(newValue))
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Byte.fromUnsignedInteger(newValue))
+    } else {
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Byte.fromUnsignedInteger(this.maxValue))
     }
   }
 
@@ -26,9 +30,11 @@ export class RotarySwitch extends Device {
    *
    */
   public decrease(): void {
-    let newValue = this.RotarySwitch_ADDRESS.value-1
-    if (newValue > 0){
-      this.memory.writeByte(this.RotarySwitch_ADDRESS, Word.fromUnsignedInteger(newValue))
+    let newValue = this.memory.readByte(this.RotarySwitch_ADDRESS).value - 1
+    if (newValue >= this.minValue){
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Byte.fromUnsignedInteger(newValue))
+    } else {
+      this.memory.writeByte(this.RotarySwitch_ADDRESS, Byte.fromUnsignedInteger(this.minValue))
     }
   }
 
@@ -38,7 +44,6 @@ export class RotarySwitch extends Device {
    * @returns: the current value of the rotary switch
    */
   public getRotaryValue(): Byte {
-    return  Byte.fromSignedInteger(15)
-    //return this.memory.readByte(this.RotarySwitch_ADDRESS)
+    return this.memory.readByte(this.RotarySwitch_ADDRESS)
   }
 }
