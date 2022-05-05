@@ -3,6 +3,7 @@ import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
 import { Switches } from './devices/input/switches'
+import { LcdDisplay } from './devices/output/lcd'
 import { SEVENseg } from './devices/output/7seg'
 import { LEDDevice } from './devices/output/leds'
 import { SRAM } from './devices/sram'
@@ -21,9 +22,8 @@ class Board {
   public readonly switches: Switches
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
+  public readonly lcdDisplay: LcdDisplay
   public readonly sevenSeg: SEVENseg
-
-  private executable?: IELF
 
   private executable?: IELF
 
@@ -33,6 +33,7 @@ class Board {
     this.switches = new Switches()
     this.buttons = new Buttons()
     this.leds = new LEDDevice()
+    this.lcdDisplay = new LcdDisplay()
     this.registers = new Registers()
     this.sevenSeg = new SEVENseg()
     this.memory = new MemoryBus([
@@ -41,6 +42,7 @@ class Board {
       this.buttons,
       this.switches,
       this.leds,
+      this.lcdDisplay,
       this.sevenSeg
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
