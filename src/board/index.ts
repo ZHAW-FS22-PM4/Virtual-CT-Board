@@ -3,6 +3,7 @@ import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
 import { Switches } from './devices/input/switches'
+import { LcdDisplay } from './devices/output/lcd'
 import { LEDDevice } from './devices/output/leds'
 import { SRAM } from './devices/sram'
 import { MemoryBus } from './memory/bus'
@@ -22,6 +23,7 @@ class Board {
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
   public readonly rotaryswitch: RotarySwitch
+  public readonly lcdDisplay: LcdDisplay
 
   private executable?: IELF
 
@@ -31,6 +33,7 @@ class Board {
     this.switches = new Switches()
     this.buttons = new Buttons()
     this.leds = new LEDDevice()
+    this.lcdDisplay = new LcdDisplay()
     this.rotaryswitch = new RotarySwitch()
     this.registers = new Registers()
     this.memory = new MemoryBus([
@@ -38,7 +41,8 @@ class Board {
       this.ram,
       this.buttons,
       this.switches,
-      this.leds
+      this.leds,
+      this.lcdDisplay
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
     this.processor.on('reset', () => this.reloadExecutable())
