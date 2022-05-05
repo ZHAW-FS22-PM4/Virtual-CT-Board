@@ -1,5 +1,5 @@
 import { Device } from 'board/devices/device'
-import { Byte, Word } from '../../../types/binary'
+import { Byte, Halfword, Word } from '../../../types/binary'
 enum SEVENsegNr {
   _0011_1111 = 0,
   _0000_0110 = 1,
@@ -30,7 +30,6 @@ export class SEVENseg extends Device {
   private static readonly MAX_SEG_NUMBER: number = 31
   private oldBin: Word = Word.fromUnsignedInteger(65535)
 
-
   /**
    * Returns true if seg with given position is on.
    *
@@ -60,11 +59,11 @@ export class SEVENseg extends Device {
     return (this.memory.readWord(this.startAddressBin)!=this.oldBin)||(this.memory.readWord(this.endAddressBin)!=this.oldBin)
   }
 
-  private toSevensegNrBin(inByte: Byte):boolean[]{
+  private toSevensegNrBin(inNum: number):boolean[]{
 
     let arr: boolean[] = []
 
-   let code: String = SEVENsegNr[inByte.toUnsignedInteger()]
+   let code: String = SEVENsegNr[inNum]
     for (let i = 0; i < code.length; i++) {
       const character = code.charAt(i);
       if (character=='0'){arr.push(false)}
@@ -78,16 +77,16 @@ export class SEVENseg extends Device {
     let arr: boolean[] = []
     switch ( display ) {
       case 0:
-        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin))
+        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin).toUnsignedInteger()%8)
         break;
       case 1:
-        this.memory.readByte(this.startAddressBin)
+        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.startAddressBin).toUnsignedInteger()/8))
         break;
       case 2:
-        this.memory.readByte(this.endAddressBin)
+        arr = this.toSevensegNrBin(this.memory.readByte(this.endAddress).toUnsignedInteger()%8)
         break;
       case 3:
-        this.memory.readByte(this.endAddressBin)
+        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.endAddress).toUnsignedInteger()/8))
         break;
       default:
         //
@@ -111,7 +110,6 @@ return arr
   private getRegDisplay(display: number): boolean[]{
     let arr: boolean[] = []
     arr = this.toSevensegNr(this.memory.readByte(this.startAddress.add(display)))
-
     return arr
   }
 
