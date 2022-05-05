@@ -6,9 +6,9 @@
 .rotaryswitch-button {
   padding: 30px;
   border-radius: 50%;
-  position:absolute;
-  margin-left:127px;
-  margin-top:3px;
+  position: absolute;
+  margin-left: 127px;
+  margin-top: 3px;
 }
 
 .rotaryswitch-button-clicked {
@@ -22,14 +22,14 @@
 .rotaryswitch-canvas {
   width: 300px;
   height: 70px;
-  position:absolute;
+  position: absolute;
 }
 
 .rotary-text {
   text-align: right;
-  margin-left:150px;
-  margin-top:20px;
+  margin-left: 150px;
+  margin-top: 20px;
   color: black;
-  position:absolute;
+  position: absolute;
   color: white;
 }

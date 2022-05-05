@@ -2,6 +2,7 @@ import { IELF, SegmentType } from 'assembler/elf/interfaces'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
+import { RotarySwitch } from './devices/input/rotarySwitch'
 import { Switches } from './devices/input/switches'
 import { LcdDisplay } from './devices/output/lcd'
 import { LEDDevice } from './devices/output/leds'
@@ -10,7 +11,6 @@ import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
 import { Processor } from './processor'
 import { Registers } from './registers'
-import {RotarySwitch} from "./devices/input/rotarySwitch";
 
 class Board {
   public readonly registers: Registers
