@@ -1,96 +1,61 @@
-import { Buttons } from 'board/devices/input/buttons'
+import { RotarySwitch} from "board/devices/input/rotarySwitch"
 import { Byte, Word } from 'types/binary'
 
-const address: Word = Word.fromUnsignedInteger(0x60000210)
+const address: Word = Word.fromUnsignedInteger(0x60000211)
 const byte_0000_0000: Byte = Byte.fromUnsignedInteger(0)
-const byte_0000_0101: Byte = Byte.fromUnsignedInteger(5)
 const byte_0000_0100: Byte = Byte.fromUnsignedInteger(4)
-const byte_0000_1111: Byte = Byte.fromUnsignedInteger(15)
+const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 
-let buttons: Buttons
+let rotarySwitch: RotarySwitch
 
 beforeEach(() => {
-  buttons = new Buttons()
-  buttons.press(0)
-  buttons.press(2)
+  rotarySwitch = new RotarySwitch()
 })
 
-test('test that buttons are set to readonly', () => {
-  buttons.writeByte(address, byte_0000_0000)
-  expect(buttons.readByte(address)).toEqual(byte_0000_0101)
-})
-
-describe('test isPressed() function', () => {
-  test('test passing invalid positions to isPressed() function', () => {
-    expect(() => buttons.isPressed(4)).toThrow(
-      new Error('Button position 4 does not exist.')
-    )
-    expect(() => buttons.isPressed(-2)).toThrow(
-      new Error('Button position -2 does not exist.')
-    )
+describe('test increase() function', () => {
+  test('test increase function when original value is zero', () => {
+    rotarySwitch.writeByte(address,byte_0000_0000)
+    rotarySwitch.increase()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_0000_0000.value + 1)
   })
-  test('test passing valid positions to isPressed() function', () => {
-    expect(buttons.isPressed(0)).toBe(true)
-    expect(buttons.isPressed(1)).toBe(false)
-    expect(buttons.isPressed(2)).toBe(true)
-    expect(buttons.isPressed(3)).toBe(false)
+
+  test('test increase function with normal value', () => {
+    rotarySwitch.writeByte(address,byte_0000_0100)
+    rotarySwitch.increase()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_0000_0100.value + 1)
+  })
+
+  test('test increase function when original value is the max', () => {
+    rotarySwitch.writeByte(address,byte_1111_1111)
+    rotarySwitch.increase()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_1111_1111.value)
   })
 })
 
-describe('test press() function', () => {
-  test('test passing invalid positions to press() function', () => {
-    expect(() => buttons.press(4)).toThrow(
-      new Error('Button position 4 does not exist.')
-    )
-    expect(() => buttons.press(-2)).toThrow(
-      new Error('Button position -2 does not exist.')
-    )
+describe('test decrease() function', () => {
+  test('test decrease function when original value is zero', () => {
+    rotarySwitch.writeByte(address,byte_0000_0000)
+    rotarySwitch.decrease()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_0000_0000.value)
   })
-  test('test passing valid positions to press() function', () => {
-    buttons.press(1)
-    buttons.press(3)
 
-    expect(buttons.readByte(address)).toEqual(byte_0000_1111)
-
-    expect(buttons.isPressed(0)).toBe(true)
-    expect(buttons.isPressed(1)).toBe(true)
-    expect(buttons.isPressed(2)).toBe(true)
-    expect(buttons.isPressed(3)).toBe(true)
+  test('test decrease function with normal value', () => {
+    rotarySwitch.writeByte(address,byte_0000_0100)
+    rotarySwitch.decrease()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_0000_0100.value - 1)
   })
-  test('test passing the same value to press() function again', () => {
-    buttons.press(1)
-    expect(buttons.isPressed(1)).toBe(true)
-    buttons.press(1)
-    expect(buttons.isPressed(1)).toBe(true)
+
+  test('test decrease function when original value is the max', () => {
+    rotarySwitch.writeByte(address,byte_1111_1111)
+    rotarySwitch.decrease()
+    expect(rotarySwitch.readByte(address).value).toBe(byte_1111_1111.value - 1)
   })
 })
 
-describe('test release() function', () => {
-  test('test passing invalid positions to release() function', () => {
-    expect(() => buttons.release(22)).toThrow(
-      new Error('Button position 22 does not exist.')
-    )
-    expect(() => buttons.release(-1)).toThrow(
-      new Error('Button position -1 does not exist.')
-    )
-  })
-  test('test passing valid positions to release() function', () => {
-    buttons.release(0)
-    buttons.release(2)
-
-    expect(buttons.readByte(address)).toEqual(byte_0000_0000)
-
-    expect(buttons.isPressed(0)).toBe(false)
-    expect(buttons.isPressed(1)).toBe(false)
-    expect(buttons.isPressed(2)).toBe(false)
-    expect(buttons.isPressed(3)).toBe(false)
-  })
-  test('test passing the same value to release() function again', () => {
-    buttons.release(0)
-    expect(buttons.isPressed(0)).toBe(false)
-    expect(buttons.readByte(address)).toEqual(byte_0000_0100)
-    buttons.release(0)
-    expect(buttons.isPressed(0)).toBe(false)
-    expect(buttons.readByte(address)).toEqual(byte_0000_0100)
+describe('test getRotaryValue() function', () => {
+  test('test get the correct value of the rotary address', () => {
+    rotarySwitch.writeByte(address,byte_0000_0100)
+    expect(rotarySwitch.getRotaryValue()).toEqual(byte_0000_0100)
   })
 })
+

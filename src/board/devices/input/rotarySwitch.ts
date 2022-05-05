@@ -1,3 +1,9 @@
+/**
+ * Represents the rotary switch in memory.
+ *
+ * @author Philippe Schneider
+ */
+
 import { Device } from 'board/devices/device'
 import {Byte, Word} from 'types/binary'
 
