@@ -1,5 +1,5 @@
 import { Device } from 'board/devices/device'
-import { Word } from 'types/binary'
+import {Byte, Word} from 'types/binary'
 
 export class RotarySwitch extends Device {
   public RotarySwitch_ADDRESS = Word.fromUnsignedInteger(0x60000211)
@@ -37,7 +37,8 @@ export class RotarySwitch extends Device {
    *
    * @returns: the current value of the rotary switch
    */
-  public getRotaryValue(): number {
-    return this.memory.readWord(this.RotarySwitch_ADDRESS).value
+  public getRotaryValue(): Byte {
+    return  Byte.fromSignedInteger(15)
+    //return this.memory.readByte(this.RotarySwitch_ADDRESS)
   }
 }
