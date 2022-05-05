@@ -6,7 +6,7 @@ type RotaryState = {
   [key: number]: number
 }
 
-export class RotarySwitch extends React.Component<RotaryState> {
+export class RotarySwitchComponent extends React.Component<RotaryState> {
   private rotaryValue: number // only temporary for testing.
   private mouseClicked: boolean
 
@@ -19,9 +19,9 @@ export class RotarySwitch extends React.Component<RotaryState> {
 
   private getState() {
     const state: RotaryState = {}
-    state[1] = 2//Board.rotaryswitch.getRotaryValue()
+    state[1] =4//Board.rotaryswitch.getRotaryValue()
 
-    this.rotaryValue = state[1]
+    //this.rotaryValue = state[1]
     //let serotaryValue = Board.rotaryswitch.getRotaryValue()
     return state
   }

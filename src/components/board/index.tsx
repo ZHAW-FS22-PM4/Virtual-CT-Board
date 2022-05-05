@@ -3,7 +3,7 @@ import { Button } from './button'
 import { DipSwitch } from './dip-switch'
 import { LedComponent } from './led'
 import './style.css'
-import {RotarySwitch} from "./rotaryswitch";
+import {RotarySwitchComponent} from './rotaryswitch'
 
 export class BoardComonent extends React.Component {
   public render(): React.ReactNode {
@@ -35,7 +35,7 @@ export class BoardComonent extends React.Component {
         </div>
         <div className="row mx-2 my-1">
           <div className="col-sm-2 offset-sm-2">
-            <RotarySwitch startIndex={0} size={1} />
+            <RotarySwitchComponent/>
           </div>
         </div>
       </div>
