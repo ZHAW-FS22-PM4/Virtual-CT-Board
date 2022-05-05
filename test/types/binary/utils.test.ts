@@ -64,7 +64,7 @@ describe('limitValuesToBitCount method', () => {
 describe('getMaxValueDisplayableWithBits method', () => {
   test('getMaxValueDisplayableWithBits validValues', () => {
     expect(getMaxValueDisplayableWithBits(8)).toBe(
-      Byte.ZERO_BYTE.maxValueForType
+      Byte.fromUnsignedInteger(0).maxValueForType
     )
     expect(getMaxValueDisplayableWithBits(16)).toBe(
       Halfword.fromUnsignedInteger(0).maxValueForType

@@ -8,6 +8,8 @@ const invalidInstructionName = 'ZZZ_notImplemeted'
 const instruction: IInstruction = {
   name: validInstructionName,
   pattern: '11001100XXXXXXXX',
+  opcodeLength: 1,
+  needsLabels: false,
   canEncodeInstruction: jest.fn((name) => name == validInstructionName),
   encodeInstruction: jest.fn(),
   executeInstruction: jest.fn()

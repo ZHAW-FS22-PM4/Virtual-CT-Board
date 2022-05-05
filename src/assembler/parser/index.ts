@@ -5,7 +5,7 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z#]+`
 
-const OPTION = `[0-9a-z#\\[\\]]+`
+const OPTION = `[0-9a-z#\\[\\]=]+`
 const INSTRUCTION = `([a-z]+) +(${OPTION}( *, *${OPTION})*)`
 
 /**
@@ -76,7 +76,7 @@ export function parse(code: string): ICodeFile {
           )
         }
         const instruction: IInstruction = {
-          name: match.captures[0],
+          name: match.captures[0].toUpperCase(),
           options: match.captures[1].split(',').map((x) => x.trim()),
           line: match.from.line
         }

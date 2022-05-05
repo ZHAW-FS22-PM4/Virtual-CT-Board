@@ -272,6 +272,19 @@ export function isImmediate(possibleImmediate: string): boolean {
 }
 
 /**
+ * Determines if string is low register.
+ * @param possibleLowRegister string value to check
+ * @returns true if low register
+ */
+export function isLowRegister(possibleLowRegister: string): boolean {
+  let register = $enum(Register).getValueOrDefault(
+    possibleLowRegister,
+    Register.R12
+  )
+  return Registers.isLowRegister(register)
+}
+
+/**
  * Converts a String to an enum of Register. If not possible an vbe is thrown
  * @param option string to convert
  * @returns valid value for enum Register

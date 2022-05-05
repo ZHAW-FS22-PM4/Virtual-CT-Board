@@ -1,7 +1,6 @@
 import { add, AluResult } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -33,7 +32,7 @@ export class AddsRegistersInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
@@ -41,17 +40,17 @@ export class AddsRegistersInstruction extends BaseInstruction {
     let rmBits = createLowRegisterBits(options[options.length - 1])
     opcode = setBits(opcode, this.rnPattern, rnBits)
     opcode = setBits(opcode, this.rmPattern, rmBits)
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rnRegister: number = getBits(opcode, this.rnPattern).value
-    let rmRegister: number = getBits(opcode, this.rmPattern).value
-    let rdRegister: number = getBits(opcode, this.rdPattern).value
+    let rnRegister: number = getBits(opcode[0], this.rnPattern).value
+    let rmRegister: number = getBits(opcode[0], this.rmPattern).value
+    let rdRegister: number = getBits(opcode[0], this.rdPattern).value
 
     let rnRegisterContent: Word = registers.readRegister(rnRegister)
     let rmRegisterContent: Word = registers.readRegister(rmRegister)
@@ -83,7 +82,7 @@ export class AddsImmediate3Instruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionsCount)
     if (options[0] === options[1]) {
       throw new Error(
@@ -95,18 +94,18 @@ export class AddsImmediate3Instruction extends BaseInstruction {
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
     opcode = setBits(opcode, this.immPattern, immBits)
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rnRegister: number = getBits(opcode, this.rnPattern).value
-    let rdRegister: number = getBits(opcode, this.rdPattern).value
+    let rnRegister: number = getBits(opcode[0], this.rnPattern).value
+    let rdRegister: number = getBits(opcode[0], this.rdPattern).value
 
-    let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
+    let immValue: Word = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
     let rnRegisterContent: Word = registers.readRegister(rnRegister)
 
     let aluResult: AluResult = add(rnRegisterContent, immValue)
@@ -134,7 +133,7 @@ export class AddsImmediate8Instruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     // for ADDS imm8, result and operand must be stored in the same register
     if (options.length === 3 && options[0] !== options[1]) {
@@ -147,16 +146,16 @@ export class AddsImmediate8Instruction extends BaseInstruction {
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdnPattern, regBits)
     opcode = setBits(opcode, this.immPattern, immBits)
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let rdnRegister: number = getBits(opcode, this.rdnPattern).value
-    let immValue: Word = Word.fromHalfwords(getBits(opcode, this.immPattern))
+    let rdnRegister: number = getBits(opcode[0], this.rdnPattern).value
+    let immValue: Word = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
 
     let rdnRegisterContent: Word = registers.readRegister(rdnRegister)
 
