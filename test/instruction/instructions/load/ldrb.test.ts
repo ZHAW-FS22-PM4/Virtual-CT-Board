@@ -4,8 +4,6 @@ import {
   LdrbImmediate5OffsetInstruction,
   LdrbRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrb'
-import { ILabelOffsets } from 'instruction/interfaces'
-import { mock } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
 
@@ -37,7 +35,6 @@ const invalidRegisterOption: string = 'R22'
 const instrLdrbImm = new LdrbImmediate5OffsetInstruction()
 const instrLdrbReg = new LdrbRegisterOffsetInstruction()
 
-const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
@@ -118,94 +115,98 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // LDRB R1, [R2, #0x01]
     expect(
       instrLdrbImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionLow],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          validImmediateOptionLow
+        ])[0]
         .toBinaryString()
     ).toEqual('0111100001010001')
     // LDRB R1, [R2, #0x1F]
     expect(
       instrLdrbImm
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          validImmediateOptionHigh
+        ])[0]
         .toBinaryString()
     ).toEqual('0111111111010001')
     // LDRB R1, [R2, R3]
     expect(() =>
-      instrLdrbImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-        labelOffsetMock
-      )
+      instrLdrbImm.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        lowRegisterOption3
+      ])
     ).toThrow(VirtualBoardError)
     // LDRB R5, [R2
     expect(() =>
-      instrLdrbImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrbImm.encodeInstruction([lowRegisterOption, lowRegisterOption2])
     ).toThrow(VirtualBoardError)
     // LDRB R1, [R2, 5]
     expect(() =>
-      instrLdrbImm.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instrLdrbImm.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        invalidImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRB R5, 0x1F], [R2
     expect(() =>
-      instrLdrbImm.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrbImm.encodeInstruction([
+        lowRegisterOption,
+        validImmediateOptionHigh,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
   })
   test('LdrbRegisterOffsetInstruction', () => {
     // LDRB R1, [R2, R3]
     expect(
       instrLdrbReg
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2, lowRegisterOption3],
-          labelOffsetMock
-        )
+        .encodeInstruction([
+          lowRegisterOption,
+          lowRegisterOption2,
+          lowRegisterOption3
+        ])[0]
         .toBinaryString()
     ).toEqual('0101110011010001')
     // LDRB R1, [R2, #0x1F]
     expect(() =>
-      instrLdrbReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, validImmediateOptionHigh],
-        labelOffsetMock
-      )
+      instrLdrbReg.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        validImmediateOptionHigh
+      ])
     ).toThrow(VirtualBoardError)
     // LDRB R1, [R2, SP]
     expect(() =>
-      instrLdrbReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, highRegisterOption],
-        labelOffsetMock
-      )
+      instrLdrbReg.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        highRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRB R1, [R2, R22]
     expect(() =>
-      instrLdrbReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2, invalidRegisterOption],
-        labelOffsetMock
-      )
+      instrLdrbReg.encodeInstruction([
+        lowRegisterOption,
+        lowRegisterOption2,
+        invalidRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // LDRB R5, [R2
     expect(() =>
-      instrLdrbReg.encodeInstruction(
-        [lowRegisterOption, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrbReg.encodeInstruction([lowRegisterOption, lowRegisterOption2])
     ).toThrow(VirtualBoardError)
     // LDRB R5, 0x1F], [R2
     expect(() =>
-      instrLdrbReg.encodeInstruction(
-        [lowRegisterOption, validImmediateOptionHigh, lowRegisterOption2],
-        labelOffsetMock
-      )
+      instrLdrbReg.encodeInstruction([
+        lowRegisterOption,
+        validImmediateOptionHigh,
+        lowRegisterOption2
+      ])
     ).toThrow(VirtualBoardError)
   })
 })
@@ -218,7 +219,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrbImm.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0111100001110111),
+      [Halfword.fromUnsignedInteger(0b0111100001110111)],
       registers,
       memory
     )
@@ -232,7 +233,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrbReg.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0101110101110111),
+      [Halfword.fromUnsignedInteger(0b0101110101110111)],
       registers,
       memory
     )

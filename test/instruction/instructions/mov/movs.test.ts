@@ -4,7 +4,6 @@ import {
   MovsImmediate8Instruction,
   MovsRegistersInstruction
 } from 'instruction/instructions/mov/movs'
-import { ILabelOffsets } from 'instruction/interfaces'
 import { $enum } from 'ts-enum-util'
 import { anything, instance, mock, resetCalls, verify, when } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
@@ -31,7 +30,6 @@ const toolongImmediateOption: string = '#0x111'
 const instructionMovsLiteral = new MovsImmediate8Instruction()
 const instructionMovsRegisters = new MovsRegistersInstruction()
 
-const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const memoryMock: Memory = mock<Memory>()
 const registerMock: Registers = mock<Registers>()
 const registers: Registers = instance(registerMock)
@@ -45,6 +43,9 @@ when(
 when(
   registerMock.readRegister($enum(Register).getValueOrThrow(highRegisterOption))
 ).thenReturn(highRegisterValue)
+when(registerMock.readRegister(Register.PC)).thenReturn(
+  Word.fromUnsignedInteger(0x0)
+)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
   test('MOVS literal encoder', () => {
@@ -86,66 +87,57 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // MOVS R5, R2
     expect(
       instructionMovsRegisters
-        .encodeInstruction(
-          [lowRegisterOption, lowRegisterOption2],
-          labelOffsetMock
-        )
+        .encodeInstruction([lowRegisterOption, lowRegisterOption2])[0]
         .toBinaryString()
     ).toEqual('0000000000010101')
     // MOVS R2, R5
     expect(
       instructionMovsRegisters
-        .encodeInstruction(
-          [lowRegisterOption2, lowRegisterOption],
-          labelOffsetMock
-        )
+        .encodeInstruction([lowRegisterOption2, lowRegisterOption])[0]
         .toBinaryString()
     ).toEqual('0000000000101010')
     // MOVS SP, R5
     expect(() =>
-      instructionMovsRegisters.encodeInstruction(
-        [highRegisterOption, lowRegisterOption],
-        labelOffsetMock
-      )
+      instructionMovsRegisters.encodeInstruction([
+        highRegisterOption,
+        lowRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOVS R5, SP
     expect(() =>
-      instructionMovsRegisters.encodeInstruction(
-        [lowRegisterOption, highRegisterOption],
-        labelOffsetMock
-      )
+      instructionMovsRegisters.encodeInstruction([
+        lowRegisterOption,
+        highRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOVS R5, R22
     expect(() =>
-      instructionMovsRegisters.encodeInstruction(
-        [lowRegisterOption, invalidRegisterOption],
-        labelOffsetMock
-      )
+      instructionMovsRegisters.encodeInstruction([
+        lowRegisterOption,
+        invalidRegisterOption
+      ])
     ).toThrow(VirtualBoardError)
 
     // MOVS with literal
     // MOVS R5, #0x5C
     expect(
       instructionMovsLiteral
-        .encodeInstruction(
-          [lowRegisterOption, validImmediateOption],
-          labelOffsetMock
-        )
+        .encodeInstruction([lowRegisterOption, validImmediateOption])[0]
         .toBinaryString()
     ).toEqual('0010010101011100')
     // MOVS R2, 5
     expect(() =>
-      instructionMovsLiteral.encodeInstruction(
-        [lowRegisterOption2, invalidImmediateOption],
-        labelOffsetMock
-      )
+      instructionMovsLiteral.encodeInstruction([
+        lowRegisterOption2,
+        invalidImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
     // MOVS R2, #0x111
     expect(() =>
-      instructionMovsLiteral.encodeInstruction(
-        [lowRegisterOption2, toolongImmediateOption],
-        labelOffsetMock
-      )
+      instructionMovsLiteral.encodeInstruction([
+        lowRegisterOption2,
+        toolongImmediateOption
+      ])
     ).toThrow(VirtualBoardError)
   })
 })
@@ -154,7 +146,7 @@ describe('test executeInstruction function', () => {
   test('MOVS handler', () => {
     // MOVS R5, R2
     instructionMovsRegisters.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0000000000010101),
+      [Halfword.fromUnsignedInteger(0b0000000000010101)],
       registers,
       memoryMock
     )
@@ -180,7 +172,7 @@ describe('test executeInstruction function', () => {
 
     // MOVS R2, R5
     instructionMovsRegisters.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0000000000101010),
+      [Halfword.fromUnsignedInteger(0b0000000000101010)],
       registers,
       memoryMock
     )
@@ -206,7 +198,7 @@ describe('test executeInstruction function', () => {
 
     // MOVS R5, #0x5C
     instructionMovsLiteral.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0010010101011100),
+      [Halfword.fromUnsignedInteger(0b0010010101011100)],
       registers,
       memoryMock
     )

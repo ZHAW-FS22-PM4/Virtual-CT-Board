@@ -1,3 +1,25 @@
+import {
+  BALConditionalJumpInstruction,
+  BCCConditionalJumpInstruction,
+  BCSConditionalJumpInstruction,
+  BEQConditionalJumpInstruction,
+  BGEConditionalJumpInstruction,
+  BGTConditionalJumpInstruction,
+  BHIConditionalJumpInstruction,
+  BHSConditionalJumpInstruction,
+  BLEConditionalJumpInstruction,
+  BLOConditionalJumpInstruction,
+  BLSConditionalJumpInstruction,
+  BLTConditionalJumpInstruction,
+  BMIConditionalJumpInstruction,
+  BNEConditionalJumpInstruction,
+  BPLConditionalJumpInstruction,
+  BVCConditionalJumpInstruction,
+  BVSConditionalJumpInstruction
+} from 'instruction/instructions/jump/bconditional'
+import { BlInstruction } from 'instruction/instructions/jump/bl'
+import { BlxInstruction } from 'instruction/instructions/jump/blx'
+import { BxInstruction } from 'instruction/instructions/jump/bx'
 import { Halfword } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
@@ -7,8 +29,16 @@ import {
   AddsImmediate8Instruction,
   AddsRegistersInstruction
 } from './instructions/add/adds'
+import { CmnInstruction } from './instructions/compare/cmn'
+import {
+  CmpInstructionWithHighRegisters,
+  CmpInstructionWithImmediateOffset,
+  CmpInstructionWithLowRegisters
+} from './instructions/compare/cmp'
+import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
+  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from './instructions/load/ldr'
@@ -115,9 +145,18 @@ export default new InstructionSet([
   new AsrsRegisterInstruction(),
   new AsrsImmediateInstruction(),
   new BicsInstruction(),
+  new BInstruction(),
+  new CmpInstructionWithLowRegisters(),
+  new CmpInstructionWithHighRegisters(),
+  new CmpInstructionWithImmediateOffset(),
+  new CmnInstruction(),
+  new BlInstruction(),
+  new BlxInstruction(),
+  new BxInstruction(),
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
+  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),
@@ -147,5 +186,22 @@ export default new InstructionSet([
   new SubsRegistersInstruction(),
   new SubsImmediate3Instruction(),
   new SubsImmediate8Instruction(),
-  new TstInstruction()
+  new TstInstruction(),
+  new BEQConditionalJumpInstruction(),
+  new BNEConditionalJumpInstruction(),
+  new BCSConditionalJumpInstruction(),
+  new BHSConditionalJumpInstruction(),
+  new BCCConditionalJumpInstruction(),
+  new BLOConditionalJumpInstruction(),
+  new BMIConditionalJumpInstruction(),
+  new BPLConditionalJumpInstruction(),
+  new BVSConditionalJumpInstruction(),
+  new BVCConditionalJumpInstruction(),
+  new BHIConditionalJumpInstruction(),
+  new BLSConditionalJumpInstruction(),
+  new BGEConditionalJumpInstruction(),
+  new BLTConditionalJumpInstruction(),
+  new BGTConditionalJumpInstruction(),
+  new BLEConditionalJumpInstruction(),
+  new BALConditionalJumpInstruction()
 ])

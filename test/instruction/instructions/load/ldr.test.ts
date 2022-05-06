@@ -6,8 +6,6 @@ import {
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldr'
-import { ILabelOffsets } from 'instruction/interfaces'
-import { mock } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
@@ -47,7 +45,6 @@ const offsetNotWordAligned = new VirtualBoardError(
   VirtualBoardErrorType.InvalidParamProvided
 )
 
-const labelOffsetMock: ILabelOffsets = mock<ILabelOffsets>()
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
@@ -190,125 +187,106 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('LdrImmediate5OffsetInstruction', () => {
     expect(
-      instrLdrImm
-        .encodeInstruction(['R7', '[R2', '#0x28]'], labelOffsetMock)
-        .toBinaryString()
+      instrLdrImm.encodeInstruction(['R7', '[R2', '#0x28]'])[0].toBinaryString()
     ).toEqual('0110101010010111')
     expect(
-      instrLdrImm
-        .encodeInstruction(['R1', '[R2', '#0x7C]'], labelOffsetMock)
-        .toBinaryString()
+      instrLdrImm.encodeInstruction(['R1', '[R2', '#0x7C]'])[0].toBinaryString()
     ).toEqual('0110111111010001')
     expect(
-      instrLdrImm
-        .encodeInstruction(['R3', '[R6]'], labelOffsetMock)
-        .toBinaryString()
+      instrLdrImm.encodeInstruction(['R3', '[R6]'])[0].toBinaryString()
     ).toEqual('0110100000110011')
     expect(
-      instrLdrImm
-        .encodeInstruction(['R2', '[R3', '#0x1C]'], labelOffsetMock)
-        .toHexString()
+      instrLdrImm.encodeInstruction(['R2', '[R3', '#0x1C]'])[0].toHexString()
     ).toEqual('69da')
     expect(
-      instrLdrImm
-        .encodeInstruction(['R1', '[R5', '#0x20]'], labelOffsetMock)
-        .toHexString()
+      instrLdrImm.encodeInstruction(['R1', '[R5', '#0x20]'])[0].toHexString()
     ).toEqual('6a29')
     expect(
-      instrLdrImm
-        .encodeInstruction(['R6', '[R7', '#0x7C]'], labelOffsetMock)
-        .toHexString()
+      instrLdrImm.encodeInstruction(['R6', '[R7', '#0x7C]'])[0].toHexString()
     ).toEqual('6ffe')
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R7', '[R2', 'R3]'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R5', '[R2'], labelOffsetMock)
-    ).toThrow(encodingErrorWrongBracketsOn2nd)
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R1', '[R2', '#5'], labelOffsetMock)
-    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R5', '0x1F]', '[R2'], labelOffsetMock)
-    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R1', '[R2', '#0x3]'], labelOffsetMock)
-    ).toThrow(offsetNotWordAligned)
-    expect(() =>
-      instrLdrImm.encodeInstruction(['R1', '[R2', '#0x2]'], labelOffsetMock)
-    ).toThrow(offsetNotWordAligned)
+    expect(() => instrLdrImm.encodeInstruction(['R7', '[R2', 'R3]'])).toThrow(
+      VirtualBoardError
+    )
+    expect(() => instrLdrImm.encodeInstruction(['R5', '[R2'])).toThrow(
+      encodingErrorWrongBracketsOn2nd
+    )
+    expect(() => instrLdrImm.encodeInstruction(['R1', '[R2', '#5'])).toThrow(
+      encodingErrorWrongBracketsOn2ndOr3rd
+    )
+    expect(() => instrLdrImm.encodeInstruction(['R5', '0x1F]', '[R2'])).toThrow(
+      encodingErrorWrongBracketsOn2ndOr3rd
+    )
+    expect(() => instrLdrImm.encodeInstruction(['R1', '[R2', '#0x3]'])).toThrow(
+      offsetNotWordAligned
+    )
+    expect(() => instrLdrImm.encodeInstruction(['R1', '[R2', '#0x2]'])).toThrow(
+      offsetNotWordAligned
+    )
   })
   test('LdrRegisterOffsetInstruction', () => {
     // LDR R4, [R2, R3]
     expect(
-      instrLdrReg
-        .encodeInstruction(['R4', '[R2', 'R3]'], labelOffsetMock)
-        .toBinaryString()
+      instrLdrReg.encodeInstruction(['R4', '[R2', 'R3]'])[0].toBinaryString()
     ).toEqual('0101100011010100')
 
     expect(
-      instrLdrReg
-        .encodeInstruction(['R0', '[R2', 'R5]'], labelOffsetMock)
-        .toBinaryString()
+      instrLdrReg.encodeInstruction(['R0', '[R2', 'R5]'])[0].toBinaryString()
     ).toEqual('0101100101010000')
     // LDR R1, [R2, #0x1F]
     expect(() =>
-      instrLdrReg.encodeInstruction(['R1', '[R2', '#0x1F]'], labelOffsetMock)
+      instrLdrReg.encodeInstruction(['R1', '[R2', '#0x1F]'])
     ).toThrow(VirtualBoardError)
     // LDR R1, [R2, SP]
-    expect(() =>
-      instrLdrReg.encodeInstruction(['R1', '[R2', 'SP]'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
+    expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'SP]'])).toThrow(
+      VirtualBoardError
+    )
     // LDR R1, [R2, R22]
-    expect(() =>
-      instrLdrReg.encodeInstruction(['R1', '[R2', 'R22]'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
+    expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'R22]'])).toThrow(
+      VirtualBoardError
+    )
     // LDR R5, [R2
-    expect(() =>
-      instrLdrReg.encodeInstruction(['R1', '[R2'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
+    expect(() => instrLdrReg.encodeInstruction(['R1', '[R2'])).toThrow(
+      VirtualBoardError
+    )
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instrLdrReg.encodeInstruction(['R1', '#0x1F]', '[R2'], labelOffsetMock)
+      instrLdrReg.encodeInstruction(['R1', '#0x1F]', '[R2'])
     ).toThrow(VirtualBoardError)
   })
   test('LoadRegisterInstruction', () => {
     // LDR R1, [SP, #0x01]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x0c]'], labelOffsetMock)
+        .encodeInstruction(['R1', '[SP', '#0x0c]'])[0]
         .toBinaryString()
     ).toEqual('0100100100000011')
     // LDR R1, [SP, #0x1F]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x7c]'], labelOffsetMock)
+        .encodeInstruction(['R1', '[SP', '#0x7c]'])[0]
         .toBinaryString()
     ).toEqual('0100100100011111')
     // LDR R1, [R2, R3]
     expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', 'R3]'], labelOffsetMock)
+      instrLdrPointer.encodeInstruction(['R1', '[R2', 'R3]'])
     ).toThrow(VirtualBoardError)
     // LDR R5, [R2
-    expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
-    expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', '5'], labelOffsetMock)
-    ).toThrow(VirtualBoardError)
+    expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2'])).toThrow(
+      VirtualBoardError
+    )
+    expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2', '5'])).toThrow(
+      VirtualBoardError
+    )
     // LDR R5, 0x1F], [R2
     expect(() =>
-      instrLdrPointer.encodeInstruction(
-        ['R5', '#0x1F]', '[R2'],
-        labelOffsetMock
-      )
+      instrLdrPointer.encodeInstruction(['R5', '#0x1F]', '[R2'])
     ).toThrow(VirtualBoardError)
 
     expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x6]'], labelOffsetMock)
+      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x6]'])
     ).toThrow(offsetNotWordAligned)
     expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x7]'], labelOffsetMock)
+      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x7]'])
     ).toThrow(offsetNotWordAligned)
   })
 })
@@ -322,7 +300,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrImm.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0110100101110111),
+      [Halfword.fromUnsignedInteger(0b0110100101110111)],
       registers,
       memory
     )
@@ -336,7 +314,7 @@ describe('test executeInstruction function', () => {
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrReg.executeInstruction(
-      Halfword.fromUnsignedInteger(0b0101100101110111),
+      [Halfword.fromUnsignedInteger(0b0101100101110111)],
       registers,
       memory
     )
@@ -354,7 +332,7 @@ describe('test executeInstruction function', () => {
 
     //LDR R3, [PC]
     instrLdrPointer.executeInstruction(
-      Halfword.fromUnsignedInteger(0x4b00),
+      [Halfword.fromUnsignedInteger(0x4b00)],
       registers,
       memory
     )
@@ -362,7 +340,7 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R3).value).toEqual(0xdeff1234)
     //LDR R3, [PC]
     instrLdrPointer.executeInstruction(
-      Halfword.fromUnsignedInteger(0x4b00),
+      [Halfword.fromUnsignedInteger(0x4b00)],
       registers,
       memory
     )

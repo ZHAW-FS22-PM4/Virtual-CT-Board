@@ -1,6 +1,5 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -37,7 +36,7 @@ export class StrhImmediate5OffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
@@ -51,20 +50,20 @@ export class StrhImmediate5OffsetInstruction extends BaseInstruction {
       this.immPattern,
       createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 1)
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     memory.writeHalfword(
       registers
-        .readRegister(getBits(opcode, this.rnPattern).value)
-        .add(getImmediateBits(opcode, this.immPattern, 1).value),
+        .readRegister(getBits(opcode[0], this.rnPattern).value)
+        .add(getImmediateBits(opcode[0], this.immPattern, 1).value),
       registers
-        .readRegister(getBits(opcode, this.rtPattern).value)
+        .readRegister(getBits(opcode[0], this.rtPattern).value)
         .toHalfwords()[0]
     )
   }
@@ -90,7 +89,7 @@ export class StrhRegisterOffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
@@ -104,20 +103,20 @@ export class StrhRegisterOffsetInstruction extends BaseInstruction {
       this.rmPattern,
       createLowRegisterBits(removeBracketsFromRegisterString(options[2]))
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     memory.writeHalfword(
       registers
-        .readRegister(getBits(opcode, this.rnPattern).value)
-        .add(registers.readRegister(getBits(opcode, this.rmPattern).value)),
+        .readRegister(getBits(opcode[0], this.rnPattern).value)
+        .add(registers.readRegister(getBits(opcode[0], this.rmPattern).value)),
       registers
-        .readRegister(getBits(opcode, this.rtPattern).value)
+        .readRegister(getBits(opcode[0], this.rtPattern).value)
         .toHalfwords()[0]
     )
   }

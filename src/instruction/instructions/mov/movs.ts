@@ -1,7 +1,6 @@
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
   create,
@@ -33,24 +32,27 @@ export class MovsRegistersInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     let valueToWrite = registers.readRegister(
-      getBits(opcode, this.rmPattern).value
+      getBits(opcode[0], this.rmPattern).value
     )
     registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
-    registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
+    registers.writeRegister(
+      getBits(opcode[0], this.rdPattern).value,
+      valueToWrite
+    )
   }
 }
 
@@ -72,7 +74,7 @@ export class MovsImmediate8Instruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
@@ -81,16 +83,19 @@ export class MovsImmediate8Instruction extends BaseInstruction {
       this.immPattern,
       createImmediateBits(options[1], 8)
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
-    let valueToWrite = Word.fromHalfwords(getBits(opcode, this.immPattern))
+    let valueToWrite = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
     registers.setFlags(evaluateZeroAndNegativeFlags(valueToWrite))
-    registers.writeRegister(getBits(opcode, this.rdPattern).value, valueToWrite)
+    registers.writeRegister(
+      getBits(opcode[0], this.rdPattern).value,
+      valueToWrite
+    )
   }
 }

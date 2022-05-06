@@ -44,7 +44,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(
       options,
       this.expectedOptionCountMin,
@@ -72,19 +72,20 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
       this.immPattern,
       createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 2)
     )
-    return opcode
+    return [opcode]
   }
-  public executeInstruction(
-    opcode: Halfword,
+
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     registers.writeRegister(
-      getBits(opcode, this.rtPattern).value,
+      getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
         registers
-          .readRegister(getBits(opcode, this.immPattern).value)
-          .add(getImmediateBits(opcode, this.rnPattern, 2).value)
+          .readRegister(getBits(opcode[0], this.rnPattern).value)
+          .add(getImmediateBits(opcode[0], this.immPattern, 2).value)
       )
     )
   }
@@ -110,7 +111,7 @@ export class LdrRegisterOffsetInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionCount)
     checkBracketsOnLastOptions(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
@@ -125,20 +126,20 @@ export class LdrRegisterOffsetInstruction extends BaseInstruction {
       this.rmPattern,
       createLowRegisterBits(removeBracketsFromRegisterString(options[2]))
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     registers.writeRegister(
-      getBits(opcode, this.rtPattern).value,
+      getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
         registers
-          .readRegister(getBits(opcode, this.rnPattern).value)
-          .add(registers.readRegister(getBits(opcode, this.rmPattern).value))
+          .readRegister(getBits(opcode[0], this.rnPattern).value)
+          .add(registers.readRegister(getBits(opcode[0], this.rmPattern).value))
       )
     )
   }
@@ -168,7 +169,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
     )
   }
 
-  public encodeInstruction(options: string[], labels: ILabelOffsets): Halfword {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(
       options,
       this.expectedOptionCountMin,
@@ -191,21 +192,71 @@ export class LdrRegisterInstruction extends BaseInstruction {
       this.immPattern,
       createImmediateBits(removeBracketsFromRegisterString(options[2]), 8, 2)
     )
-    return opcode
+    return [opcode]
   }
 
-  public executeInstruction(
-    opcode: Halfword,
+  protected onExecuteInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
   ): void {
     registers.writeRegister(
-      getBits(opcode, this.rtPattern).value,
+      getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
         registers
           .readRegister(Register.PC)
-          .add(getImmediateBits(opcode, this.immPattern, 2).value)
-          .add(2) // .add(2) not needed if PC counter is increased before calling executeInstruction
+          .add(getImmediateBits(opcode[0], this.immPattern, 2).value)
+          .add(2) // TODO no longer required probably: .add(2) not needed if PC counter is increased before calling executeInstruction
+      )
+    )
+  }
+}
+
+/**
+ * Represents a 'LOAD' instruction - LDR (pointer + offset) - word
+ */
+export class LdrLabelInstruction extends BaseInstruction {
+  public name: string = 'LDR'
+  public pattern: string = '01001XXXXXXXXXXX'
+  private immPattern: string = '01001000XXXXXXXX'
+  private rtPattern: string = '01001XXX00000000'
+  private expectedOptionCount: number = 2
+
+  public canEncodeInstruction(name: string, options: string[]): boolean {
+    return (
+      super.canEncodeInstruction(name, options) &&
+      isOptionCountValid(options, this.expectedOptionCount)
+    )
+  }
+
+  public encodeInstruction(
+    options: string[],
+    labels?: ILabelOffsets
+  ): Halfword[] {
+    checkOptionCount(options, this.expectedOptionCount)
+    let opcode: Halfword = create(this.pattern)
+    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+    opcode = setBits(
+      opcode,
+      this.immPattern,
+      labels
+        ? Halfword.fromUnsignedInteger(labels[options[1]].value)
+        : Halfword.fromUnsignedInteger(0x0)
+    )
+    return [opcode]
+  }
+
+  protected onExecuteInstruction(
+    opcode: Halfword[],
+    registers: Registers,
+    memory: IMemory
+  ): void {
+    registers.writeRegister(
+      getBits(opcode[0], this.rtPattern).value,
+      memory.readWord(
+        registers
+          .readRegister(Register.PC)
+          .add(getBits(opcode[0], this.immPattern).value)
       )
     )
   }
