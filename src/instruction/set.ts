@@ -38,7 +38,6 @@ import {
 import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
-  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from './instructions/load/ldr'
@@ -156,7 +155,6 @@ export default new InstructionSet([
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
-  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),

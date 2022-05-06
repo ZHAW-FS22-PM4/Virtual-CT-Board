@@ -5,6 +5,9 @@ import { Halfword } from 'types/binary'
 
 export abstract class BaseInstruction implements IInstruction {
   public abstract name: string
+  /**
+   * Has to be unique for each class so getExecutor in set.ts always finds correct executor
+   */
   public abstract pattern: string
   public opcodeLength: number = 1
   public needsLabels: boolean = false

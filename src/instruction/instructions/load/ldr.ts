@@ -15,6 +15,7 @@ import {
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
+import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
@@ -164,34 +165,47 @@ export class LdrRegisterInstruction extends BaseInstruction {
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       ) &&
-      isPCRegister(options[1]) &&
-      (options.length == this.expectedOptionCountMin || isImmediate(options[2]))
+      (this.isPseudoInstruction(options) ||
+        (isPCRegister(options[1]) &&
+          (options.length == this.expectedOptionCountMin ||
+            isImmediate(options[2]))))
     )
   }
 
-  public encodeInstruction(options: string[]): Halfword[] {
+  public encodeInstruction(
+    options: string[],
+    labels?: ILabelOffsets
+  ): Halfword[] {
     checkOptionCount(
       options,
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    checkBracketsOnLastOptions(
-      options,
-      this.expectedOptionCountMin,
-      this.expectedOptionCountMax
-    )
-    if (options.length == this.expectedOptionCountMin) {
+    !this.isPseudoInstruction(options) &&
+      checkBracketsOnLastOptions(
+        options,
+        this.expectedOptionCountMin,
+        this.expectedOptionCountMax
+      )
+    let immValue: Halfword
+    if (this.isPseudoInstruction(options)) {
+      immValue = labels
+        ? Halfword.fromUnsignedInteger(labels[options[1]].value)
+        : Halfword.fromUnsignedInteger(0x0)
+    } else if (options.length == this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
-      options.push('#0')
+      immValue = Halfword.fromUnsignedInteger(0)
+    } else {
+      immValue = createImmediateBits(
+        removeBracketsFromRegisterString(options[2]),
+        8,
+        2
+      )
     }
 
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(
-      opcode,
-      this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 8, 2)
-    )
+    opcode = setBits(opcode, this.immPattern, immValue)
     return [opcode]
   }
 
@@ -210,54 +224,31 @@ export class LdrRegisterInstruction extends BaseInstruction {
       )
     )
   }
-}
 
-/**
- * Represents a 'LOAD' instruction - LDR (pointer + offset) - word
- */
-export class LdrLabelInstruction extends BaseInstruction {
-  public name: string = 'LDR'
-  public pattern: string = '01001XXXXXXXXXXX'
-  private immPattern: string = '01001000XXXXXXXX'
-  private rtPattern: string = '01001XXX00000000'
-  private expectedOptionCount: number = 2
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount)
-    )
+  /**
+   * Determines whether the specified instruction is a
+   * pseudo instruction.
+   *
+   * @param options parameter provided for instruction
+   * @returns whether the instruction is a pseudo instruction
+   */
+  private isPseudoInstruction(options: string[]): boolean {
+    return options.length === 2 && this.isLiteralString(options[1])
   }
 
-  public encodeInstruction(
-    options: string[],
-    labels?: ILabelOffsets
-  ): Halfword[] {
-    checkOptionCount(options, this.expectedOptionCount)
-    let opcode: Halfword = create(this.pattern)
-    opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(
-      opcode,
-      this.immPattern,
-      labels
-        ? Halfword.fromUnsignedInteger(labels[options[1]].value)
-        : Halfword.fromUnsignedInteger(0x0)
-    )
-    return [opcode]
-  }
-
-  protected onExecuteInstruction(
-    opcode: Halfword[],
-    registers: Registers,
-    memory: IMemory
-  ): void {
-    registers.writeRegister(
-      getBits(opcode[0], this.rtPattern).value,
-      memory.readWord(
-        registers
-          .readRegister(Register.PC)
-          .add(getBits(opcode[0], this.immPattern).value)
-      )
-    )
+  /**
+   * Determines whether the specified string is a
+   * a literal (all except valid register, and strings containing any brackets)
+   *
+   * @param option string provided as param which could be literal
+   * @returns whether the string is a literal part of pseudo instruction
+   */
+  private isLiteralString(option: string): boolean {
+    try {
+      $enum(Register).getValueOrThrow(option)
+      return false
+    } catch (e) {
+      return !option.includes('[') && !option.includes(']')
+    }
   }
 }

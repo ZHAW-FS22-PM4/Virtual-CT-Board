@@ -294,9 +294,8 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 describe('test executeInstruction function', () => {
   test('LdrImmediate5OffsetInstruction - LDR word immediate offset', () => {
     // LDR R7, [R6, #0x14]
-
     memory.writeWord(
-      registerValueR6.add(0x14 * 4),
+      registerValueR6.add(0x14),
       Word.fromUnsignedInteger(0x0009)
     )
     instrLdrImm.executeInstruction(

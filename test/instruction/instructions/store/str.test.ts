@@ -286,9 +286,7 @@ describe('test executeInstruction function', () => {
       memory
     )
     expect(
-      memory
-        .readWord(registerValueR7.add(registerValueR5.value * 4))
-        .toHexString()
+      memory.readWord(registerValueR7.add(registerValueR5.value)).toHexString()
     ).toEqual('12345678')
     memory.reset()
   })

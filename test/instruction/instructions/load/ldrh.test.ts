@@ -210,13 +210,10 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 
 describe('test executeInstruction function', () => {
   test('LDRH immediate offset', () => {
-    // LDRH R7, [R6, #0x01]
-    memory.writeWord(
-      registerValueR6.add(0x01),
-      Word.fromUnsignedInteger(0x0009)
-    )
+    // LDRH R7, [R6, #0x04] --> offset by 8
+    memory.writeWord(registerValueR6.add(8), Word.fromUnsignedInteger(0x0009))
     instrLdrhImm.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b1000100001110111)],
+      [Halfword.fromUnsignedInteger(0b1000100100110111)],
       registers,
       memory
     )
