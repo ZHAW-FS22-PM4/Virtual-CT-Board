@@ -220,7 +220,6 @@ export class LdrRegisterInstruction extends BaseInstruction {
         registers
           .readRegister(Register.PC)
           .add(getImmediateBits(opcode[0], this.immPattern, 2).value)
-          .add(2) // TODO no longer required probably: .add(2) not needed if PC counter is increased before calling executeInstruction
       )
     )
   }

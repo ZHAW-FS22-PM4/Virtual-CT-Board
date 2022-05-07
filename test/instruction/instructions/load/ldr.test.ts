@@ -335,16 +335,16 @@ describe('test executeInstruction function', () => {
       registers,
       memory
     )
-    expect(memory.readWord(pcAddress.add(2)).value).toEqual(0xdeff1234)
-    expect(registers.readRegister(Register.R3).value).toEqual(0xdeff1234)
+    expect(memory.readWord(pcAddress).value).toEqual(0x12345678)
+    expect(registers.readRegister(Register.R3).value).toEqual(0x12345678)
     //LDR R3, [PC]
     instrLdrPointer.executeInstruction(
-      [Halfword.fromUnsignedInteger(0x4b00)],
+      [Halfword.fromUnsignedInteger(0x4c01)],
       registers,
       memory
     )
-    expect(memory.readWord(pcAddress.add(2)).value).toEqual(0xdeff1234)
-    expect(registers.readRegister(Register.R3).value).toEqual(0xdeff1234)
+    expect(memory.readWord(pcAddress.add(4)).value).toEqual(0x9abcdeff)
+    expect(registers.readRegister(Register.R4).value).toEqual(0x9abcdeff)
     memory.reset()
   })
 })
