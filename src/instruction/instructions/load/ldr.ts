@@ -16,7 +16,9 @@ import {
   setBits
 } from 'instruction/opcode'
 import { $enum } from 'ts-enum-util'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
+import { limitValuesToBitCount } from 'types/binary/utils'
+import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 /**
@@ -165,7 +167,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       ) &&
-      (this.isPseudoInstruction(options) ||
+      (LdrRegisterInstruction.isPseudoInstruction(options) ||
         (isPCRegister(options[1]) &&
           (options.length == this.expectedOptionCountMin ||
             isImmediate(options[2]))))
@@ -181,17 +183,36 @@ export class LdrRegisterInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    !this.isPseudoInstruction(options) &&
+    if (!LdrRegisterInstruction.isPseudoInstruction(options)) {
       checkBracketsOnLastOptions(
         options,
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       )
+      if (!isPCRegister(options[1])) {
+        throw new VirtualBoardError(
+          'second param is not PC register',
+          VirtualBoardErrorType.InvalidRegisterAsOption
+        )
+      }
+    }
     let immValue: Halfword
-    if (this.isPseudoInstruction(options)) {
-      immValue = labels
-        ? Halfword.fromUnsignedInteger(labels[options[1]].value)
-        : Halfword.fromUnsignedInteger(0x0)
+    if (LdrRegisterInstruction.isPseudoInstruction(options)) {
+      let pseudoValue = options[1]
+      if (pseudoValue.startsWith('=')) {
+        pseudoValue = pseudoValue.slice(1)
+      }
+      /*TODO remove when it works immValue = Halfword.fromUnsignedInteger(
+        labels ? labels[pseudoValue].value : 0
+      )*/
+      immValue = createImmediateBits(
+        //limit bit count so negative values will not be considered wrong
+        `#${
+          labels ? limitValuesToBitCount(labels[pseudoValue].value, 10) : '0'
+        }`,
+        8,
+        2
+      )
     } else if (options.length == this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       immValue = Halfword.fromUnsignedInteger(0)
@@ -217,9 +238,11 @@ export class LdrRegisterInstruction extends BaseInstruction {
     registers.writeRegister(
       getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
-        registers
-          .readRegister(Register.PC)
-          .add(getImmediateBits(opcode[0], this.immPattern, 2).value)
+        Word.fromUnsignedInteger(
+          LdrRegisterInstruction.alignPointerToNextWord(
+            registers.readRegister(Register.PC).value
+          ) + getImmediateBits(opcode[0], this.immPattern, 2).value
+        )
       )
     )
   }
@@ -231,8 +254,10 @@ export class LdrRegisterInstruction extends BaseInstruction {
    * @param options parameter provided for instruction
    * @returns whether the instruction is a pseudo instruction
    */
-  private isPseudoInstruction(options: string[]): boolean {
-    return options.length === 2 && this.isLiteralString(options[1])
+  public static isPseudoInstruction(options: string[]): boolean {
+    return (
+      options.length === 2 && LdrRegisterInstruction.isLiteralString(options[1])
+    )
   }
 
   /**
@@ -242,12 +267,24 @@ export class LdrRegisterInstruction extends BaseInstruction {
    * @param option string provided as param which could be literal
    * @returns whether the string is a literal part of pseudo instruction
    */
-  private isLiteralString(option: string): boolean {
+  public static isLiteralString(option: string): boolean {
     try {
       $enum(Register).getValueOrThrow(option)
       return false
     } catch (e) {
       return !option.includes('[') && !option.includes(']')
     }
+  }
+
+  /**
+   * Makes sure pointer is dividable by 4
+   * @param pointer pointer which is used to navigate from
+   * @returns word aligned pointer
+   */
+  public static alignPointerToNextWord(pointer: number): number {
+    while (pointer % 4 !== 0) {
+      pointer++
+    }
+    return pointer
   }
 }

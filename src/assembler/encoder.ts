@@ -1,4 +1,5 @@
 import { CompileError } from 'assembler/parser/error'
+import { LdrRegisterInstruction } from 'instruction/instructions/load/ldr'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
@@ -145,8 +146,7 @@ function writeInstruction(
 function isPseudoInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name === 'LDR' &&
-    instruction.options.length === 2 &&
-    instruction.options[1].startsWith('=')
+    LdrRegisterInstruction.isPseudoInstruction(instruction.options)
   )
 }
 
@@ -164,9 +164,9 @@ function writePseudoInstruction(
 ): void {
   const options = [instruction.options[0], 'literal']
   const encoder = InstructionSet.getEncoder(instruction.name, options)
-  //TODO catch
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  //TODO different pseudo: EQ value has to be added to literal pool (=CONST_A); address to literal in DataSection or CodeSection (=mylita); space in literal pool for defined value ()=0x20003000); value of already defined literal is loaded (,mylita) --> not slice index 0
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -174,7 +174,7 @@ function writePseudoInstruction(
       line: instruction.line
     },
     offset: writer.getCurrentSectionOffset(),
-    length: bytes.length,
+    length: bytes.length, //always 4 so it is word aligned //TODO before bytes.length
     value: instruction.options[1].slice(1)
   })
   writer.writeBytes(bytes, 2)
@@ -293,8 +293,17 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
         entry.instruction.options
       )
       const vpc = entry.offset + entry.length
+      /*TODO remove after failing test resolved console.log(
+        'current offset' +
+          writer.getCurrentSectionOffset() +
+          ', aligned vpc' +
+          LdrRegisterInstruction.alignPointerToNextWord(vpc)
+      )*/
       const opcode = encoder.encodeInstruction(entry.instruction.options, {
-        literal: Word.fromSignedInteger(writer.getCurrentSectionOffset() - vpc)
+        literal: Word.fromSignedInteger(
+          writer.getCurrentSectionOffset() -
+            LdrRegisterInstruction.alignPointerToNextWord(vpc)
+        )
       })
       writer.setBytes(
         entry.offset,

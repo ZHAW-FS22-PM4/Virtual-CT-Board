@@ -203,9 +203,9 @@ export function createImmediateBits(
     )
   }
 
-  let immediateBits = Halfword.fromUnsignedInteger(+option.substring(1))
+  let optionValue = +option.substring(1)
   if (lsbZeroBitCount !== 0) {
-    if (immediateBits.value % (lsbZeroBitCount * 2) !== 0) {
+    if (optionValue % (lsbZeroBitCount * 2) !== 0) {
       throw new VirtualBoardError(
         `immediate offset not ${
           lsbZeroBitCount == 2
@@ -218,10 +218,9 @@ export function createImmediateBits(
       )
     }
 
-    immediateBits = Halfword.fromUnsignedInteger(
-      immediateBits.value >> lsbZeroBitCount
-    )
+    optionValue = optionValue >> lsbZeroBitCount
   }
+  let immediateBits = Halfword.fromUnsignedInteger(optionValue)
   if (
     immediateBits
       .toBinaryString()

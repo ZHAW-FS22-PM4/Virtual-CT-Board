@@ -81,6 +81,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid2)
     ).toBe(false)
+    expect(instrLdrImm.canEncodeInstruction(ldrName, ldrPCOptionsValid)).toBe(
+      false
+    )
+    expect(instrLdrImm.canEncodeInstruction(ldrName, ldrPCOptionsValid2)).toBe(
+      false
+    )
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(true)
@@ -131,6 +137,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrOptionsWriteToPCInvalid)
     ).toBe(false)
+    expect(instrLdrReg.canEncodeInstruction(ldrName, ldrPCOptionsValid)).toBe(
+      false
+    )
+    expect(instrLdrReg.canEncodeInstruction(ldrName, ldrPCOptionsValid2)).toBe(
+      false
+    )
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(true)
@@ -166,18 +178,18 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrPointer.canEncodeInstruction(ldrbName, ldrPCOptionsValid)
     ).toBe(false)
-
     expect(
       instrLdrPointer.canEncodeInstruction(
         ldrName,
         ldrRegisterOptionsValidShort
       )
     ).toBe(false)
-
     expect(
       instrLdrPointer.canEncodeInstruction(ldrName, ldrOptionsWriteToPCInvalid)
     ).toBe(false)
-
+    expect(
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid2)
+    ).toBe(false)
     expect(
       instrLdrPointer.canEncodeInstruction(ldrName, ldrPCOptionsValid2)
     ).toBe(true)
@@ -224,70 +236,103 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     )
   })
   test('LdrRegisterOffsetInstruction', () => {
-    // LDR R4, [R2, R3]
     expect(
       instrLdrReg.encodeInstruction(['R4', '[R2', 'R3]'])[0].toBinaryString()
     ).toEqual('0101100011010100')
-
     expect(
       instrLdrReg.encodeInstruction(['R0', '[R2', 'R5]'])[0].toBinaryString()
     ).toEqual('0101100101010000')
-    // LDR R1, [R2, #0x1F]
     expect(() =>
       instrLdrReg.encodeInstruction(['R1', '[R2', '#0x1F]'])
     ).toThrow(VirtualBoardError)
-    // LDR R1, [R2, SP]
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'SP]'])).toThrow(
       VirtualBoardError
     )
-    // LDR R1, [R2, R22]
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'R22]'])).toThrow(
       VirtualBoardError
     )
-    // LDR R5, [R2
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2'])).toThrow(
       VirtualBoardError
     )
-    // LDR R5, 0x1F], [R2
     expect(() =>
       instrLdrReg.encodeInstruction(['R1', '#0x1F]', '[R2'])
     ).toThrow(VirtualBoardError)
   })
   test('LoadRegisterInstruction', () => {
-    // LDR R1, [SP, #0x01]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x0c]'])[0]
+        .encodeInstruction(['R1', '[PC', '#0x0c]'])[0]
         .toBinaryString()
     ).toEqual('0100100100000011')
-    // LDR R1, [SP, #0x1F]
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[SP', '#0x7c]'])[0]
+        .encodeInstruction(['R1', '[PC', '#0x7c]'])[0]
         .toBinaryString()
     ).toEqual('0100100100011111')
-    // LDR R1, [R2, R3]
+    expect(
+      instrLdrPointer.encodeInstruction(['R2', '[PC]'])[0].toBinaryString()
+    ).toEqual('0100101000000000')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R0', '[PC', '#0]'])[0]
+        .toBinaryString()
+    ).toEqual('0100100000000000')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R5', '[PC', '#0x000]'])[0]
+        .toBinaryString()
+    ).toEqual('0100110100000000')
     expect(() =>
       instrLdrPointer.encodeInstruction(['R1', '[R2', 'R3]'])
     ).toThrow(VirtualBoardError)
-    // LDR R5, [R2
+    expect(() =>
+      instrLdrPointer.encodeInstruction(['R1', '[SP', '#4]'])
+    ).toThrow(
+      new VirtualBoardError(
+        'second param is not PC register',
+        VirtualBoardErrorType.InvalidRegisterAsOption
+      )
+    )
     expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2'])).toThrow(
       VirtualBoardError
     )
     expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2', '5'])).toThrow(
       VirtualBoardError
     )
-    // LDR R5, 0x1F], [R2
     expect(() =>
       instrLdrPointer.encodeInstruction(['R5', '#0x1F]', '[R2'])
     ).toThrow(VirtualBoardError)
+    expect(() =>
+      instrLdrPointer.encodeInstruction(['R1', '[PC', '#0x6]'])
+    ).toThrow(offsetNotWordAligned)
+    expect(() =>
+      instrLdrPointer.encodeInstruction(['R1', '[PC', '#0x7]'])
+    ).toThrow(offsetNotWordAligned)
+  })
 
-    expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x6]'])
-    ).toThrow(offsetNotWordAligned)
-    expect(() =>
-      instrLdrPointer.encodeInstruction(['R1', '[R2', '#0x7]'])
-    ).toThrow(offsetNotWordAligned)
+  test('LoadRegisterInstruction - pseudo instruction', () => {
+    expect(
+      instrLdrPointer.encodeInstruction(['R3', '=justSmth'])[0].toBinaryString()
+    ).toEqual('0100101100000000')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R3', '=0x20003000'])[0]
+        .toBinaryString()
+    ).toEqual('0100101100000000')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R3', '=justSmth'], {
+          justSmth: Word.fromUnsignedInteger(0x1a0)
+        })[0]
+        .toBinaryString()
+    ).toEqual('0100101101101000')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R6', '=everything'], {
+          everything: Word.fromSignedInteger(-12)
+        })[0]
+        .toBinaryString()
+    ).toEqual('0100111011111101')
   })
 })
 
@@ -324,7 +369,7 @@ describe('test executeInstruction function', () => {
     memory.reset()
   })
   test('LdrRegisterInstruction - LDR word pc offset', () => {
-    const pcAddress = Word.fromUnsignedInteger(0x08123456f)
+    const pcAddress = Word.fromUnsignedInteger(0x08123456c)
     registers.writeRegister(Register.PC, pcAddress)
     memory.writeWord(pcAddress, Word.fromUnsignedInteger(0x12345678))
     memory.writeWord(pcAddress.add(4), Word.fromUnsignedInteger(0x9abcdeff))
