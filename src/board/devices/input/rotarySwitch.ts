@@ -8,7 +8,8 @@ import { Device } from 'board/devices/device'
 import { Byte, Word } from 'types/binary'
 
 export class RotarySwitch extends Device {
-  private static readonly ROTARYSWITCH_ADDRESS: Word = Word.fromUnsignedInteger(0x60000211)
+  private static readonly ROTARYSWITCH_ADDRESS: Word =
+    Word.fromUnsignedInteger(0x60000211)
   private static readonly MINVALUE = 0
   private static readonly MAXVALUE = 255
 
@@ -22,9 +23,14 @@ export class RotarySwitch extends Device {
    *
    */
   public increase(): void {
-    let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
+    let rotarySwitchByte = this.memory.readByte(
+      RotarySwitch.ROTARYSWITCH_ADDRESS
+    )
     if (rotarySwitchByte.value < RotarySwitch.MAXVALUE) {
-      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, rotarySwitchByte.add(1))
+      this.memory.writeByte(
+        RotarySwitch.ROTARYSWITCH_ADDRESS,
+        rotarySwitchByte.add(1)
+      )
     }
   }
 
@@ -33,9 +39,14 @@ export class RotarySwitch extends Device {
    *
    */
   public decrease(): void {
-    let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
+    let rotarySwitchByte = this.memory.readByte(
+      RotarySwitch.ROTARYSWITCH_ADDRESS
+    )
     if (rotarySwitchByte.value > RotarySwitch.MINVALUE) {
-      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, rotarySwitchByte.add(-1))
+      this.memory.writeByte(
+        RotarySwitch.ROTARYSWITCH_ADDRESS,
+        rotarySwitchByte.add(-1)
+      )
     }
   }
 
