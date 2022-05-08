@@ -16,9 +16,3 @@ export class CompileError extends VirtualBoardError {
     this.line = line
   }
 }
-
-export class EncoderError extends VirtualBoardError {
-  constructor(message: string, type: VirtualBoardErrorType) {
-    super(message, type)
-  }
-}
