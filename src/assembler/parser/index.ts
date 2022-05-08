@@ -4,9 +4,10 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z#]+`
+const SPACE_OR_TAB = `[ \\t]`
 
-const OPTION = `[0-9a-z#\\[\\]=]+`
-const INSTRUCTION = `([a-z]+) +(${OPTION}( *, *${OPTION})*)`
+const OPTION = `[0-9a-z#\\[\\]=_{}]+`
+const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 
 /**
  * Parses a given code string and return a parsed code file (AST representation).
@@ -32,7 +33,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'LiteralSymbolDeclaration',
-      pattern: `(${SYMBOL}) +EQU +(${VALUE})`,
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
         label = null
@@ -40,7 +41,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
-      pattern: `AREA +(${SYMBOL}) *, *(DATA|CODE) *, *(READ(WRITE|ONLY))`,
+      pattern: `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
@@ -57,7 +58,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=\\s+${INSTRUCTION})`,
+      pattern: `(${SYMBOL})(?=\\s*${SPACE_OR_TAB}${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(match.from, 'Label must be defined in area')
