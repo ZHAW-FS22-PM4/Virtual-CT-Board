@@ -24,7 +24,7 @@ export class RotarySwitch extends Device {
   public increase(): void {
     let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
     if (rotarySwitchByte.value < RotarySwitch.MAXVALUE) {
-      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, Byte.fromUnsignedInteger(rotarySwitchByte.value + 1))
+      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, rotarySwitchByte.add(1))
     }
   }
 
@@ -35,7 +35,7 @@ export class RotarySwitch extends Device {
   public decrease(): void {
     let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
     if (rotarySwitchByte.value > RotarySwitch.MINVALUE) {
-      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, Byte.fromUnsignedInteger(rotarySwitchByte.value - 1))
+      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, rotarySwitchByte.add(-1))
     }
   }
 
