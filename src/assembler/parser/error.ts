@@ -16,3 +16,6 @@ export class CompileError extends VirtualBoardError {
     this.line = line
   }
 }
+
+//TODO replace with matching class of Leo
+export class EncoderError extends VirtualBoardError {}
