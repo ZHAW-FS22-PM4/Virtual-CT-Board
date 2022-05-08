@@ -203,10 +203,6 @@ export class LdrRegisterInstruction extends BaseInstruction {
       if (pseudoValue.startsWith('=')) {
         pseudoValue = pseudoValue.slice(1)
       }
-      //TODO remove when it works
-      /*immValue = Halfword.fromUnsignedInteger(
-        labels ? labels[pseudoValue].value : 0
-      )*/
       immValue = createImmediateBits(
         //limit bit count so negative values will not be considered wrong
         `#${
@@ -219,7 +215,6 @@ export class LdrRegisterInstruction extends BaseInstruction {
       //just add fix value 0 as immediate
       immValue = Halfword.fromUnsignedInteger(0)
     } else {
-      //TODO work with byte offset
       immValue = createImmediateBits(
         removeBracketsFromRegisterString(options[2]),
         8,
@@ -244,7 +239,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         Word.fromUnsignedInteger(
           //TODO  VCB-176 --> LdrRegisterInstruction.alignPointerToNextWord(registers.readRegister(Register.PC).value)
           registers.readRegister(Register.PC).value +
-            getImmediateBits(opcode[0], this.immPattern, 2).value
+            getImmediateBits(opcode[0], this.immPattern, 0).value //TODO VCB-176 --> getImmediateBits 2 instead of 0
         )
       )
     )

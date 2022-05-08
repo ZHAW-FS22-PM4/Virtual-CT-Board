@@ -168,7 +168,7 @@ export class FileWriter {
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff)) //TODO better with zeros
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff)) //TODO better with zeros for unaligend data section instructions
         )
       }
     }

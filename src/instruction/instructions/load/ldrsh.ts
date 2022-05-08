@@ -58,16 +58,14 @@ export class LdrshRegisterOffsetInstruction extends BaseInstruction {
   ): void {
     registers.writeRegister(
       getBits(opcode[0], this.rtPattern).value,
-      Word.fromSignedInteger(
-        memory
-          .readHalfword(
-            registers
-              .readRegister(getBits(opcode[0], this.rnPattern).value)
-              .add(
-                registers.readRegister(getBits(opcode[0], this.rmPattern).value)
-              )
-          )
-          .toSignedInteger()
+      Word.fromHalfwords(
+        memory.readHalfword(
+          registers
+            .readRegister(getBits(opcode[0], this.rnPattern).value)
+            .add(
+              registers.readRegister(getBits(opcode[0], this.rmPattern).value)
+            )
+        )
       )
     )
   }

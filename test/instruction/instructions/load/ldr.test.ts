@@ -386,7 +386,7 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R3).value).toEqual(0x12345678)
     //LDR R3, [PC]
     instrLdrPointer.executeInstruction(
-      [Halfword.fromUnsignedInteger(0x4c01)],
+      [Halfword.fromUnsignedInteger(0x4c04)], //TODO VCB-176 --> 0x4c01
       registers,
       memory
     )

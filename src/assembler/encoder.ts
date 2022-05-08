@@ -167,7 +167,6 @@ function writePseudoInstruction(
   const encoder = InstructionSet.getEncoder(instruction.name, options)
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
-  //TODO different pseudo: EQ value has to be added to literal pool (=CONST_A); address to literal in DataSection or CodeSection (=mylita); space in literal pool for defined value ()=0x20003000); value of already defined literal is loaded (,mylita) --> not slice index 0
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -175,7 +174,7 @@ function writePseudoInstruction(
       line: instruction.line
     },
     offset: writer.getCurrentSectionOffset(),
-    length: bytes.length, //always 4 so it is word aligned //TODO before bytes.length
+    length: bytes.length,
     value: instruction.options[1].slice(1)
   })
   writer.writeBytes(bytes, 2)
@@ -294,12 +293,6 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
         entry.instruction.options
       )
       const vpc = entry.offset + entry.length
-      /*TODO remove after failing test resolved console.log(
-        'current offset' +
-          writer.getCurrentSectionOffset() +
-          ', aligned vpc' +
-          LdrRegisterInstruction.alignPointerToNextWord(vpc)
-      )*/
       const opcode = encoder.encodeInstruction(entry.instruction.options, {
         literal: Word.fromSignedInteger(
           writer.getCurrentSectionOffset() -
