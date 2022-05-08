@@ -1,7 +1,9 @@
+import { CompileError } from 'assembler/parser/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
 import { Byte, Halfword, Word } from 'types/binary'
+import { VirtualBoardError } from 'types/error'
 import { ICodeFile, IInstruction, ISymbols } from './ast'
 import { IELF, SectionType, SymbolType } from './elf/interfaces'
 import { createFile } from './elf/utils'
@@ -66,7 +68,13 @@ export function encode(code: ICodeFile): IELF {
     for (const instruction of area.instructions) {
       writer.mapLine(instruction.line)
       addLabel(writer, instruction)
-      writeInstruction(writer, instruction, pool)
+      try {
+        writeInstruction(writer, instruction, pool)
+      } catch (e: any) {
+        if (e instanceof VirtualBoardError) {
+          throw new CompileError(instruction.line, e.message, e.type)
+        }
+      }
     }
     writeLiteralPool(writer, pool)
     writer.endSection()
