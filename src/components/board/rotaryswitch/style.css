@@ -1,0 +1,35 @@
+.rotaryswitch {
+  alignment: center;
+  color: black;
+}
+
+.rotaryswitch-button {
+  padding: 30px;
+  border-radius: 50%;
+  position: absolute;
+  margin-left: 127px;
+  margin-top: 3px;
+}
+
+.rotaryswitch-button-clicked {
+  background-color: #000000;
+}
+
+.rotaryswitch-button-notclicked {
+  background-color: #313030;
+}
+
+.rotaryswitch-canvas {
+  width: 300px;
+  height: 70px;
+  position: absolute;
+}
+
+.rotary-text {
+  text-align: right;
+  margin-left: 150px;
+  margin-top: 20px;
+  color: black;
+  position: absolute;
+  color: white;
+}
