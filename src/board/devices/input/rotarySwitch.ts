@@ -8,31 +8,23 @@ import { Device } from 'board/devices/device'
 import { Byte, Word } from 'types/binary'
 
 export class RotarySwitch extends Device {
-  private RotarySwitch_ADDRESS = Word.fromUnsignedInteger(0x60000211)
-  private maxValue = 255
-  private minValue = 0
+  private static readonly ROTARYSWITCH_ADDRESS: Word = Word.fromUnsignedInteger(0x60000211)
+  private static readonly MINVALUE = 0
+  private static readonly MAXVALUE = 255
 
   public isReadOnly = false
   public isVolatile = false
-  public startAddress = this.RotarySwitch_ADDRESS
-  public endAddress = this.RotarySwitch_ADDRESS
+  public startAddress = RotarySwitch.ROTARYSWITCH_ADDRESS
+  public endAddress = RotarySwitch.ROTARYSWITCH_ADDRESS
 
   /**
    * increase the rotary switch
    *
    */
   public increase(): void {
-    let newValue = this.memory.readByte(this.RotarySwitch_ADDRESS).value + 1
-    if (newValue < this.maxValue) {
-      this.memory.writeByte(
-        this.RotarySwitch_ADDRESS,
-        Byte.fromUnsignedInteger(newValue)
-      )
-    } else {
-      this.memory.writeByte(
-        this.RotarySwitch_ADDRESS,
-        Byte.fromUnsignedInteger(this.maxValue)
-      )
+    let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
+    if (rotarySwitchByte.value < RotarySwitch.MAXVALUE) {
+      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, Byte.fromUnsignedInteger(rotarySwitchByte.value + 1))
     }
   }
 
@@ -41,17 +33,9 @@ export class RotarySwitch extends Device {
    *
    */
   public decrease(): void {
-    let newValue = this.memory.readByte(this.RotarySwitch_ADDRESS).value - 1
-    if (newValue >= this.minValue) {
-      this.memory.writeByte(
-        this.RotarySwitch_ADDRESS,
-        Byte.fromUnsignedInteger(newValue)
-      )
-    } else {
-      this.memory.writeByte(
-        this.RotarySwitch_ADDRESS,
-        Byte.fromUnsignedInteger(this.minValue)
-      )
+    let rotarySwitchByte = this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
+    if (rotarySwitchByte.value > RotarySwitch.MINVALUE) {
+      this.memory.writeByte(RotarySwitch.ROTARYSWITCH_ADDRESS, Byte.fromUnsignedInteger(rotarySwitchByte.value - 1))
     }
   }
 
@@ -61,6 +45,6 @@ export class RotarySwitch extends Device {
    * @returns: the current value of the rotary switch
    */
   public getRotaryValue(): Byte {
-    return this.memory.readByte(this.RotarySwitch_ADDRESS)
+    return this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
   }
 }
