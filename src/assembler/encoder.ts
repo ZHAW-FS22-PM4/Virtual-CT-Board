@@ -146,7 +146,8 @@ function writeInstruction(
 function isPseudoInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name === 'LDR' &&
-    LdrRegisterInstruction.isPseudoInstruction(instruction.options)
+    instruction.options.length === 2 &&
+    instruction.options[1].startsWith('=')
   )
 }
 

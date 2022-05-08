@@ -17,7 +17,6 @@ import {
 } from 'instruction/opcode'
 import { $enum } from 'ts-enum-util'
 import { Halfword, Word } from 'types/binary'
-import { limitValuesToBitCount } from 'types/binary/utils'
 import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
@@ -167,7 +166,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       ) &&
-      (LdrRegisterInstruction.isPseudoInstruction(options) ||
+      (LdrRegisterInstruction.isLabelOffsetInstruction(options) ||
         (isPCRegister(options[1]) &&
           (options.length == this.expectedOptionCountMin ||
             isImmediate(options[2]))))
@@ -183,7 +182,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    if (!LdrRegisterInstruction.isPseudoInstruction(options)) {
+    if (!LdrRegisterInstruction.isLabelOffsetInstruction(options)) {
       checkBracketsOnLastOptions(
         options,
         this.expectedOptionCountMin,
@@ -197,30 +196,32 @@ export class LdrRegisterInstruction extends BaseInstruction {
       }
     }
     let immValue: Halfword
-    if (LdrRegisterInstruction.isPseudoInstruction(options)) {
+    if (LdrRegisterInstruction.isLabelOffsetInstruction(options)) {
       let pseudoValue = options[1]
       if (pseudoValue.startsWith('=')) {
         pseudoValue = pseudoValue.slice(1)
       }
-      /*TODO remove when it works immValue = Halfword.fromUnsignedInteger(
+      //TODO remove when it works
+      immValue = Halfword.fromUnsignedInteger(
         labels ? labels[pseudoValue].value : 0
-      )*/
-      immValue = createImmediateBits(
+      )
+      /*immValue = createImmediateBits(
         //limit bit count so negative values will not be considered wrong
         `#${
           labels ? limitValuesToBitCount(labels[pseudoValue].value, 10) : '0'
         }`,
         8,
         2
-      )
+      )*/
     } else if (options.length == this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       immValue = Halfword.fromUnsignedInteger(0)
     } else {
+      //TODO work with byte offset
       immValue = createImmediateBits(
         removeBracketsFromRegisterString(options[2]),
         8,
-        2
+        0 //TODO VCB-176 when word aligned 2
       )
     }
 
@@ -254,7 +255,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
    * @param options parameter provided for instruction
    * @returns whether the instruction is a pseudo instruction
    */
-  public static isPseudoInstruction(options: string[]): boolean {
+  public static isLabelOffsetInstruction(options: string[]): boolean {
     return (
       options.length === 2 && LdrRegisterInstruction.isLiteralString(options[1])
     )
