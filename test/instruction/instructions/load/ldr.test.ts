@@ -21,6 +21,7 @@ const ldrRegisterOptionsValid = ['R0', '[R1', 'R2]']
 const ldrRegisterOptionsValidShort = ['R3', '[R4]']
 const ldrRegisterOptionsInvalid = ['R0', 'R1', 'R2']
 const ldrRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
+const ldrRegisterOptionsInvalidShort = ['R3', 'R4']
 const ldrLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const ldrLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const ldrLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
@@ -106,6 +107,9 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsValidShort)
     ).toBe(true)
+    expect(
+      instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalidShort)
+    ).toBe(true)
   })
   test('LdrRegisterOffsetInstruction - LDR (register offset) - word encoder', () => {
     expect(
@@ -153,6 +157,9 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(true)
+    expect(
+      instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalidShort)
+    ).toBe(false)
   })
   test('LdrRegisterInstruction - LDR (programm counter + offset) - word', () => {
     expect(
@@ -203,6 +210,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrPointer.canEncodeInstruction(ldrName, ldrPCWithLiteralValid)
     ).toBe(true)
+    expect(
+      instrLdrPointer.canEncodeInstruction(
+        ldrName,
+        ldrRegisterOptionsInvalidShort
+      )
+    ).toBe(false)
   })
 })
 
