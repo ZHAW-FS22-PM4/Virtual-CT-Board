@@ -6,6 +6,7 @@ import CodeMirror, {
   ReactCodeMirrorRef
 } from '@uiw/react-codemirror'
 import { assemble } from 'assembler'
+import { AssemblerError } from 'assembler/error'
 import Board from 'board'
 import { Register } from 'board/registers'
 import React from 'react'
@@ -92,21 +93,26 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }))
   }
 
-  updateProgramCounterHighlighting(clear: boolean = false) {
+  updateProgramCounterHighlighting(clear: boolean = false): void {
+    const executable = Board.getExecutable()
+    let line: number | undefined
+    if (executable && !clear) {
+      const pc = Board.registers.readRegister(Register.PC)
+      line = executable.sourceMap.getLine(pc)
+    }
+
+    this.highlightLine('current-program-counter', line ? line + 1 : undefined)
+  }
+
+  highlightLine(className: string, line?: number): void {
     const view = this.editor.current?.view
+    const decorations: Extension[] = []
     if (view) {
-      const executable = Board.getExecutable()
-      let line: number | undefined
-      if (executable && !clear) {
-        const pc = Board.registers.readRegister(Register.PC)
-        line = executable.sourceMap.getLine(pc)
-      }
-      const decorations: Extension[] = []
       if (line) {
         const decoration = Decoration.line({
-          class: 'current-program-counter'
+          class: className
         })
-        const position = view.state.doc.line(line + 1).from
+        const position = view.state.doc.line(line).from
         decorations.push(
           EditorView.decorations.of(Decoration.set(decoration.range(position)))
         )
@@ -116,7 +122,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }
   }
 
-  catchAndShowError(action: () => void) {
+  catchAndShowError(action: () => void): void {
     try {
       action()
     } catch (err: unknown) {
@@ -127,6 +133,10 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           errorMessage: errorMessage
         })
         setTimeout(() => this.setState({ showError: false }), 5000)
+      }
+
+      if (err instanceof AssemblerError) {
+        this.highlightLine('error-highlighting', err.line + 1)
       }
     }
   }
