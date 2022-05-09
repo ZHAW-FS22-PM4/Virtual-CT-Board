@@ -29,7 +29,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'ProcedureInstructions',
-      pattern: `ENDP${SPACE_OR_TAB}*\|PROC${SPACE_OR_TAB}*\|END${SPACE_OR_TAB}*`
+      pattern: `PROC\|ENDP\|END`
     },
     {
       name: 'Comment',
