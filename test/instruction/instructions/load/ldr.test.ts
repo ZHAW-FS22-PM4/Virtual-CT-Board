@@ -25,6 +25,7 @@ const ldrLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const ldrLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const ldrLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 const ldrPCOptionsValid = ['R0', '[PC', '#0xe6]']
+const ldrPCWithLiteralValid = ['R0', 'myliteral']
 const ldrPCOptionsValid2 = ['R7', '[PC]']
 const ldrOptionsWriteToPCInvalid = ['PC', '[R3', '#0x8]']
 
@@ -88,6 +89,9 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       false
     )
     expect(
+      instrLdrImm.canEncodeInstruction(ldrName, ldrPCWithLiteralValid)
+    ).toBe(false)
+    expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrLiteralOptionsInvalid)
     ).toBe(true)
     expect(
@@ -144,6 +148,9 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
       false
     )
     expect(
+      instrLdrReg.canEncodeInstruction(ldrName, ldrPCWithLiteralValid)
+    ).toBe(false)
+    expect(
       instrLdrReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(true)
   })
@@ -192,6 +199,9 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     ).toBe(false)
     expect(
       instrLdrPointer.canEncodeInstruction(ldrName, ldrPCOptionsValid2)
+    ).toBe(true)
+    expect(
+      instrLdrPointer.canEncodeInstruction(ldrName, ldrPCWithLiteralValid)
     ).toBe(true)
   })
 })
