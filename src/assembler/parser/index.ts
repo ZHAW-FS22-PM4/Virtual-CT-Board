@@ -28,6 +28,10 @@ export function parse(code: string): ICodeFile {
       pattern: /\s+/
     },
     {
+      name: 'ProcedureInstructions',
+      pattern: `ENDP${SPACE_OR_TAB}*\|PROC${SPACE_OR_TAB}*\|END${SPACE_OR_TAB}*`
+    },
+    {
       name: 'Comment',
       pattern: /;[^\n]*/
     },
