@@ -21,7 +21,6 @@ import { BlInstruction } from 'instruction/instructions/jump/bl'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
 import { AddInstruction } from './instructions/add/add'
 import {
@@ -117,9 +116,8 @@ export class InstructionSet implements IInstructionSet {
         return instruction
       }
     }
-    throw new VirtualBoardError(
-      `Unable to find instruction encoder for the instruction '${name}'.`,
-      VirtualBoardErrorType.NoEncoderFound
+    throw new Error(
+      `Unable to find instruction encoder for the instruction '${name}'.`
     )
   }
 

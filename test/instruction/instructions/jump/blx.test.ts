@@ -2,7 +2,6 @@ import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const registers = new Registers()
 const memory = new Memory()
@@ -64,6 +63,6 @@ describe('test onExecuteInstruction function for BLX', () => {
     let opcode = blxInstruction.encodeInstruction(['R0'])
     expect(() =>
       blxInstruction.executeInstruction(opcode, registers, memory)
-    ).toThrow(VirtualBoardError)
+    ).toThrow(Error)
   })
 })

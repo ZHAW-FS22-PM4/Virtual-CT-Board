@@ -1,5 +1,6 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   MovsImmediate8Instruction,
   MovsRegistersInstruction
@@ -7,7 +8,6 @@ import {
 import { $enum } from 'ts-enum-util'
 import { anything, instance, mock, resetCalls, verify, when } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 const invalidInstructionOptions = ['R77', '#2#']
@@ -102,21 +102,21 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         highRegisterOption,
         lowRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOVS R5, SP
     expect(() =>
       instructionMovsRegisters.encodeInstruction([
         lowRegisterOption,
         highRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOVS R5, R22
     expect(() =>
       instructionMovsRegisters.encodeInstruction([
         lowRegisterOption,
         invalidRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
 
     // MOVS with literal
     // MOVS R5, #0x5C
@@ -131,14 +131,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOVS R2, #0x111
     expect(() =>
       instructionMovsLiteral.encodeInstruction([
         lowRegisterOption2,
         toolongImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 

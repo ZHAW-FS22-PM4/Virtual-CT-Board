@@ -1,12 +1,12 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrImmediate5OffsetInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldr'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -251,14 +251,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         lowRegisterOption3
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, [R2
     expect(() =>
       instructionLoadInstructionImmediateOffset.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R1, [R2, 5]
     expect(() =>
       instructionLoadInstructionImmediateOffset.encodeInstruction([
@@ -266,7 +266,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, 0x1F], [R2
     expect(() =>
       instructionLoadInstructionImmediateOffset.encodeInstruction([
@@ -274,7 +274,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LdrRegisterOffsetInstruction', () => {
     // LDR R1, [R2, R3]
@@ -294,7 +294,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         validImmediateOptionHigh
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R1, [R2, SP]
     expect(() =>
       instructionLoadInstructionRegisterOffset.encodeInstruction([
@@ -302,7 +302,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         highRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R1, [R2, R22]
     expect(() =>
       instructionLoadInstructionRegisterOffset.encodeInstruction([
@@ -310,14 +310,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, [R2
     expect(() =>
       instructionLoadInstructionRegisterOffset.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, 0x1F], [R2
     expect(() =>
       instructionLoadInstructionRegisterOffset.encodeInstruction([
@@ -325,7 +325,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LoadRegisterInstruction', () => {
     // LDR R1, [SP, #0x01]
@@ -355,14 +355,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         lowRegisterOption3
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, [R2
     expect(() =>
       instructionLoadInstructionPointerOffset.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R1, [R2, 5]
     expect(() =>
       instructionLoadInstructionPointerOffset.encodeInstruction([
@@ -370,7 +370,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDR R5, 0x1F], [R2
     expect(() =>
       instructionLoadInstructionPointerOffset.encodeInstruction([
@@ -378,7 +378,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 

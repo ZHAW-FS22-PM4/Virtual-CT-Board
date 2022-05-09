@@ -9,7 +9,6 @@ import {
   setBits
 } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 /**
@@ -42,9 +41,8 @@ export class BlxInstruction extends BaseInstruction {
     const rmRegister = getBits(opcode[0], this.pattern).value
     const content = registers.readRegister(rmRegister)
     if (content.toUnsignedInteger() % 2 !== 0) {
-      throw new VirtualBoardError(
-        `value of register cannot be divided by 2 and and is therefore not valid`,
-        VirtualBoardErrorType.InvalidParamProvided
+      throw new Error(
+        'Value of register cannot be divided by 2 and and is therefore not valid.'
       )
     }
     registers.writeRegister(Register.PC, content)

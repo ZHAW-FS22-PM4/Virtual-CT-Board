@@ -1,9 +1,9 @@
-import { CompileError } from 'assembler/parser/error'
+import { AssemblerError } from 'assembler/error'
+import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
 import { Byte, Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 import { ICodeFile, IInstruction, ISymbols } from './ast'
 import { IELF, SectionType, SymbolType } from './elf/interfaces'
 import { createFile } from './elf/utils'
@@ -71,8 +71,8 @@ export function encode(code: ICodeFile): IELF {
       try {
         writeInstruction(writer, instruction, pool)
       } catch (e: any) {
-        if (e instanceof VirtualBoardError) {
-          throw new CompileError(instruction.line, e.message, e.type)
+        if (e instanceof InstructionError) {
+          throw new AssemblerError(e.message, instruction.line)
         }
       }
     }
@@ -107,12 +107,18 @@ function addSymbols(writer: FileWriter, symbols: ISymbols): void {
  */
 function addLabel(writer: FileWriter, instruction: IInstruction): void {
   if (instruction.label) {
-    writer.addSymbol({
-      type: SymbolType.Address,
-      name: instruction.label,
-      section: writer.getCurrentSection().name,
-      value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
-    })
+    try {
+      writer.addSymbol({
+        type: SymbolType.Address,
+        name: instruction.label,
+        section: writer.getCurrentSection().name,
+        value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
+      })
+    } catch (e: any) {
+      if (e instanceof Error) {
+        throw new AssemblerError(e.message, instruction.line)
+      }
+    }
   }
 }
 

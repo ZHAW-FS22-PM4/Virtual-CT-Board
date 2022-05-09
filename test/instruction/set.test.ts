@@ -1,7 +1,6 @@
 import { IInstruction } from 'instruction/interfaces'
 import { InstructionSet } from 'instruction/set'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const validInstructionName = 'TEST'
 const invalidInstructionName = 'ZZZ_notImplemeted'
@@ -22,9 +21,8 @@ describe('InstructionSet', function () {
   })
   it('should return error when no encoder found', function () {
     expect(() => sut.getEncoder(invalidInstructionName, [])).toThrowError(
-      new VirtualBoardError(
-        `Unable to find instruction encoder for the instruction '${invalidInstructionName}'.`,
-        VirtualBoardErrorType.NoEncoderFound
+      new Error(
+        `Unable to find instruction encoder for the instruction '${invalidInstructionName}'.`
       )
     )
   })

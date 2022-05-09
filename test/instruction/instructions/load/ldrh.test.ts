@@ -1,11 +1,11 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrhImmediate5OffsetInstruction,
   LdrhRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrh'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -192,14 +192,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         lowRegisterOption3
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R5, [R2
     expect(() =>
       instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R1, [R2, 5]
     expect(() =>
       instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -207,7 +207,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R5, 0x1F], [R2
     expect(() =>
       instructionLoadInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -215,7 +215,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LdrhRegisterOffsetInstruction', () => {
     // LDRH R1, [R2, R3]
@@ -235,7 +235,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         validImmediateOptionHigh
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R1, [R2, SP]
     expect(() =>
       instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -243,7 +243,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         highRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R1, [R2, R22]
     expect(() =>
       instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -251,14 +251,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R5, [R2
     expect(() =>
       instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // LDRH R5, 0x1F], [R2
     expect(() =>
       instructionLoadInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -266,7 +266,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 

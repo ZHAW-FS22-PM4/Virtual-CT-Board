@@ -61,7 +61,7 @@ export function parse(code: string): ICodeFile {
       pattern: `(${SYMBOL})(?=\\s*${SPACE_OR_TAB}${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
-          throw new ParseError(match.from, 'Label must be defined in area')
+          throw new ParseError('Label must be defined in area', match.from)
         }
         label = match.captures[0]
       }
@@ -72,8 +72,8 @@ export function parse(code: string): ICodeFile {
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(
-            match.from,
-            'Instruction must be defined in area'
+            'Instruction must be defined in area',
+            match.from
           )
         }
         const instruction: IInstruction = {
@@ -91,7 +91,7 @@ export function parse(code: string): ICodeFile {
   ]
   const cursor = parseText(code, rules)
   if (cursor.index != code.length) {
-    throw new ParseError(cursor, 'Unknown token')
+    throw new ParseError('Unknown token', cursor)
   }
   return ast
 }
