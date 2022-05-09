@@ -1,20 +1,20 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
-import { LdrshRegisterOffsetInstruction } from 'instruction/instructions/load/ldrsh'
+import { LdrsbRegisterOffsetInstruction } from 'instruction/instructions/load/ldrsb'
 import { Byte, Halfword, Word } from 'types/binary'
 import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
-const instrName = 'LDRSH'
+const instrName = 'LDRSB'
 
-const instruction = new LdrshRegisterOffsetInstruction()
+const instruction = new LdrsbRegisterOffsetInstruction()
 
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
-const registerValueR4: Word = Word.fromUnsignedInteger(0x00008000) // onlyHalfwordSign
-const registerValueR3: Word = Word.fromUnsignedInteger(0x12345678) // value without halfword sign
-const registerValueR2: Word = Word.fromUnsignedInteger(0x8ab0a10c) // value with Halfword sign and more bits set
+const registerValueR4: Word = Word.fromUnsignedInteger(0x00000080) // onlyByteSign
+const registerValueR3: Word = Word.fromUnsignedInteger(0x12345678) // value without byte sign
+const registerValueR2: Word = Word.fromUnsignedInteger(0x8ab0a1bc) // value with byte sign and more bits set
 const registerValueR1: Word = Word.fromUnsignedInteger(0x00000000) // offset zero
 
 registers.writeRegister(Register.R4, registerValueR4)
@@ -23,7 +23,7 @@ registers.writeRegister(Register.R2, registerValueR2)
 registers.writeRegister(Register.R1, registerValueR1)
 
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
-  test('LOAD instruction - LDRSH (register offset) - encoder', () => {
+  test('LOAD instruction - LDRSB (register offset) - encoder', () => {
     expect(
       instruction.canEncodeInstruction(invalidInstructionName, [
         'R5',
@@ -41,13 +41,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
-  test('LdrshRegisterOffsetInstruction', () => {
+  test('LdrsbRegisterOffsetInstruction', () => {
     expect(
       instruction.encodeInstruction(['R5', '[R3', 'R1]'])[0].toBinaryString()
-    ).toEqual('0101111001011101')
+    ).toEqual('0101011001011101')
     expect(
       instruction.encodeInstruction(['R7', '[R5', 'R6]'])[0].toBinaryString()
-    ).toEqual('0101111110101111')
+    ).toEqual('0101011110101111')
     expect(() => instruction.encodeInstruction(['invalidOption'])).toThrow(
       VirtualBoardError
     )
@@ -67,93 +67,93 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('LDR halfword with sign extension', () => {
+  test('LDR byte with sign extension', () => {
     memory.writeWord(registerValueR4, registerValueR4)
     memory.writeWord(registerValueR3, registerValueR3)
-    memory.writeByte(registerValueR3.add(4), Byte.fromUnsignedInteger(0xb7)) //for offset 3
+    memory.writeByte(registerValueR3.add(7), Byte.fromUnsignedInteger(0xb7)) //for offset 7
     memory.writeHalfword(
-      registerValueR3.add(-2),
-      Halfword.fromUnsignedInteger(0x6655)
-    ) //for offset -2
+      registerValueR3.add(-220),
+      Halfword.fromUnsignedInteger(0x8833)
+    ) //for offset -220
     memory.writeHalfword(
       registerValueR3.add(68),
-      Halfword.fromUnsignedInteger(0x3434)
+      Halfword.fromUnsignedInteger(0x6969)
     ) //for offset 68
     memory.writeWord(registerValueR2, registerValueR2)
-    memory.writeByte(registerValueR2.add(4), Byte.fromUnsignedInteger(0x72)) //for offset 3
+    memory.writeByte(registerValueR2.add(7), Byte.fromUnsignedInteger(0x72)) //for offset 7
     memory.writeHalfword(
-      registerValueR2.add(-2),
-      Halfword.fromUnsignedInteger(0xdd88)
-    ) //for offset -2
+      registerValueR2.add(-220),
+      Halfword.fromUnsignedInteger(0x22ee)
+    ) //for offset -220
     memory.writeHalfword(
       registerValueR2.add(68),
       Halfword.fromUnsignedInteger(0xf4f5)
     ) //for offset 68
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111001011101)], //LDRSH R5, [R3, R1]
+      [Halfword.fromUnsignedInteger(0b0101011001011101)], //LDRSB R5, [R3, R1]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R5).value).toEqual(0x5678)
+    expect(registers.readRegister(Register.R5).value).toEqual(0x78)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111110001111)], //LDRSH R7, [R1, R6]
+      [Halfword.fromUnsignedInteger(0b0101011110001111)], //LDRSB R7, [R1, R6]
       registers,
       memory
     )
     expect(registers.readRegister(Register.R7).value).toEqual(0)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111001100101)], //LDRSH R5, [R4, R1]
+      [Halfword.fromUnsignedInteger(0b0101011001100101)], //LDRSB R5, [R4, R1]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R5).value).toEqual(0xffff8000)
+    expect(registers.readRegister(Register.R5).value).toEqual(0xffffff80)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111001010110)], //LDRSH R6, [R2, R1]
+      [Halfword.fromUnsignedInteger(0b0101011001010110)], //LDRSB R6, [R2, R1]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R6).value).toEqual(0xffffa10c)
+    expect(registers.readRegister(Register.R6).value).toEqual(0xffffffbc)
 
-    registers.writeRegister(Register.R6, Word.fromUnsignedInteger(3))
+    registers.writeRegister(Register.R6, Word.fromUnsignedInteger(7))
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111110011111)], //LDRSH R7, [R3, R6]
+      [Halfword.fromUnsignedInteger(0b0101011110011111)], //LDRSB R7, [R3, R6]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R7).value).toEqual(0xffffb712)
+    expect(registers.readRegister(Register.R7).value).toEqual(0xffffffb7)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111110010000)], //LDRSH R0, [R2, R6]
+      [Halfword.fromUnsignedInteger(0b0101011110010000)], //LDRSB R0, [R2, R6]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R0).value).toEqual(0x728a)
+    expect(registers.readRegister(Register.R0).value).toEqual(0x72)
 
-    registers.writeRegister(Register.R5, Word.fromSignedInteger(-2))
+    registers.writeRegister(Register.R5, Word.fromSignedInteger(-220))
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111101010000)], //LDRSH R0, [R2, R5]
+      [Halfword.fromUnsignedInteger(0b0101011101010000)], //LDRSB R0, [R2, R5]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R0).value).toEqual(0xffffdd88)
+    expect(registers.readRegister(Register.R0).value).toEqual(0xffffffee)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111101011001)], //LDRSH R1, [R3, R5]
+      [Halfword.fromUnsignedInteger(0b0101011101011001)], //LDRSB R1, [R3, R5]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R1).value).toEqual(0x6655)
+    expect(registers.readRegister(Register.R1).value).toEqual(0x33)
 
     registers.writeRegister(Register.R6, Word.fromUnsignedInteger(68))
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111110010000)], //LDRSH R0, [R2, R6]
+      [Halfword.fromUnsignedInteger(0b0101011110010000)], //LDRSB R0, [R2, R6]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R0).value).toEqual(0xfffff4f5)
+    expect(registers.readRegister(Register.R0).value).toEqual(0xfffffff5)
     instruction.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0101111110011011)], //LDRSH R3, [R3, R6]
+      [Halfword.fromUnsignedInteger(0b0101011110011011)], //LDRSB R3, [R3, R6]
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R3).value).toEqual(0x3434)
+    expect(registers.readRegister(Register.R3).value).toEqual(0x69)
   })
 })
