@@ -5,12 +5,12 @@
  */
 
 import { Device } from 'board/devices/device'
-import { Byte, Word } from 'types/binary'
+import { Word } from 'types/binary'
 
 export class RotarySwitch extends Device {
   private static readonly ROTARYSWITCH_ADDRESS: Word =
     Word.fromUnsignedInteger(0x60000211)
-  private static readonly MINVALUE = 0
+  private static readonly MINVALUE = 240
   private static readonly MAXVALUE = 255
 
   public isReadOnly = false
@@ -55,7 +55,7 @@ export class RotarySwitch extends Device {
    *
    * @returns: the current value of the rotary switch
    */
-  public getRotaryValue(): Byte {
-    return this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS)
+  public getRotaryValue(): number {
+    return this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS).value - 240
   }
 }

@@ -12,12 +12,12 @@ export class RotarySwitchComponent extends React.Component<{}, RotaryState> {
   constructor(props: {}) {
     super(props)
     this.mouseClicked = false
-    this.state = { value: Board.rotaryswitch.getRotaryValue().toHexString() }
+    this.state = { value: Board.rotaryswitch.getRotaryValue().toString(16) }
     Board.processor.on('afterReset', () => this.update())
   }
 
   private update() {
-    this.setState({ value: Board.rotaryswitch.getRotaryValue().toHexString() })
+    this.setState({ value: Board.rotaryswitch.getRotaryValue().toString(16) })
   }
 
   private handleRotarySwitch = (
