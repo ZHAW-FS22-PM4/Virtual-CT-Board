@@ -3,7 +3,7 @@ import Board from '../../../board'
 import './style.css'
 
 type SevenSegState = {
-  [key: number]: boolean
+  segState: boolean[]
 }
 
 type SevenSegProps = {
@@ -19,13 +19,8 @@ export class SevenSegComponent extends React.Component<
     this.state = this.getState()
   }
 
-  private getState() {
-    const state: SevenSegState = {}
-    let startIndex: number = this.props.displayId * 8
-    for (let i = startIndex; i <= startIndex + 7; i++) {
-      state[i] = Board.sevenSeg.isOn(i)
-    }
-    return state
+  private getState(): SevenSegState {
+    return { segState: Board.sevenSeg.getDisplay(this.props.displayId) }
   }
 
   public render(): React.ReactNode {
@@ -36,42 +31,42 @@ export class SevenSegComponent extends React.Component<
           className="display-container display-size-12">
           <div
             className="segment-x segment-a"
-            style={this.state[0] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[0] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-y segment-b"
-            style={this.state[1] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[1] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-y segment-c"
-            style={this.state[2] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[2] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-x segment-d"
-            style={this.state[3] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[3] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-y segment-e"
-            style={this.state[4] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[4] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-y segment-f"
-            style={this.state[5] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[5] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-x segment-g"
-            style={this.state[6] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[6] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
           <div
             className="segment-dp"
-            style={this.state[7] ? { opacity: 1 } : { opacity: 0.1 }}>
+            style={this.state.segState[7] ? { opacity: 1 } : { opacity: 0.1 }}>
             <span className="segment-border" />
           </div>
         </div>
