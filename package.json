@@ -60,4 +60,5 @@
   "jest-junit": {
     "reportTestSuiteErrors": "true"
   }
+
 }
