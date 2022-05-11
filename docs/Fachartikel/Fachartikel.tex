@@ -40,6 +40,13 @@
 \section*{Abstract}
 \thispagestyle{empty}
 
+% Einleitung
+% Methodische Einordnung der Arbeit
+% Vorgehen
+% Ergebnis
+
+Ein fester Bestandteil des Informatikstudiums an der ZHAW ist das Modul \glqq Computertechnik 1\grqq, in dem die Studierenden das hardwarenahe Programmieren erlernen. Dafür wird ihnen ein physisches Microcontroller-Board zur Verfügung gestellt, das für die Durchführung der zum Modul gehörigen Praktika notwendig ist. Das Projekt \glqq Virtual CT Board\grqq{} hat zum Ziel, dieses physische Board zu virtualisieren und den Studierenden eine handliche, digitale Version davon zur Verfügung zu stellen. Dazu wurde eine Software gebaut, die als Web-Applikation funktioniert und in einem Browser verwendbar ist. Das Projekt hatte zum Ziel, so viele Funktionen des physischen CT Boards wie möglich umzusetzen, wobei im Zwei-Wochen-Rhythmus Reviews und Plannings gemäss der agilen SCRUM-Methode abgehalten wurden. Nachdem die Grundarchitektur erstellt war, wurden darauf aufbauend die einzelnen Funktionen des Boards und des dazugehörigen Code-Editors umgesetzt. Im Zentrum standen dabei die Lauffähigkeit von Assembly-Code und die diversen Input-/Output-Möglichkeiten des Boards.
+\newline Das vorliegend umgesetzte \glqq Virtual CT Board\grqq{} ist ein Prototyp, der noch der einen oder anderen Ergänzung bedarf, bevor er das physische CT Board vollständig ersetzen kann. Der Grundstein ist jedoch gelegt: X der 14 CT1-Praktika können bereits mit dem \glqq Virtual CT Board\grqq{} durchgeführt werden. 
 
 
 \newpage
@@ -55,7 +62,7 @@
 
 \subsection{Die Idee}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
 \includegraphics[width=10cm]{ctboard}
