@@ -14,16 +14,16 @@ enum SEVENsegNr {
   _0111_0111 = 10,//a
   _0111_1100 = 11,//b
   _0100_1100 = 12,//c
-  _0101_1110 = 10,//d
-  _0111_1001 = 10,//e
-  _0111_0011 = 10,//f
+  _0101_1110 = 13,//d
+  _0111_1001 = 14,//e
+  _0111_0001 = 15,//f
 }
 
 export class SEVENseg extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000110)
-  public endAddress = Word.fromUnsignedInteger(0x60000113)
+  public endAddress = Word.fromUnsignedInteger(0x60000115)
   public startAddressBin = Word.fromUnsignedInteger(0x60000114)
-  public endAddressBin = Word.fromUnsignedInteger(0x60000105)
+  public endAddressBin = Word.fromUnsignedInteger(0x60000115)
   public isReadOnly = false
   public isVolatile = false
 
@@ -43,10 +43,11 @@ export class SEVENseg extends Device {
     return this.findSegByte(position).isBitSet(position % 8)
   }
   public getDisplay(display: number): boolean[]{
+    //return [true,true,true,false,true,true,true,true]
     if( this.isBin()){
      return this.getBinDisplay(display)
     }else{
-      return this.getDisplay(display)
+      return this.getRegDisplay(display)
     }
     return []
   }
@@ -77,16 +78,17 @@ export class SEVENseg extends Device {
     let arr: boolean[] = []
     switch ( display ) {
       case 0:
-        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin).toUnsignedInteger()%8)
+        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin).toUnsignedInteger()%16)
         break;
       case 1:
-        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.startAddressBin).toUnsignedInteger()/8))
+        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.startAddressBin).toUnsignedInteger()/16))
         break;
       case 2:
-        arr = this.toSevensegNrBin(this.memory.readByte(this.endAddress).toUnsignedInteger()%8)
+        arr = this.toSevensegNrBin(this.memory.readByte(this.endAddressBin).toUnsignedInteger()%16)
         break;
       case 3:
-        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.endAddress).toUnsignedInteger()/8))
+        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.endAddressBin).toUnsignedInteger()/16))
+        this.oldBin=this.memory.readWord(this.endAddressBin)
         break;
       default:
         //
