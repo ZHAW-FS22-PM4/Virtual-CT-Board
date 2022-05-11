@@ -102,15 +102,15 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       line = executable.sourceMap.getLine(pc)
     }
 
-    if (line) this.highlightLine(line + 1)
+    if (line) this.highlightLine(line + 1, 'step-highlighting')
   }
 
-  highlightLine(line: number): void {
+  highlightLine(line: number, className: string): void {
     const view = this.editor.current?.view
     if (view) {
       const decorations: Extension[] = []
       const decoration = Decoration.line({
-        class: 'line-highlighting'
+        class: className
       })
       const position = view.state.doc.line(line).from
       decorations.push(
@@ -136,19 +136,16 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     try {
       action()
     } catch (err: unknown) {
-      console.log('error occurred')
-
       if (err instanceof Error) {
         const errorMessage: string = err.message
         this.setState({
           showError: true,
           errorMessage: errorMessage
         })
-        setTimeout(() => this.setState({ showError: false }), 5000)
       }
 
       if (err instanceof AssemblerError) {
-        this.highlightLine(err.line + 1)
+        this.highlightLine(err.line + 1, 'error-highlighting')
       }
     }
   }
@@ -257,6 +254,10 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           editable={this.state.mode == EditorMode.EDIT}
           extensions={[this.configuration.of([]), Assembly()]}
           onChange={(value: string) => {
+            if (this.state.showError) {
+              this.clearHighlightings()
+              this.setState({ showError: false })
+            }
             sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
           }}
         />

@@ -5,7 +5,7 @@
 export class AssemblerError extends Error {
   public line: number
   constructor(message: string, line: number, pos?: number) {
-    super(`${message} at Line: ${line + 1} ${pos ? ', Position: ' + pos : ''}`)
+    super(`${message} Line: ${line + 1} ${pos ? 'Position: ' + pos : ''}`)
     this.line = line
   }
 }

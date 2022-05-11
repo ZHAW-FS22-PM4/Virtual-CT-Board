@@ -1,5 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -37,7 +38,7 @@ export class BxInstruction extends BaseInstruction {
     const content = registers.readRegister(register)
 
     if (content.toUnsignedInteger() % 2 !== 0) {
-      throw new Error(
+      throw new InstructionError(
         'Value of register cannot be divided by 2 and and is therefore not valid.'
       )
     }

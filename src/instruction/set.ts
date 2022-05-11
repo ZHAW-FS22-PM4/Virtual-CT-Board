@@ -1,3 +1,4 @@
+import { InstructionError } from 'instruction/error'
 import {
   BALConditionalJumpInstruction,
   BCCConditionalJumpInstruction,
@@ -116,9 +117,7 @@ export class InstructionSet implements IInstructionSet {
         return instruction
       }
     }
-    throw new Error(
-      `Unable to find instruction encoder for the instruction '${name}'.`
-    )
+    throw new InstructionError(`Unable to find instruction '${name}'.`)
   }
 
   public getExecutor(opcode: Halfword): IInstructionExecutor {
