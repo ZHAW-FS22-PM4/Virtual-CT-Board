@@ -1,3 +1,4 @@
+import { InstructionError } from 'instruction/error'
 import { IInstruction } from 'instruction/interfaces'
 import { InstructionSet } from 'instruction/set'
 import { Halfword } from 'types/binary'
@@ -21,8 +22,8 @@ describe('InstructionSet', function () {
   })
   it('should return error when no encoder found', function () {
     expect(() => sut.getEncoder(invalidInstructionName, [])).toThrowError(
-      new Error(
-        `Unable to find instruction encoder for the instruction '${invalidInstructionName}'.`
+      new InstructionError(
+        `Unable to find instruction '${invalidInstructionName}'.`
       )
     )
   })
