@@ -136,6 +136,8 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     try {
       action()
     } catch (err: unknown) {
+      console.log('error occurred')
+
       if (err instanceof Error) {
         const errorMessage: string = err.message
         this.setState({

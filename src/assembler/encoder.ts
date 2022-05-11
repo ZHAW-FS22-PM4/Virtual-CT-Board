@@ -1,5 +1,4 @@
 import { AssemblerError } from 'assembler/error'
-import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
@@ -71,7 +70,7 @@ export function encode(code: ICodeFile): IELF {
       try {
         writeInstruction(writer, instruction, pool)
       } catch (e: any) {
-        if (e instanceof InstructionError) {
+        if (e instanceof Error) {
           throw new AssemblerError(e.message, instruction.line)
         }
       }
