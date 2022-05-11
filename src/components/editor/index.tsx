@@ -49,7 +49,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   resetProcessor(): void {
     Board.processor.reset()
     this.setState({ mode: EditorMode.EDIT })
-    this.updateProgramCounterHighlighting(true)
+    this.clearHighlightings()
   }
 
   runOrHalt(): void {
@@ -64,12 +64,13 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     } else if (this.state.mode === EditorMode.RUN) {
       Board.processor.halt()
       nextMode = EditorMode.STEP
+      this.updateProgramCounterHighlighting()
     } else if (this.state.mode === EditorMode.STEP) {
       Board.processor.execute()
       nextMode = EditorMode.RUN
+      this.clearHighlightings()
     }
     this.setState({ mode: nextMode })
-    this.updateProgramCounterHighlighting(nextMode != EditorMode.STEP)
   }
 
   step(): void {
@@ -93,36 +94,45 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }))
   }
 
-  updateProgramCounterHighlighting(clear: boolean = false): void {
+  updateProgramCounterHighlighting() {
     const executable = Board.getExecutable()
     let line: number | undefined
-    if (executable && !clear) {
+    if (executable) {
       const pc = Board.registers.readRegister(Register.PC)
       line = executable.sourceMap.getLine(pc)
     }
 
-    this.highlightLine('current-program-counter', line ? line + 1 : undefined)
+    if (line) this.highlightLine(line + 1)
   }
 
-  highlightLine(className: string, line?: number): void {
+  highlightLine(line: number): void {
     const view = this.editor.current?.view
-    const decorations: Extension[] = []
     if (view) {
-      if (line) {
-        const decoration = Decoration.line({
-          class: className
-        })
-        const position = view.state.doc.line(line).from
-        decorations.push(
-          EditorView.decorations.of(Decoration.set(decoration.range(position)))
-        )
-      }
+      const decorations: Extension[] = []
+      const decoration = Decoration.line({
+        class: 'line-highlighting'
+      })
+      const position = view.state.doc.line(line).from
+      decorations.push(
+        EditorView.decorations.of(Decoration.set(decoration.range(position)))
+      )
       const effect = this.configuration.reconfigure(decorations)
       view.dispatch({ effects: [effect] })
     }
   }
 
-  catchAndShowError(action: () => void): void {
+  clearHighlightings(): void {
+    const view = this.editor.current?.view
+    if (view) {
+      const decorations: Extension[] = []
+      const effect = this.configuration.reconfigure(decorations)
+      view.dispatch({ effects: [effect] })
+    }
+  }
+
+  catchAndShowError(action: () => void) {
+    this.clearHighlightings()
+
     try {
       action()
     } catch (err: unknown) {
@@ -136,7 +146,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       }
 
       if (err instanceof AssemblerError) {
-        this.highlightLine('error-highlighting', err.line + 1)
+        this.highlightLine(err.line + 1)
       }
     }
   }
