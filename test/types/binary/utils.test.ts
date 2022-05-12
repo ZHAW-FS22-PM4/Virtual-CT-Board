@@ -5,13 +5,12 @@ import {
   getMaxValueDisplayableWithBits,
   limitValuesToBitCount
 } from 'types/binary/utils'
-import { VirtualBoardError } from 'types/error'
 
 const bitCountErrorMsg =
   'BitCount has to be a positive integer value (at least 1)'
-const notSafeIntegerErrorMsg = 'value out of save integer range'
+const notSafeIntegerErrorMsg = 'Value out of save integer range.'
 const invalidBitCountErrorMsg =
-  'provided bitCount is not an integer between 1 and 32'
+  'Provided bitCount is not an integer between 1 and 32.'
 describe('checkRange method', () => {
   test('valid ranges', () => {
     expect(checkRange('ANY', 6, 3, 7)).toBeUndefined()
@@ -22,16 +21,16 @@ describe('checkRange method', () => {
   test('invalid ranges or non integer', () => {
     expect(() => {
       checkRange('INVALID', 0, 1, 10)
-    }).toThrowError(VirtualBoardError)
+    }).toThrowError(Error)
     expect(() => {
       checkRange('INVALID', 234567, 234566, 234566)
-    }).toThrowError(VirtualBoardError)
+    }).toThrowError(Error)
     expect(() => {
       checkRange('INVALID', 456, 100, 150)
-    }).toThrowError(VirtualBoardError)
+    }).toThrowError(Error)
     expect(() => {
       checkRange('INVALID', 5.5, 4, 6)
-    }).toThrowError(VirtualBoardError)
+    }).toThrowError(Error)
   })
 })
 describe('limitValuesToBitCount method', () => {

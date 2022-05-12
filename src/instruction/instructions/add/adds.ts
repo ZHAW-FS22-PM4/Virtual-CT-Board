@@ -1,6 +1,7 @@
 import { add, AluResult } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -78,17 +79,12 @@ export class AddsImmediate3Instruction extends BaseInstruction {
       super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionsCount) &&
       isImmediate(options[2]) &&
-      options[0] != options[1]
+      options[0] !== options[1]
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionsCount)
-    if (options[0] === options[1]) {
-      throw new Error(
-        'If operand 1 and result are the same register, AddsImmediate8Instruction must be used.'
-      )
-    }
     let immBits = createImmediateBits(options[2], 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
@@ -137,7 +133,7 @@ export class AddsImmediate8Instruction extends BaseInstruction {
     checkOptionCount(options, 2, 3)
     // for ADDS imm8, result and operand must be stored in the same register
     if (options.length === 3 && options[0] !== options[1]) {
-      throw new Error(
+      throw new InstructionError(
         'First and second parameter must be the same register (Rdn = Rdn + <imm8>).'
       )
     }
