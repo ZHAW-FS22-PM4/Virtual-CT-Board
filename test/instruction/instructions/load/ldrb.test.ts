@@ -1,11 +1,11 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrbImmediate5OffsetInstruction,
   LdrbRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrb'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -121,17 +121,17 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       instrLdrbImm.encodeInstruction(['R7', '[R4]'])[0].toBinaryString()
     ).toEqual('0111100000100111')
     expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2', 'R3]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2', '6]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() =>
       instrLdrbImm.encodeInstruction(['R1', '0x19]', '[R2'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LdrbRegisterOffsetInstruction', () => {
     expect(
@@ -139,19 +139,18 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0101110011010001')
     expect(() =>
       instrLdrbReg.encodeInstruction(['R1', '[R2', '#0x1F]'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     expect(() => instrLdrbReg.encodeInstruction(['R1', '[R2', 'R8]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrbReg.encodeInstruction(['R11', '[R2', 'R5]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrbReg.encodeInstruction(['R1', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
-    // LDRB R5, 0x1F], [R2
     expect(() => instrLdrbReg.encodeInstruction(['R1', '0xd]', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
   })
 })

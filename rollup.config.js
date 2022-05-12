@@ -29,6 +29,9 @@ import livereload from 'rollup-plugin-livereload'
 // to automatically convert .grammar files to javascript object files
 import { lezer } from '@lezer/generator/rollup'
 
+// allows to copy files
+import copy from 'rollup-plugin-copy'
+
 const isDevelopment = !!process.env.ROLLUP_WATCH
 const isProduction = !isDevelopment
 
@@ -57,7 +60,15 @@ let plugins = [
     template: 'src/index.html',
     target: 'index.html'
   }),
-  lezer()
+  lezer(),
+  copy({
+    targets: [
+      {
+        src: './node_modules/fork-awesome/fonts',
+        dest: 'dist/'
+      }
+    ]
+  })
 ]
 
 if (isProduction) {

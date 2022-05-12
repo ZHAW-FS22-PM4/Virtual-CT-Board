@@ -1,10 +1,10 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { MovInstruction } from 'instruction/instructions/mov/mov'
 import { $enum } from 'ts-enum-util'
 import { instance, mock, resetCalls, verify, when } from 'ts-mockito'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 const invalidInstructionOptions = ['R77', '#2#']
@@ -77,25 +77,25 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption,
         invalidRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOV R5, #0x5C
     expect(() =>
       instructionMov.encodeInstruction([
         lowRegisterOption,
         validImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOV R2, 5
     expect(() =>
       instructionMov.encodeInstruction([
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // MOV R2
     expect(() =>
       instructionMov.encodeInstruction([lowRegisterOption2])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 

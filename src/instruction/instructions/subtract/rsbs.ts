@@ -1,6 +1,7 @@
 import { sub } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -10,7 +11,6 @@ import {
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 /**
@@ -49,10 +49,7 @@ export class RsbsInstruction extends BaseInstruction {
   private static checkConstImmediate(options: string[]): void {
     let immConst = createImmediateBits(options[2], 1)
     if (immConst.value != 0) {
-      throw new VirtualBoardError(
-        'third option must be #0',
-        VirtualBoardErrorType.InvalidParamProvided
-      )
+      throw new InstructionError('Third option must be #0.')
     }
   }
 }

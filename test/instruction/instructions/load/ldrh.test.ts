@@ -1,11 +1,11 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrhImmediate5OffsetInstruction,
   LdrhRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrh'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -130,17 +130,17 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       instrLdrhImm.encodeInstruction(['R7', '[R5', '#0x3e]'])[0].toHexString()
     ).toEqual('8fef')
     expect(() => instrLdrhImm.encodeInstruction(['R1', '[R6', 'R5]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrhImm.encodeInstruction(['R5', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrhImm.encodeInstruction(['R4', '[R3', '8]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() =>
       instrLdrhImm.encodeInstruction(['R5', '0x1F]', '[R2'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LdrhRegisterOffsetInstruction', () => {
     expect(
@@ -148,21 +148,21 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0101101001111100')
     expect(() =>
       instrLdrhReg.encodeInstruction(['R4', '[R2', '#0x16]'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     expect(() => instrLdrhReg.encodeInstruction(['R1', '[R2', 'SP]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrhReg.encodeInstruction(['R2', '[R55', 'R1]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrhReg.encodeInstruction(['R5', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() =>
       instrLdrhReg.encodeInstruction(['R5', '0x1F]', '[R2'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     expect(() => instrLdrhReg.encodeInstruction(['R6', '[R2]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
   })
 })

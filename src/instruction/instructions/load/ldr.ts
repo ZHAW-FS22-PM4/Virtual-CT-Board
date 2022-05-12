@@ -1,5 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkBracketsOnLastOptions,
@@ -18,7 +19,6 @@ import {
 import { $enum } from 'ts-enum-util'
 import { Halfword, Word } from 'types/binary'
 import { limitValuesToBitCount } from 'types/binary/utils'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 /**
@@ -190,10 +190,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         this.expectedOptionCountMax
       )
       if (!isPCRegister(options[1])) {
-        throw new VirtualBoardError(
-          'second param is not PC register',
-          VirtualBoardErrorType.InvalidRegisterAsOption
-        )
+        throw new InstructionError('Second param is not PC register')
       }
     }
     let immValue: Halfword

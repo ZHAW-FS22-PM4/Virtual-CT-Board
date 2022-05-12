@@ -178,7 +178,7 @@ export class LcdDisplay extends Device {
         return i
       }
     }
-    throw new Error('Binary Offset not found.')
+    throw new Error('Binary offset not found.')
   }
 
   private setLcdPositionInfoBlock(

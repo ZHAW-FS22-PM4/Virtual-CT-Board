@@ -6,6 +6,7 @@ import CodeMirror, {
   ReactCodeMirrorRef
 } from '@uiw/react-codemirror'
 import { assemble } from 'assembler'
+import { AssemblerError } from 'assembler/error'
 import Board from 'board'
 import { Register } from 'board/registers'
 import React from 'react'
@@ -48,7 +49,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
   resetProcessor(): void {
     Board.processor.reset()
     this.setState({ mode: EditorMode.EDIT })
-    this.updateProgramCounterHighlighting(true)
+    this.clearHighlightings()
   }
 
   runOrHalt(): void {
@@ -63,12 +64,13 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     } else if (this.state.mode === EditorMode.RUN) {
       Board.processor.halt()
       nextMode = EditorMode.STEP
+      this.updateProgramCounterHighlighting()
     } else if (this.state.mode === EditorMode.STEP) {
       Board.processor.execute()
       nextMode = EditorMode.RUN
+      this.clearHighlightings()
     }
     this.setState({ mode: nextMode })
-    this.updateProgramCounterHighlighting(nextMode != EditorMode.STEP)
   }
 
   step(): void {
@@ -92,31 +94,45 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }))
   }
 
-  updateProgramCounterHighlighting(clear: boolean = false) {
+  updateProgramCounterHighlighting() {
+    const executable = Board.getExecutable()
+    let line: number | undefined
+    if (executable) {
+      const pc = Board.registers.readRegister(Register.PC)
+      line = executable.sourceMap.getLine(pc)
+    }
+
+    if (line) this.highlightLine(line + 1, 'step-highlighting')
+  }
+
+  highlightLine(line: number, className: string): void {
     const view = this.editor.current?.view
     if (view) {
-      const executable = Board.getExecutable()
-      let line: number | undefined
-      if (executable && !clear) {
-        const pc = Board.registers.readRegister(Register.PC)
-        line = executable.sourceMap.getLine(pc)
-      }
       const decorations: Extension[] = []
-      if (line) {
-        const decoration = Decoration.line({
-          class: 'current-program-counter'
-        })
-        const position = view.state.doc.line(line + 1).from
-        decorations.push(
-          EditorView.decorations.of(Decoration.set(decoration.range(position)))
-        )
-      }
+      const decoration = Decoration.line({
+        class: className
+      })
+      const position = view.state.doc.line(line).from
+      decorations.push(
+        EditorView.decorations.of(Decoration.set(decoration.range(position)))
+      )
+      const effect = this.configuration.reconfigure(decorations)
+      view.dispatch({ effects: [effect] })
+    }
+  }
+
+  clearHighlightings(): void {
+    const view = this.editor.current?.view
+    if (view) {
+      const decorations: Extension[] = []
       const effect = this.configuration.reconfigure(decorations)
       view.dispatch({ effects: [effect] })
     }
   }
 
   catchAndShowError(action: () => void) {
+    this.clearHighlightings()
+
     try {
       action()
     } catch (err: unknown) {
@@ -126,7 +142,10 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           showError: true,
           errorMessage: errorMessage
         })
-        setTimeout(() => this.setState({ showError: false }), 5000)
+      }
+
+      if (err instanceof AssemblerError) {
+        this.highlightLine(err.line + 1, 'error-highlighting')
       }
     }
   }
@@ -235,6 +254,10 @@ export class EditorComponent extends React.Component<{}, EditorState> {
           editable={this.state.mode == EditorMode.EDIT}
           extensions={[this.configuration.of([]), Assembly()]}
           onChange={(value: string) => {
+            if (this.state.showError) {
+              this.clearHighlightings()
+              this.setState({ showError: false })
+            }
             sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
           }}
         />

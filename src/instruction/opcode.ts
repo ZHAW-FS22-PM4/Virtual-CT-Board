@@ -1,8 +1,7 @@
-import { EncoderError } from 'assembler/parser/error'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 /**
  * if pattern length is not valid throws a vbe with type InvalidParamProvided
@@ -10,9 +9,8 @@ import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
  */
 function checkPatternLength(pattern: string) {
   if (pattern.length !== 16) {
-    throw new VirtualBoardError(
-      'Opcode pattern length is invalid. Must be 16 characters long.',
-      VirtualBoardErrorType.InvalidParamProvided
+    throw new Error(
+      'Opcode pattern length is invalid. Must be 16 characters long.'
     )
   }
 }
@@ -23,9 +21,8 @@ function checkPatternLength(pattern: string) {
  */
 function checkPatternCharacter(char: string) {
   if (!['0', '1', 'X'].includes(char)) {
-    throw new VirtualBoardError(
-      'Opcode pattern contains invalid characters. Only 1, 0 or X are valid pattern characters.',
-      VirtualBoardErrorType.InvalidParamProvided
+    throw new Error(
+      'Opcode pattern contains invalid characters. Only 1, 0 or X are valid pattern characters.'
     )
   }
 }
@@ -166,10 +163,7 @@ export function getImmediateBits(
 export function createLowRegisterBits(option: string): Halfword {
   let register: Register = getEnumValueForRegisterString(option)
   if (!Registers.isLowRegister(register)) {
-    throw new VirtualBoardError(
-      'Provided register is not a low register',
-      VirtualBoardErrorType.ProvidedRegisterShouldBeLow
-    )
+    throw new InstructionError('Provided register is not a low register.')
   }
   return Halfword.fromUnsignedInteger(register)
 }
@@ -197,24 +191,22 @@ export function createImmediateBits(
   lsbZeroBitCount: number = 0
 ): Halfword {
   if (!isImmediate(option)) {
-    throw new VirtualBoardError(
-      'Is not an immediate value (should start with #)',
-      VirtualBoardErrorType.ProvidedImmediateIsInvalid
+    throw new InstructionError(
+      'Is not an immediate value (should start with #).'
     )
   }
 
   let optionValue = +option.substring(1)
   if (lsbZeroBitCount !== 0) {
     if (optionValue % (lsbZeroBitCount * 2) !== 0) {
-      throw new VirtualBoardError(
-        `immediate offset not ${
+      throw new InstructionError(
+        `Immediate offset not ${
           lsbZeroBitCount == 2
             ? 'word'
             : lsbZeroBitCount == 1
             ? 'halfword'
             : lsbZeroBitCount + ' bytes'
-        } aligned`,
-        VirtualBoardErrorType.ProvidedImmediateIsInvalid
+        } aligned`
       )
     }
 
@@ -228,9 +220,8 @@ export function createImmediateBits(
   ) {
     return immediateBits
   }
-  throw new VirtualBoardError(
-    'Immediate value uses to much bits (try with a smaller number)',
-    VirtualBoardErrorType.ProvidedImmediateIsInvalid
+  throw new InstructionError(
+    'Immediate value uses too much bits (try with a smaller number).'
   )
 }
 
@@ -242,16 +233,10 @@ export function createImmediateBits(
  */
 function checkValidPositiveRange(minCount: number, maxCount: number): void {
   if (minCount > maxCount) {
-    throw new VirtualBoardError(
-      'range max should be bigger value than min',
-      VirtualBoardErrorType.InvalidParamProvided
-    )
+    throw new Error('Range max should be bigger value than min.')
   }
   if (minCount < 0 || maxCount < 0) {
-    throw new VirtualBoardError(
-      'range should only include positive values',
-      VirtualBoardErrorType.InvalidParamProvided
-    )
+    throw new Error('Range should only include positive values.')
   }
 }
 
@@ -268,15 +253,13 @@ export function checkOptionCount(
 ): void {
   checkValidPositiveRange(minCount, maxCount)
   if (options.length < minCount) {
-    throw new VirtualBoardError(
-      `to less options provided expected at least ${minCount}`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    throw new InstructionError(
+      `Not enough options provided expected at least ${minCount}.`
     )
   }
   if (options.length > maxCount) {
-    throw new VirtualBoardError(
-      `to much options provided expected ${maxCount} at most`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    throw new InstructionError(
+      `Too much options provided expected ${maxCount} at most.`
     )
   }
 }
@@ -299,14 +282,13 @@ export function checkBracketsOnLastOptions(
     optionCountMax - optionCountMin !== 1
   ) {
     throw Error(
-      'provided option count is more than one apart or max is smaller than min'
+      'Provided option count is more than one apart or max is smaller than min'
     )
   }
   if (optionCountMin != optionCountMax && options.length == optionCountMin) {
     if (!registerStringEnclosedInBrackets(options[optionCountMin - 1])) {
-      throw new EncoderError(
-        `opening or closing bracket missing for ${optionCountMin}. param`,
-        VirtualBoardErrorType.InvalidParamProvided
+      throw new InstructionError(
+        `Opening or closing bracket missing for ${optionCountMin}. param`
       )
     }
   } else if (
@@ -316,11 +298,10 @@ export function checkBracketsOnLastOptions(
       options[optionCountMax - 1]
     )
   ) {
-    throw new EncoderError(
-      `opening bracket on ${
+    throw new InstructionError(
+      `Opening bracket on ${
         optionCountMax - 1
-      }. param or closing bracket on ${optionCountMax}. param`,
-      VirtualBoardErrorType.InvalidParamProvided
+      }. param or closing bracket on ${optionCountMax}. param`
     )
   }
 }
@@ -383,10 +364,7 @@ function getEnumValueForRegisterString(option: string): Register {
   try {
     return $enum(Register).getValueOrThrow(option)
   } catch (e) {
-    throw new VirtualBoardError(
-      `option '${option}' is not a valid register`,
-      VirtualBoardErrorType.InvalidRegisterAsOption
-    )
+    throw new InstructionError(`Option '${option}' is not a valid register.`)
   }
 }
 

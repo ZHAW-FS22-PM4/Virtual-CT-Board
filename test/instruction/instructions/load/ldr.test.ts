@@ -1,13 +1,12 @@
-import { EncoderError } from 'assembler/parser/error'
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrImmediate5OffsetInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldr'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -34,17 +33,14 @@ const instrLdrImm = new LdrImmediate5OffsetInstruction()
 const instrLdrReg = new LdrRegisterOffsetInstruction()
 const instrLdrPointer = new LdrRegisterInstruction()
 
-const encodingErrorWrongBracketsOn2nd = new EncoderError(
-  'opening or closing bracket missing for 2. param',
-  VirtualBoardErrorType.InvalidParamProvided
+const encodingErrorWrongBracketsOn2nd = new InstructionError(
+  'Opening or closing bracket missing for 2. param'
 )
-const encodingErrorWrongBracketsOn2ndOr3rd = new EncoderError(
-  'opening bracket on 2. param or closing bracket on 3. param',
-  VirtualBoardErrorType.InvalidParamProvided
+const encodingErrorWrongBracketsOn2ndOr3rd = new InstructionError(
+  'Opening bracket on 2. param or closing bracket on 3. param'
 )
-const offsetNotWordAligned = new VirtualBoardError(
-  'immediate offset not word aligned',
-  VirtualBoardErrorType.InvalidParamProvided
+const offsetNotWordAligned = new InstructionError(
+  'Immediate offset not word aligned'
 )
 
 const registers: Registers = new Registers()
@@ -238,7 +234,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       instrLdrImm.encodeInstruction(['R6', '[R7', '#0x7C]'])[0].toHexString()
     ).toEqual('6ffe')
     expect(() => instrLdrImm.encodeInstruction(['R7', '[R2', 'R3]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrImm.encodeInstruction(['R5', '[R2'])).toThrow(
       encodingErrorWrongBracketsOn2nd
@@ -265,19 +261,19 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0101100101010000')
     expect(() =>
       instrLdrReg.encodeInstruction(['R1', '[R2', '#0x1F]'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'SP]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2', 'R22]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrReg.encodeInstruction(['R1', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() =>
       instrLdrReg.encodeInstruction(['R1', '#0x1F]', '[R2'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('LoadRegisterInstruction', () => {
     expect(
@@ -305,24 +301,19 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     ).toEqual('0100110100000000')
     expect(() =>
       instrLdrPointer.encodeInstruction(['R1', '[R2', 'R3]'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     expect(() =>
       instrLdrPointer.encodeInstruction(['R1', '[SP', '#4]'])
-    ).toThrow(
-      new VirtualBoardError(
-        'second param is not PC register',
-        VirtualBoardErrorType.InvalidRegisterAsOption
-      )
-    )
+    ).toThrow(new InstructionError('Second param is not PC register'))
     expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instrLdrPointer.encodeInstruction(['R1', '[R2', '5'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() =>
       instrLdrPointer.encodeInstruction(['R5', '#0x1F]', '[R2'])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     //TODO VCB-176 --> uncomment tests
     /*expect(() =>
       instrLdrPointer.encodeInstruction(['R1', '[PC', '#0x6]'])

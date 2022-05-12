@@ -1,5 +1,4 @@
 import { Byte, Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { IInstruction } from '../ast'
 import {
   IELF,
@@ -104,10 +103,7 @@ export class FileWriter {
    */
   public addSymbol(symbol: ISymbol): void {
     if (symbol.name in this.file.symbols)
-      throw new VirtualBoardError(
-        `Symbol with name '${symbol.name}' already exists.`,
-        VirtualBoardErrorType.DuplicateSymbolDefinition
-      )
+      throw new Error(`Symbol with name '${symbol.name}' already exists.`)
     this.file.symbols[symbol.name] = symbol
   }
 
