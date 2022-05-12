@@ -1,5 +1,3 @@
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
-
 export function checkRange(
   name: string,
   value: number,
@@ -7,9 +5,8 @@ export function checkRange(
   max: number
 ) {
   if (!Number.isInteger(value) || value < min || value > max) {
-    throw new VirtualBoardError(
-      `OutOfRange: ${name} must be an integer in range ${min} to ${max} (provided: ${value}).`,
-      VirtualBoardErrorType.BinaryTypeOutOfRange
+    throw new Error(
+      `OutOfRange: ${name} must be an integer in range ${min} to ${max} (provided: ${value}).`
     )
   }
 }
@@ -23,10 +20,10 @@ export function checkRange(
  */
 export function limitValuesToBitCount(value: number, bitCount: number): number {
   if (!Number.isSafeInteger(value)) {
-    throw new Error('value out of save integer range')
+    throw new Error('Value out of save integer range.')
   }
   if (bitCount < 1 || bitCount > 32 || !Number.isInteger(bitCount)) {
-    throw new Error('provided bitCount is not an integer between 1 and 32')
+    throw new Error('Provided bitCount is not an integer between 1 and 32.')
   }
   //bitwise operations are limited to maximal 32 bits
   let mask = getMaxValueDisplayableWithBits(bitCount)
@@ -40,7 +37,7 @@ export function limitValuesToBitCount(value: number, bitCount: number): number {
  */
 export function getMaxValueDisplayableWithBits(bitCount: number) {
   if (bitCount < 1 || !Number.isInteger(bitCount)) {
-    throw new Error('BitCount has to be a positive integer value (at least 1)')
+    throw new Error('BitCount has to be a positive integer value (at least 1).')
   }
   return Math.pow(2, bitCount) - 1
 }
@@ -54,7 +51,7 @@ export function getMaxValueDisplayableWithBits(bitCount: number) {
  */
 export function convertToUnsignedNumber(value: number): number {
   if (!Number.isSafeInteger(value)) {
-    throw new Error('value out of save integer range')
+    throw new Error('Value out of save integer range.')
   }
   return value >>> 0
 }

@@ -96,7 +96,7 @@ describe('fromBytes method', () => {
         Byte.fromUnsignedInteger(255),
         Byte.fromUnsignedInteger(255)
       )
-    ).toThrowError('too many bytes for type provided')
+    ).toThrowError('Too many bytes for type provided.')
   })
 })
 
@@ -136,7 +136,7 @@ describe('add method', () => {
   })
   test('add - to big number added (no longer in safe integer range)', () => {
     expect(() => word_ffffffff.add(Math.pow(2, 54))).toThrowError(
-      'addition result is not within safe integer range'
+      'Addition result is not within safe integer range.'
     )
   })
 })
@@ -239,7 +239,7 @@ describe('test isBitSet function', () => {
   })
   test('should throw error if out of range', () => {
     let systemError = new Error(
-      'bit offset (tried to access) is not within type range'
+      'Bit offset (tried to access) is not within type range.'
     )
     expect(() => word_00010000.isBitSet(32)).toThrow(systemError)
     expect(() => word_00010000.isBitSet(66)).toThrow(systemError)
@@ -327,18 +327,18 @@ describe('test toggleBit function', () => {
 describe('binaryType functions with invalid values', () => {
   test('getHexCharCount not dividable by 4', () => {
     expect(() => BinaryType.getHexCharCount(3)).toThrowError(
-      'provided bit count is not dividable by 4'
+      'Provided bit count is not dividable by 4.'
     )
     expect(() => BinaryType.getHexCharCount(6)).toThrowError(
-      'provided bit count is not dividable by 4'
+      'Provided bit count is not dividable by 4.'
     )
   })
   test('getByteCount not dividable by 8', () => {
     expect(() => BinaryType.getByteCount(7)).toThrowError(
-      'provided bit count is not dividable by 8'
+      'Provided bit count is not dividable by 8.'
     )
     expect(() => BinaryType.getByteCount(9)).toThrowError(
-      'provided bit count is not dividable by 8'
+      'Provided bit count is not dividable by 8.'
     )
   })
 })
