@@ -1,11 +1,11 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   StrhImmediate5OffsetInstruction,
   StrhRegisterOffsetInstruction
 } from 'instruction/instructions/store/strh'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -192,14 +192,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         lowRegisterOption3
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -207,7 +207,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidImmediateOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -215,7 +215,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
   test('StrhRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
@@ -235,7 +235,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         validImmediateOptionHigh
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R1, [R2, SP]
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -243,7 +243,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         highRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R1, [R2, R22]
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -251,14 +251,14 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         lowRegisterOption2,
         invalidRegisterOption
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
         lowRegisterOption,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
@@ -266,7 +266,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         validImmediateOptionHigh,
         lowRegisterOption2
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 

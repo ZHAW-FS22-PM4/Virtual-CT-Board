@@ -1,9 +1,9 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Flag, Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { ILabelOffsets } from 'instruction/interfaces'
 import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
 import { Byte, Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 abstract class ConditionalJumpInstruction extends BaseInstruction {
@@ -30,19 +30,13 @@ abstract class ConditionalJumpInstruction extends BaseInstruction {
     if (labels) {
       let word = labels[options[0]].toSignedInteger()
       if (word % 2 !== 0) {
-        throw new VirtualBoardError(
-          `Offset ${word} not dividable by two.`,
-          VirtualBoardErrorType.InvalidParamProvided
-        )
+        throw new Error(`Offset ${word} not dividable by two.`)
       }
       if (
         word < Byte.MIN_SIGNED_VALUE * 2 ||
         word > Byte.MAX_SIGNED_VALUE * 2
       ) {
-        throw new VirtualBoardError(
-          `Offset ${word} out of range.`,
-          VirtualBoardErrorType.InvalidParamProvided
-        )
+        throw new InstructionError(`Offset ${word} out of range.`)
       }
       // offset is divided by two here since on the real CT board the
       // offset corresponds to the amount of halfwords but on the virtual

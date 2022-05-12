@@ -7,10 +7,18 @@
   text-align: justify;
 }
 
-.cm-line.current-program-counter {
+.cm-line.error-highlighting {
   background-color: #8c2c34 !important;
 }
 
-.cm-activeLine.current-program-counter {
+.cm-activeLine.error-highlighting {
   background-color: #90313a !important;
+}
+
+.cm-line.step-highlighting {
+  background-color: #34495e !important;
+}
+
+.cm-activeLine.step-highlighting {
+  background-color: #34495e !important;
 }

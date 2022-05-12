@@ -1,6 +1,7 @@
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -29,7 +30,7 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
-      throw new Error('Parameter 1 and 2 must be identical!')
+      throw new InstructionError('Parameter 1 and 2 must be identical.')
 
     let opcode: Halfword = create(this.pattern)
     let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
@@ -111,7 +112,9 @@ export class AsrsImmediateInstruction extends BaseInstruction {
     let immValue: Word = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
 
     if (immValue.value === 0) {
-      throw new Error('Zero is not allowed as immediate in an ASRS operation!')
+      throw new InstructionError(
+        'Zero is not allowed as immediate in an ASRS operation.'
+      )
     }
 
     let result: Word = Word.fromSignedInteger(rmValue.value >> immValue.value)
