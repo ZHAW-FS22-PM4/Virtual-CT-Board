@@ -1,6 +1,7 @@
 import { AluResult, mul } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -23,8 +24,8 @@ export class MulsInstruction extends BaseInstruction {
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 3)
     if (options[0] !== options[2]) {
-      throw new Error(
-        'first and third parameter must be the same register (Rdm = Rn * Rdm)'
+      throw new InstructionError(
+        'First and third parameter must be the same register (Rdm = Rn * Rdm).'
       )
     }
     let opcode: Halfword = create(this.pattern)
