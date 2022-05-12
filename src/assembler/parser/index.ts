@@ -8,6 +8,7 @@ const SPACE_OR_TAB = `[ \\t]`
 
 const OPTION = `[0-9a-z#\\[\\]=_{}]+`
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const COMMENT = `;[^\\n]*`
 
 /**
  * Parses a given code string and return a parsed code file (AST representation).
@@ -41,7 +42,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Comment',
-      pattern: /;[^\n]*/
+      pattern: COMMENT
     },
     {
       name: 'LiteralSymbolDeclaration',
@@ -70,7 +71,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=\\s*${SPACE_OR_TAB}${INSTRUCTION})`,
+      pattern: `(${SYMBOL})(?=(?:${COMMENT}|\\s)*${SPACE_OR_TAB}${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(match.from, 'Label must be defined in area')
