@@ -105,6 +105,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
   }
 
   private cycle() {
+    let pcIncremented = false
     let executor: IInstructionExecutor | undefined = undefined
 
     try {
@@ -123,6 +124,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
         Register.PC,
         pc.add(executor.opcodeLength * 2)
       )
+      pcIncremented = true
       executor.executeInstruction(opcode, this.registers, this.memory)
       this.emit('afterCycle')
     } catch (e: any) {
@@ -131,7 +133,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
         // in case error happened during execution of the instruction, the program counter has to be set back
         // so the correct address is fetched from the source map to highlight the line
-        if (executor) {
+        if (executor && pcIncremented) {
           const pc = this.registers.readRegister(Register.PC)
           this.registers.writeRegister(
             Register.PC,
