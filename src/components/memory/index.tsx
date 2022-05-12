@@ -101,6 +101,9 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
 
   public searchAddress(text: string): void {
     let address = parseInt(String(text), 16)
+    if (isNaN(address)) {
+      return
+    }
     let startAddress = address - (address % VIEW_WIDTH)
     this.showMemory(startAddress)
   }
