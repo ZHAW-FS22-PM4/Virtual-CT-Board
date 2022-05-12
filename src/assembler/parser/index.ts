@@ -28,8 +28,16 @@ export function parse(code: string): ICodeFile {
       pattern: /\s+/
     },
     {
-      name: 'ProcedureInstructions',
-      pattern: `PROC\|ENDP\|END`
+      name: 'ProcedureInstructionStart',
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`
+    },
+    {
+      name: 'ProcedureInstructionEnds',
+      pattern: `ENDP\|END`
+    },
+    {
+      name: 'ExportInstruction',
+      pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
     },
     {
       name: 'Comment',
