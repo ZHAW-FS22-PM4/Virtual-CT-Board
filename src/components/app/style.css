@@ -54,7 +54,7 @@
 
 @media screen and (max-width: 1400px) {
   .app-component {
-    grid-template-columns: 14rem 6rem minmax(30rem, 1fr) 10rem;
+    grid-template-columns: 14rem 6rem minmax(30rem, 1fr) auto;
     grid-template-rows: 4rem 1fr auto;
   }
   .app-component .title-container {
@@ -88,7 +88,7 @@
 
 @media screen and (min-width: 1401px) {
   .app-component {
-    grid-template-columns: 14rem 1fr 10rem minmax(50rem, 1.75fr);
+    grid-template-columns: 14rem 1fr auto minmax(50rem, 1.75fr);
     grid-template-rows: 4rem 1fr auto;
   }
   .app-component .title-container {

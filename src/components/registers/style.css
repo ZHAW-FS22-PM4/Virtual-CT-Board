@@ -8,7 +8,7 @@
 }
 
 .registers-component .registers {
-  font-family: monospace;
+  font-family: 'Consolas', 'Monaco', monospace;
 }
 
 .registers-component .register {
@@ -25,7 +25,7 @@
 }
 
 .registers-component .flags {
-  font-family: monospace;
+  font-family: 'Consolas', 'Monaco', monospace;
   text-align: center;
   border-top: 1px solid #ced4da;
 }

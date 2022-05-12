@@ -81,7 +81,7 @@
 }
 
 .memory-component .cell {
-  font-family: monospace;
+  font-family: 'Consolas', 'Monaco', monospace;
 }
 
 .memory-component .address.head,

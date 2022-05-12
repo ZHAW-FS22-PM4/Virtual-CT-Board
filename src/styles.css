@@ -3,6 +3,7 @@ body,
 #app {
   width: 100%;
   height: 100%;
+  font-family: 'Segoe UI', 'Roboto', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
 }
 
 @media screen and (max-width: 1024px) {
