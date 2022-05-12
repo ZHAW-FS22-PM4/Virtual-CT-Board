@@ -1,14 +1,15 @@
 import Board from 'board'
+import classNames from 'classnames'
 import React from 'react'
 import './style.css'
 
-type LedState = {
-  [key: number]: boolean
-}
-
-type LedProps = {
+export type LedProps = {
   startIndex: number
   size: number
+}
+
+type LedState = {
+  [key: number]: boolean
 }
 
 export class LedComponent extends React.Component<LedProps, LedState> {
@@ -17,11 +18,11 @@ export class LedComponent extends React.Component<LedProps, LedState> {
   constructor(props: LedProps) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
-    Board.processor.on('afterCycle', () => this.update())
     this.state = this.getState()
+    Board.leds.on('change', () => this.update())
   }
 
-  private update() {
+  public update() {
     return this.setState(this.getState())
   }
 
@@ -30,32 +31,32 @@ export class LedComponent extends React.Component<LedProps, LedState> {
     for (let i = this.props.startIndex; i <= this.endIndex; i++) {
       state[i] = Board.leds.isOn(i)
     }
-
     return state
   }
 
   public render(): React.ReactNode {
     return (
-      <div className="led-container">
-        <div className="led-label" style={{ fontSize: 10 }}>
-          <div className="led-label-left">
-            LED{this.props.startIndex + 7}...{this.props.startIndex + 4}
-          </div>
-          <div className="led-label-right" style={{ textAlign: 'right' }}>
-            LED{this.props.startIndex + 3}...{this.props.startIndex}
-          </div>
-        </div>
-        <div className="led-display">
+      <div className="led-component">
+        <div className="leds bg-light">
           {Object.keys(this.state)
             .map(Number)
             .sort((n1, n2) => n2 - n1)
             .map((key) => (
-              <div className="led" key={'led-' + key}>
-                <div
-                  className={`led ${this.state[key] ? 'led-on' : 'led-off'}`}
-                />
-              </div>
+              <div
+                className={classNames('led', {
+                  on: this.state[key]
+                })}
+                key={'led_' + key}
+              />
             ))}
+        </div>
+        <div className="label">
+          <span>
+            LED{this.props.startIndex + 7}..{this.props.startIndex + 4}
+          </span>
+          <span>
+            LED{this.props.startIndex + 3}..{this.props.startIndex}
+          </span>
         </div>
       </div>
     )

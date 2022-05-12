@@ -19,7 +19,7 @@ beforeEach(() => {
   lcdDisplay = new LcdDisplay()
 })
 
-test('get colour function', () => {
+test('get color function', () => {
   let redValue: Halfword = Halfword.fromBytes(byte_1111_1111, byte_1111_1111)
   let greenValue: Halfword = Halfword.fromBytes(byte_1010_1010, byte_1111_1111)
   let blueValue: Halfword = Halfword.fromBytes(byte_0101_0101, byte_0000_0000)
@@ -28,9 +28,15 @@ test('get colour function', () => {
   lcdDisplay.writeHalfword(lcdDisplayAdressGreen, greenValue)
   lcdDisplay.writeHalfword(lcdDisplayAdressBlue, blueValue)
 
-  expect(lcdDisplay.getColour()[0].value).toBe(redValue.value)
-  expect(lcdDisplay.getColour()[1].value).toBe(greenValue.value)
-  expect(lcdDisplay.getColour()[2].value).toBe(blueValue.value)
+  expect(lcdDisplay.getColor()[0]).toBe(
+    (redValue.value / Halfword.MAX_VALUE) * 255
+  )
+  expect(lcdDisplay.getColor()[1]).toBe(
+    (greenValue.value / Halfword.MAX_VALUE) * 255
+  )
+  expect(lcdDisplay.getColor()[2]).toBe(
+    (blueValue.value / Halfword.MAX_VALUE) * 255
+  )
 })
 
 test('get display value function', () => {
@@ -84,9 +90,9 @@ test('get display value function', () => {
 
 test('get display value function should throw error with invalid position', () => {
   expect(() => lcdDisplay.getDisplayValue(-1)).toThrow(
-    new Error(`Position -1 does not exist.`)
+    new Error(`Position -1 is not valid.`)
   )
   expect(() => lcdDisplay.getDisplayValue(40)).toThrow(
-    new Error(`Position 40 does not exist.`)
+    new Error(`Position 40 is not valid.`)
   )
 })

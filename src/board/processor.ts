@@ -5,15 +5,13 @@ import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
 
-const cycleSpeed: number = 200
+const cycleSpeed: number = 10
 
 /**
  * The events which can be emitted by the processor.
  */
 type ProcessorEvents = {
-  afterCycle: () => void
   reset: () => void
-  afterReset: () => void
   endOfCode: () => void
 }
 
@@ -99,8 +97,6 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       Register.PC,
       this.memory.readWord(Word.fromUnsignedInteger(0x08000004))
     )
-
-    this.emit('afterReset')
   }
 
   private cycle() {
@@ -117,6 +113,5 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     }
     this.registers.writeRegister(Register.PC, pc.add(executor.opcodeLength * 2))
     executor.executeInstruction(opcode, this.registers, this.memory)
-    this.emit('afterCycle')
   }
 }

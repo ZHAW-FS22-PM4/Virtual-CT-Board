@@ -1,0 +1,49 @@
+.registers-component .registers-bar {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.registers-component .title {
+  padding: 0.5rem;
+}
+
+.registers-component .registers {
+  font-family: monospace;
+}
+
+.registers-component .register {
+  border-top: 1px solid #ced4da;
+  padding: 0.25rem 0.5rem;
+}
+
+.registers-component .register * {
+  display: inline-block;
+}
+
+.registers-component .register .name {
+  width: 2.5rem;
+}
+
+.registers-component .flags {
+  font-family: monospace;
+  text-align: center;
+  border-top: 1px solid #ced4da;
+}
+
+.registers-component .flag {
+  display: inline-block;
+  width: 25%;
+  padding: 0.25rem 0.5rem;
+}
+
+@media screen and (max-width: 1400px) {
+  .registers-component {
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  }
+}
+
+@media screen and (min-width: 1401px) {
+  .registers-component {
+    padding: 0.25rem;
+  }
+}

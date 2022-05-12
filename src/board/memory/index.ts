@@ -1,14 +1,16 @@
 import { Byte, Halfword, Word } from 'types/binary'
-import { IMemory } from './interfaces'
+import { EventEmitter } from 'types/events/emitter'
+import { IMemory, MemoryEvents } from './interfaces'
 
 interface IMemoryData {
   [address: number]: number
 }
 
-export class Memory implements IMemory {
+export class Memory extends EventEmitter<MemoryEvents> implements IMemory {
   private data: IMemoryData
 
   constructor() {
+    super()
     this.data = {}
   }
 
@@ -37,6 +39,7 @@ export class Memory implements IMemory {
 
   public writeByte(address: Word, byte: Byte): void {
     this.data[address.value] = byte.value
+    this.emit('change')
   }
 
   public writeBytes(address: Word, bytes: Byte[]): void {
@@ -56,5 +59,6 @@ export class Memory implements IMemory {
 
   public reset(): void {
     this.data = {}
+    this.emit('change')
   }
 }
