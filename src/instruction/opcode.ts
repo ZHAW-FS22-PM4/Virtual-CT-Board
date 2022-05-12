@@ -274,7 +274,7 @@ export function isLowRegister(possibleLowRegister: string): boolean {
  * @param option string to convert
  * @returns valid value for enum Register
  */
-function getEnumValueForRegisterString(option: string): Register {
+export function getEnumValueForRegisterString(option: string): Register {
   try {
     return $enum(Register).getValueOrThrow(option)
   } catch (e) {
