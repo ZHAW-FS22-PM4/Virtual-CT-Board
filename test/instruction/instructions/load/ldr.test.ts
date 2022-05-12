@@ -75,8 +75,6 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(false)
-
-    //TODO check invalid options in encodeMethod of instructionLoadInstructionImmediateOffset
     expect(
       instrLdrImm.canEncodeInstruction(ldrName, ldrRegisterOptionsInvalid)
     ).toBe(false)
@@ -251,7 +249,6 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     expect(() => instrLdrImm.encodeInstruction(['R5', '0x1F]', '[R2'])).toThrow(
       encodingErrorWrongBracketsOn2ndOr3rd
     )
-    //TODO VCB-176 --> uncomment tests
     expect(() => instrLdrImm.encodeInstruction(['R1', '[R2', '#0x3]'])).toThrow(
       offsetNotWordAligned
     )

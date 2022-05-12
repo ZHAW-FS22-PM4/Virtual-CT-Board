@@ -34,7 +34,6 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
     new LdrRegisterOffsetInstruction(),
     new LdrRegisterInstruction()
   ]
-
   private expectedOptionCountMin: number = 2
   private expectedOptionCountMax: number = 3
 
