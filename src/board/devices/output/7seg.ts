@@ -28,8 +28,9 @@ export class SEVENseg extends Device {
   public isVolatile = false
 
   private static readonly MAX_SEG_NUMBER: number = 31
-  private oldBin: Word = Word.fromUnsignedInteger(65535)
-
+  private oldBin: Halfword = this.memory.readHalfword(this.startAddressBin)
+  private oldSeg: Word = this.memory.readWord(this.startAddress)
+  private displays: boolean[][] = []
   /**
    * Returns true if seg with given position is on.
    *
@@ -45,21 +46,29 @@ export class SEVENseg extends Device {
   public getDisplay(display: number): boolean[]{
     //return [true,true,true,false,true,true,true,true]
     if( this.isBin()){
-     return this.getBinDisplay(display)
-    }else{
-      return this.getRegDisplay(display)
+      this.displays[display]=this.getBinDisplay(display)
     }
-    return []
+    if(this.isReg()){
+      this.displays[display]= this.getRegDisplay(display)
+    }
+    return this.displays[display]
   }
   /**
-   * Returns true if seg with given position is on.
+   * Returns true if value where the binary section is stored has changed.
    *
-   * @returns true if segment is turned on
+   * @returns true in case of change
    */
   private isBin():boolean{
-    return (this.memory.readWord(this.startAddressBin)!=this.oldBin)||(this.memory.readWord(this.endAddressBin)!=this.oldBin)
+    return (this.memory.readHalfword(this.startAddressBin)!=this.oldBin)
   }
-
+  /**
+   * Returns true if value where the regular section is stored has changed.
+   *
+   * @returns true in case of change
+   */
+  private isReg():boolean{
+    return (this.memory.readWord(this.startAddress)!=this.oldSeg)
+  }
   private toSevensegNrBin(inNum: number):boolean[]{
 
     let arr: boolean[] = []
@@ -88,7 +97,7 @@ export class SEVENseg extends Device {
         break;
       case 3:
         arr = this.toSevensegNrBin(~~(this.memory.readByte(this.endAddressBin).toUnsignedInteger()/16))
-        this.oldBin=this.memory.readWord(this.endAddressBin)
+        this.oldBin = this.memory.readHalfword(this.startAddressBin)
         break;
       default:
         //
@@ -112,6 +121,7 @@ return arr
   private getRegDisplay(display: number): boolean[]{
     let arr: boolean[] = []
     arr = this.toSevensegNr(this.memory.readByte(this.startAddress.add(display)))
+    if (display==3){this.oldSeg =this.memory.readWord(this.startAddress)}
     return arr
   }
 
