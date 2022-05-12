@@ -1,8 +1,8 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { LdrshRegisterOffsetInstruction } from 'instruction/instructions/load/ldrsh'
 import { Byte, Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 const instrName = 'LDRSH'
@@ -49,19 +49,19 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       instruction.encodeInstruction(['R7', '[R5', 'R6]'])[0].toBinaryString()
     ).toEqual('0101111110101111')
     expect(() => instruction.encodeInstruction(['invalidOption'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instruction.encodeInstruction(['R7', 'R5]', 'R6]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instruction.encodeInstruction(['R7', '[R5]', 'R6'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instruction.encodeInstruction(['R8', '[R5', 'R6]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => instruction.encodeInstruction(['R7', '[PC', 'R6]'])).toThrow(
-      VirtualBoardError
+      InstructionError
     )
   })
 })

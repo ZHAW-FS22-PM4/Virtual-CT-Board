@@ -1,5 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import { ILabelOffsets } from 'instruction/interfaces'
 import {
   checkOptionCount,
@@ -9,7 +10,6 @@ import {
   setBits
 } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { BaseInstruction } from '../base'
 
 /**
@@ -38,9 +38,8 @@ export class BxInstruction extends BaseInstruction {
     const content = registers.readRegister(register)
 
     if (content.toUnsignedInteger() % 2 !== 0) {
-      throw new VirtualBoardError(
-        `value of register cannot be divided by 2 and and is therefore not valid`,
-        VirtualBoardErrorType.InvalidParamProvided
+      throw new InstructionError(
+        'Value of register cannot be divided by 2 and and is therefore not valid.'
       )
     }
 
