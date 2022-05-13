@@ -11,12 +11,12 @@ enum SEVENsegNr {
   _0000_0111 = 7,
   _0111_1111 = 8,
   _0110_1111 = 9,
-  _0111_0111 = 10,//a
-  _0111_1100 = 11,//b
-  _0100_1100 = 12,//c
-  _0101_1110 = 13,//d
-  _0111_1001 = 14,//e
-  _0111_0001 = 15,//f
+  _0111_0111 = 10, //a
+  _0111_1100 = 11, //b
+  _0100_1100 = 12, //c
+  _0101_1110 = 13, //d
+  _0111_1001 = 14, //e
+  _0111_0001 = 15 //f
 }
 
 export class SEVENseg extends Device {
@@ -25,12 +25,17 @@ export class SEVENseg extends Device {
   public startAddressBin = Word.fromUnsignedInteger(0x60000114)
   public endAddressBin = Word.fromUnsignedInteger(0x60000115)
   public isReadOnly = false
-  public isVolatile = false
+  public isVolatile = true
 
   private static readonly MAX_SEG_NUMBER: number = 31
   private oldBin: Halfword = this.memory.readHalfword(this.startAddressBin)
   private oldSeg: Word = this.memory.readWord(this.startAddress)
-  private displays: boolean[][] = []
+  private displays: boolean[][] = [
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false]
+  ]
   /**
    * Returns true if seg with given position is on.
    *
@@ -43,13 +48,13 @@ export class SEVENseg extends Device {
     }
     return this.findSegByte(position).isBitSet(position % 8)
   }
-  public getDisplay(display: number): boolean[]{
+  public getDisplay(display: number): boolean[] {
     //return [true,true,true,false,true,true,true,true]
-    if( this.isBin()){
-      this.displays[display]=this.getBinDisplay(display)
+    if (this.isBin()) {
+      this.displays[display] = this.getBinDisplay(display)
     }
-    if(this.isReg()){
-      this.displays[display]= this.getRegDisplay(display)
+    if (this.isReg()) {
+      this.displays[display] = this.getRegDisplay(display)
     }
     return this.displays[display]
   }
@@ -58,73 +63,99 @@ export class SEVENseg extends Device {
    *
    * @returns true in case of change
    */
-  private isBin():boolean{
-    return (this.memory.readHalfword(this.startAddressBin)!=this.oldBin)
+  private isBin(): boolean {
+    return (
+      this.memory.readHalfword(this.startAddressBin).toUnsignedInteger() !=
+      this.oldBin.toUnsignedInteger()
+    )
   }
   /**
    * Returns true if value where the regular section is stored has changed.
    *
    * @returns true in case of change
    */
-  private isReg():boolean{
-    return (this.memory.readWord(this.startAddress)!=this.oldSeg)
+  private isReg(): boolean {
+    return (
+      this.memory.readWord(this.startAddress).toUnsignedInteger() !=
+      this.oldSeg.toUnsignedInteger()
+    )
   }
-  private toSevensegNrBin(inNum: number):boolean[]{
-
+  private toSevensegNrBin(inNum: number): boolean[] {
     let arr: boolean[] = []
 
-   let code: String = SEVENsegNr[inNum]
+    let code: String = SEVENsegNr[inNum]
     for (let i = 0; i < code.length; i++) {
-      const character = code.charAt(i);
-      if (character=='0'){arr.push(false)}
-      if (character=='1'){arr.push(true)}
-      if (character=='_'){}
+      const character = code.charAt(i)
+      if (character == '0') {
+        arr.push(false)
+      }
+      if (character == '1') {
+        arr.push(true)
+      }
+      if (character == '_') {
+      }
     }
 
     return arr
   }
-  private getBinDisplay(display: number): boolean[]{
+  private getBinDisplay(display: number): boolean[] {
     let arr: boolean[] = []
-    switch ( display ) {
+    switch (display) {
       case 0:
-        arr = this.toSevensegNrBin(this.memory.readByte(this.startAddressBin).toUnsignedInteger()%16)
-        break;
-      case 1:
-        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.startAddressBin).toUnsignedInteger()/16))
-        break;
-      case 2:
-        arr = this.toSevensegNrBin(this.memory.readByte(this.endAddressBin).toUnsignedInteger()%16)
-        break;
-      case 3:
-        arr = this.toSevensegNrBin(~~(this.memory.readByte(this.endAddressBin).toUnsignedInteger()/16))
+        arr = this.toSevensegNrBin(
+          this.memory.readByte(this.startAddressBin).toUnsignedInteger() % 16
+        )
         this.oldBin = this.memory.readHalfword(this.startAddressBin)
-        break;
+        break
+      case 1:
+        arr = this.toSevensegNrBin(
+          ~~(
+            this.memory.readByte(this.startAddressBin).toUnsignedInteger() / 16
+          )
+        )
+        break
+      case 2:
+        arr = this.toSevensegNrBin(
+          this.memory.readByte(this.endAddressBin).toUnsignedInteger() % 16
+        )
+        break
+      case 3:
+        arr = this.toSevensegNrBin(
+          ~~(this.memory.readByte(this.endAddressBin).toUnsignedInteger() / 16)
+        )
+        break
       default:
         //
-        break;
+        break
     }
 
-return arr
+    return arr
   }
-  private toSevensegNr(inByte: Byte):boolean[]{
-
+  private toSevensegNr(inByte: Byte): boolean[] {
     let arr: boolean[] = []
     let code: String = inByte.toBinaryString()
     for (let i = 0; i < code.length; i++) {
-      const character = code.charAt(i);
-      if (character=='0'){arr.push(false)}
-      if (character=='1'){arr.push(true)}
+      const character = code.charAt(i)
+      if (character == '0') {
+        arr.push(false)
+      }
+      if (character == '1') {
+        arr.push(true)
+      }
     }
 
     return arr
   }
-  private getRegDisplay(display: number): boolean[]{
+  private getRegDisplay(display: number): boolean[] {
     let arr: boolean[] = []
-    arr = this.toSevensegNr(this.memory.readByte(this.startAddress.add(display)))
-    if (display==3){this.oldSeg =this.memory.readWord(this.startAddress)}
+    arr = this.toSevensegNr(
+      this.memory.readByte(this.startAddress.add(display))
+    )
+    if (display == 0) {
+      this.oldSeg = this.memory.readWord(this.startAddress)
+    }
     return arr
   }
-
 
   private findSegByte(position: number): Byte {
     return this.memory.readByte(this.startAddress.add(Math.floor(position / 8)))
