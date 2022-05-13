@@ -5,8 +5,9 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z#]+`
 const SPACE_OR_TAB = `[ \\t]`
+const STRING = `("[\\x00-\\xFF]*")`
 
-const OPTION = `[0-9a-z#\\[\\]=_{}]+`
+const OPTION = `[0-9a-z#\\[\\]=_{}]+|${STRING}`
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const COMMENT = `;[^\\n]*`
 

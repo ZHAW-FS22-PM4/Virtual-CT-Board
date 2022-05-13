@@ -237,19 +237,42 @@ function writeDataInstruction(
   }
   let bytes: Byte[] = []
   let alignment: number = 0
-  const values = instruction.options.map((x) => +x)
+  let optionsContainAString: boolean = false
+  let values: number[] = []
+  instruction.options.forEach((x) => {
+    if (x.startsWith('"')) {
+      optionsContainAString = true
+      x = x.substring(0, x.length - 1).substring(1)
+      x.split('').forEach((y) => {
+        values.push(y.charCodeAt(0))
+      })
+    }
+    values.push(+x)
+  })
   switch (instruction.name) {
     case 'DCB':
       bytes = values.map(Byte.fromUnsignedInteger)
       alignment = 1
       break
     case 'DCW':
+      if (optionsContainAString) {
+        throw new AssemblerError(
+          'String operands can only be specified for DCB',
+          instruction.line
+        )
+      }
       bytes = values
         .map(Halfword.fromUnsignedInteger)
         .flatMap((x) => x.toBytes())
       alignment = 2
       break
     case 'DCD':
+      if (optionsContainAString) {
+        throw new AssemblerError(
+          'String operands can only be specified for DCB',
+          instruction.line
+        )
+      }
       bytes = values.map(Word.fromUnsignedInteger).flatMap((x) => x.toBytes())
       alignment = 4
       break
