@@ -4,10 +4,12 @@ import { checkOptionCount, create } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
 import { StackInstruction } from './util'
 
-export class PushInstruction extends StackInstruction {
-  public name: string = 'PUSH'
-  public pattern: string = '1011010XXXXXXXXX'
-  protected additionalRegister: Register = Register.LR
+export class PopInstruction extends StackInstruction {
+  public name: string = 'POP'
+  public pattern: string = '1011110XXXXXXXXX'
+  protected additionalRegister: Register = Register.PC
+
+  private pcRegisterPosition = 8
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 1, 9)
@@ -23,14 +25,13 @@ export class PushInstruction extends StackInstruction {
     memory: IMemory
   ) {
     let registerValues = this.getStackRegisterFromOpcode(opcode[0])
-
     let address = registers
       .readRegister(Register.SP)
-      .add(-4 * registerValues.length)
+      .add(4 * registerValues.length)
     registers.writeRegister(Register.SP, address)
     for (const registerVal of registerValues) {
       memory.writeWord(address, registers.readRegister(registerVal))
-      address = address.add(4)
+      address = address.add(-4)
     }
   }
 }
