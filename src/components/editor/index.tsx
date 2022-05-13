@@ -63,7 +63,7 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
     const view = this.editor.current?.view
     if (view) {
       const decorations: Extension[] = []
-      if (line) {
+      if (line !== null) {
         const decoration = Decoration.line({
           class: name
         })
