@@ -1,13 +1,15 @@
+import { InstructionError } from 'instruction/error'
 import { IInstruction } from 'instruction/interfaces'
 import { InstructionSet } from 'instruction/set'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const validInstructionName = 'TEST'
 const invalidInstructionName = 'ZZZ_notImplemeted'
 const instruction: IInstruction = {
   name: validInstructionName,
   pattern: '11001100XXXXXXXX',
+  opcodeLength: 1,
+  needsLabels: false,
   canEncodeInstruction: jest.fn((name) => name == validInstructionName),
   encodeInstruction: jest.fn(),
   executeInstruction: jest.fn()
@@ -20,9 +22,8 @@ describe('InstructionSet', function () {
   })
   it('should return error when no encoder found', function () {
     expect(() => sut.getEncoder(invalidInstructionName, [])).toThrowError(
-      new VirtualBoardError(
-        `Unable to find instruction encoder for the instruction '${invalidInstructionName}'.`,
-        VirtualBoardErrorType.NoEncoderFound
+      new InstructionError(
+        `Unable to find instruction '${invalidInstructionName}'.`
       )
     )
   })

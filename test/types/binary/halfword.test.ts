@@ -147,7 +147,7 @@ describe('fromBytes method', () => {
         Byte.fromUnsignedInteger(255),
         Byte.fromUnsignedInteger(255)
       )
-    ).toThrowError('too many bytes for type provided')
+    ).toThrowError('Too many bytes for type provided.')
   })
 })
 
@@ -161,7 +161,7 @@ describe('test isBitSet function', () => {
   })
   test('should throw error if out of range', () => {
     let systemError = new Error(
-      'bit offset (tried to access) is not within type range'
+      'Bit offset (tried to access) is not within type range.'
     )
     expect(() => halfword_8001.isBitSet(16)).toThrow(systemError)
     expect(() => halfword_8001.isBitSet(33)).toThrow(systemError)

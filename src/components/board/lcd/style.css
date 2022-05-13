@@ -1,0 +1,25 @@
+.lcd-container {
+  border: 2px solid black;
+  height: 4rem;
+  border-radius: 10px;
+  display: grid;
+  align-items: center;
+}
+
+.lcdChar {
+  width: 1rem;
+  text-align: center;
+
+  padding-right: calc(var(--bs-gutter-x) * 0.2);
+  padding-left: calc(var(--bs-gutter-x) * 0.2);
+}
+.lcdChar:nth-child(4n + 1) {
+  padding-right: calc(var(--bs-gutter-x) * 0.4);
+  padding-left: calc(var(--bs-gutter-x) * 0.4);
+}
+
+#greenBackground,
+#redBackground,
+#blueBackground {
+  border-radius: 10px;
+}

@@ -1,3 +1,4 @@
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -6,12 +7,12 @@ import {
   createRegisterBits,
   getBits,
   isImmediate,
+  isLowRegister,
   isOptionCountValid,
   match,
   setBits
 } from 'instruction/opcode'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 describe('match', function () {
   it('should match when equal', function () {
@@ -63,12 +64,12 @@ describe('test create function', function () {
   })
 
   it('should throw when pattern not 16 characters', function () {
-    expect(() => create('1111111111XXXXXXX')).toThrow(VirtualBoardError)
-    expect(() => create('11111111XXXXXXX')).toThrow(VirtualBoardError)
+    expect(() => create('1111111111XXXXXXX')).toThrow(Error)
+    expect(() => create('11111111XXXXXXX')).toThrow(Error)
   })
 
   it('should throw when pattern contains invalid characters', function () {
-    expect(() => create('1112111111XXXXXX')).toThrow(VirtualBoardError)
+    expect(() => create('1112111111XXXXXX')).toThrow(Error)
   })
 })
 
@@ -103,18 +104,12 @@ describe('test setBits function', function () {
   })
 
   it('should throw when pattern not 16 characters', function () {
-    expect(() => setBits(opcode, '1111111111XXXXXXX', value)).toThrow(
-      VirtualBoardError
-    )
-    expect(() => setBits(opcode, '11111111XXXXXXX', value)).toThrow(
-      VirtualBoardError
-    )
+    expect(() => setBits(opcode, '1111111111XXXXXXX', value)).toThrow(Error)
+    expect(() => setBits(opcode, '11111111XXXXXXX', value)).toThrow(Error)
   })
 
   it('should throw when pattern contains invalid characters', function () {
-    expect(() => setBits(opcode, '1112111111XXXXXX', value)).toThrow(
-      VirtualBoardError
-    )
+    expect(() => setBits(opcode, '1112111111XXXXXX', value)).toThrow(Error)
   })
 })
 
@@ -147,14 +142,12 @@ describe('test getBits function', function () {
   })
 
   it('should throw when pattern not 16 characters', function () {
-    expect(() => getBits(opcode, '1111111111XXXXXXX')).toThrow(
-      VirtualBoardError
-    )
-    expect(() => getBits(opcode, '11111111XXXXXXX')).toThrow(VirtualBoardError)
+    expect(() => getBits(opcode, '1111111111XXXXXXX')).toThrow(Error)
+    expect(() => getBits(opcode, '11111111XXXXXXX')).toThrow(Error)
   })
 
   it('should throw when pattern contains invalid characters', function () {
-    expect(() => getBits(opcode, '1112111111XXXXXX')).toThrow(VirtualBoardError)
+    expect(() => getBits(opcode, '1112111111XXXXXX')).toThrow(Error)
   })
 })
 
@@ -166,9 +159,8 @@ describe('test createLowRegisterBits function', function () {
   })
 
   it('should throw when high register is provided', function () {
-    let notLowRegisterError = new VirtualBoardError(
-      'Provided register is not a low register',
-      VirtualBoardErrorType.ProvidedRegisterShouldBeLow
+    let notLowRegisterError = new InstructionError(
+      'Provided register is not a low register.'
     )
     expect(() => createLowRegisterBits('R8')).toThrow(notLowRegisterError)
     expect(() => createLowRegisterBits('SP')).toThrow(notLowRegisterError)
@@ -176,12 +168,11 @@ describe('test createLowRegisterBits function', function () {
   })
 
   it('should throw when invalid register is provided', function () {
-    let notValidRegisterError = new VirtualBoardError(
-      `option 'R13' is not a valid register`,
-      VirtualBoardErrorType.InvalidRegisterAsOption
+    let notValidRegisterError = new InstructionError(
+      `Option 'R13' is not a valid register.`
     )
     expect(() => createLowRegisterBits('R13')).toThrow(notValidRegisterError)
-    notValidRegisterError.message = `option 'ABC' is not a valid register`
+    notValidRegisterError.message = `Option 'ABC' is not a valid register.`
     expect(() => createLowRegisterBits('ABC')).toThrow(notValidRegisterError)
   })
 })
@@ -196,12 +187,11 @@ describe('test createRegisterBits function', function () {
   })
 
   it('should throw when invalid register is provided', function () {
-    let notValidRegisterError = new VirtualBoardError(
-      `option '12R' is not a valid register`,
-      VirtualBoardErrorType.InvalidRegisterAsOption
+    let notValidRegisterError = new InstructionError(
+      `Option '12R' is not a valid register.`
     )
     expect(() => createRegisterBits('12R')).toThrow(notValidRegisterError)
-    notValidRegisterError.message = `option '123' is not a valid register`
+    notValidRegisterError.message = `Option '123' is not a valid register.`
     expect(() => createRegisterBits('123')).toThrow(notValidRegisterError)
   })
 })
@@ -216,9 +206,8 @@ describe('test createImmediateBits function', function () {
   })
 
   it('should throw when immediate bits are not enough for value', function () {
-    let tooLessBitsForImmediateError = new VirtualBoardError(
-      'Immediate value uses to much bits (try with a smaller number)',
-      VirtualBoardErrorType.ProvidedImmediateIsInvalid
+    let tooLessBitsForImmediateError = new InstructionError(
+      'Immediate value uses too much bits (try with a smaller number).'
     )
     expect(() => createImmediateBits('#0x22', 5)).toThrow(
       tooLessBitsForImmediateError
@@ -228,25 +217,22 @@ describe('test createImmediateBits function', function () {
     )
     //out of range of halfword
     expect(() => createImmediateBits('#0x12345', 16)).toThrow(
-      new VirtualBoardError(
-        `OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: 74565).`,
-        VirtualBoardErrorType.BinaryTypeOutOfRange
+      new Error(
+        `OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: 74565).`
       )
     )
   })
 
   it('should throw when no immediate is provided', function () {
-    let noImmediateError = new VirtualBoardError(
-      'Is not an immediate value (should start with #)',
-      VirtualBoardErrorType.ProvidedImmediateIsInvalid
+    let noImmediateError = new InstructionError(
+      'Is not an immediate value (should start with #).'
     )
     expect(() => createImmediateBits('R9', 4)).toThrow(noImmediateError)
     expect(() => createImmediateBits('14', 7)).toThrow(noImmediateError)
   })
   it('should throw when immediate is not parsable number', function () {
-    let noParsableNumberError = new VirtualBoardError(
-      'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: NaN).',
-      VirtualBoardErrorType.BinaryTypeOutOfRange
+    let noParsableNumberError = new InstructionError(
+      'OutOfRange: 16-bit unsigned integer must be an integer in range 0 to 65535 (provided: NaN).'
     )
     expect(() => createImmediateBits('##', 9)).toThrow(noParsableNumberError)
     expect(() => createImmediateBits('#af', 9)).toThrow(noParsableNumberError)
@@ -264,14 +250,12 @@ describe('test checkOptionCount and isOptionCountValid function', function () {
     expect(isOptionCountValid(threeOptions, 3)).toBe(true)
     expect(isOptionCountValid(fourOptions, 4)).toBe(true)
 
-    expect(() => checkOptionCount([], 0)).not.toThrow(VirtualBoardError)
-    expect(() => checkOptionCount(oneOption, 1)).not.toThrow(VirtualBoardError)
+    expect(() => checkOptionCount([], 0)).not.toThrow(InstructionError)
+    expect(() => checkOptionCount(oneOption, 1)).not.toThrow(InstructionError)
     expect(() => checkOptionCount(threeOptions, 3)).not.toThrow(
-      VirtualBoardError
+      InstructionError
     )
-    expect(() => checkOptionCount(fourOptions, 4)).not.toThrow(
-      VirtualBoardError
-    )
+    expect(() => checkOptionCount(fourOptions, 4)).not.toThrow(InstructionError)
   })
   it('should true or not throw an exeption for option count within range', function () {
     expect(isOptionCountValid(oneOption, 0, 2)).toBe(true)
@@ -279,13 +263,13 @@ describe('test checkOptionCount and isOptionCountValid function', function () {
     expect(isOptionCountValid(fourOptions, 2, 4)).toBe(true)
 
     expect(() => checkOptionCount(oneOption, 1, 2)).not.toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => checkOptionCount(threeOptions, 1, 5)).not.toThrow(
-      VirtualBoardError
+      InstructionError
     )
     expect(() => checkOptionCount(fourOptions, 2, 4)).not.toThrow(
-      VirtualBoardError
+      InstructionError
     )
   })
 
@@ -295,13 +279,11 @@ describe('test checkOptionCount and isOptionCountValid function', function () {
     expect(isOptionCountValid(threeOptions, 0)).toBe(false)
     expect(isOptionCountValid(fourOptions, 3)).toBe(false)
 
-    let tooLessError = new VirtualBoardError(
-      `to less options provided expected at least 2`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    let tooLessError = new InstructionError(
+      `Not enough options provided expected at least 2.`
     )
-    let tooMuchError = new VirtualBoardError(
-      `to much options provided expected 1 at most`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    let tooMuchError = new InstructionError(
+      `Too much options provided expected 1 at most.`
     )
     expect(() => checkOptionCount([], 2)).toThrow(tooLessError)
     expect(() => checkOptionCount(oneOption, 2)).toThrow(tooLessError)
@@ -314,29 +296,25 @@ describe('test checkOptionCount and isOptionCountValid function', function () {
     expect(isOptionCountValid(threeOptions, 0, 2)).toBe(false)
     expect(isOptionCountValid(fourOptions, 8, 12)).toBe(false)
 
-    let tooLessError = new VirtualBoardError(
-      `to less options provided expected at least 8`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    let tooLessError = new InstructionError(
+      `Not enough options provided expected at least 8.`
     )
-    let tooMuchError = new VirtualBoardError(
-      `to much options provided expected 0 at most`,
-      VirtualBoardErrorType.InstructionWrongOptionCount
+    let tooMuchError = new InstructionError(
+      `Too much options provided expected 0 at most.`
     )
     expect(() => checkOptionCount([], 8, 16)).toThrow(tooLessError)
-    tooLessError.message = `to less options provided expected at least 2`
+    tooLessError.message = `Not enough options provided expected at least 2.`
     expect(() => checkOptionCount(oneOption, 2, 5)).toThrow(tooLessError)
     expect(() => checkOptionCount(threeOptions, 0, 0)).toThrow(tooMuchError)
-    tooMuchError.message = `to much options provided expected 3 at most`
+    tooMuchError.message = `Too much options provided expected 3 at most.`
     expect(() => checkOptionCount(fourOptions, 2, 3)).toThrow(tooMuchError)
   })
   it('should throw error when range is invalid', function () {
-    let maxBeforeMinError = new VirtualBoardError(
-      'range max should be bigger value than min',
-      VirtualBoardErrorType.InvalidParamProvided
+    let maxBeforeMinError = new InstructionError(
+      'Range max should be bigger value than min.'
     )
-    let negativeValueError = new VirtualBoardError(
-      'range should only include positive values',
-      VirtualBoardErrorType.InvalidParamProvided
+    let negativeValueError = new InstructionError(
+      'Range should only include positive values.'
     )
     expect(() => isOptionCountValid(threeOptions, 5, 3)).toThrow(
       maxBeforeMinError
@@ -368,5 +346,30 @@ describe('test isImmediate function', function () {
     expect(isImmediate('78')).toBe(false)
     expect(isImmediate('abc')).toBe(false)
     expect(isImmediate('0x5d5')).toBe(false)
+  })
+})
+
+describe('test isLowRegister function', () => {
+  it('should return true for isLowRegister', () => {
+    expect(isLowRegister('R0')).toBe(true)
+    expect(isLowRegister('R1')).toBe(true)
+    expect(isLowRegister('R2')).toBe(true)
+    expect(isLowRegister('R3')).toBe(true)
+    expect(isLowRegister('R4')).toBe(true)
+    expect(isLowRegister('R5')).toBe(true)
+    expect(isLowRegister('R6')).toBe(true)
+    expect(isLowRegister('R7')).toBe(true)
+  })
+  it('should return false for isLowRegister', () => {
+    expect(isLowRegister('R8')).toBe(false)
+    expect(isLowRegister('R9')).toBe(false)
+    expect(isLowRegister('R10')).toBe(false)
+    expect(isLowRegister('R11')).toBe(false)
+    expect(isLowRegister('R12')).toBe(false)
+    expect(isLowRegister('SP')).toBe(false)
+    expect(isLowRegister('LR')).toBe(false)
+    expect(isLowRegister('PC')).toBe(false)
+    expect(isLowRegister('APSR')).toBe(false)
+    expect(isLowRegister('TEST')).toBe(false)
   })
 })

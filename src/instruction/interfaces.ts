@@ -1,12 +1,15 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 
 /**
  * Represents a list of label offsets.
  */
 export interface ILabelOffsets {
-  [name: string]: Halfword
+  /**
+   * The offset to the label in range -2147483648 to 2147483647 (signed 32 bit).
+   */
+  [name: string]: Word
 }
 
 /**
@@ -19,21 +22,32 @@ export interface IInstructionEncoder {
   name: string
 
   /**
-   * checks wheter this implementation can handle the given options for the instruction (e.g. MOVS with immediate or 2 registers)
+   * The length of the instruction in halfwords.
+   */
+  opcodeLength: number
+
+  /**
+   * Defines whether this instruction needs labels or not.
+   */
+  needsLabels: boolean
+
+  /**
+   * Checks wheter this encoder can encode the instruction with the
+   * specified name and options.
    *
-   * @param commandName name of the command
+   * @param name the name of the instruction
    * @param options the options of the instruction
    */
-  canEncodeInstruction: (commandName: string, options: string[]) => boolean
+  canEncodeInstruction(name: string, options: string[]): boolean
 
   /**
    * Encodes the instruction into its opcode.
    *
    * @param options the options of the instruction
-   * @param labels the offsets (as halfwords) of the labels
-   * @returns the encoded opcode as a halfword
+   * @param labels the labels with their offsets relative to this instruction
+   * @returns the encoded opcode as an array of halfwords
    */
-  encodeInstruction: (options: string[], labels: ILabelOffsets) => Halfword
+  encodeInstruction(options: string[], labels?: ILabelOffsets): Halfword[]
 }
 
 /**
@@ -46,15 +60,22 @@ export interface IInstructionExecutor {
   pattern: string
 
   /**
+   * The length of the instruction in halfwords.
+   */
+  opcodeLength: number
+
+  /**
    * Executes the instruction represented by the specified opcode.
    *
    * @param opcode the opcode of the instruction to be executed
+   * @param registers the registers to be used during execution
+   * @param memory the memory to be used during execution
    */
-  executeInstruction: (
-    opcode: Halfword,
+  executeInstruction(
+    opcode: Halfword[],
     registers: Registers,
     memory: IMemory
-  ) => void
+  ): void
 }
 
 /**
@@ -66,14 +87,14 @@ export interface IInstruction
 
 export interface IInstructionSet {
   /**
-   * Gets the instruction encoder for the instruction with the specified name.
+   * Gets the instruction encoder for the instruction with the specified name and options.
    *
    * @param name the name of the instruction
-   * @param options options which are used for instruction
+   * @param options the options which are used for instruction
    * @returns the instruction encoder for the instruction
    * @throws when the instruction encoder could not be found
    */
-  getEncoder: (name: string, options: string[]) => IInstructionEncoder
+  getEncoder(name: string, options: string[]): IInstructionEncoder
 
   /**
    * Gets the instruction executor for the instruction with the specified opcode.
@@ -82,5 +103,5 @@ export interface IInstructionSet {
    * @returns the instruction executor for the instruction
    * @throws when the instruction executor could not be found
    */
-  getExecutor: (opcode: Halfword) => IInstructionExecutor
+  getExecutor(opcode: Halfword): IInstructionExecutor
 }

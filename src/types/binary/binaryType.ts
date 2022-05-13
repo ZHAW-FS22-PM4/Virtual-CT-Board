@@ -4,18 +4,20 @@ export interface IByte {
   readonly value: number
 }
 
-export abstract class BinaryType {
+export class BinaryType {
   public static MIN_UNSIGNED_VALUE: number = 0
   /**
    * The unsigned integer representation of the type as a number (IEEE double precision floating point).
    * Has to be always positive use toSignedInteger method to get interpretation of negative values
    */
-  abstract readonly value: number
-  abstract readonly numberOfBitsForType: number
-  abstract readonly maxValueForType: number
+  public readonly value: number
+  public readonly numberOfBitsForType: number
+  public readonly maxValueForType: number
 
-  constructor() {
-    //since value here is sometimes undefined, abstract properties are used
+  constructor(value: number, numberOfBitsForType: number) {
+    this.value = value
+    this.numberOfBitsForType = numberOfBitsForType
+    this.maxValueForType = Math.pow(2, numberOfBitsForType) - 1
   }
 
   /**
@@ -31,7 +33,7 @@ export abstract class BinaryType {
   ): number {
     const maxByteCount = BinaryType.getByteCount(numberOfBitsForType)
     if (bytes.length > maxByteCount) {
-      throw new Error('too many bytes for type provided')
+      throw new Error('Too many bytes for type provided.')
     }
     let value = BinaryType.MIN_UNSIGNED_VALUE
     let shift = 0
@@ -77,7 +79,7 @@ export abstract class BinaryType {
    */
   public static getHexCharCount(numberOfBitsForType: number): number {
     if (numberOfBitsForType % 4 !== 0) {
-      throw new Error('provided bit count is not dividable by 4')
+      throw new Error('Provided bit count is not dividable by 4.')
     }
     return numberOfBitsForType / 4
   }
@@ -89,7 +91,7 @@ export abstract class BinaryType {
    */
   public static getByteCount(numberOfBitsForType: number): number {
     if (numberOfBitsForType % 8 !== 0) {
-      throw new Error('provided bit count is not dividable by 8')
+      throw new Error('Provided bit count is not dividable by 8.')
     }
     return numberOfBitsForType / 8
   }
@@ -160,7 +162,8 @@ export abstract class BinaryType {
    * Adds the specified number to the binary type value and returns the result as a number.
    * In case the result exceeds the max value of the type the result is out of the range of the type.
    *
-   * As long as result stays in safe integer range (below 2^53 and higher than 2^(-53) according to https://www.avioconsulting.com/blog/overcoming-javascript-numeric-precision-issues
+   * As long as result stays in safe integer range (below 2^53 and higher than 2^(-53) according to
+   * https://www.avioconsulting.com/blog/overcoming-javascript-numeric-precision-issues
    * there is no problem in precision. Otherwise LSB will be cut off.
    *
    * @param value the number to be added
@@ -172,14 +175,14 @@ export abstract class BinaryType {
     }
     let result = value + this.value
     if (!Number.isSafeInteger(result)) {
-      throw new Error('addition result is not within safe integer range')
+      throw new Error('Addition result is not within safe integer range.')
     }
     return convertToUnsignedNumber(result)
   }
 
   protected limitValueToTypeRange(value: number) {
     if (!Number.isSafeInteger(value)) {
-      throw new Error('value out of save integer range')
+      throw new Error('Value out of save integer range.')
     }
     return convertToUnsignedNumber(this.maxValueForType & value)
   }
@@ -222,7 +225,7 @@ export abstract class BinaryType {
    */
   private throwErrorIfBitOffsetNotInRange(bitOffset: number): void {
     if (bitOffset >= this.numberOfBitsForType || bitOffset < 0) {
-      throw new Error('bit offset (tried to access) is not within type range')
+      throw new Error('Bit offset (tried to access) is not within type range.')
     }
   }
 }
@@ -235,20 +238,11 @@ export class Byte extends BinaryType implements IByte {
   public static MAX_VALUE: number = 0xff //decimal: 255
   public static MIN_SIGNED_VALUE: number = -128
   public static MAX_SIGNED_VALUE: number = 127
-  public static readonly ZERO_BYTE: Byte = Byte.fromUnsignedInteger(0)
-
-  readonly numberOfBitsForType: number = 8
-  readonly maxValueForType: number = 0xff
-
-  /**
-   * The unsigned integer representation of the byte as a number (IEEE double precision floating point).
-   */
-  public readonly value: number
+  public static NUMBER_OF_BITS: number = 8
 
   private constructor(value: number) {
-    super()
+    super(value, Byte.NUMBER_OF_BITS)
     checkRange('Byte', value, Byte.MIN_VALUE, Byte.MAX_VALUE)
-    this.value = value
   }
 
   /**

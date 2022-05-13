@@ -130,7 +130,7 @@ describe('test isBitSet function', () => {
   })
   test('should throw error if out of range', () => {
     let systemError = new Error(
-      'bit offset (tried to access) is not within type range'
+      'Bit offset (tried to access) is not within type range.'
     )
     expect(() => byte_80.isBitSet(8)).toThrow(systemError)
     expect(() => byte_80.isBitSet(33)).toThrow(systemError)

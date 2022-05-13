@@ -2,7 +2,7 @@ import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { IInstructionSet } from 'instruction/interfaces'
 import { END_OF_CODE } from 'instruction/special'
-import { Halfword, Word } from 'types/binary'
+import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
 
 const cycleSpeed: number = 200
@@ -12,6 +12,7 @@ const cycleSpeed: number = 200
  */
 type ProcessorEvents = {
   afterCycle: () => void
+  reset: () => void
   afterReset: () => void
   endOfCode: () => void
 }
@@ -85,6 +86,8 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     this.memory.reset()
     this.registers.reset()
 
+    this.emit('reset')
+
     // According to the ARM convention, the processor initializes:
     // - the stack pointer (SP register) from the address 0x00000000 (alias for 0x08000000)
     // - the program counter (PC register) from the address 0x00000004 (alias for 0x08000004)
@@ -102,16 +105,18 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
   private cycle() {
     const pc: Word = this.registers.readRegister(Register.PC)
-    const opcode: Halfword = this.memory.readHalfword(pc)
-    if (opcode.value === END_OF_CODE.value) {
+    const opcode = [this.memory.readHalfword(pc)]
+    if (opcode[0].value === END_OF_CODE.value) {
       this.halt()
       this.emit('endOfCode')
       return
     }
-    this.instructions
-      .getExecutor(opcode)
-      .executeInstruction(opcode, this.registers, this.memory)
-    this.registers.writeRegister(Register.PC, pc.add(2))
+    const executor = this.instructions.getExecutor(opcode[0])
+    for (let i = 1; i < executor.opcodeLength; i++) {
+      opcode.push(this.memory.readHalfword(pc.add(i * 2)))
+    }
+    this.registers.writeRegister(Register.PC, pc.add(executor.opcodeLength * 2))
+    executor.executeInstruction(opcode, this.registers, this.memory)
     this.emit('afterCycle')
   }
 }

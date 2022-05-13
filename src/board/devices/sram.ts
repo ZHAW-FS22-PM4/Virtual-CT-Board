@@ -7,6 +7,6 @@ import { Device } from './device'
 export class SRAM extends Device {
   public startAddress = Word.fromUnsignedInteger(0x20000000)
   public endAddress = Word.fromUnsignedInteger(0x2002ffff)
-  public isReadOnly = true
-  public isVolatile = false
+  public isReadOnly = false
+  public isVolatile = true
 }

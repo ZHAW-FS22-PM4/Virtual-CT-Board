@@ -1,7 +1,9 @@
+import { LcdComponent } from 'components/board/lcd'
 import React from 'react'
 import { Button } from './button'
 import { DipSwitch } from './dip-switch'
 import { LedComponent } from './led'
+import { RotarySwitchComponent } from './rotaryswitch'
 import './style.css'
 
 export class BoardComonent extends React.Component {
@@ -9,6 +11,11 @@ export class BoardComonent extends React.Component {
     return (
       <div className="board-container">
         <h4 className="title">Board</h4>
+        <div className="row mx-2 my-1">
+          <div className="col-sm-7 offset-sm-5">
+            <LcdComponent />
+          </div>
+        </div>
         <div className="row mx-2 my-1">
           <div className="col-sm-3 offset-sm-6">
             <LedComponent startIndex={24} size={8} />
@@ -30,6 +37,11 @@ export class BoardComonent extends React.Component {
           <div className="col-sm-3">
             <LedComponent startIndex={0} size={8} />
             <DipSwitch startIndex={0} size={8} />
+          </div>
+        </div>
+        <div className="row mx-2 my-1">
+          <div className="col-sm-2 offset-sm-2">
+            <RotarySwitchComponent />
           </div>
         </div>
       </div>
