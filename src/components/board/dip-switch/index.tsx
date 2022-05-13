@@ -49,8 +49,8 @@ export class DipSwitchComponent extends React.Component<
             <div className="dip-switch" key={'dip_switch_' + position}>
               <div
                 className={classNames('switch', {
-                  'switch-on': this.state[position],
-                  'switch-off': !this.state[position]
+                  on: this.state[position],
+                  off: !this.state[position]
                 })}
                 onClick={() => this.toggleSwitch(position)}
               />

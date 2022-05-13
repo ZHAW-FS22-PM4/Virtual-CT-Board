@@ -44,7 +44,8 @@
   height: 2rem;
 }
 
-.app-component .editor-container {
+.app-component .editor-container,
+.app-component .board-container {
   min-height: 4rem;
 }
 

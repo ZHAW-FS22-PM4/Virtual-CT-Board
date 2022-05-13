@@ -1,4 +1,5 @@
 import { assemble } from 'assembler'
+import { AssemblerError } from 'assembler/error'
 import Board from 'board'
 import { Register } from 'board/registers'
 import * as bootstrap from 'bootstrap'
@@ -104,18 +105,21 @@ export class ControlsComponent extends React.Component<
       const pc = Board.registers.readRegister(Register.PC)
       line = executable.sourceMap.getLine(pc) || null
     }
-    this.getEditor().highlightLine(line)
+    this.getEditor().highlightStep(line)
   }
 
   private catchAndReportError(action: () => void) {
     const editor = this.getEditor()
     try {
       action()
-      editor.showErrorMessage(null)
-    } catch (err: unknown) {
+      editor.clearError()
+    } catch (err: any) {
       if (err instanceof Error) {
-        const errorMessage: string = err.message
-        editor.showErrorMessage(errorMessage)
+        let line: number | null = null
+        if (err instanceof AssemblerError) {
+          line = err.line
+        }
+        editor.showError(err.message, line)
       }
     }
   }

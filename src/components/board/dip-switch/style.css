@@ -9,18 +9,18 @@
   padding: 0.1rem;
 }
 
-.dip-switch-component .switch {
+.dip-switch-component .dip-switch .switch {
   height: 70%;
   border: 0.1rem solid lightgray;
   --background-color: rgb(33, 37, 41);
   cursor: pointer;
 }
 
-.dip-switch-component .switch-off {
+.dip-switch-component .dip-switch .switch.off {
   background: linear-gradient(0deg, var(--background-color) 50%, lightgray 50%);
 }
 
-.dip-switch-component .switch-on {
+.dip-switch-component .dip-switch .switch.on {
   background: linear-gradient(
     180deg,
     var(--background-color) 50%,

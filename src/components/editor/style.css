@@ -51,9 +51,12 @@
   display: none;
 }
 
-.editor-component .status-bar {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.cm-line.step-highlighting {
+  background-color: #34495e !important;
+}
+
+.cm-activeLine.step-highlighting {
+  background-color: #384e65 !important;
 }
 
 .cm-line.error-highlighting {
@@ -64,10 +67,7 @@
   background-color: #90313a !important;
 }
 
-.cm-line.step-highlighting {
-  background-color: #34495e !important;
-}
-
-.cm-activeLine.step-highlighting {
-  background-color: #34495e !important;
+.editor-component .status-bar {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

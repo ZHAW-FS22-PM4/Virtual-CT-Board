@@ -1,9 +1,9 @@
 import React from 'react'
 import { ButtonComponent } from './button'
 import { DipSwitchComponent } from './dip-switch'
+import { HexSwitchComponent } from './hex-switch'
 import { LcdComponent } from './lcd'
 import { LedComponent } from './led'
-import { RotarySwitchComponent } from './rotaryswitch'
 import './style.css'
 
 export class BoardComonent extends React.Component {
@@ -53,13 +53,10 @@ export class BoardComonent extends React.Component {
           <div className="glas-cover left"></div>
           <div className="glas-cover right"></div>
           <div className="seven-segment bg-secondary d-none"></div>
-          <div className="hex-switch bg-dark"></div>
-          <div className="rotary-switch bg-dark"></div>
-        </div>
-        <div className="row mx-2 my-1">
-          <div className="col-sm-2 offset-sm-2">
-            <RotarySwitchComponent />
+          <div className="hex-switch-container">
+            <HexSwitchComponent />
           </div>
+          <div className="potentiometer bg-dark"></div>
         </div>
       </div>
     )

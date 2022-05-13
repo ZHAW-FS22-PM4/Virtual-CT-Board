@@ -4,6 +4,7 @@
   padding: 0.5rem;
   display: grid;
   overflow: hidden;
+  align-items: center;
 }
 
 .board-component .board {
@@ -13,6 +14,11 @@
   aspect-ratio: 24 / 15;
   border-radius: 0.25rem;
   overflow: hidden;
+  margin: 0 auto;
+}
+
+.board-component .board * {
+  user-select: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -162,7 +168,7 @@
   bottom: 25.33%;
 }
 
-.board-component .rotary-switch {
+.board-component .potentiometer {
   position: absolute;
   width: 10%;
   height: 16%;
@@ -179,13 +185,12 @@
   top: 30%;
 }
 
-.board-component .hex-switch {
+.board-component .hex-switch-container {
   position: absolute;
   width: 4.16%;
   height: 6.66%;
   right: 24.16%;
   top: 18.66%;
-  border-radius: 100%;
 }
 
 .board-component .seven-segment {

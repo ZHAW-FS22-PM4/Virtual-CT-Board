@@ -22,7 +22,7 @@ class Board {
   public readonly switches: Switches
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
-  public readonly rotaryswitch: RotarySwitch
+  public readonly rotarySwitch: RotarySwitch
   public readonly lcdDisplay: LcdDisplay
 
   private executable?: IELF
@@ -34,7 +34,7 @@ class Board {
     this.buttons = new Buttons()
     this.leds = new LEDDevice()
     this.lcdDisplay = new LcdDisplay()
-    this.rotaryswitch = new RotarySwitch()
+    this.rotarySwitch = new RotarySwitch()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,
@@ -42,7 +42,8 @@ class Board {
       this.buttons,
       this.switches,
       this.leds,
-      this.lcdDisplay
+      this.lcdDisplay,
+      this.rotarySwitch
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
     this.processor.on('reset', () => this.reloadExecutable())

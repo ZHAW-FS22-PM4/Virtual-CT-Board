@@ -15,14 +15,23 @@ interface IEditorState {
   errorMessage: string | null
 }
 
+interface IEditorHighlithings {
+  [name: string]: Compartment
+}
+
 export class EditorComponent extends React.Component<{}, IEditorState> {
   private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
-  private configuration: Compartment
+  private static ERROR_HIGHLIGHTING = 'error-highlighting'
+  private static STEP_HIGHLIGHTING = 'step-highlighting'
+  private highlightings: IEditorHighlithings
   private editor: React.RefObject<ReactCodeMirrorRef>
 
   public constructor(props: {}) {
     super(props)
-    this.configuration = new Compartment()
+    this.highlightings = {
+      [EditorComponent.ERROR_HIGHLIGHTING]: new Compartment(),
+      [EditorComponent.STEP_HIGHLIGHTING]: new Compartment()
+    }
     this.editor = React.createRef<ReactCodeMirrorRef>()
     this.state = { isEditable: true, errorMessage: null }
   }
@@ -37,33 +46,33 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
   }
 
   public showError(message: string, line: number | null): void {
-    this.highlightLine(line, 'error-highlighting')
+    this.highlightLine(line, EditorComponent.ERROR_HIGHLIGHTING)
     this.setState({ errorMessage: message })
   }
 
   public clearError(): void {
-    this.highlightLine(null, 'error-highlighting')
+    this.highlightLine(null, EditorComponent.ERROR_HIGHLIGHTING)
     this.setState({ errorMessage: null })
   }
 
   public highlightStep(line: number | null): void {
-    this.highlightLine(line, 'step-highlighting')
+    this.highlightLine(line, EditorComponent.STEP_HIGHLIGHTING)
   }
 
-  private highlightLine(line: number | null, className: string): void {
+  private highlightLine(line: number | null, name: string): void {
     const view = this.editor.current?.view
     if (view) {
       const decorations: Extension[] = []
       if (line) {
         const decoration = Decoration.line({
-          class: className
+          class: name
         })
-        const position = view.state.doc.line(line).from
+        const position = view.state.doc.line(line + 1).from
         decorations.push(
           EditorView.decorations.of(Decoration.set(decoration.range(position)))
         )
       }
-      const effect = this.configuration.reconfigure(decorations)
+      const effect = this.highlightings[name].reconfigure(decorations)
       view.dispatch({ effects: [effect] })
     }
   }
@@ -82,7 +91,7 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
             undefined
           }
           editable={this.state.isEditable}
-          extensions={[this.configuration.of([]), Assembly()]}
+          extensions={this.getExtensions()}
           onChange={(value: string) => {
             sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
           }}
@@ -92,5 +101,13 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
         </div>
       </div>
     )
+  }
+
+  private getExtensions(): Extension[] {
+    const extensions: Extension[] = [Assembly()]
+    for (const highlighting of Object.values(this.highlightings)) {
+      extensions.push(highlighting.of([]))
+    }
+    return extensions
   }
 }
