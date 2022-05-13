@@ -1,13 +1,11 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import {
+  checkBracketsOnLastOptions,
   checkOptionCount,
   create,
   createLowRegisterBits,
   getBits,
-  isImmediate,
-  isOptionCountValid,
-  registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
@@ -25,17 +23,9 @@ export class LdrshRegisterOffsetInstruction extends BaseInstruction {
   private rtPattern: string = '0101111000000XXX'
   private expectedOptionCount: number = 3
 
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      !isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2])
-    )
-  }
-
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, this.expectedOptionCount)
+    checkBracketsOnLastOptions(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
@@ -58,14 +48,16 @@ export class LdrshRegisterOffsetInstruction extends BaseInstruction {
   ): void {
     registers.writeRegister(
       getBits(opcode[0], this.rtPattern).value,
-      Word.fromHalfwords(
-        memory.readHalfword(
-          registers
-            .readRegister(getBits(opcode[0], this.rnPattern).value)
-            .add(
-              registers.readRegister(getBits(opcode[0], this.rmPattern).value)
-            )
-        )
+      Word.fromSignedInteger(
+        memory
+          .readHalfword(
+            registers
+              .readRegister(getBits(opcode[0], this.rnPattern).value)
+              .add(
+                registers.readRegister(getBits(opcode[0], this.rmPattern).value)
+              )
+          )
+          .toSignedInteger()
       )
     )
   }
