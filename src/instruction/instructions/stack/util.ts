@@ -34,7 +34,11 @@ export abstract class StackInstruction extends BaseInstruction {
     const registerValues: Register[] = []
     for (let i = 0; i <= this.lrOrPcRegisterPosition; i++) {
       if (registerList.isBitSet(i)) {
-        registerValues.push(i)
+        if (i === this.lrOrPcRegisterPosition) {
+          registerValues.push(this.additionalRegister)
+        } else {
+          registerValues.push(i)
+        }
       }
     }
     return registerValues
