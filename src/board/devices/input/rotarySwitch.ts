@@ -18,6 +18,11 @@ export class RotarySwitch extends Device {
   public startAddress = RotarySwitch.ROTARYSWITCH_ADDRESS
   public endAddress = RotarySwitch.ROTARYSWITCH_ADDRESS
 
+  constructor() {
+    super()
+    this.initializeByte()
+  }
+
   /**
    * increase the rotary switch
    *
@@ -56,15 +61,13 @@ export class RotarySwitch extends Device {
    * @returns: the current value of the rotary switch
    */
   public getRotaryValue(): number {
-    if (
-      this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS).value - 240 <
-      0
-    ) {
-      this.initializeByte()
-    }
     return this.memory.readByte(RotarySwitch.ROTARYSWITCH_ADDRESS).value - 240
   }
 
+  /**
+   * Initializes the correct bits at the address for the rotary switch
+   *
+   */
   private initializeByte(): void {
     this.memory.writeByte(
       RotarySwitch.ROTARYSWITCH_ADDRESS,
