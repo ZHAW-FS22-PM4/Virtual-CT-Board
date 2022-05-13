@@ -86,6 +86,12 @@ export function encode(code: ICodeFile): IELF {
   return file
 }
 
+/**
+ * Creates a map for fast lookup of equ constants.
+ *
+ * @param file file from which the map is created
+ * @returns created map
+ */
 function createEquConstantsMap(file: IELF): Map<string, Word> {
   const equConstants: Map<string, Word> = new Map<string, Word>()
   for (const symbol in file.symbols) {
@@ -95,6 +101,12 @@ function createEquConstantsMap(file: IELF): Map<string, Word> {
   return equConstants
 }
 
+/**
+ * Replaces all references to equ constants for the given instruction with the actual value.
+ *
+ * @param instruction instruction to replace options
+ * @param equConstants map of equ constant that is used to lookup the actual value
+ */
 function replaceEquConstants(
   instruction: IInstruction,
   equConstants: Map<string, Word>
