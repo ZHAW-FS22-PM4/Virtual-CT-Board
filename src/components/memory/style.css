@@ -86,7 +86,7 @@
 
 .memory-component .address.head,
 .memory-component .address.cell {
-  width: 6rem;
+  width: 7rem;
 }
 
 .memory-component .value.cell {
