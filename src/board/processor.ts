@@ -1,6 +1,6 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
-import { IInstructionSet } from 'instruction/interfaces'
+import { IInstructionExecutor, IInstructionSet } from 'instruction/interfaces'
 import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
@@ -13,6 +13,7 @@ const cycleSpeed: number = 10
 type ProcessorEvents = {
   reset: () => void
   endOfCode: () => void
+  error: (message: string) => void
 }
 
 /**
@@ -100,18 +101,40 @@ export class Processor extends EventEmitter<ProcessorEvents> {
   }
 
   private cycle() {
-    const pc: Word = this.registers.readRegister(Register.PC)
-    const opcode = [this.memory.readHalfword(pc)]
-    if (opcode[0].value === END_OF_CODE.value) {
-      this.halt()
-      this.emit('endOfCode')
-      return
+    let executor: IInstructionExecutor | null = null
+    let pcIncremented = false
+    try {
+      const pc = this.registers.readRegister(Register.PC)
+      const opcode = [this.memory.readHalfword(pc)]
+      if (opcode[0].value === END_OF_CODE.value) {
+        this.halt()
+        this.emit('endOfCode')
+        return
+      }
+      executor = this.instructions.getExecutor(opcode[0])
+      for (let i = 1; i < executor.opcodeLength; i++) {
+        opcode.push(this.memory.readHalfword(pc.add(i * 2)))
+      }
+      this.registers.writeRegister(
+        Register.PC,
+        pc.add(executor.opcodeLength * 2)
+      )
+      pcIncremented = true
+      executor.executeInstruction(opcode, this.registers, this.memory)
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.halt()
+        // In case error happened during execution of the instruction, the program counter has to be set back,
+        // so the correct address is fetched from the source map to highlight the line.
+        if (executor && pcIncremented) {
+          const pc = this.registers.readRegister(Register.PC)
+          this.registers.writeRegister(
+            Register.PC,
+            pc.add(-1 * executor.opcodeLength * 2)
+          )
+        }
+        this.emit('error', e.message)
+      }
     }
-    const executor = this.instructions.getExecutor(opcode[0])
-    for (let i = 1; i < executor.opcodeLength; i++) {
-      opcode.push(this.memory.readHalfword(pc.add(i * 2)))
-    }
-    this.registers.writeRegister(Register.PC, pc.add(executor.opcodeLength * 2))
-    executor.executeInstruction(opcode, this.registers, this.memory)
   }
 }

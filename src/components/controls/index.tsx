@@ -39,6 +39,11 @@ export class ControlsComponent extends React.Component<
     Board.processor.on('endOfCode', () =>
       this.setState({ mode: ControlsMode.EDIT })
     )
+    Board.processor.on('error', (message) => {
+      this.updateProgramCounterHighlighting(true)
+      this.getEditor().showError(message, this.getProgramCounterLine())
+      this.setState({ mode: ControlsMode.EDIT })
+    })
   }
 
   public componentDidMount(): void {
@@ -99,11 +104,9 @@ export class ControlsComponent extends React.Component<
   }
 
   private updateProgramCounterHighlighting(clear: boolean = false) {
-    const executable = Board.getExecutable()
     let line: number | null = null
-    if (executable && !clear) {
-      const pc = Board.registers.readRegister(Register.PC)
-      line = executable.sourceMap.getLine(pc) || null
+    if (!clear) {
+      line = this.getProgramCounterLine()
     }
     this.getEditor().highlightStep(line)
   }
@@ -122,6 +125,16 @@ export class ControlsComponent extends React.Component<
         editor.showError(err.message, line)
       }
     }
+  }
+
+  private getProgramCounterLine(): number | null {
+    const executable = Board.getExecutable()
+    let line: number | null = null
+    if (executable) {
+      const pc = Board.registers.readRegister(Register.PC)
+      line = executable.sourceMap.getLine(pc) || null
+    }
+    return line
   }
 
   public render(): React.ReactNode {
