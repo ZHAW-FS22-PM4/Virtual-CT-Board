@@ -6,6 +6,7 @@
 \usepackage{amsmath,amssymb,amsthm} % For including math equations, theorems, symbols, etc
 \usepackage{quotes} % for quotation marks
 \usepackage{caption}
+\usepackage[table]{xcolor}
 \captionsetup{font=footnotesize}
 
 \title{Fachartikel}
@@ -125,9 +126,13 @@ Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs 
 
 \section{Resultate}
 
-Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{} ist die Grafikoberfläche unseres Endprodukts ersichtlich. Im Nachfolgenden werden die in der virtualisierten Variante umgesetzten Funktionen des physischen CT Boards erläutert.
+Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{final} ist die Grafikoberfläche unseres Endprodukts ersichtlich. Im Nachfolgenden werden die in der virtualisierten Variante umgesetzten Funktionen des physischen CT Boards erläutert.
 
-%%% Screenshot des Virtual CT Boards einfügen
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{final}
+\caption[size=8pt]{Die Grafikoberfläche des virtuellen CT Boards.}
+\label{final}
+\end{figure}
 
 \subsection{Funktionen des \glqq Virtual CT Boards\grqq}
 
@@ -149,11 +154,46 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 	\item[$-$] Kontrollstrukturen: \emph{Conditional} und \emph{Unconditional branches}
 \end{itemize}
 
-\paragraph{Debugging} Der Debug-Modus erlaubt es, Schritt für Schritt durch den Programmcode zu gehen und jede Zeile einzeln auszuführen.
+\paragraph{Debugging} Der Step-Modus erlaubt es, Schritt für Schritt durch den Programmcode zu gehen und jede Zeile einzeln auszuführen.
 
 \subsection{Ausführbare Praktika}
 
 %%% Welche Praktika sind ausführbar? Sind überhaupt welche ausführbar?
+
+Die manuellen Tests haben ergeben, dass von den insgesamt 11 Praktika xx ausführbar sind. Die Tabelle \ref{praktika} zeigt den Lauffähigkeitsstatus jedes Praktikums und listet bei jenen, die noch nicht ausführbar sind, die fehlenden Funktionen auf.
+
+\rowcolors{2}{gray!10}{gray!40}
+\begin{table}[ht]
+\begin{tabular}{ | l | c | c |}
+	\hline
+    \textbf{Praktikum} & \textbf{Lauffähigkeit} & \textbf{Fehlende Funktion} \\
+	\hline
+    1 Target System & Nein & C Code \\
+	\hline
+    2 Bit Manipulations & Nein & C Code \\
+\hline
+    3 Introduction to Assembly & ??? & - \\
+\hline
+    4 Data Transfer Commands & ??? & - \\
+\hline
+    5 Arithmetic Operations & ??? & - \\
+\hline
+    6 Control Structure & ??? & - \\
+\hline
+    7 Structured Programming in Assembly & ??? & - \\
+\hline
+    8 Subroutines and Parameter Passing & Nein & Potentiometer \\
+\hline
+    9 Linker & Nein & C Code \\
+\hline
+    10 Multiplication & ??? & - \\
+\hline
+    11 Interrupt & Nein & Interrupts \\
+\hline
+\end{tabular}
+\caption[size=8pt]{Lauffähigkeitsstatus aller Praktika des CT1-Moduls auf dem virtuellen CT Board.}
+\label{praktika}
+\end{table}
 
 \section{Diskussion und Ausblick}
 
@@ -161,7 +201,7 @@ Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Mo
 
 \begin{itemize}
 	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
-	\item[$-$] Für die ersten beiden Praktika müsste auch C-Code interpretier- und ausführbar sein.
+	\item[$-$] Für die ersten beiden Praktika sowie Praktikum 9 müsste auch C-Code interpretier- und ausführbar sein.
 	\item[$-$] Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
 	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
 
