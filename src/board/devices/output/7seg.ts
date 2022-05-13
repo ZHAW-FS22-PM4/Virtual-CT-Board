@@ -40,16 +40,24 @@ export class SEVENseg extends Device {
    * Returns true if seg with given position is on.
    *
    * @param position seg position to check (0-31)
+   * @param segment segmentnumber to check (0-3)
    * @returns true if segment is turned on
    */
-  public isOn(position: number): boolean {
-    if (SEVENseg.invalidPosition(position)) {
-      throw new Error(`Position ${position} does not exist.`)
+  public isOn(segment: number,position: number): boolean {
+    if (SEVENseg.invalidPosition(segment,position)) {
+      throw new Error(`Segment ${segment} Position ${ position} does not exist.`)
     }
-    return this.findSegByte(position).isBitSet(position % 8)
+    return this.displays[segment][position]
   }
+
+  /**
+   * Returns an array of segment positions,true if seg on position should be on.
+   * the values are read from the newer updated datasection and interpreted accordingly
+   *
+   * @param display display to get (0-3)
+   * @returns segmentArray an array of boolean, true if segment is turned on
+   */
   public getDisplay(display: number): boolean[] {
-    //return [true,true,true,false,true,true,true,true]
     if (this.isBin()) {
       this.displays[display] = this.getBinDisplay(display)
     }
@@ -80,6 +88,12 @@ export class SEVENseg extends Device {
       this.oldSeg.toUnsignedInteger()
     )
   }
+  /**
+   * converts an number to an array of segment positions,true if seg on position should be on.
+   *
+   * @param inNum number to convert (0-15)
+   * @returns segmentArray an array of boolean, true if segment is turned on
+   */
   private toSevensegNrBin(inNum: number): boolean[] {
     let arr: boolean[] = []
 
@@ -98,6 +112,14 @@ export class SEVENseg extends Device {
 
     return arr
   }
+
+  /**
+   * Returns an array of segment positions,true if seg on position should be on.
+   * the values are read from the datasection and interpreted binary
+   *
+   * @param display to check (0-3)
+   * @returns segmentArray an array of boolean, true if segment is turned on
+   */
   private getBinDisplay(display: number): boolean[] {
     let arr: boolean[] = []
     switch (display) {
@@ -131,6 +153,13 @@ export class SEVENseg extends Device {
 
     return arr
   }
+
+  /**
+   * converts an number to an array of segment positions,true if seg on position should be on.
+   *
+   * @param inByte byte to convert (0-F)
+   * @returns segmentArray an array of boolean, true if segment is turned on
+   */
   private toSevensegNr(inByte: Byte): boolean[] {
     let arr: boolean[] = []
     let code: String = inByte.toBinaryString()
@@ -146,6 +175,14 @@ export class SEVENseg extends Device {
 
     return arr
   }
+
+  /**
+   * Returns an array of segment positions,true if seg on position should be on.
+   * the values are read from the datasection and interpreted hexadecimal
+   *
+   * @param display to check (0-3)
+   * @returns segmentArray an array of boolean, true if segment is turned on
+   */
   private getRegDisplay(display: number): boolean[] {
     let arr: boolean[] = []
     arr = this.toSevensegNr(
@@ -157,11 +194,8 @@ export class SEVENseg extends Device {
     return arr
   }
 
-  private findSegByte(position: number): Byte {
-    return this.memory.readByte(this.startAddress.add(Math.floor(position / 8)))
-  }
 
-  private static invalidPosition(position: number): boolean {
-    return position < 0 || position > SEVENseg.MAX_SEG_NUMBER
+  private static invalidPosition(segment: number, position: number): boolean {
+    return position < 0 || position > SEVENseg.MAX_SEG_NUMBER || segment <0 || segment > 7
   }
 }
