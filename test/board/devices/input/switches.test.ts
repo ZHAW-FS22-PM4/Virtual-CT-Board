@@ -1,5 +1,5 @@
 import { Switches } from 'board/devices/input/switches'
-import { Byte, Word } from 'types/binary'
+import { Byte, Halfword, Word } from 'types/binary'
 
 const block1: Word = Word.fromUnsignedInteger(0x60000200)
 const block2: Word = Word.fromUnsignedInteger(0x60000201)
@@ -10,7 +10,8 @@ const byte_0000_0000: Byte = Byte.fromUnsignedInteger(0)
 const byte_0101_0101: Byte = Byte.fromUnsignedInteger(85)
 const byte_1010_1010: Byte = Byte.fromUnsignedInteger(170)
 const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
-
+const halfword_empty: Halfword = Halfword.fromUnsignedInteger(0)
+const word_empty: Word = Word.fromUnsignedInteger(0)
 let switches: Switches
 
 beforeEach(() => {
@@ -39,6 +40,16 @@ test('test that switches are set to readonly', () => {
   switches.writeByte(block3, byte_0000_0000)
   switches.writeByte(block4, byte_0000_0000)
 
+  expect(switches.readByte(block1)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block2)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block3)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block4)).toEqual(byte_0101_0101)
+
+  switches.writeHalfword(block1, halfword_empty)
+  expect(switches.readByte(block1)).toEqual(byte_0101_0101)
+  expect(switches.readByte(block2)).toEqual(byte_0101_0101)
+
+  switches.writeWord(block1, word_empty)
   expect(switches.readByte(block1)).toEqual(byte_0101_0101)
   expect(switches.readByte(block2)).toEqual(byte_0101_0101)
   expect(switches.readByte(block3)).toEqual(byte_0101_0101)

@@ -30,9 +30,22 @@ test('isOn() returns led state on correct position', () => {
   expect(leds.isOn(18)).toBeFalsy()
   expect(leds.isOn(30)).toBeTruthy()
   expect(leds.isOn(31)).toBeTruthy()
+  leds.reset()
 })
 
 test('isOn() throws error when position is out of bounds', () => {
   expect(() => leds.isOn(-1)).toThrow(new Error(`Position -1 does not exist.`))
   expect(() => leds.isOn(32)).toThrow(new Error(`Position 32 does not exist.`))
+})
+
+test('resetting turns all leds off', () => {
+  leds.reset()
+  expect(leds.isOn(0)).toBeFalsy()
+  expect(leds.isOn(1)).toBeFalsy()
+  expect(leds.isOn(2)).toBeFalsy()
+  expect(leds.isOn(3)).toBeFalsy()
+  expect(leds.isOn(4)).toBeFalsy()
+  expect(leds.isOn(5)).toBeFalsy()
+  expect(leds.isOn(6)).toBeFalsy()
+  expect(leds.isOn(7)).toBeFalsy()
 })

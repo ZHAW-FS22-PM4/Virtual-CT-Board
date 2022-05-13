@@ -13,6 +13,10 @@ const config: Config.InitialOptions = {
     './src/instruction/**/*.ts',
     './src/types/**/*.ts'
   ],
+  coveragePathIgnorePatterns: [
+    './src/[a-z]*/index.ts',
+    './src/assembler/elf.ts'
+  ],
   coverageThreshold: {
     global: {
       lines: 90
