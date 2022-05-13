@@ -47,14 +47,6 @@
   outline: 0;
 }
 
-.editor-component .cm-line.current-program-counter {
-  background-color: #8c2c34 !important;
-}
-
-.editor-component .cm-activeLine.current-program-counter {
-  background-color: #90313a !important;
-}
-
 .editor-component:not(.has-error) .status-bar {
   display: none;
 }
@@ -62,4 +54,20 @@
 .editor-component .status-bar {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.cm-line.error-highlighting {
+  background-color: #8c2c34 !important;
+}
+
+.cm-activeLine.error-highlighting {
+  background-color: #90313a !important;
+}
+
+.cm-line.step-highlighting {
+  background-color: #34495e !important;
+}
+
+.cm-activeLine.step-highlighting {
+  background-color: #34495e !important;
 }

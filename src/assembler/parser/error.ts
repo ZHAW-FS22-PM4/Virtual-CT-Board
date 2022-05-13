@@ -1,9 +1,10 @@
+import { AssemblerError } from 'assembler/error'
 import { ITextCursor } from './text'
 
-export class ParseError extends Error {
+export class ParseError extends AssemblerError {
   public cursor: ITextCursor
-  constructor(cursor: ITextCursor, message: string) {
-    super(`${message} at Line ${cursor.line + 1}, Position ${cursor.position}`)
+  constructor(message: string, cursor: ITextCursor) {
+    super(message, cursor.line + 1, cursor.position)
     this.cursor = cursor
   }
 }

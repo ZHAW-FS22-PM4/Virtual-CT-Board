@@ -1,3 +1,5 @@
+import { AssemblerError } from 'assembler/error'
+import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
@@ -66,7 +68,15 @@ export function encode(code: ICodeFile): IELF {
     for (const instruction of area.instructions) {
       writer.mapLine(instruction.line)
       addLabel(writer, instruction)
-      writeInstruction(writer, instruction, pool)
+      try {
+        writeInstruction(writer, instruction, pool)
+      } catch (e: any) {
+        if (e instanceof InstructionError) {
+          throw new AssemblerError(e.message, instruction.line)
+        } else if (e instanceof Error) {
+          throw e // in case of everything else just throw it on
+        }
+      }
     }
     writeLiteralPool(writer, pool)
     writer.endSection()
@@ -99,12 +109,18 @@ function addSymbols(writer: FileWriter, symbols: ISymbols): void {
  */
 function addLabel(writer: FileWriter, instruction: IInstruction): void {
   if (instruction.label) {
-    writer.addSymbol({
-      type: SymbolType.Address,
-      name: instruction.label,
-      section: writer.getCurrentSection().name,
-      value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
-    })
+    try {
+      writer.addSymbol({
+        type: SymbolType.Address,
+        name: instruction.label,
+        section: writer.getCurrentSection().name,
+        value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
+      })
+    } catch (e: any) {
+      if (e instanceof Error) {
+        throw new AssemblerError(e.message, instruction.line)
+      }
+    }
   }
 }
 

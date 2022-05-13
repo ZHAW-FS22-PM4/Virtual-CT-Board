@@ -36,19 +36,29 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
     this.setState({ isEditable: editable })
   }
 
-  public showErrorMessage(message: string | null): void {
+  public showError(message: string, line: number | null): void {
+    this.highlightLine(line, 'error-highlighting')
     this.setState({ errorMessage: message })
   }
 
-  public highlightLine(line: number | null): void {
+  public clearError(): void {
+    this.highlightLine(null, 'error-highlighting')
+    this.setState({ errorMessage: null })
+  }
+
+  public highlightStep(line: number | null): void {
+    this.highlightLine(line, 'step-highlighting')
+  }
+
+  private highlightLine(line: number | null, className: string): void {
     const view = this.editor.current?.view
     if (view) {
       const decorations: Extension[] = []
       if (line) {
         const decoration = Decoration.line({
-          class: 'current-program-counter'
+          class: className
         })
-        const position = view.state.doc.line(line + 1).from
+        const position = view.state.doc.line(line).from
         decorations.push(
           EditorView.decorations.of(Decoration.set(decoration.range(position)))
         )

@@ -2,6 +2,7 @@ import { IELF, SegmentType } from 'assembler/elf/interfaces'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
+import { RotarySwitch } from './devices/input/rotarySwitch'
 import { Switches } from './devices/input/switches'
 import { LcdDisplay } from './devices/output/lcd'
 import { LEDDevice } from './devices/output/leds'
@@ -21,6 +22,7 @@ class Board {
   public readonly switches: Switches
   public readonly buttons: Buttons
   public readonly leds: LEDDevice
+  public readonly rotaryswitch: RotarySwitch
   public readonly lcdDisplay: LcdDisplay
 
   private executable?: IELF
@@ -32,6 +34,7 @@ class Board {
     this.buttons = new Buttons()
     this.leds = new LEDDevice()
     this.lcdDisplay = new LcdDisplay()
+    this.rotaryswitch = new RotarySwitch()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,

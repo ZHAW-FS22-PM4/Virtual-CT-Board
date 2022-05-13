@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'fork-awesome/css/fork-awesome.min.css'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppComponent } from './components/app'
