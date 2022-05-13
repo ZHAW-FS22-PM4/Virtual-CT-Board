@@ -92,5 +92,7 @@ describe('step', function () {
     expect(registers.readRegister(Register.PC).toUnsignedInteger()).toBe(
       0x0800000c
     )
+    processor.step()
+    expect(processor.isRunning()).toBe(false)
   })
 })

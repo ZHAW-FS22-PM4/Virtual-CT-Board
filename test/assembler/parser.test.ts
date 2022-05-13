@@ -268,7 +268,7 @@ describe('parse text', function () {
 describe('invalid code', function () {
   it('should throw error if no area is defined', function () {
     expect(() => parse('MOVS R1, #123')).toThrow(
-      'Instruction must be defined in area at Line 1, Position 0'
+      'Instruction must be defined in area Line: 2'
     )
   })
 })
