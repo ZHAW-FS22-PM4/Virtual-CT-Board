@@ -209,8 +209,7 @@ function isDataInstruction(instruction: IInstruction): boolean {
 function isSymbolDataInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name == 'DCD' &&
-    instruction.options.length == 1 &&
-    isNaN(+instruction.options[0])
+    instruction.options.every((option) => isNaN(+option))
   )
 }
 
@@ -226,8 +225,10 @@ function writeDataInstruction(
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
-    writer.addDataRelocation(instruction.options[0], bytes.length)
-    writer.writeBytes(bytes, 4)
+    for (const option of instruction.options) {
+      writer.addDataRelocation(option, bytes.length)
+      writer.writeBytes(bytes, 4)
+    }
     return
   } else if (instruction.name === 'ALIGN') {
     const alignment =
