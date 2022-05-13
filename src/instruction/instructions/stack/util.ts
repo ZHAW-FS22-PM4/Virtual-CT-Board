@@ -1,6 +1,7 @@
 import { Register, Registers } from 'board/registers'
 import { InstructionError } from 'instruction/error'
 import { getBits, getEnumValueForRegisterString } from 'instruction/opcode'
+import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
@@ -26,7 +27,7 @@ export abstract class StackInstruction extends BaseInstruction {
       }
     }
 
-    return Halfword.fromUnsignedInteger(0)
+    return opcode
   }
   protected getStackRegisterFromOpcode(opcode: Halfword): Register[] {
     const registerList = getBits(opcode, this.registerBitsPattern)
@@ -40,7 +41,7 @@ export abstract class StackInstruction extends BaseInstruction {
   }
 
   private correctLrOrPcRegisterProvided(register: Register): boolean {
-    return register !== this.additionalRegister
+    return register === this.additionalRegister
   }
 
   private getRegisters(options: string[]): Register[] {
@@ -93,7 +94,9 @@ export abstract class StackInstruction extends BaseInstruction {
       !this.correctLrOrPcRegisterProvided(register)
     ) {
       throw new InstructionError(
-        'Provided register is not a low register or the LR register.'
+        `Provided register is not a low register or the ${$enum(
+          Register
+        ).getKeyOrThrow(this.additionalRegister)} register.`
       )
     }
     return register
@@ -111,13 +114,11 @@ export abstract class StackInstruction extends BaseInstruction {
         throw new InstructionError(
           `Opening or closing curly bracket missing for 1. param.`
         )
+      } else {
+        throw new InstructionError(
+          `Opening curly bracket on 1. param or closing bracket on ${options.length}. param missing.`
+        )
       }
-    } else {
-      throw new InstructionError(
-        `Opening curly bracket on 1. param or closing bracket on ${
-          options.length - 1
-        }. param missing.`
-      )
     }
   }
 

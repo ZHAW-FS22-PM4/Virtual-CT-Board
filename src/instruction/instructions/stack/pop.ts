@@ -9,8 +9,6 @@ export class PopInstruction extends StackInstruction {
   public pattern: string = '1011110XXXXXXXXX'
   protected additionalRegister: Register = Register.PC
 
-  private pcRegisterPosition = 8
-
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 1, 9)
     this.checkCurlyBracketsOnOptions(options)
@@ -30,7 +28,7 @@ export class PopInstruction extends StackInstruction {
       .add(4 * registerValues.length)
     registers.writeRegister(Register.SP, address)
     for (const registerVal of registerValues) {
-      memory.writeWord(address, registers.readRegister(registerVal))
+      registers.writeRegister(registerVal, memory.readWord(address))
       address = address.add(-4)
     }
   }
