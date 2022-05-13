@@ -1,4 +1,4 @@
-import { LcdDisplay } from 'board/devices/output/lcd'
+import { LcdDevice } from 'board/devices/output/lcd'
 import { Byte, Halfword, Word } from 'types/binary'
 
 const byte_0101_0101: Byte = Byte.fromUnsignedInteger(85)
@@ -13,10 +13,10 @@ const lcdDisplayAdressBlue: Word = Word.fromUnsignedInteger(0x60000344)
 const lcdDisplayAsciiBaseAdress: Word = Word.fromUnsignedInteger(0x60000300)
 const lcdDisplayBinaryBaseAdress: Word = Word.fromUnsignedInteger(0x60000330)
 
-let lcdDisplay: LcdDisplay
+let lcdDisplay: LcdDevice
 
 beforeEach(() => {
-  lcdDisplay = new LcdDisplay()
+  lcdDisplay = new LcdDevice()
 })
 
 test('get color function', () => {

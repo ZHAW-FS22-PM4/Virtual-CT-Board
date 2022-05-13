@@ -22,7 +22,7 @@ interface ILcdBinaryPositions {
   [offset: number]: number[]
 }
 
-export class LcdDisplay extends Device {
+export class LcdDevice extends Device {
   private static readonly MAX_POSITIONS: number = 39
 
   private static readonly ASCII_ADRESSES: number[] = this.createAdressRange(
@@ -139,7 +139,7 @@ export class LcdDisplay extends Device {
   /**
    * Maps position on the LCD to their source.
    */
-  private source: ILcdSourceMap = LcdDisplay.emptySourceMap()
+  private source: ILcdSourceMap = LcdDevice.emptySourceMap()
 
   public startAddress = Word.fromUnsignedInteger(0x60000300)
   public endAddress = Word.fromUnsignedInteger(0x60000345)
@@ -153,7 +153,7 @@ export class LcdDisplay extends Device {
    * @returns character at the specified position
    */
   public getDisplayValue(position: number): String {
-    if (LcdDisplay.isInvalidPosition(position)) {
+    if (LcdDevice.isInvalidPosition(position)) {
       throw new Error(`Position ${position} is not valid.`)
     }
     switch (this.source[position]) {
@@ -162,19 +162,19 @@ export class LcdDisplay extends Device {
       }
       case LcdSource.ASCII: {
         const character = this.memory.readByte(
-          Word.fromUnsignedInteger(LcdDisplay.ASCII_ADRESSES[position])
+          Word.fromUnsignedInteger(LcdDevice.ASCII_ADRESSES[position])
         )
         return character.value > 31
           ? String.fromCharCode(character.toUnsignedInteger())
           : ''
       }
       case LcdSource.BINARY: {
-        if (LcdDisplay.BINARY_EMPTY_POSITIONS.includes(position)) {
+        if (LcdDevice.BINARY_EMPTY_POSITIONS.includes(position)) {
           return ''
         }
-        const { offset, mask } = LcdDisplay.BINARY_OFFSETS[position]
+        const { offset, mask } = LcdDevice.BINARY_OFFSETS[position]
         const byte = this.memory.readByte(
-          Word.fromUnsignedInteger(LcdDisplay.BINARY_ADRESSES[0] + offset)
+          Word.fromUnsignedInteger(LcdDevice.BINARY_ADRESSES[0] + offset)
         )
         let nibble = byte.value & mask
         if (mask == 0xf0) {
@@ -192,8 +192,8 @@ export class LcdDisplay extends Device {
    */
   public getColor(): number[] {
     let color: number[] = []
-    for (let i = 0; i < LcdDisplay.COLOR_ADRESSES.length; i++) {
-      const halfword = this.memory.readHalfword(LcdDisplay.COLOR_ADRESSES[i])
+    for (let i = 0; i < LcdDevice.COLOR_ADRESSES.length; i++) {
+      const halfword = this.memory.readHalfword(LcdDevice.COLOR_ADRESSES[i])
       color[i] = (halfword.value / Halfword.MAX_VALUE) * 255
     }
     return color
@@ -227,23 +227,23 @@ export class LcdDisplay extends Device {
 
   public reset(): void {
     super.reset()
-    this.source = LcdDisplay.emptySourceMap()
+    this.source = LcdDevice.emptySourceMap()
   }
 
   private onWriteAtAddress(address: Word): void {
-    if (LcdDisplay.ASCII_ADRESSES.includes(address.value)) {
-      const position = address.value - LcdDisplay.ASCII_ADRESSES[0]
+    if (LcdDevice.ASCII_ADRESSES.includes(address.value)) {
+      const position = address.value - LcdDevice.ASCII_ADRESSES[0]
       this.setSourceForBlock(position, LcdSource.ASCII)
-    } else if (LcdDisplay.BINARY_ADRESSES.includes(address.value)) {
-      const offset = address.value - LcdDisplay.BINARY_ADRESSES[0]
-      for (const position of LcdDisplay.BINARY_POSITIONS[offset]) {
+    } else if (LcdDevice.BINARY_ADRESSES.includes(address.value)) {
+      const offset = address.value - LcdDevice.BINARY_ADRESSES[0]
+      for (const position of LcdDevice.BINARY_POSITIONS[offset]) {
         this.setSourceForBlock(position, LcdSource.BINARY)
       }
     }
   }
 
   private setSourceForBlock(position: number, source: LcdSource): void {
-    const block = LcdDisplay.BLOCKS.find((x) => x.includes(position))
+    const block = LcdDevice.BLOCKS.find((x) => x.includes(position))
     if (block) {
       for (const position of block) {
         this.source[position] = source
@@ -252,7 +252,7 @@ export class LcdDisplay extends Device {
   }
 
   private static isInvalidPosition(position: number): boolean {
-    return position < 0 || position > LcdDisplay.MAX_POSITIONS
+    return position < 0 || position > LcdDevice.MAX_POSITIONS
   }
 
   private static createAdressRange(start: number, end: number): number[] {
@@ -265,7 +265,7 @@ export class LcdDisplay extends Device {
 
   private static emptySourceMap(): ILcdSourceMap {
     const map: ILcdSourceMap = {}
-    for (let i = 0; i <= LcdDisplay.MAX_POSITIONS; i++) {
+    for (let i = 0; i <= LcdDevice.MAX_POSITIONS; i++) {
       map[i] = LcdSource.NOT_SET
     }
     return map

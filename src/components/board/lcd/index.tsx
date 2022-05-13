@@ -16,7 +16,7 @@ export class LcdComponent extends React.Component<{}, ILcdState> {
   constructor(props: {}) {
     super(props)
     this.state = LcdComponent.getState()
-    Board.lcdDisplay.on('change', () => this.update())
+    Board.lcd.on('change', () => this.update())
   }
 
   public update() {
@@ -25,12 +25,12 @@ export class LcdComponent extends React.Component<{}, ILcdState> {
 
   private static getState() {
     const line0 = Array.from({ length: LcdComponent.LINE_LENGTH }, (_, i) =>
-      Board.lcdDisplay.getDisplayValue(i)
+      Board.lcd.getDisplayValue(i)
     )
     const line1 = Array.from({ length: LcdComponent.LINE_LENGTH }, (_, i) =>
-      Board.lcdDisplay.getDisplayValue(LcdComponent.LINE_LENGTH + i)
+      Board.lcd.getDisplayValue(LcdComponent.LINE_LENGTH + i)
     )
-    let [red, green, blue] = Board.lcdDisplay.getColor()
+    let [red, green, blue] = Board.lcd.getColor()
     return { line0, line1, red, green, blue }
   }
 

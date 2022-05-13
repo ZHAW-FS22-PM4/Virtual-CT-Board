@@ -1,11 +1,11 @@
 import { IELF, SegmentType } from 'assembler/elf/interfaces'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
-import { Buttons } from './devices/input/buttons'
-import { RotarySwitch } from './devices/input/rotarySwitch'
-import { Switches } from './devices/input/switches'
-import { LcdDisplay } from './devices/output/lcd'
-import { LEDDevice } from './devices/output/leds'
+import { ButtonsDevice } from './devices/input/buttons'
+import { DipSwitchesDevice } from './devices/input/dip-switches'
+import { HexSwitchDevice } from './devices/input/hex-switch'
+import { LcdDevice } from './devices/output/lcd'
+import { LedsDevice } from './devices/output/leds'
 import { SRAM } from './devices/sram'
 import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
@@ -19,31 +19,31 @@ class Board {
 
   public readonly flash: Flash
   public readonly ram: SRAM
-  public readonly switches: Switches
-  public readonly buttons: Buttons
-  public readonly leds: LEDDevice
-  public readonly rotarySwitch: RotarySwitch
-  public readonly lcdDisplay: LcdDisplay
+  public readonly dipSwitches: DipSwitchesDevice
+  public readonly buttons: ButtonsDevice
+  public readonly leds: LedsDevice
+  public readonly hexSwitch: HexSwitchDevice
+  public readonly lcd: LcdDevice
 
   private executable?: IELF
 
   constructor() {
     this.flash = new Flash()
     this.ram = new SRAM()
-    this.switches = new Switches()
-    this.buttons = new Buttons()
-    this.leds = new LEDDevice()
-    this.lcdDisplay = new LcdDisplay()
-    this.rotarySwitch = new RotarySwitch()
+    this.dipSwitches = new DipSwitchesDevice()
+    this.buttons = new ButtonsDevice()
+    this.hexSwitch = new HexSwitchDevice()
+    this.leds = new LedsDevice()
+    this.lcd = new LcdDevice()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,
       this.ram,
+      this.dipSwitches,
       this.buttons,
-      this.switches,
+      this.hexSwitch,
       this.leds,
-      this.lcdDisplay,
-      this.rotarySwitch
+      this.lcd
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
     this.processor.on('reset', () => this.reloadExecutable())

@@ -13,13 +13,13 @@ export class HexSwitchComponent extends React.Component<{}, IHexSwitchState> {
     super(props)
     this.state = {
       moving: false,
-      value: Board.rotarySwitch.getRotaryValue().toHexString()
+      value: Board.hexSwitch.getRotaryValue().toString(16)
     }
-    Board.rotarySwitch.on('change', () => this.update())
+    Board.hexSwitch.on('change', () => this.update())
   }
 
   public update() {
-    this.setState({ value: Board.rotarySwitch.getRotaryValue().toHexString() })
+    this.setState({ value: Board.hexSwitch.getRotaryValue().toString(16) })
   }
 
   private mouseDown(): void {
@@ -29,9 +29,9 @@ export class HexSwitchComponent extends React.Component<{}, IHexSwitchState> {
   private mouseMove(e: React.MouseEvent<HTMLDivElement>): void {
     if (this.state.moving) {
       if (e.movementX > 0) {
-        Board.rotarySwitch.increase()
+        Board.hexSwitch.increase()
       } else {
-        Board.rotarySwitch.decrease()
+        Board.hexSwitch.decrease()
       }
     }
     this.update()

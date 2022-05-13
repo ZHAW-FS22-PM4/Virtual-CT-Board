@@ -28,13 +28,13 @@ export class DipSwitchComponent extends React.Component<
     this.setState({
       [position]: !this.state[position]
     })
-    Board.switches.toggle(position)
+    Board.dipSwitches.toggle(position)
   }
 
   private getState() {
     const state: DipSwitchState = {}
     for (let i = this.props.startIndex; i <= this.endIndex; i++) {
-      state[i] = Board.switches.isOn(i)
+      state[i] = Board.dipSwitches.isOn(i)
     }
     return state
   }
