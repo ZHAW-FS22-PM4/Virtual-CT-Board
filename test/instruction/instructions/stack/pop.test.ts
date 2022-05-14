@@ -2,6 +2,7 @@ import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
 import { InstructionError } from 'instruction/error'
 import { PopInstruction } from 'instruction/instructions/stack/pop'
+import { PushInstruction } from 'instruction/instructions/stack/push'
 import { Halfword, Word } from 'types/binary'
 
 const instr = new PopInstruction()
@@ -114,8 +115,36 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 })
 
 describe('test executeInstruction function', () => {
-  test('LDR byte with sign extension', () => {
-    let stackAddress = Word.fromUnsignedInteger(0x2000199e)
+  test('POP with PUSH before of other registers', () => {
+    let pushInstr = new PushInstruction()
+
+    let stackAddress = Word.fromUnsignedInteger(0x20004324)
+    const value1 = Word.fromUnsignedInteger(0x66ee44bb)
+    const value2 = Word.fromUnsignedInteger(0xe17c2ab6)
+    registers.writeRegister(Register.SP, stackAddress)
+    registers.writeRegister(Register.R1, value1)
+    registers.writeRegister(Register.R5, value2)
+
+    pushInstr.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b1011010000100010)], //PUSH {R1, R5}
+      registers,
+      memory
+    )
+
+    registers.writeRegister(Register.R1, Word.fromUnsignedInteger(0))
+    registers.writeRegister(Register.R5, Word.fromUnsignedInteger(0))
+
+    instr.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b1011110000100010)], //POP {R1, R5}
+      registers,
+      memory
+    )
+
+    expect(registers.readRegister(Register.R1)).toEqual(value1)
+    expect(registers.readRegister(Register.R5)).toEqual(value2)
+  })
+  test('POP with directly writing to stack memory', () => {
+    let stackAddress = Word.fromUnsignedInteger(0x2000199c)
     const topOfStackVal = Word.fromUnsignedInteger(0xfedc4321)
     const stackVal2 = Word.fromUnsignedInteger(0x22443355)
     const stackVal3 = Word.fromUnsignedInteger(0x03050208)
@@ -136,10 +165,11 @@ describe('test executeInstruction function', () => {
       memory
     )
 
-    expect(registers.readRegister(Register.R5)).toEqual(topOfStackVal)
-    expect(registers.readRegister(Register.R1)).toEqual(stackVal2)
+    expect(memory.readByte(stackAddress).value).toBe(0x21)
+    expect(registers.readRegister(Register.R1)).toEqual(topOfStackVal)
+    expect(registers.readRegister(Register.R5)).toEqual(stackVal2)
     expect(registers.readRegister(Register.SP).value).toEqual(
-      stackAddress.add(8)
+      stackAddress.add(8).value
     )
 
     instr.executeInstruction(
@@ -148,13 +178,13 @@ describe('test executeInstruction function', () => {
       memory
     )
 
-    expect(registers.readRegister(Register.PC)).toEqual(stackVal3)
-    expect(registers.readRegister(Register.R7)).toEqual(stackVal4)
-    expect(registers.readRegister(Register.R5)).toEqual(stackVal5)
-    expect(registers.readRegister(Register.R3)).toEqual(stackVal6)
+    expect(registers.readRegister(Register.R3)).toEqual(stackVal3)
+    expect(registers.readRegister(Register.R5)).toEqual(stackVal4)
+    expect(registers.readRegister(Register.R7)).toEqual(stackVal5)
+    expect(registers.readRegister(Register.PC)).toEqual(stackVal6)
 
     expect(registers.readRegister(Register.SP).value).toEqual(
-      stackAddress.add(16)
+      stackAddress.add(24).value
     )
 
     registers.reset()
@@ -169,17 +199,24 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.PC)).toEqual(topOfStackVal)
     expect(registers.readRegister(Register.R7).value).toEqual(0)
     expect(registers.readRegister(Register.R0).value).toEqual(0)
+    expect(registers.readRegister(Register.SP).value).toEqual(
+      stackAddress.add(4).value
+    )
+    expect(registers.readRegister(Register.PC)).toEqual(topOfStackVal) //uchanged
 
     instr.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b1011110100100111)], //POP {R6, R0-R2}
+      [Halfword.fromUnsignedInteger(0b1011110001000111)], //POP {R6, R0-R2}
       registers,
       memory
     )
 
-    expect(registers.readRegister(Register.PC)).toEqual(topOfStackVal)
-    expect(registers.readRegister(Register.R6)).toEqual(stackVal2)
-    expect(registers.readRegister(Register.R2)).toEqual(stackVal3)
-    expect(registers.readRegister(Register.R1)).toEqual(stackVal4)
-    expect(registers.readRegister(Register.R0)).toEqual(stackVal5)
+    expect(registers.readRegister(Register.PC)).toEqual(topOfStackVal) //uchanged
+    expect(registers.readRegister(Register.R0)).toEqual(stackVal2)
+    expect(registers.readRegister(Register.R1)).toEqual(stackVal3)
+    expect(registers.readRegister(Register.R2)).toEqual(stackVal4)
+    expect(registers.readRegister(Register.R6)).toEqual(stackVal5)
+    expect(registers.readRegister(Register.SP).value).toEqual(
+      stackAddress.add(20).value
+    )
   })
 })

@@ -32,15 +32,15 @@ export abstract class StackInstruction extends BaseInstruction {
   protected getStackRegisterFromOpcode(opcode: Halfword): Register[] {
     const registerList = getBits(opcode, this.registerBitsPattern)
     const registerValues: Register[] = []
-    for (let i = 0; i <= this.lrOrPcRegisterPosition; i++) {
+    for (let i = 0; i < this.lrOrPcRegisterPosition; i++) {
       if (registerList.isBitSet(i)) {
-        if (i === this.lrOrPcRegisterPosition) {
-          registerValues.push(this.additionalRegister)
-        } else {
-          registerValues.push(i)
-        }
+        registerValues.push(i)
       }
     }
+    if (registerList.isBitSet(this.lrOrPcRegisterPosition)) {
+      registerValues.push(this.additionalRegister)
+    }
+
     return registerValues
   }
 

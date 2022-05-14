@@ -135,6 +135,7 @@ describe('test executeInstruction function', () => {
       memory
     )
 
+    expect(registers.readRegister(Register.SP)).toEqual(stackAddress.add(-8))
     expect(memory.readWord(registers.readRegister(Register.SP))).toEqual(value2)
     expect(memory.readWord(registers.readRegister(Register.SP).add(4))).toEqual(
       value3
@@ -146,6 +147,7 @@ describe('test executeInstruction function', () => {
       memory
     )
 
+    expect(registers.readRegister(Register.SP)).toEqual(stackAddress.add(-24))
     expect(memory.readWord(registers.readRegister(Register.SP))).toEqual(value1)
     expect(memory.readWord(registers.readRegister(Register.SP).add(4))).toEqual(
       value3
@@ -163,6 +165,7 @@ describe('test executeInstruction function', () => {
       memory
     )
 
+    expect(registers.readRegister(Register.SP)).toEqual(stackAddress.add(-28))
     expect(memory.readWord(registers.readRegister(Register.SP))).toEqual(value5)
 
     instr.executeInstruction(
@@ -171,6 +174,7 @@ describe('test executeInstruction function', () => {
       memory
     )
 
+    expect(registers.readRegister(Register.SP)).toEqual(stackAddress.add(-44))
     expect(memory.readWord(registers.readRegister(Register.SP))).toEqual(value1)
     expect(memory.readWord(registers.readRegister(Register.SP).add(4))).toEqual(
       value2

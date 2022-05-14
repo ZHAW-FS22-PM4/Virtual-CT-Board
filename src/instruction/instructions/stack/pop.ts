@@ -23,13 +23,11 @@ export class PopInstruction extends StackInstruction {
     memory: IMemory
   ) {
     let registerValues = this.getStackRegisterFromOpcode(opcode[0])
-    let address = registers
-      .readRegister(Register.SP)
-      .add(4 * registerValues.length)
-    registers.writeRegister(Register.SP, address)
+    let address = registers.readRegister(Register.SP)
     for (const registerVal of registerValues) {
       registers.writeRegister(registerVal, memory.readWord(address))
-      address = address.add(-4)
+      address = address.add(4)
     }
+    registers.writeRegister(Register.SP, address)
   }
 }
