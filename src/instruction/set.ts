@@ -78,6 +78,7 @@ import {
   LsrsRegisterInstruction
 } from './instructions/shift_rotate/lsrs'
 import { RorsInstruction } from './instructions/shift_rotate/rors'
+import { PopInstruction } from './instructions/stack/pop'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
@@ -202,5 +203,6 @@ export default new InstructionSet([
   new BGTConditionalJumpInstruction(),
   new BLEConditionalJumpInstruction(),
   new BALConditionalJumpInstruction(),
-  new PushInstruction()
+  new PushInstruction(),
+  new PopInstruction()
 ])
