@@ -117,6 +117,50 @@ describe('encode', function () {
     expect(file.content[6].value).toBe(0x00)
     expect(file.content[7].value).toBe(0x00)
   })
+  it('should encode DCD instruction with labels', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'DCD',
+              options: ['case1', 'case2'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(8)
+    expect(file.content.length).toBe(8)
+    expect(file.content[0].value).toBe(0x00)
+    expect(file.content[1].value).toBe(0x00)
+    expect(file.content[2].value).toBe(0x00)
+    expect(file.content[3].value).toBe(0x00)
+    expect(file.content[4].value).toBe(0x00)
+    expect(file.content[5].value).toBe(0x00)
+    expect(file.content[6].value).toBe(0x00)
+    expect(file.content[7].value).toBe(0x00)
+
+    expect(file.relocations.length).toBe(2)
+    expect(file.relocations[0].type).toBe(RelocationType.Data)
+    expect(file.relocations[0].section).toBe('|.data|')
+    expect(file.relocations[0].offset).toBe(0)
+    expect(file.relocations[0].length).toBe(4)
+    expect(file.relocations[0].symbol).toBe('case1')
+    expect(file.relocations[1].type).toBe(RelocationType.Data)
+    expect(file.relocations[1].section).toBe('|.data|')
+    expect(file.relocations[1].offset).toBe(4)
+    expect(file.relocations[1].length).toBe(4)
+    expect(file.relocations[1].symbol).toBe('case2')
+  })
   it('should encode SPACE instruction', function () {
     for (const name of ['SPACE', 'FILL', '%']) {
       const code: ICodeFile = {
