@@ -153,7 +153,7 @@ kw<term> { @specialize[@name="Keyword"]<identifier, term> }
 
   RegisterLiteral { "R" $[0-9] | "R1" $[1-2] | "SP" | "LR" | "PC" }
 
-  RegisterLiteralRange { RegisterLiteral "-" RegisterLiteral }
+  RegisterLiteralRange { RegisterLiteral space* "-" space* RegisterLiteral }
 
   digits {
     $[0-9]+
