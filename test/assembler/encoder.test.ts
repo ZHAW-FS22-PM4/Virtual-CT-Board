@@ -2,6 +2,7 @@ import { AreaType, ICodeFile } from 'assembler/ast'
 import { RelocationType } from 'assembler/elf/interfaces'
 import { getSection } from 'assembler/elf/utils'
 import { encode } from 'assembler/encoder'
+import { AssemblerError } from 'assembler/error'
 import { Byte, Halfword, Word } from 'types/binary'
 
 describe('encode', function () {
@@ -306,5 +307,55 @@ describe('encode', function () {
         file.content[7]
       )
     ).toEqual(Word.fromUnsignedInteger(0x00))
+  })
+  it('should encode code instruction that references equ constant', function () {
+    const code: ICodeFile = {
+      symbols: {
+        ['MY_CONST']: '0xB'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.text|',
+          instructions: [
+            {
+              name: 'MOVS',
+              options: ['R1', '#MY_CONST'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.text|').offset).toBe(0)
+    expect(getSection(file, '|.text|').size).toBe(2)
+    expect(file.content.length).toBe(2)
+    expect(file.content[0].value).toBe(0xb)
+    expect(file.content[1].value).toBe(0x21)
+  })
+  it('should throw error if instruction references unknown equ constant', function () {
+    const code: ICodeFile = {
+      symbols: {
+        ['MY_CONST']: '0xB'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.text|',
+          instructions: [
+            {
+              name: 'MOVS',
+              options: ['R1', '#MY_UNKNOWN_CONST'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    expect(() => encode(code)).toThrow(AssemblerError)
   })
 })
