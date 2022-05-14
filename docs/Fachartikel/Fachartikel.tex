@@ -102,10 +102,10 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 Es existieren bereits verschiedene Produkte, die den Studenten des CT1-Moduls beim Erlernen ihrer Fertigkeiten behilflich sein können.
 
 \paragraph{Virtuelle Emulatoren}
-Der Emulator VisUAL von Alman Sarif soll hier stellvertretend für andere virtuelle Emulatoren für die Assembly-Programmiersprache vorgestellt werden. Er wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
+Der Emulator VisUAL von Salman Arif (2015) soll hier stellvertretend für andere virtuelle Emulatoren für die Assembly-Programmiersprache vorgestellt werden. Er wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{visual_emulator}
-\caption{Der Emulator VisUAL samt seiner grafischen Oberfläche. (Quelle: https://salmanarif.bitbucket.io/visual/index.html)}
+\caption{Der Emulator VisUAL samt seiner grafischen Oberfläche (Arif 2015).}
 \label{emulator}
 \end{figure}
 Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die CT1-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der CT1-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem auch die fürs CT1-Modul notwendigen Hardware-Bestandteile des physischen CT Boards visualisiert werden und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
@@ -160,7 +160,7 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 %%% Welche Praktika sind ausführbar? Sind überhaupt welche ausführbar?
 
-Die manuellen Tests haben ergeben, dass von den insgesamt 11 Praktika xx ausführbar sind. Die Tabelle \ref{praktika} zeigt den Lauffähigkeitsstatus jedes Praktikums und listet bei jenen, die noch nicht ausführbar sind, die fehlenden Funktionen auf.
+Die manuellen Tests haben ergeben, dass von den insgesamt 11 Praktika xx ausführbar sind. Die Tabelle \ref{praktika} gibt einen Überblick über den Lauffähigkeitsstatus der Praktika und listet bei jenen, die noch nicht ausführbar sind, die fehlenden Funktionen auf.
 
 \rowcolors{2}{gray!10}{gray!40}
 \begin{table}[ht]
@@ -200,7 +200,7 @@ Die manuellen Tests haben ergeben, dass von den insgesamt 11 Praktika xx ausfüh
 Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Die Studierenden können nach und nach auf das \glqq Virtual CT Board\grqq{} umsteigen - wenn auch noch nicht vollständig. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, könnten im CT1-Unterricht die physischen Boards neben dem virtuellen eingesetzt und damit die bestehenden Ressourcen ideal ausgeschöpft werden. Falls die ZHAW Interesse daran hat, das \glqq Virtual CT Board\grqq{} weiter zu entwickeln und auch finanziell zu unterstützen, bietet sich die Umsetzung folgender Punkte an, für die die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
 
 \begin{itemize}
-	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
+	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen. Siehe hierzu Tabelle \ref{praktika}.
 	\item[$-$] Für die ersten beiden Praktika sowie Praktikum 9 müsste auch C-Code interpretier- und ausführbar sein.
 	\item[$-$] Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
 	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
@@ -221,10 +221,10 @@ Sollte die ZHAW zudem eine Erweiterung der Software anstreben, könnten zukünft
 
 \begin{itemize}
 
-\item[$-$] \emph{https://ennis.zhaw.ch} [abgerufen am 30.03.2022]
-\item[$-$] \emph{https://salmanarif.bitbucket.io/visual/index.html}. [abgerufen am 30.03.2022]
-\item[$-$] West, Steve (2018). Meeting Millennial Expectations In These Four Areas Of Technology. \emph{https://www.forbes.com/sites/forbestechcouncil/2018/06/28/meeting-millennial-expectations-in-these-four-areas-of-technology/?sh=5df2822f4ffc} [Abgerufen am 25.04.2022]
-\item[$-$] Wirthman, Lisa (2020). How Tech-Savvy Millennials Are Driving the Digital Workplace. \emph{https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/} [Abgerufen am 25.04.2022]
+\item[$-$] (o.N). (o.D). \emph{InES CT Board} [Online]. https://ennis.zhaw.ch [Stand: 30.03.2022]
+\item[$-$] S. Arik. (2015). \emph{VisUAL. A highly visual ARM emulator.} https://salmanarif.bitbucket.io/visual/index.html. [Stand: 30.03.2022]
+\item[$-$] S. West. (2018). \emph{Meeting Millennial Expectations In These Four Areas Of Technology.} https://www.forbes.com/sites/forbestechcouncil/2018/06/28/meeting-millennial-expectations-in-these-four-areas-of-technology/?sh=5df2822f4ffc [Stand: 25.04.2022]
+\item[$-$] L. Wirthman. (2020). How Tech-Savvy Millennials Are Driving the Digital Workplace. \emph{https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/} [Stand: 25.04.2022]
 
 \end{itemize}
 
