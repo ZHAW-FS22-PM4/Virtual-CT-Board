@@ -8,22 +8,30 @@ const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 const byte_fe = Byte.fromUnsignedInteger(254)
 const byte_81 = Byte.fromUnsignedInteger(129)
 let segs: SEVENseg
-let displaye: boolean[] = [false, true, true, true, true, false, false, true]//0111_1001
-let displayf: boolean[] = [false, true, true, true, false, false, false, true]//0111_0001
-let displayI: boolean[] = [false, false, false, false, false, true, true, false]//0000_0110
-let display8: boolean[] = [false, true, true, true, true, true, true, true]//0111_1111
+let displaye: boolean[] = [false, true, true, true, true, false, false, true] //0111_1001
+let displayf: boolean[] = [false, true, true, true, false, false, false, true] //0111_0001
+let displayI: boolean[] = [false, false, false, false, false, true, true, false] //0000_0110
+let display8: boolean[] = [false, true, true, true, true, true, true, true] //0111_1111
 
-let display0: boolean[] = [false, true, false, true, false, true, false, true]//0101_0101
-let display1: boolean[] = [true, false, true, false, true, false, true, false]//1010_1010
-let display2: boolean[] = [false, false, false, false, false, false, false, false]//0000_0000
-let display3: boolean[] = [true, true, true, true, true, true, true, true]//1111_1111
+let display0: boolean[] = [false, true, false, true, false, true, false, true] //0101_0101
+let display1: boolean[] = [true, false, true, false, true, false, true, false] //1010_1010
+let display2: boolean[] = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+] //0000_0000
+let display3: boolean[] = [true, true, true, true, true, true, true, true] //1111_1111
 
 beforeEach(() => {
   segs = new SEVENseg()
 })
 
 test('getDisplay() returns seg state on correct position', () => {
-
   segs.writeWord(
     segs.startAddress,
     Word.fromBytes(
@@ -40,11 +48,7 @@ test('getDisplay() returns seg state on correct position', () => {
 })
 
 test('getDisplay() from binary returns seg state on correct position', () => {
-  segs.writeHalfword(
-    segs.startAddressBin, Halfword.fromBytes(
-      byte_fe,
-      byte_81
-    ))
+  segs.writeHalfword(segs.startAddressBin, Halfword.fromBytes(byte_fe, byte_81))
   expect(segs.getDisplay(3)).toStrictEqual(display8)
   expect(segs.getDisplay(2)).toStrictEqual(displayI)
   expect(segs.getDisplay(1)).toStrictEqual(displayf)
@@ -52,6 +56,10 @@ test('getDisplay() from binary returns seg state on correct position', () => {
 })
 
 test('isOn() throws error when position is out of bounds', () => {
-  expect(() => segs.isOn(-1,0)).toThrow(new Error(`Segment -1 Position 0 does not exist.`))
-  expect(() => segs.isOn(32,0)).toThrow(new Error(`Segment 32 Position 0 does not exist.`))
+  expect(() => segs.isOn(-1, 0)).toThrow(
+    new Error(`Segment -1 Position 0 does not exist.`)
+  )
+  expect(() => segs.isOn(32, 0)).toThrow(
+    new Error(`Segment 32 Position 0 does not exist.`)
+  )
 })

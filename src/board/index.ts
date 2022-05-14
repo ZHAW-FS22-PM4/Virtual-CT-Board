@@ -1,11 +1,11 @@
-import { IELF, SegmentType } from 'assembler/elf'
+import { IELF, SegmentType } from 'assembler/elf/interfaces'
 import InstructionSet from 'instruction/set'
 import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
 import { RotarySwitch } from './devices/input/rotarySwitch'
 import { Switches } from './devices/input/switches'
-import { LcdDisplay } from './devices/output/lcd'
 import { SEVENseg } from './devices/output/7seg'
+import { LcdDisplay } from './devices/output/lcd'
 import { LEDDevice } from './devices/output/leds'
 import { SRAM } from './devices/sram'
 import { MemoryBus } from './memory/bus'
@@ -27,8 +27,6 @@ class Board {
   public readonly rotaryswitch: RotarySwitch
   public readonly lcdDisplay: LcdDisplay
   public readonly sevenSeg: SEVENseg
-
-  private executable?: IELF
 
   private executable?: IELF
 

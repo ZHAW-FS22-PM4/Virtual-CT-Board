@@ -43,9 +43,9 @@ export class SEVENseg extends Device {
    * @param segment segmentnumber to check (0-3)
    * @returns true if segment is turned on
    */
-  public isOn(segment: number,position: number): boolean {
-    if (SEVENseg.invalidPosition(segment,position)) {
-      throw new Error(`Segment ${segment} Position ${ position} does not exist.`)
+  public isOn(segment: number, position: number): boolean {
+    if (SEVENseg.invalidPosition(segment, position)) {
+      throw new Error(`Segment ${segment} Position ${position} does not exist.`)
     }
     return this.displays[segment][position]
   }
@@ -194,8 +194,12 @@ export class SEVENseg extends Device {
     return arr
   }
 
-
   private static invalidPosition(segment: number, position: number): boolean {
-    return position < 0 || position > SEVENseg.MAX_SEG_NUMBER || segment <0 || segment > 7
+    return (
+      position < 0 ||
+      position > SEVENseg.MAX_SEG_NUMBER ||
+      segment < 0 ||
+      segment > 7
+    )
   }
 }
