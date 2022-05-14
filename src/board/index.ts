@@ -39,6 +39,7 @@ class Board {
     this.memory = new MemoryBus([
       this.flash,
       this.ram,
+      this.rotaryswitch,
       this.buttons,
       this.switches,
       this.leds,
