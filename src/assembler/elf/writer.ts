@@ -153,7 +153,7 @@ export class FileWriter {
   }
 
   /**
-   * Aligns the content to be specified alignment by filling with tbd
+   * Aligns the content to be specified alignment by filling.
    *
    * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
    */
@@ -164,7 +164,7 @@ export class FileWriter {
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff)) //TODO better with zeros for unaligend data section instructions
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
         )
       }
     }
