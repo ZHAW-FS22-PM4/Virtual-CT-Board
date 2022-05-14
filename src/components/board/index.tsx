@@ -1,5 +1,6 @@
 import { LcdComponent } from 'components/board/lcd'
 import React from 'react'
+import { SevenSegComponent } from './7seg'
 import { Button } from './button'
 import { DipSwitch } from './dip-switch'
 import { LedComponent } from './led'
@@ -25,6 +26,12 @@ export class BoardComonent extends React.Component {
             <LedComponent startIndex={16} size={8} />
             <DipSwitch startIndex={16} size={8} />
           </div>
+        </div>
+        <div className="row mx-2 my-1">
+          <SevenSegComponent displayId={3} />
+          <SevenSegComponent displayId={2} />
+          <SevenSegComponent displayId={1} />
+          <SevenSegComponent displayId={0} />
         </div>
         <div className="row mx-2 my-1">
           <div className="col-sm-3">
