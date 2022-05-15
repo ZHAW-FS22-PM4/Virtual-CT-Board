@@ -96,3 +96,18 @@ describe('step', function () {
     expect(processor.isRunning()).toBe(false)
   })
 })
+
+describe('execution error', function () {
+  it('should handle execution error correctly', function () {
+    WRITE_CODE(MOVS('PC', 'R0'))
+    const processor: Processor = new Processor(
+        registers,
+        memory,
+        InstructionSet
+    )
+    processor.execute()
+    expect(processor.isRunning()).toBe(true)
+    processor.halt()
+    expect(processor.isRunning()).toBe(false)
+  })
+})
