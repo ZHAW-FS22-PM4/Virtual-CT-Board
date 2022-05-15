@@ -61,6 +61,7 @@ export function encode(code: ICodeFile): IELF {
   const file = createFile()
   const writer = new FileWriter(file)
   addSymbols(writer, code.symbols)
+  const equConstants: Map<string, Word> = createEquConstantsMap(file)
   for (const area of code.areas) {
     const type = $enum(SectionType).asValueOrThrow(area.type)
     writer.startSection(type, area.name)
@@ -68,6 +69,7 @@ export function encode(code: ICodeFile): IELF {
     for (const instruction of area.instructions) {
       writer.mapLine(instruction.line)
       addLabel(writer, instruction)
+      replaceEquConstants(instruction, equConstants)
       try {
         writeInstruction(writer, instruction, pool)
       } catch (e: any) {
@@ -82,6 +84,49 @@ export function encode(code: ICodeFile): IELF {
     writer.endSection()
   }
   return file
+}
+
+/**
+ * Creates a map for fast lookup of equ constants.
+ *
+ * @param file file from which the map is created
+ * @returns created map
+ */
+function createEquConstantsMap(file: IELF): Map<string, Word> {
+  const equConstants: Map<string, Word> = new Map<string, Word>()
+  for (const symbol in file.symbols) {
+    if (file.symbols[symbol].type === SymbolType.Constant)
+      equConstants.set(file.symbols[symbol].name, file.symbols[symbol].value)
+  }
+  return equConstants
+}
+
+/**
+ * Replaces all references to equ constants for the given instruction with the actual value.
+ *
+ * @param instruction instruction to replace options
+ * @param equConstants map of equ constant that is used to lookup the actual value
+ */
+function replaceEquConstants(
+  instruction: IInstruction,
+  equConstants: Map<string, Word>
+): void {
+  for (let i = 0; i < instruction.options.length; i++) {
+    if (
+      instruction.options[i].startsWith('#') &&
+      isNaN(+instruction.options[i].slice(1))
+    ) {
+      const val = equConstants.get(instruction.options[i].slice(1))
+      if (val) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString()
+      } else {
+        throw new AssemblerError(
+          `Instruction refers to constant ${instruction.options[i]} which does not exists.`,
+          instruction.line
+        )
+      }
+    }
+  }
 }
 
 /**
@@ -209,8 +254,7 @@ function isDataInstruction(instruction: IInstruction): boolean {
 function isSymbolDataInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name == 'DCD' &&
-    instruction.options.length == 1 &&
-    isNaN(+instruction.options[0])
+    instruction.options.every((option) => isNaN(+option))
   )
 }
 
@@ -226,8 +270,10 @@ function writeDataInstruction(
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
-    writer.addDataRelocation(instruction.options[0], bytes.length)
-    writer.writeBytes(bytes, 4)
+    for (const option of instruction.options) {
+      writer.addDataRelocation(option, bytes.length)
+      writer.writeBytes(bytes, 4)
+    }
     return
   } else if (instruction.name === 'ALIGN') {
     const alignment =

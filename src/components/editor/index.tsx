@@ -28,6 +28,8 @@ interface EditorState {
 
 export class EditorComponent extends React.Component<{}, EditorState> {
   private static SESSION_STORAGE_KEY: string = 'vcb_storage_editorContent'
+  private static ERROR_HIGHLIGHTING_CLASS: string = 'error-highlighting'
+  private static STEP_HIGHLIGHTING_CLASS: string = 'step-highlighting'
   private configuration: Compartment
   private editor: React.RefObject<ReactCodeMirrorRef>
 
@@ -44,6 +46,18 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     Board.processor.on('endOfCode', () =>
       this.setState({ mode: EditorMode.EDIT })
     )
+
+    Board.processor.on('runtimeError', (message: string) => {
+      this.clearHighlightings()
+      this.updateProgramCounterHighlighting(
+        EditorComponent.ERROR_HIGHLIGHTING_CLASS
+      )
+      this.setState({
+        showError: true,
+        errorMessage: message,
+        mode: EditorMode.EDIT
+      })
+    })
   }
 
   resetProcessor(): void {
@@ -58,6 +72,11 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       this.catchAndShowError(() => {
         const executable = assemble(this.getCode())
         Board.loadExecutable(executable)
+
+        // in case of runtime error processor is not reset so whenever the code is compiled successfully again
+        // reset the processor to make sure everything is ready for next execution
+        Board.processor.reset()
+
         Board.processor.execute()
         nextMode = EditorMode.RUN
       })
@@ -78,6 +97,11 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       this.catchAndShowError(() => {
         const executable = assemble(this.getCode())
         Board.loadExecutable(executable)
+
+        // in case of runtime error processor is not reset so whenever the code is compiled successfully again
+        // reset the processor to make sure everything is ready for next execution
+        Board.processor.reset()
+
         this.setState({
           mode: EditorMode.STEP
         })
@@ -94,7 +118,9 @@ export class EditorComponent extends React.Component<{}, EditorState> {
     }))
   }
 
-  updateProgramCounterHighlighting() {
+  updateProgramCounterHighlighting(
+    className: string = EditorComponent.STEP_HIGHLIGHTING_CLASS
+  ) {
     const executable = Board.getExecutable()
     let line: number | undefined
     if (executable) {
@@ -102,7 +128,7 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       line = executable.sourceMap.getLine(pc)
     }
 
-    if (line) this.highlightLine(line + 1, 'step-highlighting')
+    if (line) this.highlightLine(line + 1, className)
   }
 
   highlightLine(line: number, className: string): void {
@@ -145,7 +171,10 @@ export class EditorComponent extends React.Component<{}, EditorState> {
       }
 
       if (err instanceof AssemblerError) {
-        this.highlightLine(err.line + 1, 'error-highlighting')
+        this.highlightLine(
+          err.line + 1,
+          EditorComponent.ERROR_HIGHLIGHTING_CLASS
+        )
       }
     }
   }
