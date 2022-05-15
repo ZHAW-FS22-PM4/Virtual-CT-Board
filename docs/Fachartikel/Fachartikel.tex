@@ -63,7 +63,7 @@ Ein fester Bestandteil des Informatikstudiums an der ZHAW ist das Modul \glqq Co
 
 \subsection{Die Idee}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den höheren Semestern gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
 \includegraphics[width=10cm]{ctboard}
@@ -87,7 +87,7 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 \paragraph{Für die Studierenden:}
 \begin{itemize}
 \item[$-$] Die Studierenden des CT1-Moduls haben eine elegante Alternative zu den physischen CT Boards und müssen jene nicht mehr nach Hause tragen und für ihre Erhaltung besorgt sein.
-\item[$-$] Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen Strom und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
+\item[$-$] Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen direkten Stromanschluss und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
 \item[$-$] Alle Praktika des CT1-Moduls lassen sich mit dem \glqq Virtual CT Board\grqq{} umsetzen.
 \end{itemize}
 
@@ -121,7 +121,7 @@ Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs 
 \item[$-$] Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. Insbesondere die Simulation von Interrupts könnte eine Herausforderung darstellen.
 \item[$-$] Der Funktionsumfang des virtuellen Boards könnte aufgrund knapper Projektlaufzeit eingeschränkt werden. 
 \item[$-$] Aufgrund falscher Implementierung können unvorhergesehene Fehler auftreten. Das virtuelle Board wurde nicht mehrere Jahre getestet wie das phyische Board.
-\item[$-$] Das physische Board besitzt im Vergleich zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
+\item[$-$] Das physische Board besitzt im Vergleich zum Browser ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
 \end{itemize}
 
 \section{Resultate}
@@ -140,9 +140,9 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 \paragraph{Prozessor} Wie auch das physische CT Board verfügt das virtuelle Board über einen Prozessor samt \emph{Arithmetic Logic Unit} und Registern. Dieser bildet das Kernstück der Anwendung, denn dort finden die Ausführung des Programmcodes und die Berechnungen statt. 
 
-\paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form des sogenannten Opcodes sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen.
+\paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form von Maschinencode sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen.
 
-\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die \emph{Dip Switches} und die Tx-Buttons als binäre On-/Off-Schalter und der \emph{Rotary Switch}, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
+\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die DIP-Schalter und die Tx-Buttons als binäre On-/Off-Schalter und der Rotary-Schalter, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
 
 \paragraph{Assembler-Befehle} Alle für die CT1-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
 \begin{itemize}
