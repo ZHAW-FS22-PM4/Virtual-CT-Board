@@ -278,12 +278,12 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('LoadRegisterInstruction', () => {
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[PC', '#0x03]'])[0] //TODO VCB-176 --> offset '#0x0c]'
+        .encodeInstruction(['R1', '[PC', '#0x03]'])[0] //VCB-176 --> offset '#0x0c]'
         .toBinaryString()
     ).toEqual('0100100100000011')
     expect(
       instrLdrPointer
-        .encodeInstruction(['R1', '[PC', '#0x1f]'])[0] //TODO VCB-176 --> offset '#0x7c]'
+        .encodeInstruction(['R1', '[PC', '#0x1f]'])[0] //VCB-176 --> offset '#0x7c]'
         .toBinaryString()
     ).toEqual('0100100100011111')
     expect(
@@ -314,7 +314,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     expect(() =>
       instrLdrPointer.encodeInstruction(['R5', '#0x1F]', '[R2'])
     ).toThrow(InstructionError)
-    //TODO VCB-176 --> uncomment tests
+    //VCB-176 --> uncomment tests
     /*expect(() =>
       instrLdrPointer.encodeInstruction(['R1', '[PC', '#0x6]'])
     ).toThrow(offsetNotWordAligned)
@@ -338,28 +338,28 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     expect(
       instrLdrPointer
         .encodeInstruction(['R3', '=justSmth'], {
-          justSmth: Word.fromUnsignedInteger(0x68) //TODO VCB-176 --> 0x1a0
+          justSmth: Word.fromUnsignedInteger(0x68) //VCB-176 --> 0x1a0
         })[0]
         .toBinaryString()
     ).toEqual('0100101101101000')
     expect(
       instrLdrPointer
         .encodeInstruction(['R6', '=everything'], {
-          everything: Word.fromSignedInteger(-3) //TODO VCB-176 --> -12
+          everything: Word.fromSignedInteger(-3) //VCB-176 --> -12
         })[0]
         .toBinaryString()
     ).toEqual('0100111011111101')
     expect(
       instrLdrPointer
         .encodeInstruction(['R3', '=0x20003000'], {
-          '0x20003000': Word.fromUnsignedInteger(0x11) //TODO VCB-176 --> 0x44
+          '0x20003000': Word.fromUnsignedInteger(0x11) //VCB-176 --> 0x44
         })[0]
         .toBinaryString()
     ).toEqual('0100101100010001')
     expect(
       instrLdrPointer
         .encodeInstruction(['R4', 'myLita'], {
-          myLita: Word.fromUnsignedInteger(0x80) //TODO VCB-176 --> 0x200
+          myLita: Word.fromUnsignedInteger(0x80) //VCB-176 --> 0x200
         })[0]
         .toBinaryString()
     ).toEqual('0100110010000000')
@@ -422,7 +422,7 @@ describe('test executeInstruction function', () => {
     expect(registers.readRegister(Register.R3).value).toEqual(0x12345678)
     //LDR R4, [PC, #4]
     instrLdrPointer.executeInstruction(
-      [Halfword.fromUnsignedInteger(0x4c04)], //TODO VCB-176 --> 0x4c01
+      [Halfword.fromUnsignedInteger(0x4c04)], //VCB-176 --> 0x4c01
       registers,
       memory
     )

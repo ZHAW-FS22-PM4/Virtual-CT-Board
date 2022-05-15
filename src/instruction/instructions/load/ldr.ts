@@ -203,10 +203,10 @@ export class LdrRegisterInstruction extends BaseInstruction {
       immValue = createImmediateBits(
         //limit bit count so negative values will not be considered wrong
         `#${
-          labels ? limitValuesToBitCount(labels[pseudoValue].value, 8) : '0' //TODO VCB-176 --> limitValuesToBitCount 10 instead of 8 as param
+          labels ? limitValuesToBitCount(labels[pseudoValue].value, 8) : '0' //VCB-176 --> limitValuesToBitCount 10 instead of 8 as param
         }`,
         8,
-        0 //TODO VCB-176 --> 2
+        0 //VCB-176 --> 2
       )
     } else if (options.length == this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
@@ -215,7 +215,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       immValue = createImmediateBits(
         removeBracketsFromRegisterString(options[2]),
         8,
-        0 //TODO VCB-176 when word aligned --> 2
+        0 //VCB-176 when word aligned --> 2
       )
     }
 
@@ -234,9 +234,9 @@ export class LdrRegisterInstruction extends BaseInstruction {
       getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
         Word.fromUnsignedInteger(
-          //TODO  VCB-176 --> alignPointer(registers.readRegister(Register.PC).value, 4)
+          //VCB-176 --> alignPointer(registers.readRegister(Register.PC).value, 4)
           registers.readRegister(Register.PC).value +
-            getImmediateBits(opcode[0], this.immPattern, 0).value //TODO VCB-176 --> getImmediateBits 2 instead of 0
+            getImmediateBits(opcode[0], this.immPattern, 0).value //VCB-176 --> getImmediateBits 2 instead of 0
         )
       )
     )
