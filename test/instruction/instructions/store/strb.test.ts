@@ -27,6 +27,13 @@ const instructionStoreInstructionImmediateOffsetByte =
 const instructionStoreInstructionRegisterOffsetByte =
   new StrbRegisterOffsetInstruction()
 
+const encodingErrorWrongBracketsOn2nd = new InstructionError(
+  'Opening or closing bracket missing for 2. param'
+)
+const encodingErrorWrongBracketsOn2ndOr3rd = new InstructionError(
+  'Opening bracket on 2. param or closing bracket on 3. param'
+)
+
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
@@ -161,6 +168,11 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         .encodeInstruction(['R1', '[R2', '#0x1F]'])[0]
         .toBinaryString()
     ).toEqual('0111011111010001')
+    expect(
+      instructionStoreInstructionImmediateOffsetByte
+        .encodeInstruction(['R4', '[R0]'])[0]
+        .toBinaryString()
+    ).toEqual('0111000000000100')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffsetByte.encodeInstruction([
@@ -175,7 +187,21 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         'R1',
         '[R2'
       ])
-    ).toThrow(InstructionError)
+    ).toThrow(encodingErrorWrongBracketsOn2nd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetByte.encodeInstruction([
+        'R1',
+        'R2',
+        '#5]'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetByte.encodeInstruction([
+        'R5',
+        '[R2',
+        '[0x1F'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffsetByte.encodeInstruction([
@@ -244,7 +270,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 
 describe('test executeInstruction function', () => {
   test('STRB immediate offset', () => {
-    // STR R7, [R6, #0x01]
+    // STR R6, [R7, #0x01]
     instructionStoreInstructionImmediateOffsetByte.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0111000001111110)],
       registers,
@@ -253,10 +279,27 @@ describe('test executeInstruction function', () => {
     expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual(
       '00000078'
     )
+    // LDR R6, [R5]
+    instructionStoreInstructionImmediateOffsetByte.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111000000101110)],
+      registers,
+      memory
+    )
+    expect(memory.readWord(registerValueR5).toBinaryString()).toEqual(
+      '00000000000000000000000001111000'
+    )
+    //leave remaining values unchanged
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0xffffffff))
+    instructionStoreInstructionImmediateOffsetByte.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111000000101110)],
+      registers,
+      memory
+    )
+    expect(memory.readWord(registerValueR5).value).toEqual(0xffffff78)
     memory.reset()
   })
   test('STRB register offset', () => {
-    // STR R7, [R6, R5]
+    // STR R6, [R7, R5]
     instructionStoreInstructionRegisterOffsetByte.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0101010101111110)],
       registers,

@@ -27,6 +27,16 @@ const instructionStoreInstructionImmediateOffsetHalfword =
 const instructionStoreInstructionRegisterOffsetHalfword =
   new StrhRegisterOffsetInstruction()
 
+const encodingErrorWrongBracketsOn2nd = new InstructionError(
+  'Opening or closing bracket missing for 2. param'
+)
+const encodingErrorWrongBracketsOn2ndOr3rd = new InstructionError(
+  'Opening bracket on 2. param or closing bracket on 3. param'
+)
+const offsetNotHalfwordAligned = new InstructionError(
+  'Immediate offset not halfword aligned'
+)
+
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
@@ -171,6 +181,11 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         .encodeInstruction(['R4', '[R4', '#20]'])[0]
         .toBinaryString()
     ).toEqual('1000001010100100')
+    expect(
+      instructionStoreInstructionImmediateOffsetHalfword
+        .encodeInstruction(['R2', '[R2]'])[0]
+        .toBinaryString()
+    ).toEqual('1000000000010010')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -185,7 +200,21 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         'R1',
         '[R2'
       ])
-    ).toThrow(InstructionError)
+    ).toThrow(encodingErrorWrongBracketsOn2nd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
+        'R1',
+        'R2',
+        '[#5'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
+        'R5',
+        '[R2',
+        '0x1F'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -202,6 +231,20 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         '[R2'
       ])
     ).toThrow(InstructionError)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
+        'R1',
+        '[R2',
+        '#0x9]'
+      ])
+    ).toThrow(offsetNotHalfwordAligned)
+    expect(() =>
+      instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
+        'R1',
+        '[R2',
+        '#0x13]'
+      ])
+    ).toThrow(offsetNotHalfwordAligned)
   })
   test('StrhRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
@@ -254,7 +297,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 
 describe('test executeInstruction function', () => {
   test('STRH immediate offset', () => {
-    // STR R7, [R6, #0x01] --> offset by 2
+    // STR R6, [R7, #0x01] --> offset by 2
     instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
       [Halfword.fromUnsignedInteger(0b1000000001111110)],
       registers,
@@ -263,10 +306,27 @@ describe('test executeInstruction function', () => {
     expect(memory.readWord(registerValueR7.add(2)).toHexString()).toEqual(
       '00005678'
     )
+    // LDR R6, [R5]
+    instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111000000101110)],
+      registers,
+      memory
+    )
+    expect(memory.readWord(registerValueR5).toBinaryString()).toEqual(
+      '00000000000000000101011001111000'
+    )
+    //leave remaining values unchanged
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0xffffffff))
+    instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111000000101110)],
+      registers,
+      memory
+    )
+    expect(memory.readWord(registerValueR5).value).toEqual(0xffff5678)
     memory.reset()
   })
   test('STRH register offset', () => {
-    // STR R7, [R6, R5]
+    // STR R6, [R7, R5]
     instructionStoreInstructionRegisterOffsetHalfword.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0101000101111110)],
       registers,
