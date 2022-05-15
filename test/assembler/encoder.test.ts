@@ -380,6 +380,34 @@ describe('encode', function () {
     expect(file.content[0].value).toBe(0xb)
     expect(file.content[1].value).toBe(0x21)
   })
+  it('should encode code instruction that references equ constant within brackets', function () {
+    const code: ICodeFile = {
+      symbols: {
+        ['MY_CONST']: '0x0'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.code|',
+          instructions: [
+            {
+              name: 'STRB',
+              options: ['R1', '[R0', '#MY_CONST]'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.code|').offset).toBe(0)
+    expect(getSection(file, '|.code|').size).toBe(2)
+    expect(file.content.length).toBe(2)
+    expect(file.content[0].value).toBe(0x01)
+    expect(file.content[1].value).toBe(0x70)
+  })
   it('should throw error if instruction references unknown equ constant', function () {
     const code: ICodeFile = {
       symbols: {
