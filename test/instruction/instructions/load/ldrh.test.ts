@@ -177,6 +177,14 @@ describe('test executeInstruction function', () => {
       memory
     )
     expect(registers.readRegister(Register.R7).value).toEqual(0x8209)
+    // LDRH R3, [R5]
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0xefe8))
+    instrLdrhImm.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b1000100000101011)],
+      registers,
+      memory
+    )
+    expect(registers.readRegister(Register.R3).value).toEqual(0xefe8)
     memory.reset()
   })
   test('LDRH register offset', () => {

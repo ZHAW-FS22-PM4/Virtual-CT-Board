@@ -157,17 +157,22 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 
 describe('test executeInstruction function', () => {
   test('LDRB immediate offset', () => {
-    // LDRB R7, [R6, #0x01]
-    memory.writeWord(
-      registerValueR6.add(0x01),
-      Word.fromUnsignedInteger(0x0009)
-    )
+    // LDRB R7, [R6, #0x1c]
+    memory.writeWord(registerValueR6.add(0x1c), Word.fromUnsignedInteger(0xd3))
     instrLdrbImm.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0111100001110111)],
+      [Halfword.fromUnsignedInteger(0b0111111100110111)],
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R7).value).toEqual(9)
+    expect(registers.readRegister(Register.R7).value).toEqual(0xd3)
+    // LDRB R2, [R5]
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0x70))
+    instrLdrbImm.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111100000101010)],
+      registers,
+      memory
+    )
+    expect(registers.readRegister(Register.R2).value).toEqual(0x70)
     memory.reset()
   })
   test('LDRB register offset', () => {

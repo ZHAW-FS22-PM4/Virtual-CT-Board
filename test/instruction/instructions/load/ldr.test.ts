@@ -328,6 +328,9 @@ describe('test encodeInstruction (command with options --> optcode) function', (
       instrLdrPointer.encodeInstruction(['R3', '=justSmth'])[0].toBinaryString()
     ).toEqual('0100101100000000')
     expect(
+      instrLdrPointer.encodeInstruction(['R4', 'mylita'])[0].toBinaryString()
+    ).toEqual('0100110000000000')
+    expect(
       instrLdrPointer
         .encodeInstruction(['R3', '=0x20003000'])[0]
         .toBinaryString()
@@ -346,6 +349,20 @@ describe('test encodeInstruction (command with options --> optcode) function', (
         })[0]
         .toBinaryString()
     ).toEqual('0100111011111101')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R3', '=0x20003000'], {
+          '0x20003000': Word.fromUnsignedInteger(0x11) //TODO VCB-176 --> 0x44
+        })[0]
+        .toBinaryString()
+    ).toEqual('0100101100010001')
+    expect(
+      instrLdrPointer
+        .encodeInstruction(['R4', 'myLita'], {
+          myLita: Word.fromUnsignedInteger(0x80) //TODO VCB-176 --> 0x200
+        })[0]
+        .toBinaryString()
+    ).toEqual('0100110010000000')
   })
 })
 
@@ -362,6 +379,14 @@ describe('test executeInstruction function', () => {
       memory
     )
     expect(registers.readRegister(Register.R7).value).toEqual(9)
+    // LDR R4, [R5]
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0x8451e6d9))
+    instrLdrImm.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0110100000101100)],
+      registers,
+      memory
+    )
+    expect(registers.readRegister(Register.R4).value).toEqual(0x8451e6d9)
     memory.reset()
   })
   test('LdrRegisterOffsetInstruction - LDR word register offset', () => {
@@ -395,7 +420,7 @@ describe('test executeInstruction function', () => {
     )
     expect(memory.readWord(pcAddress).value).toEqual(0x12345678)
     expect(registers.readRegister(Register.R3).value).toEqual(0x12345678)
-    //LDR R3, [PC]
+    //LDR R4, [PC, #4]
     instrLdrPointer.executeInstruction(
       [Halfword.fromUnsignedInteger(0x4c04)], //TODO VCB-176 --> 0x4c01
       registers,
