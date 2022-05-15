@@ -22,16 +22,6 @@ const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
-const lowRegisterOption: string = 'R1'
-const lowRegisterOption2: string = '[R2'
-const lowRegisterOption3: string = 'R3]'
-const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F'
-const invalidImmediateOption: string = '5'
-
-const highRegisterOption: string = 'SP'
-const invalidRegisterOption: string = 'R22'
-
 const instructionStoreInstructionImmediateOffsetHalfword =
   new StrhImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffsetHalfword =
@@ -91,13 +81,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strhName,
         strLiteralOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffsetHalfword.canEncodeInstruction(
         strhName,
         strLiteralOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffsetHalfword.canEncodeInstruction(
         strhName,
@@ -135,13 +125,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strhName,
         strRegisterOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffsetHalfword.canEncodeInstruction(
         strhName,
         strRegisterOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffsetHalfword.canEncodeInstruction(
         strhName,
@@ -184,32 +174,32 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        lowRegisterOption3
+        'R1',
+        '[R2',
+        'R3]'
       ])
     ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
+        'R1',
+        '[R2'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidImmediateOption
+        'R1',
+        '[R2',
+        '5]'
       ])
     ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
     ).toThrow(InstructionError)
   })
@@ -217,50 +207,46 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffsetHalfword
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          lowRegisterOption3
-        ])[0]
+        .encodeInstruction(['R1', '[R2', 'R3]'])[0]
         .toBinaryString()
     ).toEqual('0101001011010001')
     // STR R1, [R2, #0x1F]
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        validImmediateOptionHigh
+        'R1',
+        '[R2',
+        '#0x1F]'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, SP]
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        highRegisterOption
+        'R1',
+        '[R2',
+        'SP]'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, R22]
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidRegisterOption
+        'R1',
+        '[R2',
+        'R22]'
       ])
     ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
+        'R1',
+        '[R2'
       ])
     ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionRegisterOffsetHalfword.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
     ).toThrow(InstructionError)
   })

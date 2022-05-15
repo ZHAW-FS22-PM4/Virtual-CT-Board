@@ -22,16 +22,6 @@ const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
 const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
-const lowRegisterOption: string = 'R1'
-const lowRegisterOption2: string = '[R2'
-const lowRegisterOption3: string = 'R3]'
-const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F'
-const invalidImmediateOption: string = '5'
-
-const highRegisterOption: string = 'SP'
-const invalidRegisterOption: string = 'R22'
-
 const instructionStoreInstructionImmediateOffset =
   new StrImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffset =
@@ -91,13 +81,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strName,
         strLiteralOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffset.canEncodeInstruction(
         strName,
         strLiteralOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffset.canEncodeInstruction(
         strName,
@@ -135,13 +125,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strName,
         strRegisterOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffset.canEncodeInstruction(
         strName,
         strRegisterOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffset.canEncodeInstruction(
         strName,
@@ -167,7 +157,7 @@ describe('test encodeInstruction (command with options --> optcode) function', (
   test('StrImmediate5OffsetInstruction', () => {
     expect(
       instructionStoreInstructionImmediateOffset
-        .encodeInstruction(['R1', '[R2', '#0x04'])[0]
+        .encodeInstruction(['R1', '[R2', '#0x04]'])[0]
         .toBinaryString()
     ).toEqual('0110000001010001')
     expect(
@@ -183,32 +173,32 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        lowRegisterOption3
+        'R1',
+        '[R2',
+        'R3]'
       ])
     ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
+        'R1',
+        '[R2'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidImmediateOption
+        'R1',
+        '[R2',
+        '5]'
       ])
     ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
     ).toThrow(InstructionError)
   })
@@ -216,50 +206,43 @@ describe('test encodeInstruction (command with options --> optcode) function', (
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffset
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          lowRegisterOption3
-        ])[0]
+        .encodeInstruction(['R1', '[R2', 'R3]'])[0]
         .toBinaryString()
     ).toEqual('0101000011010001')
     // STR R1, [R2, #0x1F]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        validImmediateOptionHigh
+        'R1',
+        '[R2',
+        '#0x1F]'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, SP]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        highRegisterOption
+        'R1',
+        '[R2',
+        'SP]'
       ])
     ).toThrow(InstructionError)
     // STR R1, [R2, R22]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidRegisterOption
+        'R1',
+        '[R2',
+        'R22]'
       ])
     ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
-      instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
-      ])
+      instructionStoreInstructionRegisterOffset.encodeInstruction(['R1', '[R2'])
     ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
     ).toThrow(InstructionError)
   })
