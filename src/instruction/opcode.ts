@@ -4,7 +4,7 @@ import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
 
 /**
- * if pattern length is not valid throws a vbe with type InvalidParamProvided
+ * If pattern length is not valid throws an error since should never happen.
  * @param pattern pattern to check
  */
 function checkPatternLength(pattern: string) {
@@ -16,7 +16,7 @@ function checkPatternLength(pattern: string) {
 }
 
 /**
- * if character within pattern is not one of the valid characters throws a vbe with type InvalidParamProvided
+ * If character within pattern is not one of the valid characters throws an error since should never happen.
  * @param char character of pattern to check
  */
 function checkPatternCharacter(char: string) {
@@ -156,7 +156,7 @@ export function getImmediateBits(
 }
 
 /**
- * creates opcode for low register or throws a vbe if string is not a valid register
+ * Creates opcode for low register or throws an InstructionError to let user know that a low register was expected.
  * @param option register string to convert to opcode
  * @returns halfword with bits set for a low register
  */
@@ -169,7 +169,7 @@ export function createLowRegisterBits(option: string): Halfword {
 }
 
 /**
- * creates opcode for any register or throws a vbe if string is not a valid register
+ * Creates opcode for any register or throws an InstructionError if provided string is not a valid register.
  * @param option register string to convert to opcode
  * @returns halfword with bits set for a register
  */
@@ -179,7 +179,7 @@ export function createRegisterBits(option: string): Halfword {
 }
 
 /**
- * creates opcode for immediate or throws a vbe if string is not a valid immediate
+ * Creates opcode for immediate or throws an InstructionError if string is not a valid immediate
  * @param option immediate string to convert to opcode
  * @param immediateBitCount how many bits can be used to represent the immediate value
  * @param lsbZeroBitCount the value must have at least specified amount of zeros on the right side (LSB)
@@ -226,7 +226,7 @@ export function createImmediateBits(
 }
 
 /**
- * checks wheter max is bigger value than min and if provided values are positive
+ * Checks wheter max is bigger value than min and if provided values are positive
  * @param minCount
  * @param maxCount
  * @returns
@@ -241,7 +241,7 @@ function checkValidPositiveRange(minCount: number, maxCount: number): void {
 }
 
 /**
- * Convenience method to throw a vbe if encoder is not called with the right amount of options
+ * Convenience method to throw an InstructionError if encoder is not called with the right amount of options.
  * @param options parameter provided to encodeInstruction method
  * @param minCount how many options were expected by the assembly command
  * @param maxCount if not provided set to minCount (so exactly minCount is required)
@@ -265,7 +265,7 @@ export function checkOptionCount(
 }
 
 /**
- * Convenience method to throw a vbe if encoder is not called with correctly set brackets.
+ * Convenience method to throw an InstructionError if encoder is not called with correctly set brackets.
  * If only min count is provided last param has to have opening and closing brackets and
  * other wise opening on second last and closing on last param.
  * @param options parameter provided to encodeInstruction method
@@ -356,7 +356,7 @@ export function isLowRegister(possibleLowRegister: string): boolean {
 }
 
 /**
- * Converts a String to an enum of Register. If not possible an vbe is thrown
+ * Converts a String to an enum of Register. If not possible an InstructionError is thrown
  * @param option string to convert
  * @returns valid value for enum Register
  */
