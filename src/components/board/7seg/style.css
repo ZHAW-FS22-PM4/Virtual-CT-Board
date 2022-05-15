@@ -6,20 +6,6 @@
   margin-right: 5px;
 }
 
-.label {
-  font-size: 0.6rem;
-  text-align: center;
-}
-
-body {
-  margin: 48px;
-  background: #fff;
-}
-
-.clear {
-  clear: both;
-}
-
 .display-container.display-size-12 {
   margin-bottom: 24px;
 }
@@ -100,12 +86,12 @@ body {
 
 .display-container.display-size-12 .segment-e {
   top: 31px;
-  left: 0px;
+  left: 0;
 }
 
 .display-container.display-size-12 .segment-f {
   top: 5px;
-  left: 0px;
+  left: 0;
 }
 
 .display-container.display-size-12 .segment-g {
@@ -136,36 +122,4 @@ body {
 .display-off {
   /*display: none;*/
   opacity: 0.1;
-}
-
-/* clock */
-
-#display-2,
-#display-4 {
-  margin-right: 60px;
-}
-
-#vertical-center {
-  position: absolute;
-  height: 0;
-  top: 50%;
-  left: 50%;
-}
-
-#clock-container {
-  margin-top: -110px;
-  margin-left: -462px;
-  width: 924px;
-  height: 220px;
-}
-
-#clock-container .display-container:last-child {
-  margin: 0;
-}
-
-#clock-container:after {
-  display: block;
-  content: '.';
-  visibility: hidden;
-  clear: both;
 }
