@@ -1,3 +1,5 @@
+import { ParseError } from 'assembler/parser/error'
+
 /**
  * Represents a text cursor which points to a specific location in a text.
  */
@@ -51,6 +53,20 @@ export function parseText(text: string, rules: ITextParseRule[]): ITextCursor {
               lineBreaks > 0
                 ? match[0].length - match[0].lastIndexOf('\n') - 1
                 : startCursor.position + match[0].length
+          }
+          if (rule.name == 'Instruction') {
+            let charCodeBeforeInstruction = text.charCodeAt(
+              startCursor.index - 1
+            )
+            if (
+              charCodeBeforeInstruction !== 32 &&
+              charCodeBeforeInstruction !== 9
+            ) {
+              throw new ParseError(
+                'Instruction not indented by space or tab.',
+                startCursor
+              )
+            }
           }
           if (rule.onMatch)
             rule.onMatch({

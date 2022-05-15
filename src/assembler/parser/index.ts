@@ -7,7 +7,7 @@ const VALUE = `[0-9a-z#]+`
 const SPACE_OR_TAB = `[ \\t]`
 
 const OPTION = `[0-9a-z#\\[\\]=_{}]+`
-const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const COMMENT = `;[^\\n]*`
 
 /**
@@ -74,6 +74,7 @@ export function parse(code: string): ICodeFile {
       pattern: `(${SYMBOL})(?=(?:${COMMENT}|\\s)*${SPACE_OR_TAB}${INSTRUCTION})`,
       onMatch(match: ITextMatch) {
         if (!area) {
+          match.from.line = match.from.line + 1
           throw new ParseError('Label must be defined in area', match.from)
         }
         label = match.captures[0]
