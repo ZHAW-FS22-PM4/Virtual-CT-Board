@@ -11,12 +11,12 @@ import {
   getBits,
   getImmediateBits,
   isImmediate,
+  isLiteralString,
   isOptionCountValid,
   isPCRegister,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { $enum } from 'ts-enum-util'
 import { Halfword, Word } from 'types/binary'
 import { limitValuesToBitCount } from 'types/binary/utils'
 import { BaseInstruction } from '../base'
@@ -167,7 +167,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       ) &&
-      (LdrRegisterInstruction.isLabelOffsetInstruction(options) ||
+      (isLabelOffsetInstruction(options) ||
         (isPCRegister(options[1]) &&
           (options.length == this.expectedOptionCountMin ||
             isImmediate(options[2]))))
@@ -183,7 +183,8 @@ export class LdrRegisterInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    if (!LdrRegisterInstruction.isLabelOffsetInstruction(options)) {
+    const instrHasLabelAsOffset = isLabelOffsetInstruction(options)
+    if (!instrHasLabelAsOffset) {
       checkBracketsOnLastOptions(
         options,
         this.expectedOptionCountMin,
@@ -194,7 +195,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       }
     }
     let immValue: Halfword
-    if (LdrRegisterInstruction.isLabelOffsetInstruction(options)) {
+    if (instrHasLabelAsOffset) {
       let pseudoValue = options[1]
       if (pseudoValue.startsWith('=')) {
         pseudoValue = pseudoValue.slice(1)
@@ -233,52 +234,22 @@ export class LdrRegisterInstruction extends BaseInstruction {
       getBits(opcode[0], this.rtPattern).value,
       memory.readWord(
         Word.fromUnsignedInteger(
-          //TODO  VCB-176 --> LdrRegisterInstruction.alignPointerToNextWord(registers.readRegister(Register.PC).value)
+          //TODO  VCB-176 --> alignPointer(registers.readRegister(Register.PC).value, 4)
           registers.readRegister(Register.PC).value +
             getImmediateBits(opcode[0], this.immPattern, 0).value //TODO VCB-176 --> getImmediateBits 2 instead of 0
         )
       )
     )
   }
+}
 
-  /**
-   * Determines whether the specified instruction is a
-   * pseudo instruction.
-   *
-   * @param options parameter provided for instruction
-   * @returns whether the instruction is a pseudo instruction
-   */
-  public static isLabelOffsetInstruction(options: string[]): boolean {
-    return (
-      options.length === 2 && LdrRegisterInstruction.isLiteralString(options[1])
-    )
-  }
-
-  /**
-   * Determines whether the specified string is a
-   * a literal (all except valid register, and strings containing any brackets)
-   *
-   * @param option string provided as param which could be literal
-   * @returns whether the string is a literal part of pseudo instruction
-   */
-  public static isLiteralString(option: string): boolean {
-    try {
-      $enum(Register).getValueOrThrow(option)
-      return false
-    } catch (e) {
-      return !option.includes('[') && !option.includes(']')
-    }
-  }
-
-  /**
-   * Makes sure pointer is dividable by 4
-   * @param pointer pointer which is used to navigate from
-   * @returns word aligned pointer
-   */
-  public static alignPointerToNextWord(pointer: number): number {
-    while (pointer % 4 !== 0) {
-      pointer++
-    }
-    return pointer
-  }
+/**
+ * Determines whether the specified instruction is a
+ * pseudo instruction.
+ *
+ * @param options parameter provided for instruction
+ * @returns whether the instruction is a pseudo instruction
+ */
+function isLabelOffsetInstruction(options: string[]): boolean {
+  return options.length === 2 && isLiteralString(options[1])
 }

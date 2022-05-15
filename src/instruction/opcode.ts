@@ -403,3 +403,35 @@ export function registerStringEnclosedInBrackets(
 ): boolean {
   return registerString.startsWith('[') && registerString.endsWith(']')
 }
+
+/**
+ * Makes sure pointer is dividable by provided byte count
+ * @param pointer pointer which is used to navigate from
+ * @param byteCount make pointer dividable by this value
+ * @returns word aligned pointer
+ */
+export function alignPointer(pointer: number, byteCount: number): number {
+  if (byteCount <= 0) {
+    throw new Error('Byte count must be positive value.')
+  }
+  while (pointer % byteCount !== 0) {
+    pointer++
+  }
+  return pointer
+}
+
+/**
+ * Determines whether the specified string is a
+ * a literal (all except valid register, and strings containing any brackets)
+ *
+ * @param option string provided as param which could be literal
+ * @returns whether the string is a literal part of pseudo instruction
+ */
+export function isLiteralString(option: string): boolean {
+  try {
+    $enum(Register).getValueOrThrow(option)
+    return false
+  } catch (e) {
+    return !option.includes('[') && !option.includes(']')
+  }
+}
