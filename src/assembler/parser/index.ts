@@ -7,7 +7,7 @@ const VALUE = `[0-9a-z#]+`
 const SPACE_OR_TAB = `[ \\t]`
 const STRING = `("(?:[^'"\n]|'"?)*")`
 
-const OPTION = `([0-9a-z#\\[\\]=_{}]+|${STRING})`
+const OPTION = `((?:[0-9a-z#=_]|[\\[{]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const COMMENT = `;[^\\n]*`
 
