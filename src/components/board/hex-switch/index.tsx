@@ -13,13 +13,13 @@ export class HexSwitchComponent extends React.Component<{}, IHexSwitchState> {
     super(props)
     this.state = {
       moving: false,
-      value: Board.hexSwitch.getRotaryValue().toString(16)
+      value: Board.hexSwitch.getHexValue().toString(16)
     }
     Board.hexSwitch.on('change', () => this.update())
   }
 
   public update() {
-    this.setState({ value: Board.hexSwitch.getRotaryValue().toString(16) })
+    this.setState({ value: Board.hexSwitch.getHexValue().toString(16) })
   }
 
   private mouseDown(): void {
