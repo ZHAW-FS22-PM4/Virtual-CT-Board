@@ -106,7 +106,7 @@ export class LdrbImmediate5OffsetInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    if (options.length == this.expectedOptionCountMin) {
+    if (options.length === this.expectedOptionCountMin) {
       options.push('#0')
     }
     let opcode: Halfword = create(this.pattern)

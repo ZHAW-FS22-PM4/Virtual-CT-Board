@@ -55,7 +55,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    if (options.length == this.expectedOptionCountMin) {
+    if (options.length === this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       options.push('#0')
     }
@@ -167,7 +167,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       ) &&
       (isLabelOffsetInstruction(options) ||
         (isPCRegister(options[1]) &&
-          (options.length == this.expectedOptionCountMin ||
+          (options.length === this.expectedOptionCountMin ||
             isImmediate(options[2]))))
     )
   }
@@ -206,7 +206,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         8,
         0 //VCB-176 --> 2
       )
-    } else if (options.length == this.expectedOptionCountMin) {
+    } else if (options.length === this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       immValue = Halfword.fromUnsignedInteger(0)
     } else {
