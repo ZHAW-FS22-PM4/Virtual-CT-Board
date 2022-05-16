@@ -30,7 +30,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '0110100000XXX000'
   private rtPattern: string = '0110100000000XXX'
   private immPattern: string = '01101XXXXX000000'
-  private otherInstructionWithSameName: BaseInstruction[] = [
+  private instrWithSameName: BaseInstruction[] = [
     new LdrRegisterOffsetInstruction(),
     new LdrRegisterInstruction()
   ]
@@ -40,9 +40,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      !this.otherInstructionWithSameName.some((instr) => {
-        return instr.canEncodeInstruction(name, options)
-      })
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 

@@ -82,7 +82,7 @@ export class LdrbImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '0111100000XXX000'
   private rtPattern: string = '0111100000000XXX'
   private immPattern: string = '01111XXXXX000000'
-  private otherInstructionWithSameName: BaseInstruction[] = [
+  private instrWithSameName: BaseInstruction[] = [
     new LdrbRegisterOffsetInstruction()
   ]
   private expectedOptionCountMin: number = 2
@@ -91,9 +91,7 @@ export class LdrbImmediate5OffsetInstruction extends BaseInstruction {
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      !this.otherInstructionWithSameName.some((instr) => {
-        return instr.canEncodeInstruction(name, options)
-      })
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 
