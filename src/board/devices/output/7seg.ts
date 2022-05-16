@@ -1,6 +1,6 @@
 import { Device } from 'board/devices/device'
 import { Byte, Halfword, Word } from '../../../types/binary'
-enum SEVENsegNr {
+enum SevenSegmentNr {
   _0011_1111 = 0,
   _0000_0110 = 1,
   _0101_1011 = 2,
@@ -19,16 +19,16 @@ enum SEVENsegNr {
   _0111_0001 = 15 //f
 }
 
-export class SEVENseg extends Device {
+export class SevenSegmentDevice extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000110)
   public endAddress = Word.fromUnsignedInteger(0x60000115)
-  public startAddressBin = Word.fromUnsignedInteger(0x60000114)
-  public endAddressBin = Word.fromUnsignedInteger(0x60000115)
+  private static readonly startAddressBin = Word.fromUnsignedInteger(0x60000114)
+  private static readonly endAddressBin = Word.fromUnsignedInteger(0x60000115)
   public isReadOnly = false
   public isVolatile = true
 
   private static readonly MAX_SEG_NUMBER: number = 31
-  private oldBin: Halfword = this.memory.readHalfword(this.startAddressBin)
+  private oldBin: Halfword = this.memory.readHalfword(SevenSegmentDevice.startAddressBin)
   private oldSeg: Word = this.memory.readWord(this.startAddress)
   private displays: boolean[][] = [
     [false, false, false, false, false, false, false, false],
@@ -44,7 +44,7 @@ export class SEVENseg extends Device {
    * @returns true if segment is turned on
    */
   public isOn(segment: number, position: number): boolean {
-    if (SEVENseg.invalidPosition(segment, position)) {
+    if (SevenSegmentDevice.invalidPosition(segment, position)) {
       throw new Error(`Segment ${segment} Position ${position} does not exist.`)
     }
     return this.displays[segment][position]
@@ -73,7 +73,7 @@ export class SEVENseg extends Device {
    */
   private isBin(): boolean {
     return (
-      this.memory.readHalfword(this.startAddressBin).toUnsignedInteger() !=
+      this.memory.readHalfword(SevenSegmentDevice.startAddressBin).toUnsignedInteger() !=
       this.oldBin.toUnsignedInteger()
     )
   }
@@ -97,7 +97,7 @@ export class SEVENseg extends Device {
   private toSevensegNrBin(inNum: number): boolean[] {
     let arr: boolean[] = []
 
-    let code: String = SEVENsegNr[inNum]
+    let code: String = SevenSegmentNr[inNum]
     for (let i = 0; i < code.length; i++) {
       const character = code.charAt(i)
       if (character == '0') {
@@ -125,25 +125,25 @@ export class SEVENseg extends Device {
     switch (display) {
       case 0:
         arr = this.toSevensegNrBin(
-          this.memory.readByte(this.startAddressBin).toUnsignedInteger() % 16
+          this.memory.readByte(SevenSegmentDevice.startAddressBin).toUnsignedInteger() % 16
         )
-        this.oldBin = this.memory.readHalfword(this.startAddressBin)
+        this.oldBin = this.memory.readHalfword(SevenSegmentDevice.startAddressBin)
         break
       case 1:
         arr = this.toSevensegNrBin(
           ~~(
-            this.memory.readByte(this.startAddressBin).toUnsignedInteger() / 16
+            this.memory.readByte(SevenSegmentDevice.startAddressBin).toUnsignedInteger() / 16
           )
         )
         break
       case 2:
         arr = this.toSevensegNrBin(
-          this.memory.readByte(this.endAddressBin).toUnsignedInteger() % 16
+          this.memory.readByte(SevenSegmentDevice.endAddressBin).toUnsignedInteger() % 16
         )
         break
       case 3:
         arr = this.toSevensegNrBin(
-          ~~(this.memory.readByte(this.endAddressBin).toUnsignedInteger() / 16)
+          ~~(this.memory.readByte(SevenSegmentDevice.endAddressBin).toUnsignedInteger() / 16)
         )
         break
       default:
@@ -197,7 +197,7 @@ export class SEVENseg extends Device {
   private static invalidPosition(segment: number, position: number): boolean {
     return (
       position < 0 ||
-      position > SEVENseg.MAX_SEG_NUMBER ||
+      position > SevenSegmentDevice.MAX_SEG_NUMBER ||
       segment < 0 ||
       segment > 7
     )

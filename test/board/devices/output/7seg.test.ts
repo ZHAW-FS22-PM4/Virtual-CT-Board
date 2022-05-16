@@ -1,5 +1,5 @@
 import { Byte, Halfword, Word } from 'types/binary'
-import { SEVENseg } from '../../../../src/board/devices/output/7seg'
+import { SevenSegmentDevice } from '../../../../src/board/devices/output/7seg'
 
 const byte_0101_0101: Byte = Byte.fromUnsignedInteger(85)
 const byte_1010_1010: Byte = Byte.fromUnsignedInteger(170)
@@ -7,7 +7,8 @@ const byte_0000_0000: Byte = Byte.fromUnsignedInteger(0)
 const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 const byte_fe = Byte.fromUnsignedInteger(254)
 const byte_81 = Byte.fromUnsignedInteger(129)
-let segs: SEVENseg
+const startAddressBin = Word.fromUnsignedInteger(0x60000114)
+let segs: SevenSegmentDevice
 let displaye: boolean[] = [false, true, true, true, true, false, false, true] //0111_1001
 let displayf: boolean[] = [false, true, true, true, false, false, false, true] //0111_0001
 let displayI: boolean[] = [false, false, false, false, false, true, true, false] //0000_0110
@@ -28,7 +29,7 @@ let display2: boolean[] = [
 let display3: boolean[] = [true, true, true, true, true, true, true, true] //1111_1111
 
 beforeEach(() => {
-  segs = new SEVENseg()
+  segs = new SevenSegmentDevice()
 })
 
 test('getDisplay() returns seg state on correct position', () => {
@@ -48,7 +49,7 @@ test('getDisplay() returns seg state on correct position', () => {
 })
 
 test('getDisplay() from binary returns seg state on correct position', () => {
-  segs.writeHalfword(segs.startAddressBin, Halfword.fromBytes(byte_fe, byte_81))
+  segs.writeHalfword(startAddressBin, Halfword.fromBytes(byte_fe, byte_81))
   expect(segs.getDisplay(3)).toStrictEqual(display8)
   expect(segs.getDisplay(2)).toStrictEqual(displayI)
   expect(segs.getDisplay(1)).toStrictEqual(displayf)
