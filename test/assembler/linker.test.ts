@@ -209,7 +209,7 @@ describe('linker', function () {
           instructions: [
             {
               name: 'DCW',
-              options: ['0x2222'],
+              options: ['0x3333'],
               line: 1
             }
           ]
@@ -221,12 +221,12 @@ describe('linker', function () {
           instructions: [
             {
               name: 'MOVS',
-              options: ['R1', 'R1'],
+              options: ['R1', 'R2'],
               line: 2
             },
             {
               name: 'MOVS',
-              options: ['R2', 'R2'],
+              options: ['R1', 'R2'],
               line: 3
             }
           ]
@@ -243,6 +243,43 @@ describe('linker', function () {
     expect(file.segments[1].offset).toBe(16)
     expect(file.segments[1].size).toBe(8)
     expect(file.segments[1].address).toEqual(Word.fromSignedInteger(0x20000000))
+    expect(file.content.length).toBe(24)
+    expect(
+      Word.fromBytes(
+        file.content[0],
+        file.content[1],
+        file.content[2],
+        file.content[3]
+      )
+    ).toEqual(Word.fromUnsignedInteger(0x20002000))
+    expect(
+      Word.fromBytes(
+        file.content[4],
+        file.content[5],
+        file.content[6],
+        file.content[7]
+      )
+    ).toEqual(Word.fromUnsignedInteger(0x08000008))
+    expect(Halfword.fromBytes(file.content[8], file.content[9])).toEqual(
+      Halfword.fromUnsignedInteger(0x0011)
+    )
+    expect(Halfword.fromBytes(file.content[10], file.content[11])).toEqual(
+      Halfword.fromUnsignedInteger(0x0011)
+    )
+    expect(Halfword.fromBytes(file.content[12], file.content[13])).toEqual(
+      END_OF_CODE
+    )
+    expect(Halfword.fromBytes(file.content[14], file.content[15])).toEqual(
+      Halfword.fromUnsignedInteger(0x0000)
+    )
+    expect(file.content[16]).toEqual(Byte.fromUnsignedInteger(0x22))
+    expect(file.content[17]).toEqual(Byte.fromUnsignedInteger(0x00))
+    expect(file.content[18]).toEqual(Byte.fromUnsignedInteger(0x00))
+    expect(file.content[19]).toEqual(Byte.fromUnsignedInteger(0x00))
+    expect(file.content[20]).toEqual(Byte.fromUnsignedInteger(0x33))
+    expect(file.content[21]).toEqual(Byte.fromUnsignedInteger(0x33))
+    expect(file.content[22]).toEqual(Byte.fromUnsignedInteger(0x00))
+    expect(file.content[23]).toEqual(Byte.fromUnsignedInteger(0x00))
   })
   it('should apply data relocations', function () {
     const code: ICodeFile = {
