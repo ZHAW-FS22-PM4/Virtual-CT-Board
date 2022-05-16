@@ -4,7 +4,7 @@ import { $enum } from 'ts-enum-util'
 import { Halfword } from 'types/binary'
 
 /**
- * if pattern length is not valid throws a vbe with type InvalidParamProvided
+ * If pattern length is not valid throws an error since should never happen.
  * @param pattern pattern to check
  */
 function checkPatternLength(pattern: string) {
@@ -16,7 +16,7 @@ function checkPatternLength(pattern: string) {
 }
 
 /**
- * if character within pattern is not one of the valid characters throws a vbe with type InvalidParamProvided
+ * If character within pattern is not one of the valid characters throws an error since should never happen.
  * @param char character of pattern to check
  */
 function checkPatternCharacter(char: string) {
@@ -139,7 +139,24 @@ export function getBits(opcode: Halfword, pattern: string): Halfword {
 }
 
 /**
- * creates opcode for low register or throws a vbe if string is not a valid register
+ * Gets defined bits of an opcode and multiplies value by given factor (needed for immediate which are stored with shift)
+ *
+ * @param opcode opcode to get the bits from
+ * @param pattern defines which bits are returned (has to be 16 bits digits long)
+ * @param lsbZeroBitCount the value will be left shifted by specified amount (multiplied)
+ * @returns the chosen bits as halfword multiplied by correct amount
+ */
+export function getImmediateBits(
+  opcode: Halfword,
+  pattern: string,
+  lsbZeroBitCount: number = 0
+): Halfword {
+  const valueOnPattern = getBits(opcode, pattern)
+  return Halfword.fromUnsignedInteger(valueOnPattern.value << lsbZeroBitCount)
+}
+
+/**
+ * Creates opcode for low register or throws an InstructionError to let user know that a low register was expected.
  * @param option register string to convert to opcode
  * @returns halfword with bits set for a low register
  */
@@ -152,7 +169,7 @@ export function createLowRegisterBits(option: string): Halfword {
 }
 
 /**
- * creates opcode for any register or throws a vbe if string is not a valid register
+ * Creates opcode for any register or throws an InstructionError if provided string is not a valid register.
  * @param option register string to convert to opcode
  * @returns halfword with bits set for a register
  */
@@ -162,14 +179,16 @@ export function createRegisterBits(option: string): Halfword {
 }
 
 /**
- * creates opcode for immediate or throws a vbe if string is not a valid immediate
+ * Creates opcode for immediate or throws an InstructionError if string is not a valid immediate
  * @param option immediate string to convert to opcode
  * @param immediateBitCount how many bits can be used to represent the immediate value
+ * @param lsbZeroBitCount the value must have at least specified amount of zeros on the right side (LSB)
  * @returns halfword with bits set for an immediate
  */
 export function createImmediateBits(
   option: string,
-  immediateBitCount: number
+  immediateBitCount: number,
+  lsbZeroBitCount: number = 0
 ): Halfword {
   if (!isImmediate(option)) {
     throw new InstructionError(
@@ -177,7 +196,23 @@ export function createImmediateBits(
     )
   }
 
-  let immediateBits = Halfword.fromUnsignedInteger(+option.substring(1))
+  let optionValue = +option.substring(1)
+  if (lsbZeroBitCount !== 0) {
+    if (optionValue % (lsbZeroBitCount * 2) !== 0) {
+      throw new InstructionError(
+        `Immediate offset not ${
+          lsbZeroBitCount == 2
+            ? 'word'
+            : lsbZeroBitCount == 1
+            ? 'halfword'
+            : lsbZeroBitCount + ' bytes'
+        } aligned`
+      )
+    }
+
+    optionValue = optionValue >> lsbZeroBitCount
+  }
+  let immediateBits = Halfword.fromUnsignedInteger(optionValue)
   if (
     immediateBits
       .toBinaryString()
@@ -191,7 +226,7 @@ export function createImmediateBits(
 }
 
 /**
- * checks wheter max is bigger value than min and if provided values are positive
+ * Checks wheter max is bigger value than min and if provided values are positive
  * @param minCount
  * @param maxCount
  * @returns
@@ -206,7 +241,7 @@ function checkValidPositiveRange(minCount: number, maxCount: number): void {
 }
 
 /**
- * Convenience method to throw a vbe if encoder is not called with the right amount of options
+ * Convenience method to throw an InstructionError if encoder is not called with the right amount of options.
  * @param options parameter provided to encodeInstruction method
  * @param minCount how many options were expected by the assembly command
  * @param maxCount if not provided set to minCount (so exactly minCount is required)
@@ -230,7 +265,7 @@ export function checkOptionCount(
 }
 
 /**
- * Convenience method to throw a vbe if encoder is not called with correctly set brackets.
+ * Convenience method to throw an InstructionError if encoder is not called with correctly set brackets.
  * If only min count is provided last param has to have opening and closing brackets and
  * other wise opening on second last and closing on last param.
  * @param options parameter provided to encodeInstruction method
@@ -290,6 +325,15 @@ export function isOptionCountValid(
 }
 
 /**
+ * Determine if string is PC register or not
+ * @param possiblePCRegister immedate to check
+ * @returns true if it is an immediate
+ */
+export function isPCRegister(possiblePCRegister: string): boolean {
+  return possiblePCRegister.includes('PC')
+}
+
+/**
  * Determine if string is immediate or not
  * @param possibleImmediate immedate to check
  * @returns true if it is an immediate
@@ -312,7 +356,7 @@ export function isLowRegister(possibleLowRegister: string): boolean {
 }
 
 /**
- * Converts a String to an enum of Register. If not possible an vbe is thrown
+ * Converts a String to an enum of Register. If not possible an InstructionError is thrown
  * @param option string to convert
  * @returns valid value for enum Register
  */
@@ -358,4 +402,36 @@ export function registerStringEnclosedInBrackets(
   registerString: string
 ): boolean {
   return registerString.startsWith('[') && registerString.endsWith(']')
+}
+
+/**
+ * Makes sure pointer is dividable by provided byte count
+ * @param pointer pointer which is used to navigate from
+ * @param byteCount make pointer dividable by this value
+ * @returns word aligned pointer
+ */
+export function alignPointer(pointer: number, byteCount: number): number {
+  if (byteCount <= 0) {
+    throw new Error('Byte count must be positive value.')
+  }
+  while (pointer % byteCount !== 0) {
+    pointer++
+  }
+  return pointer
+}
+
+/**
+ * Determines whether the specified string is a
+ * a literal (all except valid register, and strings containing any brackets)
+ *
+ * @param option string provided as param which could be literal
+ * @returns whether the string is a literal part of pseudo instruction
+ */
+export function isLiteralString(option: string): boolean {
+  try {
+    $enum(Register).getValueOrThrow(option)
+    return false
+  } catch (e) {
+    return !option.includes('[') && !option.includes(']')
+  }
 }
