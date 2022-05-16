@@ -313,7 +313,7 @@ function writeDataInstruction(
     case 'SPACE':
     case 'FILL':
     case '%':
-      bytes = Array(evaluateExpresion(instruction.options)).fill(Byte.fromUnsignedInteger(0xFF))
+      bytes = Array(evaluateExpression(instruction.options)).fill(Byte.fromUnsignedInteger(0xFF))
       alignment = 1
       break
   }
@@ -373,7 +373,12 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   }
 }
 
-function evaluateExpresion(options: string[]): number {
+/**
+ * Evalutes the expression and returns the value of space to reserve
+ *
+ * @param options the expression to evaluate
+ */
+function evaluateExpression(options: string[]): number {
   let value = eval(options[0])
   return value
 }
