@@ -153,7 +153,7 @@ export class FileWriter {
   }
 
   /**
-   * Aligns the content to be specified alignment by filling.
+   * Aligns the content to be specified alignment by filling zeros bytes.
    *
    * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
    */
