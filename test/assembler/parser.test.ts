@@ -4,6 +4,8 @@ import { ITextParseRule, parseText } from 'assembler/parser/text'
 
 const code = `
 MY_CONSTANT EQU 0x123
+PRESERVE8
+THUMB
 AREA |.data|, DATA, READWRITE
   ; A comment
   DCD 0xFF ; A comment
@@ -27,22 +29,22 @@ describe('parse code', function () {
     expect(ast.areas[0].instructions).toHaveLength(1)
     expect(ast.areas[0].instructions[0].name).toBe('DCD')
     expect(ast.areas[0].instructions[0].options).toEqual(['0xFF'])
-    expect(ast.areas[0].instructions[0].line).toBe(4)
+    expect(ast.areas[0].instructions[0].line).toBe(6)
     expect(ast.areas[1].name).toBe('|.text|')
     expect(ast.areas[1].type).toBe(AreaType.Code)
     expect(ast.areas[1].isReadOnly).toBe(true)
     expect(ast.areas[1].instructions).toHaveLength(3)
     expect(ast.areas[1].instructions[0].name).toBe('MOVS')
     expect(ast.areas[1].instructions[0].options).toEqual(['R1', '#123'])
-    expect(ast.areas[1].instructions[0].line).toBe(6)
+    expect(ast.areas[1].instructions[0].line).toBe(8)
     expect(ast.areas[1].instructions[1].name).toBe('MOVS')
     expect(ast.areas[1].instructions[1].label).toBe('label1')
     expect(ast.areas[1].instructions[1].options).toEqual(['R2', '#456'])
-    expect(ast.areas[1].instructions[1].line).toBe(7)
+    expect(ast.areas[1].instructions[1].line).toBe(9)
     expect(ast.areas[1].instructions[2].name).toBe('MOVS')
     expect(ast.areas[1].instructions[2].label).toBe('label2')
     expect(ast.areas[1].instructions[2].options).toEqual(['R3', '#789'])
-    expect(ast.areas[1].instructions[2].line).toBe(10)
+    expect(ast.areas[1].instructions[2].line).toBe(12)
   })
 })
 
