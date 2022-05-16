@@ -17,7 +17,7 @@ export class MsrInstruction extends BaseInstruction {
   private apsrPattern = 'XXXX000000000000'
   public opcodeLength: number = 2
 
-  public encodeInstruction (options: string[]): Halfword[] {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2)
     if (options[0] !== 'APSR') {
       throw new Error("Parameter 1 must be 'APSR'!")
@@ -32,7 +32,7 @@ export class MsrInstruction extends BaseInstruction {
     return [opcodeFirstPart, opcodeSecondPart]
   }
 
-  protected onExecuteInstruction (
+  protected onExecuteInstruction(
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
