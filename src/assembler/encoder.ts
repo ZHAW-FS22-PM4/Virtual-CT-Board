@@ -243,18 +243,14 @@ function writeDataInstruction(
     if (x.startsWith('"')) {
       optionsContainAString = true
       x = x.substring(0, x.length - 1).substring(1)
-      const charArray: string[] = x.split('')
-      for (let i = 0; i < charArray.length; i++) {
-        if (i + 1 < charArray.length) {
+      for (let i = 0; i < x.length; i++) {
+        if (i + 1 < x.length) {
           // Special case when the string contains an escaped double quote (i.e. "Example'"")
-          if (
-            charArray[i].charCodeAt(0) === 39 &&
-            charArray[i + 1].charCodeAt(0) === 34
-          ) {
+          if (x.charCodeAt(i) === 39 && x.charCodeAt(i + 1) === 34) {
             continue
           }
         }
-        values.push(charArray[i].charCodeAt(0))
+        values.push(x.charCodeAt(i))
       }
     } else {
       values.push(+x)
