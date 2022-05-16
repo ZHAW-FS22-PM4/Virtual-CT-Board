@@ -55,12 +55,10 @@ export function parseText(text: string, rules: ITextParseRule[]): ITextCursor {
                 : startCursor.position + match[0].length
           }
           if (rule.name == 'Instruction') {
-            let charCodeBeforeInstruction = text.charCodeAt(
-              startCursor.index - 1
-            )
+            let charBeforeInstruction = text.charAt(startCursor.index - 1)
             if (
-              charCodeBeforeInstruction !== ' '.charCodeAt(0) &&
-              charCodeBeforeInstruction !== '\t'.charCodeAt(0)
+              charBeforeInstruction !== ' ' &&
+              charBeforeInstruction !== '\t'
             ) {
               throw new ParseError(
                 'Instruction not indented by space or tab.',
