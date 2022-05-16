@@ -230,6 +230,7 @@ function writePseudoInstruction(
   const encoder = InstructionSet.getEncoder(instruction.name, options)
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -240,7 +241,7 @@ function writePseudoInstruction(
     length: bytes.length,
     value: instruction.options[1].slice(1)
   })
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -282,8 +283,9 @@ function writeDataInstruction(
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
     for (const option of instruction.options) {
+      writer.align(4)
       writer.addDataRelocation(option, bytes.length)
-      writer.writeBytes(bytes, 4)
+      writer.writeBytes(bytes)
     }
     return
   } else if (instruction.name === 'ALIGN') {
@@ -317,7 +319,8 @@ function writeDataInstruction(
       alignment = 1
       break
   }
-  writer.writeBytes(bytes, alignment)
+  writer.align(alignment)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -336,10 +339,11 @@ function writeCodeInstruction(
   )
   const opcode = encoder.encodeInstruction(instruction.options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   if (encoder.needsLabels) {
     writer.addCodeRelocation(instruction, bytes.length)
   }
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -350,7 +354,9 @@ function writeCodeInstruction(
  */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
-    writer.writeBytes(END_OF_CODE.toBytes(), 2)
+    writer.align(2)
+    writer.writeBytes(END_OF_CODE.toBytes())
+    writer.align(4)
     for (const entry of pool.entries) {
       const encoder = InstructionSet.getEncoder(
         entry.instruction.name,

@@ -164,7 +164,7 @@ export class FileWriter {
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0x00))
         )
       }
     }
@@ -175,8 +175,7 @@ export class FileWriter {
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[], alignment?: number): void {
-    if (alignment) this.align(alignment)
+  public writeBytes(bytes: Byte[]): void {
     this.file.content.push(...bytes)
   }
 

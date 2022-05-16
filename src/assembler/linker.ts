@@ -139,6 +139,7 @@ function writeSection(
     section.offset + section.size
   )
   writer.writeBytes(bytes)
+  writer.align(4)
   addAddressSymbols(writer, objectFile, section)
   writer.endSection()
 }
