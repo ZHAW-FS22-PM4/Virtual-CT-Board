@@ -41,6 +41,14 @@ export function parse(code: string): ICodeFile {
       pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
     },
     {
+      name: 'Preserve8Instruction',
+      pattern: `THUMB`
+    },
+    {
+      name: 'ThumbInstruction',
+      pattern: `PRESERVE8`
+    },
+    {
       name: 'Comment',
       pattern: COMMENT
     },
