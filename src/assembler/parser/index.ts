@@ -12,6 +12,8 @@ const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const COMMENT = `;[^\\n]*`
 
+//second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
+const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
 /**
  * Parses a given code string and return a parsed code file (AST representation).
  *
@@ -81,7 +83,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION})))`,
+      pattern: LABEL_DECLARATION,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError('Label must be defined in area', match.from)
