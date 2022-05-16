@@ -113,16 +113,27 @@ function replaceEquConstants(
   equConstants: Map<string, Word>
 ): void {
   for (let i = 0; i < instruction.options.length; i++) {
+    const hasEndingBracket = instruction.options[i].endsWith(']')
     if (
       instruction.options[i].startsWith('#') &&
-      isNaN(+instruction.options[i].slice(1))
+      ((!hasEndingBracket && isNaN(+instruction.options[i].slice(1))) ||
+        (hasEndingBracket &&
+          isNaN(
+            +instruction.options[i].slice(1, instruction.options[i].length - 1)
+          )))
     ) {
-      const val = equConstants.get(instruction.options[i].slice(1))
-      if (val) {
+      const equName = hasEndingBracket
+        ? instruction.options[i].slice(1, instruction.options[i].length - 1)
+        : instruction.options[i].slice(1)
+      const val = equConstants.get(equName)
+
+      if (val && !hasEndingBracket) {
         instruction.options[i] = '#' + val.toUnsignedInteger().toString()
+      } else if (val && hasEndingBracket) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString() + ']'
       } else {
         throw new AssemblerError(
-          `Instruction refers to constant ${instruction.options[i]} which does not exists.`,
+          `Instruction refers to constant #${equName} which does not exists.`,
           instruction.line
         )
       }
