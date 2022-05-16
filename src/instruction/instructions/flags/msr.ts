@@ -1,18 +1,21 @@
 import { IMemory } from 'board/memory/interfaces'
-import { Registers } from 'board/registers'
+import { Register, Registers } from 'board/registers'
 import {
   checkOptionCount,
   create,
   createRegisterBits,
+  getBits,
   setBits
 } from 'instruction/opcode'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 export class MsrInstruction extends BaseInstruction {
   public name: string = 'MSR'
   public pattern: string = '111100111000XXXX'
   private patternSecondHalf: string = '1000100000000000'
+  private apsrPattern = 'XXXX000000000000'
+  public opcodeLength: number = 2
 
   public encodeInstruction (options: string[]): Halfword[] {
     checkOptionCount(options, 2)
@@ -34,6 +37,9 @@ export class MsrInstruction extends BaseInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    throw new Error('Method not implemented.')
+    let rdRegister: number = getBits(opcode[0], this.pattern).value
+    let rdRegisterContent: number = registers.readRegister(rdRegister).value
+    let apsrContent: Word = Word.fromUnsignedInteger(rdRegisterContent >>> 28)
+    registers.writeRegister(Register.APSR, apsrContent)
   }
 }
