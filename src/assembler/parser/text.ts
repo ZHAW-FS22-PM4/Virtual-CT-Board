@@ -59,8 +59,8 @@ export function parseText(text: string, rules: ITextParseRule[]): ITextCursor {
               startCursor.index - 1
             )
             if (
-              charCodeBeforeInstruction !== 32 &&
-              charCodeBeforeInstruction !== 9
+              charCodeBeforeInstruction !== ' '.charCodeAt(0) &&
+              charCodeBeforeInstruction !== '\t'.charCodeAt(0)
             ) {
               throw new ParseError(
                 'Instruction not indented by space or tab.',
