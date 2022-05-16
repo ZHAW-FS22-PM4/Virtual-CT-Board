@@ -354,7 +354,7 @@ function writeCodeInstruction(
  */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
-    // To ensure that it's not possible to for the processor to 'fall into'
+    // To ensure that it's not possible for the processor to 'fall into'
     // the literal pool, we add a 'END_OF_CODE' instruction before the literal pool.
     writer.align(2)
     writer.writeBytes(END_OF_CODE.toBytes())
