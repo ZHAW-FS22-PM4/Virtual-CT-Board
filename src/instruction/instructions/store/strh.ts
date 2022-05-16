@@ -6,13 +6,14 @@ import {
   createImmediateBits,
   createLowRegisterBits,
   getBits,
+  getImmediateBits,
   isImmediate,
   isOptionCountValid,
   registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { Halfword, Word } from 'types/binary'
+import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 /**
@@ -47,7 +48,7 @@ export class StrhImmediate5OffsetInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 1)
     )
     return [opcode]
   }
@@ -60,9 +61,7 @@ export class StrhImmediate5OffsetInstruction extends BaseInstruction {
     memory.writeHalfword(
       registers
         .readRegister(getBits(opcode[0], this.rnPattern).value)
-        .add(
-          Word.fromUnsignedInteger(getBits(opcode[0], this.immPattern).value)
-        ),
+        .add(getImmediateBits(opcode[0], this.immPattern, 1).value),
       registers
         .readRegister(getBits(opcode[0], this.rtPattern).value)
         .toHalfwords()[0]

@@ -165,26 +165,22 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('StrhImmediate5OffsetInstruction', () => {
-    // STR R1, [R2, #0x01]
+    // STR R1, [R2, #0x02]
     expect(
       instructionStoreInstructionImmediateOffsetHalfword
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionLow
-        ])[0]
+        .encodeInstruction(['R1', '[R2', '#0x2]'])[0]
         .toBinaryString()
     ).toEqual('1000000001010001')
-    // STR R1, [R2, #0x1F]
     expect(
       instructionStoreInstructionImmediateOffsetHalfword
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionHigh
-        ])[0]
+        .encodeInstruction(['R3', '[R7', '#0x3e]'])[0]
         .toBinaryString()
-    ).toEqual('1000011111010001')
+    ).toEqual('1000011111111011')
+    expect(
+      instructionStoreInstructionImmediateOffsetHalfword
+        .encodeInstruction(['R4', '[R4', '#20]'])[0]
+        .toBinaryString()
+    ).toEqual('1000001010100100')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffsetHalfword.encodeInstruction([
@@ -272,13 +268,13 @@ describe('test encodeInstruction (command with options --> optcode) function', (
 
 describe('test executeInstruction function', () => {
   test('STRH immediate offset', () => {
-    // STR R7, [R6, #0x01]
+    // STR R7, [R6, #0x01] --> offset by 2
     instructionStoreInstructionImmediateOffsetHalfword.executeInstruction(
       [Halfword.fromUnsignedInteger(0b1000000001111110)],
       registers,
       memory
     )
-    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual(
+    expect(memory.readWord(registerValueR7.add(2)).toHexString()).toEqual(
       '00005678'
     )
     memory.reset()

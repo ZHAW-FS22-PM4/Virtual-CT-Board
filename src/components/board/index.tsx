@@ -1,4 +1,5 @@
 import React from 'react'
+import { SevenSegComponent } from './7seg'
 import { ButtonComponent } from './button'
 import { DipSwitchComponent } from './dip-switch'
 import { HexSwitchComponent } from './hex-switch'
@@ -52,7 +53,12 @@ export class BoardComonent extends React.Component {
           <div className="gpio-port n-6 bg-dark"></div>
           <div className="glas-cover left"></div>
           <div className="glas-cover right"></div>
-          <div className="seven-segment bg-secondary d-none"></div>
+          <div className="seven-segment-container">
+            <SevenSegComponent displayId={3} />
+            <SevenSegComponent displayId={2} />
+            <SevenSegComponent displayId={1} />
+            <SevenSegComponent displayId={0} />
+          </div>
           <div className="hex-switch-container">
             <HexSwitchComponent />
           </div>
