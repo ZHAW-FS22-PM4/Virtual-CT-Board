@@ -71,7 +71,7 @@ export function encode(code: ICodeFile): IELF {
       addLabel(writer, instruction)
       replaceEquConstants(instruction, equConstants)
       try {
-        writeInstruction(writer, instruction, pool, 0)
+        writeInstruction(writer, instruction, pool)
       } catch (e: any) {
         if (e instanceof InstructionError) {
           throw new AssemblerError(e.message, instruction.line)
@@ -195,7 +195,7 @@ function writeInstruction(
   if (isPseudoInstruction(instruction))
     writePseudoInstruction(writer, instruction, pool)
   else if (isDataInstruction(instruction))
-    writeDataInstruction(writer, instruction,0)
+    writeDataInstruction(writer, instruction)
   else writeCodeInstruction(writer, instruction)
 }
 
@@ -313,10 +313,7 @@ function writeDataInstruction(
     case 'SPACE':
     case 'FILL':
     case '%':
-      instruction.options
-        //evaluateexpresion()
-      let lenghToReserve = 0;
-      bytes = Array(lenghToReserve).fill(Byte.fromUnsignedInteger(0x00))
+      bytes = Array(evaluateExpresion(instruction.options)).fill(Byte.fromUnsignedInteger(0xFF))
       alignment = 1
       break
   }
@@ -374,4 +371,9 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
       })
     }
   }
+}
+
+function evaluateExpresion(options: string[]): number {
+  let value = eval(options[0])
+  return value
 }
