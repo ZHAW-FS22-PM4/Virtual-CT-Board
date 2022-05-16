@@ -221,6 +221,10 @@ export class LdrRegisterInstruction extends BaseInstruction {
 
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
+
+    //known issue: offset provided by label could not be word aligned
+    //workaround: instead of word aligned offset is in bytes --> offset range is smaller and opcode is not as on physical ct board
+    //but functionality is as it should
     opcode = setBits(opcode, this.immPattern, immValue)
     return [opcode]
   }

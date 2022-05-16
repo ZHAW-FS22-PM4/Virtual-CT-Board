@@ -1,6 +1,5 @@
 import { AssemblerError } from 'assembler/error'
 import { InstructionError } from 'instruction/error'
-import { alignPointer } from 'instruction/opcode'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
@@ -113,16 +112,27 @@ function replaceEquConstants(
   equConstants: Map<string, Word>
 ): void {
   for (let i = 0; i < instruction.options.length; i++) {
+    const hasEndingBracket = instruction.options[i].endsWith(']')
     if (
       instruction.options[i].startsWith('#') &&
-      isNaN(+instruction.options[i].slice(1))
+      ((!hasEndingBracket && isNaN(+instruction.options[i].slice(1))) ||
+        (hasEndingBracket &&
+          isNaN(
+            +instruction.options[i].slice(1, instruction.options[i].length - 1)
+          )))
     ) {
-      const val = equConstants.get(instruction.options[i].slice(1))
-      if (val) {
+      const equName = hasEndingBracket
+        ? instruction.options[i].slice(1, instruction.options[i].length - 1)
+        : instruction.options[i].slice(1)
+      const val = equConstants.get(equName)
+
+      if (val && !hasEndingBracket) {
         instruction.options[i] = '#' + val.toUnsignedInteger().toString()
+      } else if (val && hasEndingBracket) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString() + ']'
       } else {
         throw new AssemblerError(
-          `Instruction refers to constant ${instruction.options[i]} which does not exists.`,
+          `Instruction refers to constant #${equName} which does not exists.`,
           instruction.line
         )
       }
@@ -348,9 +358,7 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
       )
       const vpc = entry.offset + entry.length
       const opcode = encoder.encodeInstruction(entry.instruction.options, {
-        literal: Word.fromSignedInteger(
-          writer.getCurrentSectionOffset() - alignPointer(vpc, 4)
-        )
+        literal: Word.fromSignedInteger(writer.getCurrentSectionOffset() - vpc)
       })
       writer.setBytes(
         entry.offset,

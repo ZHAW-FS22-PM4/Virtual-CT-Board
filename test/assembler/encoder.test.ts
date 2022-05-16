@@ -283,7 +283,7 @@ describe('encode', function () {
     expect(getSection(file, '|.text|').size).toBe(16)
     expect(file.content.length).toBe(16)
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4902)
+      Halfword.fromUnsignedInteger(0x4904) //VCB-176 --> 0x4902 when pc is rounded up to next word
     )
     expect(Halfword.fromBytes(file.content[2], file.content[3])).toEqual(
       Halfword.fromUnsignedInteger(0x4a08)
@@ -339,7 +339,7 @@ describe('encode', function () {
     expect(file.relocations[0].length).toBe(4)
     expect(file.relocations[0].symbol).toBe('LITERAL_CONSTANT')
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4900)
+      Halfword.fromUnsignedInteger(0x4902) //VCB-176 --> 0x4900 when pc is rounded up to next word
     )
     expect(file.content[2]).toEqual(Byte.fromUnsignedInteger(0xff))
     expect(file.content[3]).toEqual(Byte.fromUnsignedInteger(0xff))
@@ -379,6 +379,34 @@ describe('encode', function () {
     expect(file.content.length).toBe(2)
     expect(file.content[0].value).toBe(0xb)
     expect(file.content[1].value).toBe(0x21)
+  })
+  it('should encode code instruction that references equ constant within brackets', function () {
+    const code: ICodeFile = {
+      symbols: {
+        ['MY_CONST']: '0x0'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.code|',
+          instructions: [
+            {
+              name: 'STRB',
+              options: ['R1', '[R0', '#MY_CONST]'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.code|').offset).toBe(0)
+    expect(getSection(file, '|.code|').size).toBe(2)
+    expect(file.content.length).toBe(2)
+    expect(file.content[0].value).toBe(0x01)
+    expect(file.content[1].value).toBe(0x70)
   })
   it('should throw error if instruction references unknown equ constant', function () {
     const code: ICodeFile = {
