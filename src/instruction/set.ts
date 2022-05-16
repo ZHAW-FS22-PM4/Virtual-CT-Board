@@ -21,6 +21,7 @@ import {
 import { BlInstruction } from 'instruction/instructions/jump/bl'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
+import { PushInstruction } from 'instruction/instructions/stack/push'
 import { Halfword } from 'types/binary'
 import { AdcsInstruction } from './instructions/add/adcs'
 import { AddInstruction } from './instructions/add/add'
@@ -76,6 +77,7 @@ import {
   LsrsRegisterInstruction
 } from './instructions/shift_rotate/lsrs'
 import { RorsInstruction } from './instructions/shift_rotate/rors'
+import { PopInstruction } from './instructions/stack/pop'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
@@ -198,5 +200,7 @@ export default new InstructionSet([
   new BLTConditionalJumpInstruction(),
   new BGTConditionalJumpInstruction(),
   new BLEConditionalJumpInstruction(),
-  new BALConditionalJumpInstruction()
+  new BALConditionalJumpInstruction(),
+  new PushInstruction(),
+  new PopInstruction()
 ])
