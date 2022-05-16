@@ -1,55 +1,53 @@
 import { Device } from 'board/devices/device'
 import { Byte, Halfword, Word } from '../../../types/binary'
-enum SevenSegmentNr {
-  _0011_1111 = 0,
-  _0000_0110 = 1,
-  _0101_1011 = 2,
-  _0100_1111 = 3,
-  _0110_0110 = 4,
-  _0110_1101 = 5,
-  _0111_1101 = 6,
-  _0000_0111 = 7,
-  _0111_1111 = 8,
-  _0110_1111 = 9,
-  _0111_0111 = 10, //a
-  _0111_1100 = 11, //b
-  _0100_1100 = 12, //c
-  _0101_1110 = 13, //d
-  _0111_1001 = 14, //e
-  _0111_0001 = 15 //f
-}
+
+const segmentsMap: Map<number, boolean[]> = new Map<number, boolean[]>()
+segmentsMap.set(0, [false, false, true, true, true, true, true, true])
+segmentsMap.set(1, [false, false, false, false, false, true, true, false])
+segmentsMap.set(2, [false, true, false, true, true, false, true, true])
+segmentsMap.set(3, [false, true, false, false, true, true, true, true])
+segmentsMap.set(4, [false, true, true, false, false, true, true, false])
+segmentsMap.set(5, [false, true, true, false, true, true, false, true])
+segmentsMap.set(6, [false, true, true, true, true, true, false, true])
+segmentsMap.set(7, [false, false, false, false, false, true, true, true])
+segmentsMap.set(8, [false, true, true, true, true, true, true, true])
+segmentsMap.set(9, [false, true, true, false, true, true, true, true])
+segmentsMap.set(10, [false, true, true, true, false, true, true, true])
+segmentsMap.set(11, [false, true, true, true, true, true, false, false])
+segmentsMap.set(12, [false, false, true, true, true, false, false, true])
+segmentsMap.set(13, [false, true, false, true, true, true, true, false])
+segmentsMap.set(14, [false, true, true, true, true, false, false, true])
+segmentsMap.set(15, [false, true, true, true, false, false, false, true])
 
 export class SevenSegmentDevice extends Device {
   public startAddress = Word.fromUnsignedInteger(0x60000110)
   public endAddress = Word.fromUnsignedInteger(0x60000115)
+  private static readonly segmentModeAddress2 =
+    Word.fromUnsignedInteger(0x60000111)
   private static readonly startAddressBin = Word.fromUnsignedInteger(0x60000114)
   private static readonly endAddressBin = Word.fromUnsignedInteger(0x60000115)
+  private static readonly UNUSED = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ]
   public isReadOnly = false
   public isVolatile = true
 
-  private static readonly MAX_SEG_NUMBER: number = 31
-  private oldBin: Halfword = this.memory.readHalfword(SevenSegmentDevice.startAddressBin)
-  private oldSeg: Word = this.memory.readWord(this.startAddress)
-  private displays: boolean[][] = [
-    [false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false]
-  ]
-  /**
-   * Returns true if seg with given position is on.
-   *
-   * @param position seg position to check (0-31)
-   * @param segment segmentnumber to check (0-3)
-   * @returns true if segment is turned on
-   */
-  public isOn(segment: number, position: number): boolean {
-    if (SevenSegmentDevice.invalidPosition(segment, position)) {
-      throw new Error(`Segment ${segment} Position ${position} does not exist.`)
-    }
-    return this.displays[segment][position]
-  }
+  private isBinaryMode: boolean
+  private isOn: boolean
 
+  constructor() {
+    super()
+    this.writeWord(this.startAddress, Word.fromUnsignedInteger(0xffffffff))
+    this.isOn = false
+    this.isBinaryMode = false
+  }
   /**
    * Returns an array of segment positions,true if seg on position should be on.
    * the values are read from the newer updated datasection and interpreted accordingly
@@ -58,59 +56,17 @@ export class SevenSegmentDevice extends Device {
    * @returns segmentArray an array of boolean, true if segment is turned on
    */
   public getDisplay(display: number): boolean[] {
-    if (this.isBin()) {
-      this.displays[display] = this.getBinDisplay(display)
+    if (display < 0 || display > 3) {
+      throw new Error(`invalid display position ${display}`)
     }
-    if (this.isReg()) {
-      this.displays[display] = this.getRegDisplay(display)
+    if (!this.isOn) {
+      return SevenSegmentDevice.UNUSED
     }
-    return this.displays[display]
-  }
-  /**
-   * Returns true if value where the binary section is stored has changed.
-   *
-   * @returns true in case of change
-   */
-  private isBin(): boolean {
-    return (
-      this.memory.readHalfword(SevenSegmentDevice.startAddressBin).toUnsignedInteger() !=
-      this.oldBin.toUnsignedInteger()
-    )
-  }
-  /**
-   * Returns true if value where the regular section is stored has changed.
-   *
-   * @returns true in case of change
-   */
-  private isReg(): boolean {
-    return (
-      this.memory.readWord(this.startAddress).toUnsignedInteger() !=
-      this.oldSeg.toUnsignedInteger()
-    )
-  }
-  /**
-   * converts an number to an array of segment positions,true if seg on position should be on.
-   *
-   * @param inNum number to convert (0-15)
-   * @returns segmentArray an array of boolean, true if segment is turned on
-   */
-  private toSevensegNrBin(inNum: number): boolean[] {
-    let arr: boolean[] = []
-
-    let code: String = SevenSegmentNr[inNum]
-    for (let i = 0; i < code.length; i++) {
-      const character = code.charAt(i)
-      if (character == '0') {
-        arr.push(false)
-      }
-      if (character == '1') {
-        arr.push(true)
-      }
-      if (character == '_') {
-      }
+    if (this.isBinaryMode) {
+      return this.getDisplayBinaryMode(display)
+    } else {
+      return this.getDisplaySegmentControlMode(display)
     }
-
-    return arr
   }
 
   /**
@@ -120,60 +76,43 @@ export class SevenSegmentDevice extends Device {
    * @param display to check (0-3)
    * @returns segmentArray an array of boolean, true if segment is turned on
    */
-  private getBinDisplay(display: number): boolean[] {
-    let arr: boolean[] = []
+  private getDisplayBinaryMode(display: number): boolean[] {
+    let arr: boolean[] | undefined = []
+
     switch (display) {
       case 0:
-        arr = this.toSevensegNrBin(
-          this.memory.readByte(SevenSegmentDevice.startAddressBin).toUnsignedInteger() % 16
+        arr = segmentsMap.get(
+          this.memory
+            .readByte(SevenSegmentDevice.startAddressBin)
+            .toUnsignedInteger() % 16
         )
-        this.oldBin = this.memory.readHalfword(SevenSegmentDevice.startAddressBin)
         break
       case 1:
-        arr = this.toSevensegNrBin(
-          ~~(
-            this.memory.readByte(SevenSegmentDevice.startAddressBin).toUnsignedInteger() / 16
-          )
+        arr = segmentsMap.get(
+         Math.floor(this.memory
+            .readByte(SevenSegmentDevice.startAddressBin)
+            .toUnsignedInteger() / 16)
         )
         break
       case 2:
-        arr = this.toSevensegNrBin(
-          this.memory.readByte(SevenSegmentDevice.endAddressBin).toUnsignedInteger() % 16
+        arr = segmentsMap.get(
+          this.memory
+            .readByte(SevenSegmentDevice.endAddressBin)
+            .toUnsignedInteger() % 16
         )
         break
       case 3:
-        arr = this.toSevensegNrBin(
-          ~~(this.memory.readByte(SevenSegmentDevice.endAddressBin).toUnsignedInteger() / 16)
+        arr = segmentsMap.get(
+          Math.floor(this.memory
+            .readByte(SevenSegmentDevice.endAddressBin)
+            .toUnsignedInteger() / 16)
         )
         break
-      default:
-        //
-        break
     }
-
-    return arr
-  }
-
-  /**
-   * converts an number to an array of segment positions,true if seg on position should be on.
-   *
-   * @param inByte byte to convert (0-F)
-   * @returns segmentArray an array of boolean, true if segment is turned on
-   */
-  private toSevensegNr(inByte: Byte): boolean[] {
-    let arr: boolean[] = []
-    let code: String = inByte.toBinaryString()
-    for (let i = 0; i < code.length; i++) {
-      const character = code.charAt(i)
-      if (character == '0') {
-        arr.push(false)
-      }
-      if (character == '1') {
-        arr.push(true)
-      }
+    if (arr) {
+      return arr
     }
-
-    return arr
+    return []
   }
 
   /**
@@ -183,23 +122,73 @@ export class SevenSegmentDevice extends Device {
    * @param display to check (0-3)
    * @returns segmentArray an array of boolean, true if segment is turned on
    */
-  private getRegDisplay(display: number): boolean[] {
+  private getDisplaySegmentControlMode(display: number): boolean[] {
     let arr: boolean[] = []
-    arr = this.toSevensegNr(
-      this.memory.readByte(this.startAddress.add(display))
-    )
-    if (display == 0) {
-      this.oldSeg = this.memory.readWord(this.startAddress)
+    let byte = this.readByte(this.startAddress.add(display))
+    for (let i = 0; i < 8; i++) {
+      arr[i] = !byte.isBitSet(i)
     }
     return arr
   }
 
-  private static invalidPosition(segment: number, position: number): boolean {
-    return (
-      position < 0 ||
-      position > SevenSegmentDevice.MAX_SEG_NUMBER ||
-      segment < 0 ||
-      segment > 7
-    )
+  public writeByte(address: Word, byte: Byte): void {
+    if (address.toUnsignedInteger() > this.endAddress.toUnsignedInteger()) {
+      return
+    }
+    this.isOn = true
+    this.setMode(address)
+    if (address.toUnsignedInteger() === this.startAddress.toUnsignedInteger()) {
+      super.writeByte(SevenSegmentDevice.startAddressBin, byte)
+    }
+    if (
+      address.toUnsignedInteger() ===
+      SevenSegmentDevice.segmentModeAddress2.toUnsignedInteger()
+    ) {
+      super.writeByte(SevenSegmentDevice.endAddressBin, byte)
+    }
+    if (
+      address.toUnsignedInteger() ===
+      SevenSegmentDevice.startAddressBin.toUnsignedInteger()
+    ) {
+      super.writeByte(this.startAddress, byte)
+    }
+    if (
+      address.toUnsignedInteger() ===
+      SevenSegmentDevice.endAddressBin.toUnsignedInteger()
+    ) {
+      super.writeByte(SevenSegmentDevice.segmentModeAddress2, byte)
+    }
+
+    super.writeByte(address, byte)
+  }
+
+  public writeBytes(address: Word, bytes: Byte[]): void {
+    for (let byte of bytes) {
+      this.writeByte(address, byte)
+      address = address.add(1)
+    }
+  }
+
+  public writeHalfword(address: Word, halfword: Halfword): void {
+    this.writeBytes(address, halfword.toBytes())
+  }
+
+  public writeWord(address: Word, word: Word): void {
+    this.writeBytes(address, word.toBytes())
+  }
+
+  public reset(): void {
+    this.isOn = false
+    super.reset()
+  }
+  private setMode(adress: Word): void {
+    if (
+      adress.toUnsignedInteger() >=
+      SevenSegmentDevice.startAddressBin.toUnsignedInteger()
+    ) {
+      this.isBinaryMode = true
+    } else {
+      this.isBinaryMode = false
+    }
   }
 }
