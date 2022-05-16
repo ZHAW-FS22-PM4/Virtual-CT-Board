@@ -19,6 +19,7 @@ const strRegisterOptionsValid = ['R0', '[R1', 'R2]']
 const strRegisterOptionsInvalid = ['R0', 'R1', 'R2']
 const strRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
 const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
+const strLiteralOptionsValidShort = ['R3', '[R4]']
 const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
@@ -104,6 +105,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strLiteralOptionsValid
       )
     ).toBe(true)
+    expect(
+      instructionStoreInstructionImmediateOffset.canEncodeInstruction(
+        strName,
+        strLiteralOptionsValidShort
+      )
+    ).toBe(true)
   })
   test('STORE instruction - STR (register offset) - word encoder', () => {
     expect(
@@ -160,6 +167,12 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strRegisterOptionsValid
       )
     ).toBe(true)
+    expect(
+      instructionStoreInstructionRegisterOffset.canEncodeInstruction(
+        strName,
+        strLiteralOptionsValidShort
+      )
+    ).toBe(false)
   })
 })
 
