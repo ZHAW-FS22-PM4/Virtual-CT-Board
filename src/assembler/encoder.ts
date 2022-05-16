@@ -191,7 +191,6 @@ function writeInstruction(
   writer: FileWriter,
   instruction: IInstruction,
   pool: ILiteralPool,
-  spacetoreserve: number
 ) {
   if (isPseudoInstruction(instruction))
     writePseudoInstruction(writer, instruction, pool)
@@ -278,8 +277,7 @@ function isSymbolDataInstruction(instruction: IInstruction): boolean {
  */
 function writeDataInstruction(
   writer: FileWriter,
-  instruction: IInstruction,
-  spacetoreserve: number
+  instruction: IInstruction
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
@@ -313,12 +311,12 @@ function writeDataInstruction(
       alignment = 4
       break
     case 'SPACE':
-      bytes = values.map(Word.fromUnsignedInteger).flatMap((x) => x.toBytes())
-      alignment = 4
-      break
     case 'FILL':
     case '%':
-      bytes = Array(values[0]).fill(Byte.fromUnsignedInteger(0x00))
+      instruction.options
+        //evaluateexpresion()
+      let lenghToReserve = 0;
+      bytes = Array(lenghToReserve).fill(Byte.fromUnsignedInteger(0x00))
       alignment = 1
       break
   }
@@ -373,8 +371,7 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
         name: 'DCD',
         options: [entry.value],
         line: entry.instruction.line
-      },0
-      )
+      })
     }
   }
 }
