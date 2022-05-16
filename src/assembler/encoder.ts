@@ -282,8 +282,8 @@ function writeDataInstruction(
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
+    writer.align(4)
     for (const option of instruction.options) {
-      writer.align(4)
       writer.addDataRelocation(option, bytes.length)
       writer.writeBytes(bytes)
     }
