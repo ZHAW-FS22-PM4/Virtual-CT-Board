@@ -283,7 +283,7 @@ describe('encode', function () {
     expect(getSection(file, '|.text|').size).toBe(16)
     expect(file.content.length).toBe(16)
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4902)
+      Halfword.fromUnsignedInteger(0x4904)
     )
     expect(Halfword.fromBytes(file.content[2], file.content[3])).toEqual(
       Halfword.fromUnsignedInteger(0x4a08)
@@ -339,7 +339,7 @@ describe('encode', function () {
     expect(file.relocations[0].length).toBe(4)
     expect(file.relocations[0].symbol).toBe('LITERAL_CONSTANT')
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4900)
+      Halfword.fromUnsignedInteger(0x4902)
     )
     expect(file.content[2]).toEqual(Byte.fromUnsignedInteger(0xff))
     expect(file.content[3]).toEqual(Byte.fromUnsignedInteger(0xff))

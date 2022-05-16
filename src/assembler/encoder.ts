@@ -1,6 +1,5 @@
 import { AssemblerError } from 'assembler/error'
 import { InstructionError } from 'instruction/error'
-import { alignPointer } from 'instruction/opcode'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
@@ -359,9 +358,7 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
       )
       const vpc = entry.offset + entry.length
       const opcode = encoder.encodeInstruction(entry.instruction.options, {
-        literal: Word.fromSignedInteger(
-          writer.getCurrentSectionOffset() - alignPointer(vpc, 4)
-        )
+        literal: Word.fromSignedInteger(writer.getCurrentSectionOffset() - vpc)
       })
       writer.setBytes(
         entry.offset,
