@@ -46,7 +46,7 @@ MachineInstruction {
 }
 
 PushPopInstruction {
-  (kw<"PUSH"> | kw<"POP">) "{" commaSep<RegisterLiteral> "}"
+  (kw<"PUSH"> | kw<"POP">) "{" commaSep<RegisterLiteral | RegisterLiteralRange> "}"
 }
 
 BranchInstruction {
@@ -152,6 +152,8 @@ kw<term> { @specialize[@name="Keyword"]<identifier, term> }
   identifier { $[A-Za-z0-9_]+ }
 
   RegisterLiteral { "R" $[0-9] | "R1" $[1-2] | "SP" | "LR" | "PC" }
+
+  RegisterLiteralRange { RegisterLiteral space* "-" space* RegisterLiteral }
 
   digits {
     $[0-9]+

@@ -11,6 +11,7 @@ export const AssemblyLanguage = LRLanguage.define({
         CodeOrDataArea: t.variableName,
         VariableName: t.variableName,
         RegisterLiteral: t.variableName,
+        RegisterLiteralRange: t.variableName,
         IntegerLiteral: t.number,
         MachInstrIntegerLiteral: t.number,
         MachInstrSymbolicLiteral: t.variableName,
