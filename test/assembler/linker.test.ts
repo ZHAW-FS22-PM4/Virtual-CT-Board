@@ -135,7 +135,7 @@ describe('linker', function () {
     expect(file.segments[0].address).toEqual(Word.fromSignedInteger(0x08000000))
     expect(file.segments[1].type).toBe(SegmentType.Load)
     expect(file.segments[1].offset).toBe(14)
-    expect(file.segments[1].size).toBe(1)
+    expect(file.segments[1].size).toBe(4)
     expect(file.segments[1].address).toEqual(Word.fromSignedInteger(0x20000000))
     expect(file.sections.length).toBe(0)
     expect(Object.keys(file.symbols).length).toBe(0)
@@ -143,7 +143,7 @@ describe('linker', function () {
     expect(file.sourceMap.getLine(Word.fromSignedInteger(0x20000000))).toBe(0)
     expect(file.sourceMap.getLine(Word.fromSignedInteger(0x08000008))).toBe(1)
     expect(file.sourceMap.getLine(Word.fromSignedInteger(0x0800000a))).toBe(2)
-    expect(file.content.length).toBe(15)
+    expect(file.content.length).toBe(18)
     expect(
       Word.fromBytes(
         file.content[0],
