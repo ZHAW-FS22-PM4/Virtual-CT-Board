@@ -112,16 +112,27 @@ function replaceEquConstants(
   equConstants: Map<string, Word>
 ): void {
   for (let i = 0; i < instruction.options.length; i++) {
+    const hasEndingBracket = instruction.options[i].endsWith(']')
     if (
       instruction.options[i].startsWith('#') &&
-      isNaN(+instruction.options[i].slice(1))
+      ((!hasEndingBracket && isNaN(+instruction.options[i].slice(1))) ||
+        (hasEndingBracket &&
+          isNaN(
+            +instruction.options[i].slice(1, instruction.options[i].length - 1)
+          )))
     ) {
-      const val = equConstants.get(instruction.options[i].slice(1))
-      if (val) {
+      const equName = hasEndingBracket
+        ? instruction.options[i].slice(1, instruction.options[i].length - 1)
+        : instruction.options[i].slice(1)
+      const val = equConstants.get(equName)
+
+      if (val && !hasEndingBracket) {
         instruction.options[i] = '#' + val.toUnsignedInteger().toString()
+      } else if (val && hasEndingBracket) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString() + ']'
       } else {
         throw new AssemblerError(
-          `Instruction refers to constant ${instruction.options[i]} which does not exists.`,
+          `Instruction refers to constant #${equName} which does not exists.`,
           instruction.line
         )
       }
@@ -219,6 +230,7 @@ function writePseudoInstruction(
   const encoder = InstructionSet.getEncoder(instruction.name, options)
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -229,7 +241,7 @@ function writePseudoInstruction(
     length: bytes.length,
     value: instruction.options[1].slice(1)
   })
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -270,9 +282,10 @@ function writeDataInstruction(
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
+    writer.align(4)
     for (const option of instruction.options) {
       writer.addDataRelocation(option, bytes.length)
-      writer.writeBytes(bytes, 4)
+      writer.writeBytes(bytes)
     }
     return
   } else if (instruction.name === 'ALIGN') {
@@ -306,7 +319,8 @@ function writeDataInstruction(
       alignment = 1
       break
   }
-  writer.writeBytes(bytes, alignment)
+  writer.align(alignment)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -325,10 +339,11 @@ function writeCodeInstruction(
   )
   const opcode = encoder.encodeInstruction(instruction.options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   if (encoder.needsLabels) {
     writer.addCodeRelocation(instruction, bytes.length)
   }
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -339,7 +354,14 @@ function writeCodeInstruction(
  */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
-    writer.writeBytes(END_OF_CODE.toBytes(), 2)
+    // To ensure that it's not possible for the processor to 'fall into'
+    // the literal pool, we add a 'END_OF_CODE' instruction before the literal pool.
+    writer.align(2)
+    writer.writeBytes(END_OF_CODE.toBytes())
+    // Because the offset to the 'DCD' instruction is calculated before the data instruction
+    // is written and we want the offset to include the alignment, we word align everything
+    // before writing the literal pool.
+    writer.align(4)
     for (const entry of pool.entries) {
       const encoder = InstructionSet.getEncoder(
         entry.instruction.name,

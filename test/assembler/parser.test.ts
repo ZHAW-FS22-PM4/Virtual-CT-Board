@@ -4,6 +4,8 @@ import { ITextParseRule, parseText } from 'assembler/parser/text'
 
 const code = `
 MY_CONSTANT EQU 0x123
+PRESERVE8
+THUMB
 AREA |.data|, DATA, READWRITE
   ; A comment
   DCD 0xFF ; A comment
@@ -27,22 +29,118 @@ describe('parse code', function () {
     expect(ast.areas[0].instructions).toHaveLength(1)
     expect(ast.areas[0].instructions[0].name).toBe('DCD')
     expect(ast.areas[0].instructions[0].options).toEqual(['0xFF'])
-    expect(ast.areas[0].instructions[0].line).toBe(4)
+    expect(ast.areas[0].instructions[0].line).toBe(6)
     expect(ast.areas[1].name).toBe('|.text|')
     expect(ast.areas[1].type).toBe(AreaType.Code)
     expect(ast.areas[1].isReadOnly).toBe(true)
     expect(ast.areas[1].instructions).toHaveLength(3)
     expect(ast.areas[1].instructions[0].name).toBe('MOVS')
     expect(ast.areas[1].instructions[0].options).toEqual(['R1', '#123'])
-    expect(ast.areas[1].instructions[0].line).toBe(6)
+    expect(ast.areas[1].instructions[0].line).toBe(8)
     expect(ast.areas[1].instructions[1].name).toBe('MOVS')
     expect(ast.areas[1].instructions[1].label).toBe('label1')
     expect(ast.areas[1].instructions[1].options).toEqual(['R2', '#456'])
-    expect(ast.areas[1].instructions[1].line).toBe(7)
+    expect(ast.areas[1].instructions[1].line).toBe(9)
     expect(ast.areas[1].instructions[2].name).toBe('MOVS')
     expect(ast.areas[1].instructions[2].label).toBe('label2')
     expect(ast.areas[1].instructions[2].options).toEqual(['R3', '#789'])
-    expect(ast.areas[1].instructions[2].line).toBe(10)
+    expect(ast.areas[1].instructions[2].line).toBe(12)
+  })
+  it('can parse load without offset instruction', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             LDR R4, [R5]
+
+             LDR R7, [PC]
+    other    LDRH R1, [R3]
+             LDRB R5, [R2]
+
+             LDR R5, [PC, #0x00]
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(5)
+    expect(ast.areas[0].instructions[0].name).toBe('LDR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('LDR')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['R7', '[PC]'])
+    expect(ast.areas[0].instructions[1].line).toBe(4)
+    expect(ast.areas[0].instructions[2].name).toBe('LDRH')
+    expect(ast.areas[0].instructions[2].label).toBe('other')
+    expect(ast.areas[0].instructions[2].options).toEqual(['R1', '[R3]'])
+    expect(ast.areas[0].instructions[2].line).toBe(5)
+    expect(ast.areas[0].instructions[3].name).toBe('LDRB')
+    expect(ast.areas[0].instructions[3].label).toBeUndefined()
+    expect(ast.areas[0].instructions[3].options).toEqual(['R5', '[R2]'])
+    expect(ast.areas[0].instructions[3].line).toBe(6)
+    expect(ast.areas[0].instructions[4].name).toBe('LDR')
+    expect(ast.areas[0].instructions[4].options).toEqual([
+      'R5',
+      '[PC',
+      '#0x00]'
+    ])
+    expect(ast.areas[0].instructions[4].line).toBe(8)
+  })
+  it('can parse pseudo instruction code', function () {
+    const pseudoCode = `
+    SOME_VALUE EQU 0x78ecd8e7
+    OTHER_VALUE EQU 0x0
+    AREA myData, DATA, READWRITE
+    var1 DCD 0xAE, 0x12, 0x34 ; A comment
+    var2
+    ;description for var2
+    DCD 0x33554466
+
+AREA Pseudo, CODE, READONLY
+
+         LDR R5,var1
+         LDR R6,=0x20003000
+         LDR R0, =SOME_VALUE
+        LDR R4,=var2    
+    `
+    const ast = parse(pseudoCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(2)
+    expect(ast.symbols['SOME_VALUE']).toBe('0x78ecd8e7')
+    expect(ast.symbols['OTHER_VALUE']).toBe('0x0')
+    expect(ast.areas).toHaveLength(2)
+    expect(ast.areas[0].name).toBe('myData')
+    expect(ast.areas[0].type).toBe(AreaType.Data)
+    expect(ast.areas[0].isReadOnly).toBe(false)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('DCD')
+    expect(ast.areas[0].instructions[0].label).toBe('var1')
+    expect(ast.areas[0].instructions[0].options).toEqual([
+      '0xAE',
+      '0x12',
+      '0x34'
+    ])
+    expect(ast.areas[0].instructions[0].line).toBe(4)
+    expect(ast.areas[0].instructions[1].name).toBe('DCD')
+    expect(ast.areas[0].instructions[1].label).toBe('var2')
+    expect(ast.areas[0].instructions[1].options).toEqual(['0x33554466'])
+    expect(ast.areas[0].instructions[1].line).toBe(7)
+    expect(ast.areas[1].name).toBe('Pseudo')
+    expect(ast.areas[1].type).toBe(AreaType.Code)
+    expect(ast.areas[1].isReadOnly).toBe(true)
+    expect(ast.areas[1].instructions).toHaveLength(4)
+    expect(ast.areas[1].instructions[0].name).toBe('LDR')
+    expect(ast.areas[1].instructions[0].options).toEqual(['R5', 'var1'])
+    expect(ast.areas[1].instructions[0].line).toBe(11)
+    expect(ast.areas[1].instructions[1].name).toBe('LDR')
+    expect(ast.areas[1].instructions[1].options).toEqual(['R6', '=0x20003000'])
+    expect(ast.areas[1].instructions[1].line).toBe(12)
+    expect(ast.areas[1].instructions[2].name).toBe('LDR')
+    expect(ast.areas[1].instructions[2].options).toEqual(['R0', '=SOME_VALUE'])
+    expect(ast.areas[1].instructions[2].line).toBe(13)
+    expect(ast.areas[1].instructions[3].name).toBe('LDR')
+    expect(ast.areas[1].instructions[3].options).toEqual(['R4', '=var2'])
+    expect(ast.areas[1].instructions[3].line).toBe(14)
   })
 })
 

@@ -6,7 +6,7 @@ const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z#]+`
 const SPACE_OR_TAB = `[ \\t]`
 
-const OPTION = `[0-9a-z#\\[\\]=_{}]+`
+const OPTION = `(?:[0-9a-z#=_]|[\\[{]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+`
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const COMMENT = `;[^\\n]*`
 
@@ -39,6 +39,14 @@ export function parse(code: string): ICodeFile {
     {
       name: 'ExportInstruction',
       pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
+    },
+    {
+      name: 'Preserve8Instruction',
+      pattern: `THUMB`
+    },
+    {
+      name: 'ThumbInstruction',
+      pattern: `PRESERVE8`
     },
     {
       name: 'Comment',
