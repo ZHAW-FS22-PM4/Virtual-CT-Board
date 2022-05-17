@@ -345,7 +345,7 @@ function writeDataInstruction(
     case 'SPACE':
     case 'FILL':
     case '%':
-      bytes = Array(evaluateExpression(instruction.options)).fill(Byte.fromUnsignedInteger(0xFF))
+      bytes = Array(evaluateExpression(instruction)).fill(Byte.fromUnsignedInteger(0xFF))
       alignment = 1
       break
   }
@@ -417,9 +417,15 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
 /**
  * Evalutes the expression and returns the value of space to reserve
  *
- * @param options the expression to evaluate
  */
-function evaluateExpression(options: string[]): number {
-  let value = eval(options[0])
-  return value
+function evaluateExpression(instruction: IInstruction): number {
+  const rExp : RegExp = /[0-9]+[/+/*][0-9]+/
+  if(rExp.test(instruction.options[0])){
+    return eval(instruction.options[0])
+  } else {
+    throw new AssemblerError(
+        'Only Arithemtic operation in area are allowed',
+        instruction.line
+    )
+  }
 }
