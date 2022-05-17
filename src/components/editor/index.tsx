@@ -95,7 +95,7 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
           editable={this.state.isEditable}
           extensions={this.getExtensions()}
           onChange={(value: string) => {
-            this.clearError()
+            this.highlightLine(null, EditorComponent.ERROR_HIGHLIGHTING)
             sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
           }}
         />
