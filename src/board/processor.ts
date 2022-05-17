@@ -68,16 +68,17 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
   /**
    * Runs one processor cycle.
+   *
+   * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step(): void {
-    if (this.isRunning()) return
-    this.cycle()
+  public step(): boolean {
+    if (this.isRunning()) return false
+    return this.cycle()
   }
 
   /**
    * Resets the whole processor state. It first halts the execution if required and afterwards
    * resets memory and registers.
-   * @returns void
    */
   public reset(): void {
     this.halt()
@@ -100,7 +101,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     )
   }
 
-  private cycle() {
+  private cycle(): boolean {
     let executor: IInstructionExecutor | null = null
     let pcIncremented = false
     try {
@@ -109,7 +110,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       if (opcode[0].value === END_OF_CODE.value) {
         this.halt()
         this.emit('endOfCode')
-        return
+        return false
       }
       executor = this.instructions.getExecutor(opcode[0])
       for (let i = 1; i < executor.opcodeLength; i++) {
@@ -121,6 +122,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       )
       pcIncremented = true
       executor.executeInstruction(opcode, this.registers, this.memory)
+      return true
     } catch (e: any) {
       if (e instanceof Error) {
         this.halt()
@@ -135,6 +137,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
         }
         this.emit('error', e.message)
       }
+      return false
     }
   }
 }
