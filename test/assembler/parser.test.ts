@@ -623,10 +623,3 @@ TST R1, R5
   })
 })
 
-describe('invalid code', function () {
-  it('should throw error if no area is defined', function () {
-    expect(() => parse('MOVS R1, #123')).toThrow(
-      'Instruction must be defined in area Line: 2'
-    )
-  })
-})

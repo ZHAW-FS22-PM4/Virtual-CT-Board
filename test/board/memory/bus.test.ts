@@ -2,7 +2,7 @@
  * Tests the bus of the board
  */
 import { Device } from '../../../src/board/devices/device'
-import { LEDDevice } from '../../../src/board/devices/output/leds'
+import { LedsDevice } from '../../../src/board/devices/output/leds'
 import { MemoryBus } from '../../../src/board/memory/bus'
 import { Byte, Halfword, Word } from '../../../src/types/binary'
 
@@ -16,7 +16,7 @@ let halfword1: Halfword = Halfword.fromUnsignedInteger(123)
 let word1: Word = Word.fromUnsignedInteger(123456)
 
 beforeEach(() => {
-  device = new LEDDevice()
+  device = new LedsDevice()
   bus = new MemoryBus([device])
 })
 

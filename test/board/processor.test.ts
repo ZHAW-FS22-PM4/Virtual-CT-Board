@@ -117,7 +117,7 @@ describe('execution error', function () {
     processor.step()
     expect(processor.halt).toBeCalled()
     expect(processor.emit).toHaveBeenCalledWith(
-      'runtimeError',
+      'error',
       "Could not find a device responsible for the address '0x00000000'."
     )
   })

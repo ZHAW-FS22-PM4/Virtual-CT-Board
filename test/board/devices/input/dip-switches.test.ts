@@ -1,5 +1,4 @@
 import { DipSwitchesDevice } from 'board/devices/input/dip-switches'
-import { Byte, Word } from 'types/binary'
 import { Byte, Halfword, Word } from 'types/binary'
 
 const block1: Word = Word.fromUnsignedInteger(0x60000200)
@@ -15,7 +14,6 @@ const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 let switches: DipSwitchesDevice
 const halfword_empty: Halfword = Halfword.fromUnsignedInteger(0)
 const word_empty: Word = Word.fromUnsignedInteger(0)
-let switches: Switches
 
 beforeEach(() => {
   switches = new DipSwitchesDevice()
