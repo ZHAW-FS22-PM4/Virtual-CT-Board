@@ -35,7 +35,13 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'ProcedureInstructionStart',
-      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('Label must be defined in area', match.from)
+        }
+        label = match.captures[0]
+      }
     },
     {
       name: 'ProcedureInstructionEnds',
