@@ -20,7 +20,7 @@ export class LsrsRegisterInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000011000XXX'
   private rmPattern: string = '0100000011XXX000'
 
-  public encodeInstruction(options: string[]): Halfword[] {
+  public encodeInstruction (options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
       throw new InstructionError('Parameter 1 and 2 must be identical.')
@@ -34,7 +34,7 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     return [opcode]
   }
 
-  protected onExecuteInstruction(
+  protected onExecuteInstruction (
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
@@ -59,7 +59,10 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     registers.setFlags({ C: isCarrySet })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
       options.every((x) => !isImmediate(x))
@@ -74,14 +77,17 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   private rmPattern: string = '0000100000XXX000'
   private immPattern: string = '00001XXXXX000000'
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction (
+    commandName: string,
+    options: string[]
+  ): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[length - 1])
+      isImmediate(options[options.length - 1])
     )
   }
 
-  public encodeInstruction(options: string[]): Halfword[] {
+  public encodeInstruction (options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     let opcode: Halfword = create(this.pattern)
     let immBits = createImmediateBits(options[options.length - 1], 5)
@@ -94,7 +100,7 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     return [opcode]
   }
 
-  protected onExecuteInstruction(
+  protected onExecuteInstruction (
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
