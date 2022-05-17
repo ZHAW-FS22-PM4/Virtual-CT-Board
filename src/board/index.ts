@@ -4,6 +4,7 @@ import { Flash } from './devices/flash'
 import { Buttons } from './devices/input/buttons'
 import { RotarySwitch } from './devices/input/rotarySwitch'
 import { Switches } from './devices/input/switches'
+import { SevenSegmentDevice } from './devices/output/7seg'
 import { LcdDisplay } from './devices/output/lcd'
 import { LEDDevice } from './devices/output/leds'
 import { SRAM } from './devices/sram'
@@ -24,6 +25,7 @@ class Board {
   public readonly leds: LEDDevice
   public readonly rotaryswitch: RotarySwitch
   public readonly lcdDisplay: LcdDisplay
+  public readonly sevenSeg: SevenSegmentDevice
 
   private executable?: IELF
 
@@ -36,6 +38,7 @@ class Board {
     this.lcdDisplay = new LcdDisplay()
     this.rotaryswitch = new RotarySwitch()
     this.registers = new Registers()
+    this.sevenSeg = new SevenSegmentDevice()
     this.memory = new MemoryBus([
       this.flash,
       this.ram,
@@ -43,7 +46,8 @@ class Board {
       this.buttons,
       this.switches,
       this.leds,
-      this.lcdDisplay
+      this.lcdDisplay,
+      this.sevenSeg
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
     this.processor.on('reset', () => this.reloadExecutable())
