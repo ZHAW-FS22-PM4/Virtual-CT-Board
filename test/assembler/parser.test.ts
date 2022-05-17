@@ -622,4 +622,3 @@ TST R1, R5
     ).toThrow(parseError)
   })
 })
-
