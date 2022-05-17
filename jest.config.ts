@@ -15,7 +15,6 @@ const config: Config.InitialOptions = {
   ],
   coveragePathIgnorePatterns: [
     './src/[a-z]*/index.ts',
-    './src/assembler/elf.ts',
     './src/board/devices/sram.ts'
   ],
   coverageThreshold: {
