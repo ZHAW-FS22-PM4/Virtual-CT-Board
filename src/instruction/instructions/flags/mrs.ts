@@ -10,6 +10,9 @@ import {
 import { Halfword, Word } from 'types/binary'
 import { BaseInstruction } from '../base'
 
+/**
+ * Represents MRS instruction that copies flags from APSR status register.
+ */
 export class MrsInstruction extends BaseInstruction {
   public name: string = 'MRS'
   public pattern: string = '1111001111101111'
@@ -19,7 +22,9 @@ export class MrsInstruction extends BaseInstruction {
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2)
     if (options[1] !== 'APSR') {
-      throw new Error("Parameter 2 must be 'APSR'!")
+      throw new Error(
+        "Param 2 must be 'APSR' since no other status registers are available."
+      )
     }
     let opcodeFirstPart: Halfword = create(this.pattern)
     let opcodeSecondPart: Halfword = create(this.patternSecondHalf)
