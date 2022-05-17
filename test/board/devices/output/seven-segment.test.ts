@@ -1,5 +1,5 @@
+import { SevenSegmentDevice } from 'board/devices/output/seven-segment'
 import { Byte, Halfword, Word } from 'types/binary'
-import { SevenSegmentDevice } from '../../../../src/board/devices/output/7seg'
 
 const seg_0 = [false, false, true, true, true, true, true, true]
 const seg_1 = [false, false, false, false, false, true, true, false]
