@@ -21,6 +21,7 @@ import {
 import { BlInstruction } from 'instruction/instructions/jump/bl'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
+import { PushInstruction } from 'instruction/instructions/stack/push'
 import { Halfword } from 'types/binary'
 import { AdcsInstruction } from './instructions/add/adcs'
 import { AddInstruction } from './instructions/add/add'
@@ -35,10 +36,11 @@ import {
   CmpInstructionWithImmediateOffset,
   CmpInstructionWithLowRegisters
 } from './instructions/compare/cmp'
+import { MrsInstruction } from './instructions/flags/mrs'
+import { MsrInstruction } from './instructions/flags/msr'
 import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
-  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from './instructions/load/ldr'
@@ -77,6 +79,7 @@ import {
   LsrsRegisterInstruction
 } from './instructions/shift_rotate/lsrs'
 import { RorsInstruction } from './instructions/shift_rotate/rors'
+import { PopInstruction } from './instructions/stack/pop'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
@@ -153,7 +156,6 @@ export default new InstructionSet([
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
-  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),
@@ -168,6 +170,8 @@ export default new InstructionSet([
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
+  new MrsInstruction(),
+  new MsrInstruction(),
   new MulsInstruction(),
   new MvnsInstruction(),
   new OrrsInstruction(),
@@ -200,5 +204,7 @@ export default new InstructionSet([
   new BLTConditionalJumpInstruction(),
   new BGTConditionalJumpInstruction(),
   new BLEConditionalJumpInstruction(),
-  new BALConditionalJumpInstruction()
+  new BALConditionalJumpInstruction(),
+  new PushInstruction(),
+  new PopInstruction()
 ])
