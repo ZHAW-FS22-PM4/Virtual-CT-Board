@@ -153,7 +153,7 @@ export class FileWriter {
   }
 
   /**
-   * Aligns the content to be specified alignment.
+   * Aligns the content to be specified alignment by filling zeros bytes.
    *
    * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
    */
@@ -164,7 +164,7 @@ export class FileWriter {
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0x00))
         )
       }
     }
@@ -175,8 +175,7 @@ export class FileWriter {
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[], alignment?: number): void {
-    if (alignment) this.align(alignment)
+  public writeBytes(bytes: Byte[]): void {
     this.file.content.push(...bytes)
   }
 

@@ -1,18 +1,19 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import {
+  checkBracketsOnLastOptions,
   checkOptionCount,
   create,
   createImmediateBits,
   createLowRegisterBits,
   getBits,
+  getImmediateBits,
   isImmediate,
   isOptionCountValid,
-  registerStringHasBrackets,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
-import { Halfword, Word } from 'types/binary'
+import { Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
 /**
@@ -24,19 +25,33 @@ export class StrImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '0110000000XXX000'
   private rtPattern: string = '0110000000000XXX'
   private immPattern: string = '01100XXXXX000000'
-  private expectedOptionCount: number = 3
+  private expectedOptionCountMin: number = 2
+  private expectedOptionCountMax: number = 3
+  private instrWithSameName: BaseInstruction[] = [
+    new StrRegisterOffsetInstruction()
+  ]
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2])
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, 3)
+    checkOptionCount(
+      options,
+      this.expectedOptionCountMin,
+      this.expectedOptionCountMax
+    )
+    checkBracketsOnLastOptions(
+      options,
+      this.expectedOptionCountMin,
+      this.expectedOptionCountMax
+    )
+    if (options.length === this.expectedOptionCountMin) {
+      options.push('#0')
+    }
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
@@ -47,7 +62,7 @@ export class StrImmediate5OffsetInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.immPattern,
-      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5)
+      createImmediateBits(removeBracketsFromRegisterString(options[2]), 5, 2)
     )
     return [opcode]
   }
@@ -60,9 +75,7 @@ export class StrImmediate5OffsetInstruction extends BaseInstruction {
     memory.writeWord(
       registers
         .readRegister(getBits(opcode[0], this.rnPattern).value)
-        .add(
-          Word.fromUnsignedInteger(getBits(opcode[0], this.immPattern).value)
-        ),
+        .add(getImmediateBits(opcode[0], this.immPattern, 2).value),
       registers.readRegister(getBits(opcode[0], this.rtPattern).value)
     )
   }
@@ -83,13 +96,13 @@ export class StrRegisterOffsetInstruction extends BaseInstruction {
     return (
       super.canEncodeInstruction(name, options) &&
       isOptionCountValid(options, this.expectedOptionCount) &&
-      !isImmediate(options[2]) &&
-      registerStringHasBrackets(options[1], options[2])
+      !isImmediate(options[2])
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, 3)
+    checkOptionCount(options, this.expectedOptionCount)
+    checkBracketsOnLastOptions(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rtPattern, createLowRegisterBits(options[0]))
     opcode = setBits(

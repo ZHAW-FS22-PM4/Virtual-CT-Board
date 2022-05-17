@@ -1,0 +1,125 @@
+.seven-seg-container {
+  height: 4rem;
+  border-radius: 10px;
+  display: flex;
+  width: 33px;
+  margin-right: 5px;
+}
+
+.display-container.display-size-12 {
+  margin-bottom: 24px;
+}
+
+.display-container {
+  position: relative;
+  margin-right: 24px;
+  float: left;
+}
+
+.display-container div.segment-x,
+.display-container div.segment-y {
+  position: absolute;
+}
+
+.display-container span.segment-border {
+  display: block;
+  position: absolute;
+}
+
+.display-container.display-size-12 {
+  width: 33px;
+  height: 60px;
+}
+
+.display-container.display-size-12 .segment-x {
+  width: 24px;
+  left: 5px;
+  border-bottom: 4px solid #000;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+.display-container.display-size-12 .segment-x .segment-border {
+  top: 4px;
+  left: -4px;
+  right: -4px;
+  border-top: 4px solid #000;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+.display-container.display-size-12 .segment-y {
+  height: 24px;
+  width: 0;
+  border-right: 4px solid #000;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+.display-container.display-size-12 .segment-y .segment-border {
+  position: relative;
+  left: 4px;
+  height: 24px;
+  margin-top: -4px;
+  border-left: 4px solid #000;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+.display-container.display-size-12 .segment-a {
+  top: 0;
+}
+
+.display-container.display-size-12 .segment-b {
+  top: 5px;
+  left: 26px;
+}
+
+.display-container.display-size-12 .segment-c {
+  top: 31px;
+  left: 26px;
+}
+
+.display-container.display-size-12 .segment-d {
+  top: 52px;
+}
+
+.display-container.display-size-12 .segment-e {
+  top: 31px;
+  left: 0;
+}
+
+.display-container.display-size-12 .segment-f {
+  top: 5px;
+  left: 0;
+}
+
+.display-container.display-size-12 .segment-g {
+  top: 26px;
+}
+
+.display-container.display-size-12 .segment-dp {
+  position: absolute;
+  height: 6px;
+  width: 0;
+  border-right: 4px solid #000;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  left: 29px;
+  top: 54px;
+}
+
+.display-container.display-size-12 .segment-dp .segment-border {
+  position: relative;
+  left: 4px;
+  height: 6px;
+  margin-top: -4px;
+  border-left: 4px solid #000;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+.display-off {
+  /*display: none;*/
+  opacity: 0.1;
+}

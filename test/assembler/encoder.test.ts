@@ -58,6 +58,39 @@ describe('encode', function () {
     expect(file.content[0].value).toBe(0x77)
     expect(file.content[1].value).toBe(0x44)
   })
+  it('should encode DCB instruction with Strings', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'DCB',
+              options: ['"TestString"', `"TestString '" with Escape'""`],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(35)
+    expect(file.content.length).toBe(35)
+    expect(file.content[0].value).toBe(84)
+    expect(file.content[1].value).toBe(101)
+    expect(file.content[9].value).toBe(103)
+    expect(file.content[10].value).toBe(84)
+    expect(file.content[19].value).toBe(103)
+    expect(file.content[21].value).toBe(34)
+    expect(file.content[27].value).toBe(32)
+    expect(file.content[33].value).toBe(101)
+    expect(file.content[34].value).toBe(34)
+  })
   it('should encode DCW instruction', function () {
     const code: ICodeFile = {
       symbols: {},
@@ -199,7 +232,7 @@ describe('encode', function () {
           instructions: [
             {
               name: 'DCB',
-              options: ['0x0'],
+              options: ['0x1'],
               line: 0
             },
             {
@@ -216,10 +249,10 @@ describe('encode', function () {
     expect(getSection(file, '|.data|').offset).toBe(0)
     expect(getSection(file, '|.data|').size).toBe(4)
     expect(file.content.length).toBe(4)
-    expect(file.content[0].value).toBe(0x00)
-    expect(file.content[1].value).toBe(0xff)
-    expect(file.content[2].value).toBe(0xff)
-    expect(file.content[3].value).toBe(0xff)
+    expect(file.content[0].value).toBe(0x01)
+    expect(file.content[1].value).toBe(0x00)
+    expect(file.content[2].value).toBe(0x00)
+    expect(file.content[3].value).toBe(0x00)
   })
   it('should should align code instruction', function () {
     const code: ICodeFile = {
@@ -250,7 +283,7 @@ describe('encode', function () {
     expect(getSection(file, '|.text|').size).toBe(4)
     expect(file.content.length).toBe(4)
     expect(file.content[0].value).toBe(0x00)
-    expect(file.content[1].value).toBe(0xff)
+    expect(file.content[1].value).toBe(0x00)
     expect(file.content[2].value).toBe(0x11)
     expect(file.content[3].value).toBe(0x0)
   })
@@ -283,15 +316,15 @@ describe('encode', function () {
     expect(getSection(file, '|.text|').size).toBe(16)
     expect(file.content.length).toBe(16)
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4904)
+      Halfword.fromUnsignedInteger(0x4906) //VCB-176 --> 0x4904 when pc is rounded up to next word
     )
     expect(Halfword.fromBytes(file.content[2], file.content[3])).toEqual(
       Halfword.fromUnsignedInteger(0x4a08)
     )
     expect(file.content[4]).toEqual(Byte.fromUnsignedInteger(0xff))
     expect(file.content[5]).toEqual(Byte.fromUnsignedInteger(0xff))
-    expect(file.content[6]).toEqual(Byte.fromUnsignedInteger(0xff))
-    expect(file.content[7]).toEqual(Byte.fromUnsignedInteger(0xff))
+    expect(file.content[6]).toEqual(Byte.fromUnsignedInteger(0x00))
+    expect(file.content[7]).toEqual(Byte.fromUnsignedInteger(0x00))
     expect(
       Word.fromBytes(
         file.content[8],
@@ -339,7 +372,7 @@ describe('encode', function () {
     expect(file.relocations[0].length).toBe(4)
     expect(file.relocations[0].symbol).toBe('LITERAL_CONSTANT')
     expect(Halfword.fromBytes(file.content[0], file.content[1])).toEqual(
-      Halfword.fromUnsignedInteger(0x4902)
+      Halfword.fromUnsignedInteger(0x4902) //VCB-176 --> 0x4900 when pc is rounded up to next word
     )
     expect(file.content[2]).toEqual(Byte.fromUnsignedInteger(0xff))
     expect(file.content[3]).toEqual(Byte.fromUnsignedInteger(0xff))
