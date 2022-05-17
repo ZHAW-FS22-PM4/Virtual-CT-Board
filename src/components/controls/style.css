@@ -1,0 +1,29 @@
+.controls-component {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 0.5rem 0.25rem 0;
+}
+
+.controls-component .controls-bar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ced4da;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.controls-component .left-controls {
+  white-space: nowrap;
+}
+
+.controls-component button {
+  width: 2rem;
+  height: 2rem;
+}
+
+.controls-component button:focus {
+  outline: 0;
+  box-shadow: none;
+}

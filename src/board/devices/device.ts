@@ -1,9 +1,14 @@
 import { Memory } from 'board/memory'
-import { IMemory } from 'board/memory/interfaces'
+import { IMemory, MemoryEvents } from 'board/memory/interfaces'
 import { Byte, Halfword, Word } from 'types/binary'
+import { EventEmitter } from 'types/events/emitter'
+import { forward } from 'types/events/utils'
 import { IDevice } from './interfaces'
 
-export abstract class Device implements IDevice {
+export abstract class Device
+  extends EventEmitter<MemoryEvents>
+  implements IDevice
+{
   protected readonly memory: IMemory
 
   public abstract readonly startAddress: Word
@@ -12,7 +17,9 @@ export abstract class Device implements IDevice {
   public abstract readonly isVolatile: boolean
 
   constructor() {
+    super()
     this.memory = new Memory()
+    forward<MemoryEvents>([this.memory], this)
   }
 
   public isResponsibleFor(address: Word): boolean {

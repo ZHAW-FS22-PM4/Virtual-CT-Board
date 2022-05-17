@@ -88,6 +88,41 @@ describe('parse code', function () {
     ])
     expect(ast.areas[0].instructions[4].line).toBe(8)
   })
+  it('can parse store without offset instruction', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+    other    STRH R1, [R3]
+
+             STRB R5, [R2]
+             STR R5, [R6, #0x00]
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(4)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('STRH')
+    expect(ast.areas[0].instructions[1].label).toBe('other')
+    expect(ast.areas[0].instructions[1].options).toEqual(['R1', '[R3]'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+    expect(ast.areas[0].instructions[2].name).toBe('STRB')
+    expect(ast.areas[0].instructions[2].label).toBeUndefined()
+    expect(ast.areas[0].instructions[2].options).toEqual(['R5', '[R2]'])
+    expect(ast.areas[0].instructions[2].line).toBe(5)
+    expect(ast.areas[0].instructions[3].name).toBe('STR')
+    expect(ast.areas[0].instructions[3].options).toEqual([
+      'R5',
+      '[R6',
+      '#0x00]'
+    ])
+    expect(ast.areas[0].instructions[3].line).toBe(6)
+  })
   it('can parse pseudo instruction code', function () {
     const pseudoCode = `
     SOME_VALUE EQU 0x78ecd8e7
