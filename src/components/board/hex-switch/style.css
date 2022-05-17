@@ -1,0 +1,42 @@
+.hex-switch-component {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hex-switch-component .hex-switch,
+.hex-switch-component .text,
+.hex-switch-component .overlay-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hex-switch-component .hex-switch {
+  background-color: #313030;
+  padding: 0.25rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
+
+.hex-switch-component .hex-switch.moving {
+  background-color: #000000;
+}
+
+.hex-switch-component .overlay-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.hex-switch-component .overlay {
+  min-width: 400%;
+  min-height: 400%;
+  cursor: pointer;
+}

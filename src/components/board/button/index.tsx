@@ -1,23 +1,31 @@
 import Board from 'board'
+import classNames from 'classnames'
 import React from 'react'
 import './style.css'
+
+export type ButtonProps = {
+  startIndex: number
+  size: number
+}
 
 type ButtonState = {
   [key: number]: boolean
 }
 
-type ButtonProps = {
-  startIndex: number
-  size: number
-}
-
-export class Button extends React.Component<ButtonProps, ButtonState> {
+export class ButtonComponent extends React.Component<ButtonProps, ButtonState> {
   private readonly endIndex: number
 
   constructor(props: ButtonProps) {
     super(props)
     this.endIndex = this.props.startIndex + this.props.size - 1
     this.state = this.getState()
+    Board.buttons.on('change', () => this.setState(this.getState()))
+  }
+
+  public toggleButton(position: number): void {
+    this.state[position]
+      ? Board.buttons.release(position)
+      : Board.buttons.press(position)
   }
 
   private getState() {
@@ -28,28 +36,23 @@ export class Button extends React.Component<ButtonProps, ButtonState> {
     return state
   }
 
-  private handleButton = (key: number): void => {
-    this.state[key] ? Board.buttons.release(key) : Board.buttons.press(key)
-    this.setState((state) => ({
-      [key]: !state[key]
-    }))
-  }
-
   public render(): React.ReactNode {
     return (
-      <div className="button-container">
+      <div className="button-component">
         {Object.keys(this.state)
           .map(Number)
           .sort((n1, n2) => n2 - n1)
-          .map((key) => (
-            <div key={'button-' + key}>
-              <div className="label">{'T' + key}</div>
-              <button
-                className={`button ${
-                  this.state[key] ? 'button-on' : 'button-off'
-                }`}
-                onClick={() => this.handleButton(key)}
-              />
+          .map((position) => (
+            <div className="button-wrapper" key={'button_' + position}>
+              <div className="button-socket">
+                <div
+                  className={classNames('button', {
+                    down: this.state[position]
+                  })}
+                  onClick={() => this.toggleButton(position)}
+                />
+              </div>
+              <div className="label">{'T' + position}</div>
             </div>
           ))}
       </div>

@@ -1,5 +1,6 @@
 import { AreaType } from 'assembler/ast'
 import { parse } from 'assembler/parser'
+import { ParseError } from 'assembler/parser/error'
 import { ITextParseRule, parseText } from 'assembler/parser/text'
 
 const code = `
@@ -86,6 +87,41 @@ describe('parse code', function () {
       '#0x00]'
     ])
     expect(ast.areas[0].instructions[4].line).toBe(8)
+  })
+  it('can parse store without offset instruction', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+    other    STRH R1, [R3]
+
+             STRB R5, [R2]
+             STR R5, [R6, #0x00]
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(4)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('STRH')
+    expect(ast.areas[0].instructions[1].label).toBe('other')
+    expect(ast.areas[0].instructions[1].options).toEqual(['R1', '[R3]'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+    expect(ast.areas[0].instructions[2].name).toBe('STRB')
+    expect(ast.areas[0].instructions[2].label).toBeUndefined()
+    expect(ast.areas[0].instructions[2].options).toEqual(['R5', '[R2]'])
+    expect(ast.areas[0].instructions[2].line).toBe(5)
+    expect(ast.areas[0].instructions[3].name).toBe('STR')
+    expect(ast.areas[0].instructions[3].options).toEqual([
+      'R5',
+      '[R6',
+      '#0x00]'
+    ])
+    expect(ast.areas[0].instructions[3].line).toBe(6)
   })
   it('can parse pseudo instruction code', function () {
     const pseudoCode = `
@@ -360,5 +396,229 @@ describe('parse text', function () {
         captures: []
       })
     })
+  })
+})
+describe('parse error handling', function () {
+  it('should throw ParseError for label not within area', function () {
+    const labelNotInArea = 'Label must be defined in area'
+    let parseError = new ParseError(labelNotInArea, {
+      index: 0,
+      line: 1,
+      position: 4
+    })
+    expect(() =>
+      parse(`
+    label
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    
+    AREA MyCode, CODE, READONLY
+        PUSH	{R1,R3} 
+    `)
+    ).toThrow(parseError)
+    parseError = new ParseError(labelNotInArea, {
+      index: 0,
+      line: 3,
+      position: 0
+    })
+    expect(() =>
+      parse(`
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    
+label
+
+    AREA MyCode, CODE, READONLY
+        PUSH	{R1,R3} 
+    `)
+    ).toThrow(parseError)
+  })
+  it('should throw ParseError for instruction not within area', function () {
+    const instrNotInArea = 'Instruction must be defined in area'
+    let parseError = new ParseError(instrNotInArea, {
+      index: 0,
+      line: 0,
+      position: 1
+    })
+    expect(() =>
+      parse(` ASRS R2, R2, R4
+
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    
+    AREA MyCode, CODE, READONLY
+        PUSH	{R1,R3} 
+    `)
+    ).toThrow(parseError)
+    parseError = new ParseError(instrNotInArea, {
+      index: 0,
+      line: 2,
+      position: 4
+    })
+    expect(() =>
+      parse(`
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    RORS R2, R2, R4
+    AREA MyCode, CODE, READONLY
+        PUSH	{R1,R3} 
+    `)
+    ).toThrow(parseError)
+  })
+  it('should throw ParseError for instruction not starting with tab or space', function () {
+    const instrNotIndented = 'Instruction not indented by space or tab.'
+    let parseError = new ParseError(instrNotIndented, {
+      index: 0,
+      line: 3,
+      position: 0
+    })
+    expect(() =>
+      parse(`
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    AREA MyCode, CODE, READONLY
+MVNS R1,R5
+    `)
+    ).toThrow(parseError)
+    parseError = new ParseError(instrNotIndented, {
+      index: 0,
+      line: 4,
+      position: 0
+    })
+    expect(() =>
+      parse(`
+    ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+    AREA MyCode, CODE, READONLY
+    ORRS R4, R4, R1
+TST R1, R5
+    BICS R1,R1,R5
+    `)
+    ).toThrow(parseError)
+  })
+  it('should throw ParseError for unknown token (&)', function () {
+    const unknownToken = 'Unknown token'
+    let parseError = new ParseError(unknownToken, {
+      index: 0,
+      line: 0,
+      position: 0
+    })
+    expect(() =>
+      parse(`&
+      ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+      ADDR_LED_15_8           EQU     0x60000101
+      ADDR_LED_23_16          EQU     0x60000102
+      ADDR_LED_31_24          EQU     0x60000103
+            AREA MyCode, CODE, READONLY
+    
+    main    PROC
+            EXPORT main
+        
+        LDR		R0, =ADDR_DIP_SWITCH_15_8
+        LDRB	R0, [R0]
+        LSLS	R0, R0, #24
+        ALIGN
+        ; End of code
+        ENDP
+        END
+    `)
+    ).toThrow(parseError)
+
+    parseError = new ParseError(unknownToken, {
+      index: 0,
+      line: 1,
+      position: 6
+    })
+    expect(() =>
+      parse(`
+      &
+      ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+      ADDR_LED_15_8           EQU     0x60000101
+      ADDR_LED_23_16          EQU     0x60000102
+      ADDR_LED_31_24          EQU     0x60000103
+            AREA MyCode, CODE, READONLY
+    
+    main    PROC
+            EXPORT main
+        
+        LDR		R0, =ADDR_DIP_SWITCH_15_8
+        LDRB	R0, [R0]
+        LSLS	R0, R0, #24
+        ALIGN
+        ; End of code
+        ENDP
+        END
+    `)
+    ).toThrow(parseError)
+
+    parseError = new ParseError(unknownToken, {
+      index: 0,
+      line: 9,
+      position: 2
+    })
+    expect(() =>
+      parse(`
+      ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+      ADDR_LED_15_8           EQU     0x60000101
+      ADDR_LED_23_16          EQU     0x60000102
+      ADDR_LED_31_24          EQU     0x60000103
+            AREA MyCode, CODE, READONLY
+    
+    main    PROC
+            EXPORT main
+  &
+        LDR		R0, =ADDR_DIP_SWITCH_15_8
+        LDRB	R0, &[R0]
+        LSLS	R0, R0, #24
+        ALIGN
+        ; End of code
+        ENDP
+        END
+    `)
+    ).toThrow(parseError)
+    parseError = new ParseError(unknownToken, {
+      index: 0,
+      line: 11,
+      position: 8
+    })
+    expect(() =>
+      parse(`
+      ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+      ADDR_LED_15_8           EQU     0x60000101
+      ADDR_LED_23_16          EQU     0x60000102
+      ADDR_LED_31_24          EQU     0x60000103
+            AREA MyCode, CODE, READONLY
+    
+    main    PROC
+            EXPORT main
+  
+        LDR		R0, =ADDR_DIP_SWITCH_15_8
+        LDRB &R0, [R0]
+        LSLS	R0, R0, #24
+        ALIGN
+        ; End of code
+        ENDP
+        END
+    `)
+    ).toThrow(parseError)
+    parseError = new ParseError(unknownToken, {
+      index: 0,
+      line: 11,
+      position: 15
+    })
+    expect(() =>
+      parse(`
+      ADDR_DIP_SWITCH_15_8    EQU     0x60000201
+      ADDR_LED_15_8           EQU     0x60000101
+      ADDR_LED_23_16          EQU     0x60000102
+      ADDR_LED_31_24          EQU     0x60000103
+            AREA MyCode, CODE, READONLY
+    
+    main    PROC
+            EXPORT main
+  
+        LDR		R0, =ADDR_DIP_SWITCH_15_8
+        LDRB	R0, &[R0]
+        LSLS	R0, R0, #24
+        ALIGN
+        ; End of code
+        ENDP
+        END
+    `)
+    ).toThrow(parseError)
   })
 })

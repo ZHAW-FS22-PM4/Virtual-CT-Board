@@ -30,7 +30,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '0110100000XXX000'
   private rtPattern: string = '0110100000000XXX'
   private immPattern: string = '01101XXXXX000000'
-  private otherInstructionWithSameName: BaseInstruction[] = [
+  private instrWithSameName: BaseInstruction[] = [
     new LdrRegisterOffsetInstruction(),
     new LdrRegisterInstruction()
   ]
@@ -40,9 +40,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      !this.otherInstructionWithSameName.some((instr) => {
-        return instr.canEncodeInstruction(name, options)
-      })
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 
@@ -57,7 +55,7 @@ export class LdrImmediate5OffsetInstruction extends BaseInstruction {
       this.expectedOptionCountMin,
       this.expectedOptionCountMax
     )
-    if (options.length == this.expectedOptionCountMin) {
+    if (options.length === this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       options.push('#0')
     }
@@ -169,7 +167,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       ) &&
       (isLabelOffsetInstruction(options) ||
         (isPCRegister(options[1]) &&
-          (options.length == this.expectedOptionCountMin ||
+          (options.length === this.expectedOptionCountMin ||
             isImmediate(options[2]))))
     )
   }
@@ -208,7 +206,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
         8,
         0 //VCB-176 --> 2
       )
-    } else if (options.length == this.expectedOptionCountMin) {
+    } else if (options.length === this.expectedOptionCountMin) {
       //just add fix value 0 as immediate
       immValue = Halfword.fromUnsignedInteger(0)
     } else {

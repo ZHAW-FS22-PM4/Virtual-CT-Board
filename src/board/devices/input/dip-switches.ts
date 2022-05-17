@@ -6,7 +6,7 @@ import { Byte, Word } from 'types/binary'
  *
  * @author Leo Rudin
  */
-export class Switches extends Device {
+export class DipSwitchesDevice extends Device {
   private static readonly BLOCK_ADDRESS_LIST: Word[] = [
     Word.fromUnsignedInteger(0x60000200),
     Word.fromUnsignedInteger(0x60000201),
@@ -16,8 +16,8 @@ export class Switches extends Device {
 
   private static readonly MAX_SWITCH_NUMBER: number = 31
 
-  public startAddress = Switches.BLOCK_ADDRESS_LIST[0]
-  public endAddress = Switches.BLOCK_ADDRESS_LIST[3]
+  public startAddress = DipSwitchesDevice.BLOCK_ADDRESS_LIST[0]
+  public endAddress = DipSwitchesDevice.BLOCK_ADDRESS_LIST[3]
   public isReadOnly = true
   public isVolatile = false
 
@@ -73,7 +73,7 @@ export class Switches extends Device {
   }
 
   private invalidPosition(position: number): boolean {
-    return position < 0 || position > Switches.MAX_SWITCH_NUMBER
+    return position < 0 || position > DipSwitchesDevice.MAX_SWITCH_NUMBER
   }
 
   private findSwitchByte(position: number): Byte {
@@ -85,6 +85,6 @@ export class Switches extends Device {
   }
 
   private getAddressOfPosition(position: number): Word {
-    return Switches.BLOCK_ADDRESS_LIST[Math.floor(position / 8)]
+    return DipSwitchesDevice.BLOCK_ADDRESS_LIST[Math.floor(position / 8)]
   }
 }

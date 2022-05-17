@@ -1,12 +1,16 @@
 import { IDevice } from 'board/devices/interfaces'
 import { Byte, Halfword, Word } from 'types/binary'
-import { IMemory } from './interfaces'
+import { EventEmitter } from 'types/events/emitter'
+import { forward } from 'types/events/utils'
+import { IMemory, MemoryEvents } from './interfaces'
 
-export class MemoryBus implements IMemory {
+export class MemoryBus extends EventEmitter<MemoryEvents> implements IMemory {
   private readonly devices: IDevice[]
 
   constructor(devices: IDevice[]) {
+    super()
     this.devices = devices
+    forward<MemoryEvents>(this.devices, this)
   }
 
   public readByte(address: Word): Byte {

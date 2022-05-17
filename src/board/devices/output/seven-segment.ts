@@ -1,5 +1,5 @@
 import { Device } from 'board/devices/device'
-import { Byte, Halfword, Word } from '../../../types/binary'
+import { Byte, Halfword, Word } from 'types/binary'
 
 const segmentsMap: Map<number, boolean[]> = new Map<number, boolean[]>()
 segmentsMap.set(0, [false, false, true, true, true, true, true, true])

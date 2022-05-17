@@ -1,4 +1,4 @@
-import { LEDDevice } from 'board/devices/output/leds'
+import { LedsDevice } from 'board/devices/output/leds'
 import { Byte, Word } from 'types/binary'
 
 const byte_0101_0101: Byte = Byte.fromUnsignedInteger(85)
@@ -6,10 +6,10 @@ const byte_1010_1010: Byte = Byte.fromUnsignedInteger(170)
 const byte_0000_0000: Byte = Byte.fromUnsignedInteger(0)
 const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 
-let leds: LEDDevice
+let leds: LedsDevice
 
 beforeEach(() => {
-  leds = new LEDDevice()
+  leds = new LedsDevice()
   leds.writeWord(
     leds.startAddress,
     Word.fromBytes(

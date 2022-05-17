@@ -1,0 +1,94 @@
+.memory-component {
+  padding: 0.25rem 0.5rem 0.5rem 0.5rem;
+}
+
+.memory-component .memory-bar {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.memory-component .header {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.memory-component .title {
+  display: inline-block;
+  margin: 0 2rem 0 0;
+}
+
+.memory-component button:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.memory-component .search {
+  width: 2rem;
+  height: 2rem;
+}
+
+#memory-search-popover-template input:focus {
+  border: 1px solid rgb(206, 212, 218);
+  box-shadow: none;
+  z-index: auto;
+}
+
+.memory-component .controls button {
+  width: 4rem;
+  height: 2rem;
+}
+
+.memory-component .memory-explorer {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid #ced4da;
+}
+
+.memory-component .scroller {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  min-width: 2rem;
+  border-right: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.memory-component .scroller button {
+  border: 0;
+  background-color: transparent;
+  padding: 0.5rem 0;
+}
+
+.memory-component .memory-content {
+  flex-grow: 1;
+  padding: 0.5rem;
+  overflow: auto;
+}
+
+.memory-component .line {
+  white-space: nowrap;
+}
+
+.memory-component .head,
+.memory-component .cell {
+  display: inline-block;
+}
+
+.memory-component .head {
+  font-weight: bold;
+}
+
+.memory-component .cell {
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.memory-component .address.head,
+.memory-component .address.cell {
+  width: 7rem;
+}
+
+.memory-component .value.cell {
+  margin-right: 0.25rem;
+}
