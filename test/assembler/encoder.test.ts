@@ -69,7 +69,7 @@ describe('encode', function () {
           instructions: [
             {
               name: 'DCB',
-              options: ['"TestString"', `"TestString with Escape'""`],
+              options: ['"TestString"', `"TestString '" with Escape'""`],
               line: 0
             }
           ]
@@ -79,14 +79,17 @@ describe('encode', function () {
     const file = encode(code)
     expect(Object.keys(file.sections).length).toBe(1)
     expect(getSection(file, '|.data|').offset).toBe(0)
-    expect(getSection(file, '|.data|').size).toBe(33)
-    expect(file.content.length).toBe(33)
+    expect(getSection(file, '|.data|').size).toBe(35)
+    expect(file.content.length).toBe(35)
     expect(file.content[0].value).toBe(84)
     expect(file.content[1].value).toBe(101)
     expect(file.content[9].value).toBe(103)
+    expect(file.content[10].value).toBe(84)
     expect(file.content[19].value).toBe(103)
-    expect(file.content[25].value).toBe(32)
-    expect(file.content[32].value).toBe(34)
+    expect(file.content[21].value).toBe(34)
+    expect(file.content[27].value).toBe(32)
+    expect(file.content[33].value).toBe(101)
+    expect(file.content[34].value).toBe(34)
   })
   it('should encode DCW instruction', function () {
     const code: ICodeFile = {

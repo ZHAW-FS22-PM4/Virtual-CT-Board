@@ -301,11 +301,11 @@ function writeDataInstruction(
   instruction.options.forEach((x) => {
     if (x.startsWith('"')) {
       optionsContainAString = true
-      x = x.substring(0, x.length - 1).substring(1)
+      x = x.substring(1, x.length - 1)
       for (let i = 0; i < x.length; i++) {
         if (i + 1 < x.length) {
           // Special case when the string contains an escaped double quote (i.e. "Example'"")
-          if (x.charCodeAt(i) === 39 && x.charCodeAt(i + 1) === 34) {
+          if (x.charAt(i) === `'` && x.charAt(i + 1) === `"`) {
             continue
           }
         }
