@@ -36,6 +36,8 @@ import {
   CmpInstructionWithImmediateOffset,
   CmpInstructionWithLowRegisters
 } from './instructions/compare/cmp'
+import { MrsInstruction } from './instructions/flags/mrs'
+import { MsrInstruction } from './instructions/flags/msr'
 import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
@@ -168,6 +170,8 @@ export default new InstructionSet([
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
+  new MrsInstruction(),
+  new MsrInstruction(),
   new MulsInstruction(),
   new MvnsInstruction(),
   new OrrsInstruction(),
