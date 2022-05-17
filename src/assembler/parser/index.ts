@@ -8,9 +8,13 @@ const SPACE_OR_TAB = `[ \\t]`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
 const OPTION = `(?:(?:[0-9a-z#=_]|[\\[{]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
-const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
+const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const COMMENT = `;[^\\n]*`
 
+//second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
+const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
 /**
  * Parses a given code string and return a parsed code file (AST representation).
  *
@@ -55,7 +59,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'LiteralSymbolDeclaration',
-      pattern: `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`,
+      pattern: LITERAL_SYMBOL_DECLARATION,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
         label = null
@@ -63,7 +67,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
-      pattern: `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`,
+      pattern: AREA_DECLARATION,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
@@ -80,7 +84,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=(?:${COMMENT}|\\s)*${SPACE_OR_TAB}${INSTRUCTION})`,
+      pattern: LABEL_DECLARATION,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError('Label must be defined in area', match.from)
