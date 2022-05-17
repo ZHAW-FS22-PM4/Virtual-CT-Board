@@ -51,8 +51,10 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
   }
 
   public clearError(): void {
-    this.highlightLine(null, EditorComponent.ERROR_HIGHLIGHTING)
-    this.setState({ errorMessage: null })
+    if (this.state.errorMessage) {
+      this.highlightLine(null, EditorComponent.ERROR_HIGHLIGHTING)
+      this.setState({ errorMessage: null })
+    }
   }
 
   public highlightStep(line: number | null): void {
@@ -93,6 +95,7 @@ export class EditorComponent extends React.Component<{}, IEditorState> {
           editable={this.state.isEditable}
           extensions={this.getExtensions()}
           onChange={(value: string) => {
+            this.clearError()
             sessionStorage.setItem(EditorComponent.SESSION_STORAGE_KEY, value)
           }}
         />
