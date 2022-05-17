@@ -193,12 +193,27 @@
   top: 18.66%;
 }
 
-.board-component .seven-segment {
+.board-component .seven-segment-container {
   position: absolute;
-  width: 17.91%;
-  height: 15.33%;
-  left: 15.83%;
-  bottom: 22.66%;
+  width: 4.16%;
+  height: 14.66%;
+  bottom: 22%;
+}
+
+.board-component .seven-segment-container.n-0 {
+  left: 31.66%;
+}
+
+.board-component .seven-segment-container.n-1 {
+  left: 26.66%;
+}
+
+.board-component .seven-segment-container.n-2 {
+  left: 21.66%;
+}
+
+.board-component .seven-segment-container.n-3 {
+  left: 16.66%;
 }
 
 .board-component .buttons-container {

@@ -4,9 +4,9 @@ import { Flash } from './devices/flash'
 import { ButtonsDevice } from './devices/input/buttons'
 import { DipSwitchesDevice } from './devices/input/dip-switches'
 import { HexSwitchDevice } from './devices/input/hex-switch'
-import { SevenSegmentDevice } from './devices/output/7seg'
 import { LcdDevice } from './devices/output/lcd'
 import { LedsDevice } from './devices/output/leds'
+import { SevenSegmentDevice } from './devices/output/seven-segment'
 import { SRAM } from './devices/sram'
 import { MemoryBus } from './memory/bus'
 import { IMemory } from './memory/interfaces'
@@ -25,7 +25,7 @@ class Board {
   public readonly hexSwitch: HexSwitchDevice
   public readonly leds: LedsDevice
   public readonly lcd: LcdDevice
-  public readonly sevenSeg: SevenSegmentDevice
+  public readonly sevenSegment: SevenSegmentDevice
 
   private executable?: IELF
 
@@ -37,7 +37,7 @@ class Board {
     this.hexSwitch = new HexSwitchDevice()
     this.leds = new LedsDevice()
     this.lcd = new LcdDevice()
-    this.sevenSeg = new SevenSegmentDevice()
+    this.sevenSegment = new SevenSegmentDevice()
     this.registers = new Registers()
     this.memory = new MemoryBus([
       this.flash,
@@ -47,7 +47,7 @@ class Board {
       this.hexSwitch,
       this.leds,
       this.lcd,
-      this.sevenSeg
+      this.sevenSegment
     ])
     this.processor = new Processor(this.registers, this.memory, InstructionSet)
     this.processor.on('reset', () => this.reloadExecutable())

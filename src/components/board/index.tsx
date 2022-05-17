@@ -1,10 +1,10 @@
 import React from 'react'
-import { SevenSegComponent } from './7seg'
 import { ButtonComponent } from './button'
 import { DipSwitchComponent } from './dip-switch'
 import { HexSwitchComponent } from './hex-switch'
 import { LcdComponent } from './lcd'
 import { LedComponent } from './led'
+import { SevenSegmentComponent } from './seven-segment'
 import './style.css'
 
 export class BoardComonent extends React.Component {
@@ -53,11 +53,17 @@ export class BoardComonent extends React.Component {
           <div className="gpio-port n-6 bg-dark"></div>
           <div className="glas-cover left"></div>
           <div className="glas-cover right"></div>
-          <div className="seven-segment-container">
-            <SevenSegComponent displayId={3} />
-            <SevenSegComponent displayId={2} />
-            <SevenSegComponent displayId={1} />
-            <SevenSegComponent displayId={0} />
+          <div className="seven-segment-container n-0">
+            <SevenSegmentComponent displayId={0} />
+          </div>
+          <div className="seven-segment-container n-1">
+            <SevenSegmentComponent displayId={1} />
+          </div>
+          <div className="seven-segment-container n-2">
+            <SevenSegmentComponent displayId={2} />
+          </div>
+          <div className="seven-segment-container n-3">
+            <SevenSegmentComponent displayId={3} />
           </div>
           <div className="hex-switch-container">
             <HexSwitchComponent />
