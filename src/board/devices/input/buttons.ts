@@ -6,13 +6,13 @@
 import { Device } from 'board/devices/device'
 import { Word } from 'types/binary'
 
-export class Buttons extends Device {
+export class ButtonsDevice extends Device {
   private static readonly MAX_BUTTON_NUMBER: number = 3
   private static readonly BUTTONS_ADDRESS: Word =
     Word.fromUnsignedInteger(0x60000210)
 
-  public startAddress = Buttons.BUTTONS_ADDRESS
-  public endAddress = Buttons.BUTTONS_ADDRESS
+  public startAddress = ButtonsDevice.BUTTONS_ADDRESS
+  public endAddress = ButtonsDevice.BUTTONS_ADDRESS
   public isReadOnly = true
   public isVolatile = false
 
@@ -23,11 +23,13 @@ export class Buttons extends Device {
    * @returns true if button is pressed
    */
   public isPressed(position: number): boolean {
-    if (Buttons.invalidPosition(position)) {
+    if (ButtonsDevice.invalidPosition(position)) {
       throw new Error(`Button position ${position} does not exist.`)
     }
 
-    return this.memory.readByte(Buttons.BUTTONS_ADDRESS).isBitSet(position)
+    return this.memory
+      .readByte(ButtonsDevice.BUTTONS_ADDRESS)
+      .isBitSet(position)
   }
 
   /**
@@ -36,14 +38,14 @@ export class Buttons extends Device {
    * @param position button position to press (0-3)
    */
   public press(position: number): void {
-    if (Buttons.invalidPosition(position)) {
+    if (ButtonsDevice.invalidPosition(position)) {
       throw new Error(`Button position ${position} does not exist.`)
     }
 
     const updatedByte = this.memory
-      .readByte(Buttons.BUTTONS_ADDRESS)
+      .readByte(ButtonsDevice.BUTTONS_ADDRESS)
       .setBit(position)
-    this.memory.writeByte(Buttons.BUTTONS_ADDRESS, updatedByte)
+    this.memory.writeByte(ButtonsDevice.BUTTONS_ADDRESS, updatedByte)
   }
 
   /**
@@ -52,17 +54,17 @@ export class Buttons extends Device {
    * @param position button position to press (0-3)
    */
   public release(position: number): void {
-    if (Buttons.invalidPosition(position)) {
+    if (ButtonsDevice.invalidPosition(position)) {
       throw new Error(`Button position ${position} does not exist.`)
     }
 
     const updatedByte = this.memory
-      .readByte(Buttons.BUTTONS_ADDRESS)
+      .readByte(ButtonsDevice.BUTTONS_ADDRESS)
       .clearBit(position)
-    this.memory.writeByte(Buttons.BUTTONS_ADDRESS, updatedByte)
+    this.memory.writeByte(ButtonsDevice.BUTTONS_ADDRESS, updatedByte)
   }
 
   private static invalidPosition(position: number): boolean {
-    return position < 0 || position > Buttons.MAX_BUTTON_NUMBER
+    return position < 0 || position > ButtonsDevice.MAX_BUTTON_NUMBER
   }
 }

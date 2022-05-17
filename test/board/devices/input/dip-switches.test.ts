@@ -1,4 +1,4 @@
-import { Switches } from 'board/devices/input/switches'
+import { DipSwitchesDevice } from 'board/devices/input/dip-switches'
 import { Byte, Word } from 'types/binary'
 
 const block1: Word = Word.fromUnsignedInteger(0x60000200)
@@ -11,10 +11,10 @@ const byte_0101_0101: Byte = Byte.fromUnsignedInteger(85)
 const byte_1010_1010: Byte = Byte.fromUnsignedInteger(170)
 const byte_1111_1111: Byte = Byte.fromUnsignedInteger(255)
 
-let switches: Switches
+let switches: DipSwitchesDevice
 
 beforeEach(() => {
-  switches = new Switches()
+  switches = new DipSwitchesDevice()
   switches.toggle(0)
   switches.toggle(2)
   switches.toggle(4)

@@ -1,6 +1,11 @@
 import { Byte, Halfword, Word } from 'types/binary'
+import { IEventEmitter } from 'types/events/interfaces'
 
-export interface IMemory {
+export type MemoryEvents = {
+  change(): void
+}
+
+export interface IMemory extends IEventEmitter<MemoryEvents> {
   /**
    * Reads a single byte from the memory
    * @param address memory address of the byte
