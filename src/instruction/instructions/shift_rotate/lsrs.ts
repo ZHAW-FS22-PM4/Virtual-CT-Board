@@ -77,7 +77,7 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[length - 1])
+      isImmediate(options[options.length - 1])
     )
   }
 
