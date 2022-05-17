@@ -18,8 +18,8 @@ function MOVS(...options: string[]): Halfword[] {
 
 function STR(...options: string[]): Halfword[] {
   return InstructionSet.getEncoder('STR', options).encodeInstruction(
-      options,
-      {}
+    options,
+    {}
   )
 }
 
@@ -108,15 +108,17 @@ describe('execution error', function () {
   it('should handle execution error correctly', function () {
     WRITE_CODE(STR('R0', '[R1', 'R2]'))
     const processor: Processor = new Processor(
-        registers,
-        memory,
-        InstructionSet
+      registers,
+      memory,
+      InstructionSet
     )
     jest.spyOn(processor, 'emit')
     jest.spyOn(processor, 'halt')
     processor.step()
     expect(processor.halt).toBeCalled()
-    expect(processor.emit).toHaveBeenCalledWith('runtimeError', "Could not find a device responsible for the address '0x00000000'.")
-
+    expect(processor.emit).toHaveBeenCalledWith(
+      'runtimeError',
+      "Could not find a device responsible for the address '0x00000000'."
+    )
   })
 })
