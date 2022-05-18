@@ -60,6 +60,21 @@ export function parse(code: string): ICodeFile {
       pattern: `PRESERVE8`
     },
     {
+      name: 'ALIGN',
+      pattern: `ALIGN`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('ALIGN must be defined in area', match.from)
+        }
+        const instruction: IInstruction = {
+          name: 'ALIGN',
+          options: [],
+          line: match.from.line
+        }
+        area.instructions.push(instruction)
+      }
+    },
+    {
       name: 'Comment',
       pattern: COMMENT
     },
