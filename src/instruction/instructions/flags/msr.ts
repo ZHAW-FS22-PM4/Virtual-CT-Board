@@ -19,7 +19,7 @@ export class MsrInstruction extends BaseInstruction {
   public patternSecondPart: string = '1000100000000000'
   public opcodeLength: number = 2
 
-  public encodeInstruction (options: string[]): Halfword[] {
+  public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2)
     if (options[0] !== 'APSR') {
       throw new Error(
@@ -36,7 +36,7 @@ export class MsrInstruction extends BaseInstruction {
     return [opcodeFirstPart, opcodeSecondPart]
   }
 
-  protected onExecuteInstruction (
+  protected onExecuteInstruction(
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory

@@ -110,11 +110,11 @@ import { match } from './opcode'
 export class InstructionSet implements IInstructionSet {
   private readonly instructions: IInstruction[]
 
-  constructor (instructions: IInstruction[]) {
+  constructor(instructions: IInstruction[]) {
     this.instructions = instructions
   }
 
-  public getEncoder (name: string, options: string[]): IInstructionEncoder {
+  public getEncoder(name: string, options: string[]): IInstructionEncoder {
     for (const instruction of this.instructions) {
       if (instruction.canEncodeInstruction(name, options)) {
         return instruction
@@ -123,7 +123,7 @@ export class InstructionSet implements IInstructionSet {
     throw new InstructionError(`Unable to find instruction '${name}'.`)
   }
 
-  public getExecutor (opcode: Halfword[]): IInstructionExecutor {
+  public getExecutor(opcode: Halfword[]): IInstructionExecutor {
     for (const instruction of this.instructions) {
       if (match(opcode[0], instruction.pattern)) {
         if (opcode.length === 1) return instruction

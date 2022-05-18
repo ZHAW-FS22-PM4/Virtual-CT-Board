@@ -27,7 +27,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
   private interval: number = 0
 
-  constructor (
+  constructor(
     registers: Registers,
     memory: IMemory,
     instructions: IInstructionSet
@@ -43,7 +43,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns
    */
-  public isRunning (): boolean {
+  public isRunning(): boolean {
     return this.interval !== 0
   }
 
@@ -52,7 +52,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * if program is not already running.
    * @returns void
    */
-  public execute (): void {
+  public execute(): void {
     if (this.isRunning()) return
     this.interval = window.setInterval(() => this.cycle(), cycleSpeed)
   }
@@ -61,7 +61,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * Halts the execution but does not reset state of board.
    * @returns void
    */
-  public halt (): void {
+  public halt(): void {
     window.clearInterval(this.interval)
     this.interval = 0
   }
@@ -71,7 +71,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step (): boolean {
+  public step(): boolean {
     if (this.isRunning()) return false
     return this.cycle()
   }
@@ -80,7 +80,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * Resets the whole processor state. It first halts the execution if required and afterwards
    * resets memory and registers.
    */
-  public reset (): void {
+  public reset(): void {
     this.halt()
 
     this.memory.reset()
@@ -101,7 +101,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     )
   }
 
-  private cycle (): boolean {
+  private cycle(): boolean {
     let executor: IInstructionExecutor | null = null
     let pcIncremented = false
     try {
