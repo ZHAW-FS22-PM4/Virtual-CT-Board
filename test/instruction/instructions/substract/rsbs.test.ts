@@ -21,7 +21,7 @@ describe('RSBS instruction', function () {
     const options = ['R1', 'R2', '#0']
     const encoder = InstructionSet.getEncoder(name, options)
     const opcode = encoder.encodeInstruction(options, {})
-    const executor = InstructionSet.getExecutor(opcode[0])
+    const executor = InstructionSet.getExecutor(opcode)
     executor.executeInstruction(opcode, registers, memory)
     expect(registers.readRegister(Register.R1).toSignedInteger()).toBe(-8)
   })
