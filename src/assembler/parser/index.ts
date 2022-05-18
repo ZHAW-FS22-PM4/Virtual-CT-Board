@@ -35,7 +35,13 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'ProcedureInstructionStart',
-      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('Label must be defined in area', match.from)
+        }
+        label = match.captures[0]
+      }
     },
     {
       name: 'ProcedureInstructionEnds',
@@ -52,6 +58,21 @@ export function parse(code: string): ICodeFile {
     {
       name: 'ThumbInstruction',
       pattern: `PRESERVE8`
+    },
+    {
+      name: 'ALIGN',
+      pattern: `ALIGN`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('ALIGN must be defined in area', match.from)
+        }
+        const instruction: IInstruction = {
+          name: 'ALIGN',
+          options: [],
+          line: match.from.line
+        }
+        area.instructions.push(instruction)
+      }
     },
     {
       name: 'Comment',

@@ -14,6 +14,8 @@ AREA |.text|, CODE, READONLY
          MOVS R1, #123
   label1 MOVS R2, #456
 
+  ALIGN
+
   label2
          MOVS R3, #789
 `
@@ -34,7 +36,7 @@ describe('parse code', function () {
     expect(ast.areas[1].name).toBe('|.text|')
     expect(ast.areas[1].type).toBe(AreaType.Code)
     expect(ast.areas[1].isReadOnly).toBe(true)
-    expect(ast.areas[1].instructions).toHaveLength(3)
+    expect(ast.areas[1].instructions).toHaveLength(4)
     expect(ast.areas[1].instructions[0].name).toBe('MOVS')
     expect(ast.areas[1].instructions[0].options).toEqual(['R1', '#123'])
     expect(ast.areas[1].instructions[0].line).toBe(8)
@@ -42,10 +44,12 @@ describe('parse code', function () {
     expect(ast.areas[1].instructions[1].label).toBe('label1')
     expect(ast.areas[1].instructions[1].options).toEqual(['R2', '#456'])
     expect(ast.areas[1].instructions[1].line).toBe(9)
-    expect(ast.areas[1].instructions[2].name).toBe('MOVS')
-    expect(ast.areas[1].instructions[2].label).toBe('label2')
-    expect(ast.areas[1].instructions[2].options).toEqual(['R3', '#789'])
-    expect(ast.areas[1].instructions[2].line).toBe(12)
+    expect(ast.areas[1].instructions[2].name).toBe('ALIGN')
+    expect(ast.areas[1].instructions[2].options.length).toBe(0)
+    expect(ast.areas[1].instructions[3].name).toBe('MOVS')
+    expect(ast.areas[1].instructions[3].label).toBe('label2')
+    expect(ast.areas[1].instructions[3].options).toEqual(['R3', '#789'])
+    expect(ast.areas[1].instructions[3].line).toBe(14)
   })
   it('can parse load without offset instruction', function () {
     const loadCode = `

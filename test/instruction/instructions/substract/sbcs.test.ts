@@ -63,6 +63,6 @@ function checkFlags(flags: { C: boolean; V: boolean }) {
 function executeInstruction(name: string, options: string[]) {
   const encoder = InstructionSet.getEncoder(name, options)
   const opcode = encoder.encodeInstruction(options, {})
-  const executor = InstructionSet.getExecutor(opcode[0])
+  const executor = InstructionSet.getExecutor(opcode)
   executor.executeInstruction(opcode, registers, memory)
 }
