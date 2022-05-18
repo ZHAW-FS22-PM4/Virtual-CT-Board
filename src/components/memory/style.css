@@ -104,3 +104,7 @@
   outline: 0;
   box-shadow: none;
 }
+
+#memory-search-popover-template .quick-jump .address {
+  font-family: 'Consolas', 'Monaco', monospace;
+}

@@ -198,7 +198,9 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
                   this.state.startAddress == this.lineAddress(Number(address))
                 }>
                 <span>{title}</span>
-                <span className="badge bg-secondary ms-3">{address}</span>
+                <span className="address badge bg-secondary ms-3">
+                  {address}
+                </span>
               </button>
             ))}
             <form className="input-group mt-3">
