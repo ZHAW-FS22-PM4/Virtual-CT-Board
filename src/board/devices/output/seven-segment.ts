@@ -63,15 +63,8 @@ export class SevenSegmentDevice extends Device {
     false
   ]
 
-  private isBinaryMode: boolean
-  private isOn: boolean
-
-  constructor() {
-    super()
-    this.writeWord(this.startAddress, Word.fromUnsignedInteger(0xffffffff))
-    this.isOn = false
-    this.isBinaryMode = false
-  }
+  private isBinaryMode: boolean = false
+  private isOn: boolean = false
 
   /**
    * Returns the array of booleans for the given display number (0-3).
@@ -141,8 +134,11 @@ export class SevenSegmentDevice extends Device {
   }
 
   public reset(): void {
-    this.isOn = false
     super.reset()
+    this.isOn = false
+
+    // seven segment display should have default value of FF
+    this.writeWord(this.startAddress, Word.fromUnsignedInteger(0xffffffff))
   }
 
   private getDisplayBinaryMode(display: number): boolean[] {
