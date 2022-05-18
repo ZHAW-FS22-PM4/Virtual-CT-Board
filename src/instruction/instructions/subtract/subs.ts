@@ -124,7 +124,8 @@ export class SubsImmediate8Instruction extends BaseInstruction {
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount)
+      isOptionCountValid(options, this.expectedOptionCount) &&
+      isImmediate(options[1])
     )
   }
 
