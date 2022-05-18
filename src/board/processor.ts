@@ -27,7 +27,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
   private interval: number = 0
 
-  constructor(
+  constructor (
     registers: Registers,
     memory: IMemory,
     instructions: IInstructionSet
@@ -43,7 +43,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns
    */
-  public isRunning(): boolean {
+  public isRunning (): boolean {
     return this.interval !== 0
   }
 
@@ -52,7 +52,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * if program is not already running.
    * @returns void
    */
-  public execute(): void {
+  public execute (): void {
     if (this.isRunning()) return
     this.interval = window.setInterval(() => this.cycle(), cycleSpeed)
   }
@@ -61,7 +61,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * Halts the execution but does not reset state of board.
    * @returns void
    */
-  public halt(): void {
+  public halt (): void {
     window.clearInterval(this.interval)
     this.interval = 0
   }
@@ -71,7 +71,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step(): boolean {
+  public step (): boolean {
     if (this.isRunning()) return false
     return this.cycle()
   }
@@ -80,7 +80,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    * Resets the whole processor state. It first halts the execution if required and afterwards
    * resets memory and registers.
    */
-  public reset(): void {
+  public reset (): void {
     this.halt()
 
     this.memory.reset()
@@ -101,7 +101,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     )
   }
 
-  private cycle(): boolean {
+  private cycle (): boolean {
     let executor: IInstructionExecutor | null = null
     let pcIncremented = false
     try {
@@ -112,10 +112,11 @@ export class Processor extends EventEmitter<ProcessorEvents> {
         this.emit('endOfCode')
         return false
       }
-      executor = this.instructions.getExecutor(opcode[0])
-      for (let i = 1; i < executor.opcodeLength; i++) {
-        opcode.push(this.memory.readHalfword(pc.add(i * 2)))
+      if (opcode[0].value >> 12 === 15) {
+        // if opcode starts with 1111 it's 32bit long
+        opcode.push(this.memory.readHalfword(pc.add(2)))
       }
+      executor = this.instructions.getExecutor(opcode)
       this.registers.writeRegister(
         Register.PC,
         pc.add(executor.opcodeLength * 2)
@@ -123,7 +124,7 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       pcIncremented = true
       executor.executeInstruction(opcode, this.registers, this.memory)
       return true
-    } catch (e: any) {
+    } catch (e) {
       if (e instanceof Error) {
         this.halt()
         // In case error happened during execution of the instruction, the program counter has to be set back,

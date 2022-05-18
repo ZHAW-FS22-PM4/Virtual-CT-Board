@@ -9,6 +9,7 @@ export abstract class BaseInstruction implements IInstruction {
    * Has to be unique for each class so getExecutor in set.ts always finds correct executor
    */
   public abstract pattern: string
+  public patternSecondPart: string = ''
   public opcodeLength: number = 1
   public needsLabels: boolean = false
 
@@ -18,13 +19,13 @@ export abstract class BaseInstruction implements IInstruction {
    * @param options parameter provided for instruction
    * @returns true if the encoder is resposible for given instruction
    */
-  public canEncodeInstruction(name: string, options: string[]): boolean {
+  public canEncodeInstruction (name: string, options: string[]): boolean {
     return this.name === name
   }
 
-  public abstract encodeInstruction(options: string[]): Halfword[]
+  public abstract encodeInstruction (options: string[]): Halfword[]
 
-  public executeInstruction(
+  public executeInstruction (
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
@@ -35,7 +36,7 @@ export abstract class BaseInstruction implements IInstruction {
     this.onExecuteInstruction(opcode, registers, memory)
   }
 
-  protected onExecuteInstruction(
+  protected onExecuteInstruction (
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory

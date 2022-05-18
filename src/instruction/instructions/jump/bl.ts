@@ -19,9 +19,9 @@ export class BlInstruction extends BaseInstruction {
 
   private imm10Pattern: string = '000000XXXXXXXXXX'
   private imm11Pattern: string = '00000XXXXXXXXXXX'
-  private patternSecondPart: string = '11X1XXXXXXXXXXXX'
+  public patternSecondPart: string = '11X1XXXXXXXXXXXX'
 
-  public encodeInstruction(
+  public encodeInstruction (
     options: string[],
     labels?: ILabelOffsets
   ): Halfword[] {
@@ -67,7 +67,7 @@ export class BlInstruction extends BaseInstruction {
     return [opcodeFirstPart, opcodeSecondPart]
   }
 
-  protected onExecuteInstruction(
+  protected onExecuteInstruction (
     opcode: Halfword[],
     registers: Registers,
     memory: IMemory
