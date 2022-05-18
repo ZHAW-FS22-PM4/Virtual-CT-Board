@@ -419,13 +419,5 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
  *
  */
 function evaluateExpression(instruction: IInstruction): number {
-  const rExp : RegExp = /[0-9]+[/+/*][0-9]+/
-  if(rExp.test(instruction.options[0])){
     return eval(instruction.options[0])
-  } else {
-    throw new AssemblerError(
-        'Only Arithemtic operation in area are allowed',
-        instruction.line
-    )
-  }
 }
