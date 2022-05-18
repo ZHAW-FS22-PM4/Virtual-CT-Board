@@ -1,3 +1,5 @@
+import { AssemblerError } from 'assembler/error'
+import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
@@ -212,10 +214,18 @@ function applyCodeRelocation(file: IELF, relocation: IRelocation) {
   const address = getAddressInFile(file, section.offset + relocation.offset)
   const vpc = address.add(relocation.length)
   const labels = getLabelOffsets(file, vpc)
-  const opcode = encoder.encodeInstruction(instruction.options, labels)
-  const offset = section.offset + relocation.offset
-  const bytes = opcode.flatMap((x) => x.toBytes())
-  setBytes(file, offset, bytes)
+  try {
+    const opcode = encoder.encodeInstruction(instruction.options, labels)
+    const offset = section.offset + relocation.offset
+    const bytes = opcode.flatMap((x) => x.toBytes())
+    setBytes(file, offset, bytes)
+  } catch (e: any) {
+    if (e instanceof InstructionError) {
+      throw new AssemblerError(e.message, instruction.line)
+    } else if (e instanceof Error) {
+      throw e // in case of everything else just throw it on
+    }
+  }
 }
 
 /**
@@ -232,7 +242,10 @@ function applyDataRelocation(file: IELF, relocation: IRelocation) {
     const offset = section.offset + relocation.offset
     setBytes(file, offset, symbol.value.toBytes())
   } else {
-    throw new Error(`Symbol '${relocation.symbol!}' is not defined.`)
+    throw new AssemblerError(
+      `Symbol '${relocation.symbol!}' is not defined.`,
+      relocation.line
+    )
   }
 }
 

@@ -284,7 +284,7 @@ function writeDataInstruction(
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
     writer.align(4)
     for (const option of instruction.options) {
-      writer.addDataRelocation(option, bytes.length)
+      writer.addDataRelocation(option, bytes.length, instruction.line)
       writer.writeBytes(bytes)
     }
     return
