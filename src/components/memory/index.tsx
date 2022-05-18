@@ -74,7 +74,6 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
       const form = e.currentTarget
       const element = form.elements.namedItem('search-term') as HTMLInputElement
       this.searchAddress(element.value)
-      element.value = ''
       popover.hide()
     })
     $('body').on('click', '.quick-jump', (e) => {
