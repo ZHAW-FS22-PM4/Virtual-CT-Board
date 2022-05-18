@@ -64,6 +64,8 @@ export interface IInstructionExecutor {
    */
   opcodeLength: number
 
+  patternSecondPart: string
+
   /**
    * Executes the instruction represented by the specified opcode.
    *
@@ -103,5 +105,5 @@ export interface IInstructionSet {
    * @returns the instruction executor for the instruction
    * @throws when the instruction executor could not be found
    */
-  getExecutor(opcode: Halfword): IInstructionExecutor
+  getExecutor(opcode: Halfword[]): IInstructionExecutor
 }
