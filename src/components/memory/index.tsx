@@ -26,6 +26,17 @@ const VIEW_WIDTH = 16
 const VIEW_HEIGHT = 6
 const VIEW_SIZE = VIEW_WIDTH * VIEW_HEIGHT
 
+const QUICK_JUMPS = [
+  { address: '0x08000000', title: 'Flash' },
+  { address: '0x20000000', title: 'SRAM' },
+  { address: '0x60000100', title: 'LEDs' },
+  { address: '0x60000110', title: 'Seven Segment' },
+  { address: '0x60000200', title: 'Dip Switches' },
+  { address: '0x60000210', title: 'Buttons' },
+  { address: '0x60000211', title: 'Hex Switch' },
+  { address: '0x60000300', title: 'LCD' }
+]
+
 export class MemoryComponent extends React.Component<{}, IMemoryState> {
   private searchButton: React.RefObject<HTMLButtonElement>
 
@@ -63,8 +74,11 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
       const form = e.currentTarget
       const element = form.elements.namedItem('search-term') as HTMLInputElement
       this.searchAddress(element.value)
-      element.value = ''
       popover.hide()
+    })
+    $('body').on('click', '.quick-jump ', (e) => {
+      const address = $(e.target).closest('.quick-jump').attr('data-address')
+      if (address) this.searchAddress(address)
     })
   }
 
@@ -75,11 +89,13 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
   public showMemory(startAddress?: number) {
     startAddress =
       startAddress === undefined ? this.state.startAddress : startAddress
-    if (
-      startAddress < Word.MIN_VALUE ||
-      startAddress + VIEW_SIZE > Word.MAX_VALUE
-    ) {
+    startAddress = this.lineAddress(startAddress)
+    if (startAddress < Word.MIN_VALUE || startAddress > Word.MAX_VALUE) {
       return
+    }
+    const endAddress = startAddress + VIEW_SIZE - 1
+    if (endAddress > Word.MAX_VALUE) {
+      startAddress -= endAddress - Word.MAX_VALUE
     }
     this.setState({
       startAddress,
@@ -104,8 +120,11 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
     if (isNaN(address)) {
       return
     }
-    let startAddress = address - (address % VIEW_WIDTH)
-    this.showMemory(startAddress)
+    this.showMemory(address)
+  }
+
+  private lineAddress(address: number) {
+    return address - (address % VIEW_WIDTH)
   }
 
   public render(): React.ReactNode {
@@ -168,7 +187,22 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
         </div>
         <div className="d-none">
           <div id="memory-search-popover-template">
-            <form className="input-group mb-3">
+            {QUICK_JUMPS.map(({ address, title }, i) => (
+              <button
+                className="quick-jump btn btn-primary btn-sm mb-2"
+                title="Jump to"
+                key={'quick_jump_' + i}
+                data-address={address}
+                disabled={
+                  this.state.startAddress == this.lineAddress(Number(address))
+                }>
+                <span>{title}</span>
+                <span className="address badge bg-secondary ms-3">
+                  {address}
+                </span>
+              </button>
+            ))}
+            <form className="input-group mt-3">
               <input
                 type="text"
                 id="search-term"
