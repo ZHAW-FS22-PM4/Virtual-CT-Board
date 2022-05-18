@@ -45,6 +45,7 @@ describe('parse code', function () {
     expect(ast.areas[1].instructions[1].options).toEqual(['R2', '#456'])
     expect(ast.areas[1].instructions[1].line).toBe(9)
     expect(ast.areas[1].instructions[2].name).toBe('ALIGN')
+    expect(ast.areas[1].instructions[2].options.length).toBe(0)
     expect(ast.areas[1].instructions[3].name).toBe('MOVS')
     expect(ast.areas[1].instructions[3].label).toBe('label2')
     expect(ast.areas[1].instructions[3].options).toEqual(['R3', '#789'])
