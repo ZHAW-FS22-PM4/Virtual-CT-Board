@@ -92,3 +92,15 @@
 .memory-component .value.cell {
   margin-right: 0.25rem;
 }
+
+#memory-search-popover-template .quick-jump {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#memory-search-popover-template .quick-jump:focus {
+  outline: 0;
+  box-shadow: none;
+}
