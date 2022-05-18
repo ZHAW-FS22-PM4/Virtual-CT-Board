@@ -289,7 +289,7 @@ function writeDataInstruction(
     }
     return
   } else if (instruction.name === 'ALIGN') {
-    console.log("Test ALIGN")
+    console.log('Test ALIGN')
     const alignment =
       instruction.options.length > 0 ? Number(instruction.options[0]) : 4
     writer.align(alignment)

@@ -8,8 +8,7 @@ const SPACE_OR_TAB = `[ \\t]`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
 const OPTION = `(?:(?:[0-9a-z#=_]|[\\[{]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
-const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)|${SPACE_OR_TAB}*ALIGN${SPACE_OR_TAB}*`
-//const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const COMMENT = `;[^\\n]*`
@@ -61,6 +60,21 @@ export function parse(code: string): ICodeFile {
       pattern: `PRESERVE8`
     },
     {
+      name: 'ALIGN',
+      pattern: `ALIGN`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('ALIGN must be defined in area', match.from)
+        }
+        const instruction: IInstruction = {
+          name: 'ALIGN',
+          options: [],
+          line: match.from.line
+        }
+        area.instructions.push(instruction)
+      }
+    },
+    {
       name: 'Comment',
       pattern: COMMENT
     },
@@ -109,12 +123,11 @@ export function parse(code: string): ICodeFile {
             match.from
           )
         }
-        console.log(match)
-          const instruction: IInstruction = {
-            name: match.captures[0].toUpperCase(),
-            options: match.captures[1].split(',').map((x) => x.trim()),
-            line: match.from.line
-          }
+        const instruction: IInstruction = {
+          name: match.captures[0].toUpperCase(),
+          options: match.captures[1].split(',').map((x) => x.trim()),
+          line: match.from.line
+        }
         if (label) {
           instruction.label = label
           label = null
