@@ -76,8 +76,8 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
       this.searchAddress(element.value)
       popover.hide()
     })
-    $('body').on('click', '.quick-jump', (e) => {
-      const address = $(e.target).attr('data-address')
+    $('body').on('click', '.quick-jump ', (e) => {
+      const address = $(e.target).closest('.quick-jump').attr('data-address')
       if (address) this.searchAddress(address)
     })
   }
