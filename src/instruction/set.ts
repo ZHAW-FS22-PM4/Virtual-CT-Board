@@ -123,14 +123,17 @@ export class InstructionSet implements IInstructionSet {
     throw new InstructionError(`Unable to find instruction '${name}'.`)
   }
 
-  public getExecutor(opcode: Halfword): IInstructionExecutor {
+  public getExecutor(opcode: Halfword[]): IInstructionExecutor {
     for (const instruction of this.instructions) {
-      if (match(opcode, instruction.pattern)) {
-        return instruction
+      if (match(opcode[0], instruction.pattern)) {
+        if (opcode.length === 1) return instruction
+        if (match(opcode[1], instruction.patternSecondPart)) {
+          return instruction
+        }
       }
     }
     throw new Error(
-      `Unable to find instruction executor for the opcode '${opcode.toHexString()}'.`
+      `Unable to find instruction executor for the opcode '${opcode[0].toHexString()}'.`
     )
   }
 }

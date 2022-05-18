@@ -16,7 +16,7 @@ import { BaseInstruction } from '../base'
 export class MsrInstruction extends BaseInstruction {
   public name: string = 'MSR'
   public pattern: string = '111100111000XXXX'
-  private patternSecondHalf: string = '1000100000000000'
+  public patternSecondPart: string = '1000100000000000'
   public opcodeLength: number = 2
 
   public encodeInstruction(options: string[]): Halfword[] {
@@ -27,7 +27,7 @@ export class MsrInstruction extends BaseInstruction {
       )
     }
     let opcodeFirstPart: Halfword = create(this.pattern)
-    let opcodeSecondPart: Halfword = create(this.patternSecondHalf)
+    let opcodeSecondPart: Halfword = create(this.patternSecondPart)
     opcodeFirstPart = setBits(
       opcodeFirstPart,
       this.pattern,
