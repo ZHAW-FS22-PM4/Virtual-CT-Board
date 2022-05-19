@@ -65,6 +65,11 @@ export function parse(code: string): ICodeFile {
       pattern: `PRESERVE8${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
+      name: 'ThumbInstruction',
+      indentRequired: true,
+      pattern: `THUMB${INSTRUCTION_SEPARATOR_LOOKAHED}`
+    },
+    {
       name: 'ALIGN',
       indentRequired: true,
       pattern: `ALIGN${INSTRUCTION_SEPARATOR_LOOKAHED}`,
