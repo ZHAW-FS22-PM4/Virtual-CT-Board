@@ -342,7 +342,7 @@ function writeDataInstruction(
     case 'FILL':
     case '%':
       bytes = Array(evaluateExpression(instruction)).fill(
-        Byte.fromUnsignedInteger(0xff)
+        Byte.fromUnsignedInteger(0x00)
       )
       alignment = 1
       break
