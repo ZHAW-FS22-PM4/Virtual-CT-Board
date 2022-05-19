@@ -18,6 +18,8 @@ beforeEach(() => {
 test('test that buttons are set to readonly', () => {
   buttons.writeByte(address, byte_0000_0000)
   expect(buttons.readByte(address)).toEqual(byte_0000_0101)
+  buttons.writeBytes(address, [byte_0000_0000])
+  expect(buttons.readByte(address)).toEqual(byte_0000_0101)
 })
 
 describe('test isPressed() function', () => {

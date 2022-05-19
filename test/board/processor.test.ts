@@ -16,6 +16,13 @@ function MOVS(...options: string[]): Halfword[] {
   )
 }
 
+function STR(...options: string[]): Halfword[] {
+  return InstructionSet.getEncoder('STR', options).encodeInstruction(
+    options,
+    {}
+  )
+}
+
 function WRITE_CODE(opcodes: Halfword[]) {
   memory.writeWord(
     Word.fromUnsignedInteger(0x08000000),
@@ -91,6 +98,27 @@ describe('step', function () {
     expect(registers.readRegister(Register.R2).toUnsignedInteger()).toBe(2)
     expect(registers.readRegister(Register.PC).toUnsignedInteger()).toBe(
       0x0800000c
+    )
+    processor.step()
+    expect(processor.isRunning()).toBe(false)
+  })
+})
+
+describe('execution error', function () {
+  it('should handle execution error correctly', function () {
+    WRITE_CODE(STR('R0', '[R1', 'R2]'))
+    const processor: Processor = new Processor(
+      registers,
+      memory,
+      InstructionSet
+    )
+    jest.spyOn(processor, 'emit')
+    jest.spyOn(processor, 'halt')
+    processor.step()
+    expect(processor.halt).toBeCalled()
+    expect(processor.emit).toHaveBeenCalledWith(
+      'error',
+      "Could not find a device responsible for the address '0x00000000'."
     )
   })
 })
