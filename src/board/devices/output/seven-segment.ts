@@ -29,9 +29,6 @@ segmentsMap.set(15, [false, true, true, true, false, false, false, true])
  * writes a word to address 0x60000112 the word is written up until address 0x60000115 which consequently means
  * that the mode will be set to binary control mode.
  *
- * Initially the device is in a "turned off" mode, which means, that the UI will not show any segments as turned on. This
- * changes as soon as the user writes anything to the segments.
- *
  * Furthermore there exists a mapping between address 0x60000110 and 0x60000114 and vice-versa as well as with the address
  * 0x60000111 and 0x60000115 and vice-versa. This means whenever the user writes something to those addresses, the
  * content will me mapped automatically to the corresponding other address position.
@@ -52,25 +49,12 @@ export class SevenSegmentDevice extends Device {
     Word.fromUnsignedInteger(0x60000114)
   private static readonly BIN_MODE_END_ADDRESS =
     Word.fromUnsignedInteger(0x60000115)
-  private static readonly UNUSED = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ]
 
-  private isBinaryMode: boolean
-  private isOn: boolean
+  private isBinaryMode: boolean = false
 
   constructor() {
     super()
-    this.writeWord(this.startAddress, Word.fromUnsignedInteger(0xffffffff))
-    this.isOn = false
-    this.isBinaryMode = false
+    this.reset()
   }
 
   /**
@@ -83,9 +67,6 @@ export class SevenSegmentDevice extends Device {
     if (display < 0 || display > 3) {
       throw new Error(`invalid display position ${display}`)
     }
-    if (!this.isOn) {
-      return SevenSegmentDevice.UNUSED
-    }
     if (this.isBinaryMode) {
       return this.getDisplayBinaryMode(display)
     } else {
@@ -97,7 +78,6 @@ export class SevenSegmentDevice extends Device {
     if (address.toUnsignedInteger() > this.endAddress.toUnsignedInteger()) {
       return
     }
-    this.isOn = true
     this.setMode(address)
 
     if (address.toUnsignedInteger() === this.startAddress.toUnsignedInteger()) {
@@ -141,8 +121,11 @@ export class SevenSegmentDevice extends Device {
   }
 
   public reset(): void {
-    this.isOn = false
     super.reset()
+    this.isBinaryMode = false
+
+    // seven segment display should have default value of FF
+    this.writeWord(this.startAddress, Word.fromUnsignedInteger(0xffffffff))
   }
 
   private getDisplayBinaryMode(display: number): boolean[] {
