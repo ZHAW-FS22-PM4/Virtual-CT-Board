@@ -5,12 +5,12 @@ import { ITextParseRule, parseText } from 'assembler/parser/text'
 
 const code = `
 MY_CONSTANT EQU 0x123
-PRESERVE8
-THUMB
-AREA |.data|, DATA, READWRITE
+ PRESERVE8
+ THUMB
+ AREA |.data|, DATA, READWRITE
   ; A comment
   DCD 0xFF ; A comment
-AREA |.text|, CODE, READONLY
+ AREA |.text|, CODE, READONLY
          MOVS R1, #123
   label1 MOVS R2, #456
 
@@ -137,7 +137,7 @@ describe('parse code', function () {
     ;description for var2
     DCD 0x33554466
 
-AREA Pseudo, CODE, READONLY
+    AREA Pseudo, CODE, READONLY
 
          LDR R5,var1
          LDR R6,=0x20003000
@@ -220,6 +220,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch
         }
@@ -251,6 +252,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\n/,
           onMatch
         }
@@ -282,6 +284,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\nTEST\nT/,
           onMatch
         }
@@ -313,6 +316,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\n?/,
           onMatch
         }
@@ -344,6 +348,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\nTEST/,
           onMatch
         }
@@ -370,6 +375,37 @@ describe('parse text', function () {
         captures: []
       })
     })
+    it('should throw if instruction is not indented', function () {
+      const onMatch = jest.fn()
+      const rules: ITextParseRule[] = [
+        {
+          name: 'Whitespace',
+          indentRequired: false,
+          pattern: /\s+/,
+          onMatch
+        },
+        {
+          name: 'TEST',
+          indentRequired: true,
+          pattern: /TEST/,
+          onMatch
+        }
+      ]
+
+      const instrNotIndented = 'Instruction not indented by space or tab.'
+      let parseError = new ParseError(instrNotIndented, {
+        index: 0,
+        line: 1,
+        position: 0
+      })
+      expect(() => parseText(' TEST\nTEST', rules)).toThrow(parseError)
+      parseError = new ParseError(instrNotIndented, {
+        index: 0,
+        line: 0,
+        position: 0
+      })
+      expect(() => parseText('TEST\nTEST', rules)).toThrow(parseError)
+    })
   })
   describe('rules', function () {
     it('should prioritize first rule', function () {
@@ -378,11 +414,13 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch: onMatch1
         },
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /T*/,
           onMatch: onMatch2
         }
@@ -415,6 +453,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch: onMatch
         }
@@ -631,7 +670,7 @@ TST R1, R5
     parseError = new ParseError(unknownToken, {
       index: 0,
       line: 11,
-      position: 15
+      position: 8
     })
     expect(() =>
       parse(`
