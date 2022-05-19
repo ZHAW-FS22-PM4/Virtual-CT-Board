@@ -195,7 +195,7 @@ describe('encode', function () {
     expect(file.relocations[1].length).toBe(4)
     expect(file.relocations[1].symbol).toBe('case2')
   })
-  it('should encode SPACE instruction', function () {
+  it('should encode SPACE instruction with fix value', function () {
     for (const name of ['SPACE', 'FILL', '%']) {
       const code: ICodeFile = {
         symbols: {},
@@ -221,6 +221,34 @@ describe('encode', function () {
       expect(file.content.length).toBe(16)
     }
   })
+
+  it('should encode SPACE instruction with calculated value', function () {
+    for (const name of ['SPACE', 'FILL', '%']) {
+      const code: ICodeFile = {
+        symbols: {},
+        areas: [
+          {
+            type: AreaType.Data,
+            isReadOnly: true,
+            name: '|.data|',
+            instructions: [
+              {
+                name: name,
+                options: ['8*8'],
+                line: 0
+              }
+            ]
+          }
+        ]
+      }
+      const file = encode(code)
+      expect(Object.keys(file.sections).length).toBe(1)
+      expect(getSection(file, '|.data|').offset).toBe(0)
+      expect(getSection(file, '|.data|').size).toBe(64)
+      expect(file.content.length).toBe(64)
+    }
+  })
+
   it('should encode ALIGN instruction', function () {
     const code: ICodeFile = {
       symbols: {},
