@@ -170,7 +170,7 @@ export class BinaryType {
    * @returns the unsigned result of the addition
    */
   public addToNumber(value: BinaryType | number): number {
-    if (!(typeof value == 'number')) {
+    if (!(typeof value === 'number')) {
       value = value.value
     }
     let result = value + this.value

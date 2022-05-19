@@ -48,7 +48,7 @@ export class RsbsInstruction extends BaseInstruction {
 
   private static checkConstImmediate(options: string[]): void {
     let immConst = createImmediateBits(options[2], 1)
-    if (immConst.value != 0) {
+    if (immConst.value !== 0) {
       throw new InstructionError('Third option must be #0.')
     }
   }

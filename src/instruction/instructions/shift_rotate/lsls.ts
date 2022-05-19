@@ -29,7 +29,7 @@ export class LslsRegisterInstruction extends BaseInstruction {
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
-    if (options.length == 3 && options[0] !== options[1])
+    if (options.length === 3 && options[0] !== options[1])
       throw new InstructionError('Parameter 1 and 2 must be identical.')
     let opcode: Halfword = create(this.pattern)
     let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
@@ -87,7 +87,7 @@ export class LslsImmediateInstruction extends BaseInstruction {
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.immPattern, immBits)
     opcode =
-      options.length == 3
+      options.length === 3
         ? setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
         : setBits(opcode, this.rmPattern, createLowRegisterBits(options[0]))
 
