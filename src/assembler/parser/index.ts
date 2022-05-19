@@ -13,7 +13,7 @@ const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const COMMENT = `;[^\\n]*`
 const SPACE_OR_FILL = `SPACE|FILL|\\%`
-const SPACE_OR_FILL_INSTRUCTION = `${SPACE_OR_TAB}*(${SPACE_OR_FILL})${SPACE_OR_TAB}+([0-9]+\\*[0-9]+)`
+const SPACE_OR_FILL_INSTRUCTION = `(${SPACE_OR_FILL})${SPACE_OR_TAB}+(\\(?[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*\\(?[0-9]+\\)?)*)`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
 const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
@@ -33,10 +33,12 @@ export function parse(code: string): ICodeFile {
   const rules: ITextParseRule[] = [
     {
       name: 'Whitespace',
+      indentRequired: false,
       pattern: /\s+/
     },
     {
       name: 'ProcedureInstructionStart',
+      indentRequired: false,
       pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`,
       onMatch(match: ITextMatch) {
         if (!area) {
@@ -47,22 +49,27 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'ProcedureInstructionEnds',
+      indentRequired: true,
       pattern: `ENDP\|END`
     },
     {
       name: 'ExportInstruction',
+      indentRequired: true,
       pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
     },
     {
       name: 'Preserve8Instruction',
-      pattern: `THUMB`
-    },
-    {
-      name: 'ThumbInstruction',
+      indentRequired: true,
       pattern: `PRESERVE8`
     },
     {
+      name: 'ThumbInstruction',
+      indentRequired: true,
+      pattern: `THUMB`
+    },
+    {
       name: 'ALIGN',
+      indentRequired: true,
       pattern: `ALIGN`,
       onMatch(match: ITextMatch) {
         if (!area) {
@@ -78,10 +85,12 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Comment',
+      indentRequired: false,
       pattern: COMMENT
     },
     {
       name: 'spaceOrFillInstruction',
+      indentRequired: true,
       pattern: SPACE_OR_FILL_INSTRUCTION,
       onMatch(match: ITextMatch) {
         if (!area) {
@@ -100,6 +109,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'LiteralSymbolDeclaration',
+      indentRequired: false,
       pattern: LITERAL_SYMBOL_DECLARATION,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
@@ -108,6 +118,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
+      indentRequired: true,
       pattern: AREA_DECLARATION,
       onMatch(match: ITextMatch) {
         area = {
@@ -125,6 +136,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
+      indentRequired: false,
       pattern: LABEL_DECLARATION,
       onMatch(match: ITextMatch) {
         if (!area) {
@@ -135,6 +147,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Instruction',
+      indentRequired: true,
       pattern: INSTRUCTION,
       onMatch(match: ITextMatch) {
         if (!area) {
