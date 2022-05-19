@@ -8,6 +8,7 @@ import { ICodeFile, IInstruction, ISymbols } from './ast'
 import { IELF, SectionType, SymbolType } from './elf/interfaces'
 import { createFile } from './elf/utils'
 import { FileWriter } from './elf/writer'
+import { SPACE_OR_TAB } from './parser'
 
 /**
  * Represents a literal pool which can be filled with data and can be
@@ -412,9 +413,19 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
 }
 
 /**
- * Evalutes the expression and returns the value of space to reserve
+ * Evalutes the expression and returns the value of space to reserve.
  *
+ * Only operations with + and * are enforced by regex with numbers and brackets as operands.
  */
 function evaluateExpression(instruction: IInstruction): number {
-  return eval(instruction.options[0])
+  let valToEval = instruction.options[0]
+  const expression = new RegExp(
+    `^(\\(?[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*\\(?[0-9]+\\)?)*)$`,
+    'mi'
+  )
+  const match = expression.exec(valToEval)
+  if (!match) {
+    throw Error('Instruction option contains unallowed characters to eval.')
+  }
+  return eval(valToEval)
 }

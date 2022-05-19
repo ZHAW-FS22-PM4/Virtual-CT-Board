@@ -35,7 +35,8 @@ instruction {
   SymbolicDeclaration |
   PushPopInstruction |
   BranchInstruction |
-  AdditionalInstruction
+  AdditionalInstruction |
+  DataInstructionDeclaration
 }
 
 SymbolicDeclaration {

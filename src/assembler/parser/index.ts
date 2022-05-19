@@ -4,7 +4,7 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z]+`
-const SPACE_OR_TAB = `[ \\t]`
+export const SPACE_OR_TAB = `[ \\t]`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
 const OPTION = `(?:(?:[0-9a-z_]|[\\[{#=]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
