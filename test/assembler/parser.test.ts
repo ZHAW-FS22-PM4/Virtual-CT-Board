@@ -211,6 +211,68 @@ describe('parse code', function () {
     expect(ast.areas[0].instructions[4].name).toBe('MOVS')
     expect(ast.areas[0].instructions[4].options.length).toBe(2)
   })
+  it('can parse labels starting with Instruction name', function () {
+    const code = `
+    AREA LabelCode, CODE, READONLY
+
+endless
+        SBCS R1, R7
+        B endless
+        END
+    `
+
+    //TODO align with data instruction
+    const ast = parse(code)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    let codeArea = ast.areas[0]
+    expect(codeArea.name).toBe('LabelCode')
+    expect(codeArea.type).toBe(AreaType.Code)
+    expect(codeArea.isReadOnly).toBe(true)
+    expect(codeArea.instructions).toHaveLength(2)
+    expect(codeArea.instructions[0].name).toBe('SBCS')
+    expect(codeArea.instructions[0].options).toEqual(['R1', 'R7'])
+    expect(codeArea.instructions[0].label).toEqual('endless')
+    expect(codeArea.instructions[0].line).toBe(4)
+    expect(codeArea.instructions[1].name).toBe('B')
+    expect(codeArea.instructions[1].options).toEqual(['endless'])
+    expect(codeArea.instructions[1].line).toBe(5)
+
+    const code2 = `
+    AREA test2, CODE, READONLY
+tHumbsUp DCB alignment, "test"
+
+    LSRS R2, R2, R6
+    ASRS R2, R2, R6
+
+alignment
+        SBCS R1, R7
+        ENDP
+    `
+    const ast2 = parse(code2)
+    expect(Object.keys(ast2.symbols)).toHaveLength(0)
+    expect(ast2.areas).toHaveLength(1)
+    codeArea = ast2.areas[0]
+    expect(codeArea.name).toBe('test2')
+    expect(codeArea.type).toBe(AreaType.Code)
+    expect(codeArea.isReadOnly).toBe(true)
+    expect(codeArea.instructions).toHaveLength(4)
+    expect(codeArea.instructions[0].name).toBe('DCB')
+    expect(codeArea.instructions[0].options).toEqual(['alignment', '"test"'])
+    expect(codeArea.instructions[0].label).toEqual('tHumbsUp')
+    expect(codeArea.instructions[0].line).toBe(2)
+    expect(codeArea.instructions[1].name).toBe('LSRS')
+    expect(codeArea.instructions[1].options).toEqual(['R2', 'R2', 'R6'])
+    expect(codeArea.instructions[1].line).toBe(4)
+    expect(codeArea.instructions[2].name).toBe('ASRS')
+    expect(codeArea.instructions[2].options).toEqual(['R2', 'R2', 'R6'])
+    expect(codeArea.instructions[2].label).toBeUndefined()
+    expect(codeArea.instructions[2].line).toBe(5)
+    expect(codeArea.instructions[3].name).toBe('SBCS')
+    expect(codeArea.instructions[3].options).toEqual(['R1', 'R7'])
+    expect(codeArea.instructions[3].label).toEqual('alignment')
+    expect(codeArea.instructions[3].line).toBe(8)
+  })
 })
 
 describe('parse text', function () {
