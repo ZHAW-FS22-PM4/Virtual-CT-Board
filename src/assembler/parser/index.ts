@@ -13,7 +13,7 @@ const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const COMMENT = `;[^\\n]*`
 const SPACE_OR_FILL = `SPACE|FILL|\\%`
-const SPACE_OR_FILL_Instruction = `${SPACE_OR_TAB}*(${SPACE_OR_FILL})${SPACE_OR_TAB}+([0-9]+\\*[0-9]+)`
+const SPACE_OR_FILL_INSTRUCTION = `${SPACE_OR_TAB}*(${SPACE_OR_FILL})${SPACE_OR_TAB}+([0-9]+\\*[0-9]+)`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
 const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
@@ -81,8 +81,8 @@ export function parse(code: string): ICodeFile {
       pattern: COMMENT
     },
     {
-      name: 'SPACE',
-      pattern: SPACE_OR_FILL_Instruction,
+      name: 'spaceOrFillInstruction',
+      pattern: SPACE_OR_FILL_INSTRUCTION,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(
