@@ -463,4 +463,63 @@ describe('encode', function () {
     }
     expect(() => encode(code)).toThrow(AssemblerError)
   })
+  it('should encode code instruction with immediate offset with spaces in between', function () {
+    const code: ICodeFile = {
+      symbols: {
+        ['MY_CONST']: '0x0'
+      },
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.code|',
+          instructions: [
+            {
+              name: 'STRB',
+              options: ['R1', '[R0', '#     MY_CONST]'],
+              line: 0
+            },
+            {
+              name: 'STRB',
+              options: ['R1', '[R0', '#     5]'],
+              line: 1
+            },
+            {
+              name: 'MOVS',
+              options: ['R0', '#     MY_CONST'],
+              line: 2
+            },
+            {
+              name: 'MOVS',
+              options: ['R0', '#     5'],
+              line: 3
+            },
+            {
+              name: 'LDR',
+              options: ['R0', '=       MY_CONST]'],
+              line: 4
+            },
+            {
+              name: 'LDR',
+              options: ['R0', '=     0x5]'],
+              line: 5
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.code|').offset).toBe(0)
+    expect(getSection(file, '|.code|').size).toBe(24)
+    expect(file.content.length).toBe(24)
+    expect(file.content[0].value).toBe(0x01)
+    expect(file.content[1].value).toBe(0x70)
+    expect(file.content[2].value).toBe(0x41)
+    expect(file.content[3].value).toBe(0x71)
+    expect(file.content[4].value).toBe(0x00)
+    expect(file.content[5].value).toBe(0x20)
+    expect(file.content[6].value).toBe(0x05)
+    expect(file.content[7].value).toBe(0x20)
+  })
 })
