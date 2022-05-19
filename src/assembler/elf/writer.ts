@@ -119,6 +119,7 @@ export class FileWriter {
       section: this.getCurrentSection().name,
       offset: this.getCurrentSectionOffset(),
       length,
+      line: instruction.line,
       instruction
     })
   }
@@ -128,13 +129,15 @@ export class FileWriter {
    *
    * @param symbol the symbol to be re-located
    * @param length the length of the symbol (is always 32)
+   * @param line line on which instruction with re-location is in editor
    */
-  public addDataRelocation(symbol: string, length: number): void {
+  public addDataRelocation(symbol: string, length: number, line: number): void {
     this.file.relocations.push({
       type: RelocationType.Data,
       section: this.getCurrentSection().name,
       offset: this.getCurrentSectionOffset(),
       length,
+      line,
       symbol
     })
   }

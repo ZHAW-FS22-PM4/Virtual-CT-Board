@@ -1,8 +1,14 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
-import { Halfword, Word } from 'types/binary'
+import {
+  checkOptionCount,
+  create,
+  getBits,
+  mapLabelOffset,
+  setBits
+} from 'instruction/opcode'
+import { Halfword } from 'types/binary'
 import { BinaryType } from 'types/binary/binaryType'
 import { BaseInstruction } from '../base'
 
@@ -24,9 +30,7 @@ export class BInstruction extends BaseInstruction {
     opcode = setBits(
       opcode,
       this.pattern,
-      labels
-        ? Word.fromUnsignedInteger(labels[options[0]].value).toHalfwords()[0]
-        : Halfword.fromUnsignedInteger(0x00)
+      mapLabelOffset(options[0], labels).toHalfwords()[0]
     )
     return [opcode]
   }
