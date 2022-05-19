@@ -137,7 +137,7 @@ export function parse(code: string): ICodeFile {
     }
   ]
   const cursor = parseText(code, rules)
-  if (cursor.index != code.length) {
+  if (cursor.index !== code.length) {
     throw new ParseError('Unknown token', cursor)
   }
   return ast

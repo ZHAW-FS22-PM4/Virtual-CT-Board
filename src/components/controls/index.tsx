@@ -85,7 +85,7 @@ export class ControlsComponent extends React.Component<
       nextMode = ControlsMode.RUN
     }
     this.setState({ mode: nextMode })
-    this.updateProgramCounterHighlighting(nextMode != ControlsMode.STEP)
+    this.updateProgramCounterHighlighting(nextMode !== ControlsMode.STEP)
   }
 
   public step(): void {

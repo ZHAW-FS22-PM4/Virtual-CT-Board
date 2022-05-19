@@ -286,7 +286,7 @@ export function checkBracketsOnLastOptions(
       'Provided option count is more than one apart or max is smaller than min'
     )
   }
-  if (optionCountMin != optionCountMax && options.length == optionCountMin) {
+  if (optionCountMin !== optionCountMax && options.length == optionCountMin) {
     if (!registerStringEnclosedInBrackets(options[optionCountMin - 1])) {
       throw new InstructionError(
         `Opening or closing bracket missing for ${optionCountMin}. param`
