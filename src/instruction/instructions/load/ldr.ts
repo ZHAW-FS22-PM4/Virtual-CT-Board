@@ -197,7 +197,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
     if (instrHasLabelAsOffset) {
       let pseudoValue = options[1]
       if (pseudoValue.startsWith('=')) {
-        pseudoValue = pseudoValue.slice(1)
+        pseudoValue = pseudoValue.slice(1).trim()
       }
       immValue = createImmediateBits(
         //limit bit count so negative values will not be considered wrong

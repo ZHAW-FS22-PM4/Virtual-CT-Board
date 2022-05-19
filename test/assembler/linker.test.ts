@@ -322,6 +322,50 @@ describe('linker', function () {
       )
     ).toEqual(Word.fromUnsignedInteger(0x33))
   })
+  it('should apply code relocations', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: '|.text|',
+          instructions: [
+            {
+              name: 'B',
+              options: ['label1'],
+              line: 1
+            },
+            {
+              name: 'MOVS',
+              options: ['R1', 'R2'],
+              line: 2,
+              label: 'label1'
+            }
+          ]
+        }
+      ]
+    }
+    const file = link(encode(code))
+    expect(file.segments.length).toBe(1)
+    expect(file.segments[0].type).toBe(SegmentType.Load)
+    expect(file.segments[0].offset).toBe(0)
+    expect(file.segments[0].size).toBe(16)
+    expect(file.segments[0].address).toEqual(Word.fromSignedInteger(0x08000000))
+    expect(file.sections.length).toBe(0)
+    expect(Object.keys(file.symbols).length).toBe(0)
+    expect(file.relocations.length).toBe(0)
+    expect(file.sourceMap.getLine(Word.fromSignedInteger(0x08000008))).toBe(1)
+    expect(file.content.length).toBe(16)
+    expect(
+      Word.fromBytes(
+        file.content[10],
+        file.content[11],
+        file.content[12],
+        file.content[13]
+      )
+    ).toEqual(Word.fromUnsignedInteger(0xffff0011))
+  })
   it('should throw exception if label as option is not defined', function () {
     const code: ICodeFile = {
       symbols: {},

@@ -197,7 +197,7 @@ export function createImmediateBits(
     )
   }
 
-  let optionValue = +option.substring(1)
+  let optionValue = +option.substring(1).trim()
   if (lsbZeroBitCount !== 0) {
     if (optionValue % (lsbZeroBitCount * 2) !== 0) {
       throw new InstructionError(

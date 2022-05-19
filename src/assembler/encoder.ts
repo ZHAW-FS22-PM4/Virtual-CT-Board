@@ -113,18 +113,13 @@ function replaceEquConstants(
 ): void {
   for (let i = 0; i < instruction.options.length; i++) {
     const hasEndingBracket = instruction.options[i].endsWith(']')
-    if (
-      instruction.options[i].startsWith('#') &&
-      ((!hasEndingBracket && isNaN(+instruction.options[i].slice(1))) ||
-        (hasEndingBracket &&
-          isNaN(
-            +instruction.options[i].slice(1, instruction.options[i].length - 1)
-          )))
-    ) {
-      const equName = hasEndingBracket
-        ? instruction.options[i].slice(1, instruction.options[i].length - 1)
-        : instruction.options[i].slice(1)
-      const val = equConstants.get(equName)
+    let trimmedEquName = hasEndingBracket
+      ? instruction.options[i]
+          .slice(1, instruction.options[i].length - 1)
+          .trim()
+      : instruction.options[i].slice(1).trim()
+    if (instruction.options[i].startsWith('#') && isNaN(+trimmedEquName)) {
+      const val = equConstants.get(trimmedEquName)
 
       if (val && !hasEndingBracket) {
         instruction.options[i] = '#' + val.toUnsignedInteger().toString()
@@ -132,7 +127,7 @@ function replaceEquConstants(
         instruction.options[i] = '#' + val.toUnsignedInteger().toString() + ']'
       } else {
         throw new AssemblerError(
-          `Instruction refers to constant #${equName} which does not exists.`,
+          `Instruction refers to constant #${trimmedEquName} which does not exists.`,
           instruction.line
         )
       }
@@ -284,7 +279,7 @@ function writeDataInstruction(
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
     writer.align(4)
     for (const option of instruction.options) {
-      writer.addDataRelocation(option, bytes.length, instruction.line)
+      writer.addDataRelocation(option.trim(), bytes.length, instruction.line)
       writer.writeBytes(bytes)
     }
     return
