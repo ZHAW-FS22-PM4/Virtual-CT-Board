@@ -1,3 +1,4 @@
+import { InstructionError } from 'instruction/error'
 import {
   BALConditionalJumpInstruction,
   BCCConditionalJumpInstruction,
@@ -20,8 +21,8 @@ import {
 import { BlInstruction } from 'instruction/instructions/jump/bl'
 import { BlxInstruction } from 'instruction/instructions/jump/blx'
 import { BxInstruction } from 'instruction/instructions/jump/bx'
+import { PushInstruction } from 'instruction/instructions/stack/push'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { AdcsInstruction } from './instructions/add/adcs'
 import { AddInstruction } from './instructions/add/add'
 import {
@@ -35,10 +36,11 @@ import {
   CmpInstructionWithImmediateOffset,
   CmpInstructionWithLowRegisters
 } from './instructions/compare/cmp'
+import { MrsInstruction } from './instructions/flags/mrs'
+import { MsrInstruction } from './instructions/flags/msr'
 import { BInstruction } from './instructions/jump/b'
 import {
   LdrImmediate5OffsetInstruction,
-  LdrLabelInstruction,
   LdrRegisterInstruction,
   LdrRegisterOffsetInstruction
 } from './instructions/load/ldr'
@@ -77,6 +79,7 @@ import {
   LsrsRegisterInstruction
 } from './instructions/shift_rotate/lsrs'
 import { RorsInstruction } from './instructions/shift_rotate/rors'
+import { PopInstruction } from './instructions/stack/pop'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
@@ -117,20 +120,20 @@ export class InstructionSet implements IInstructionSet {
         return instruction
       }
     }
-    throw new VirtualBoardError(
-      `Unable to find instruction encoder for the instruction '${name}'.`,
-      VirtualBoardErrorType.NoEncoderFound
-    )
+    throw new InstructionError(`Unable to find instruction '${name}'.`)
   }
 
-  public getExecutor(opcode: Halfword): IInstructionExecutor {
+  public getExecutor(opcode: Halfword[]): IInstructionExecutor {
     for (const instruction of this.instructions) {
-      if (match(opcode, instruction.pattern)) {
-        return instruction
+      if (match(opcode[0], instruction.pattern)) {
+        if (opcode.length === 1) return instruction
+        if (match(opcode[1], instruction.patternSecondPart)) {
+          return instruction
+        }
       }
     }
     throw new Error(
-      `Unable to find instruction executor for the opcode '${opcode.toHexString()}'.`
+      `Unable to find instruction executor for the opcode '${opcode[0].toHexString()}'.`
     )
   }
 }
@@ -156,7 +159,6 @@ export default new InstructionSet([
   new EorsInstruction(),
   new LdrImmediate5OffsetInstruction(),
   new LdrRegisterOffsetInstruction(),
-  new LdrLabelInstruction(),
   new LdrhImmediate5OffsetInstruction(),
   new LdrhRegisterOffsetInstruction(),
   new LdrbImmediate5OffsetInstruction(),
@@ -171,6 +173,8 @@ export default new InstructionSet([
   new MovInstruction(),
   new MovsRegistersInstruction(),
   new MovsImmediate8Instruction(),
+  new MrsInstruction(),
+  new MsrInstruction(),
   new MulsInstruction(),
   new MvnsInstruction(),
   new OrrsInstruction(),
@@ -203,5 +207,7 @@ export default new InstructionSet([
   new BLTConditionalJumpInstruction(),
   new BGTConditionalJumpInstruction(),
   new BLEConditionalJumpInstruction(),
-  new BALConditionalJumpInstruction()
+  new BALConditionalJumpInstruction(),
+  new PushInstruction(),
+  new PopInstruction()
 ])

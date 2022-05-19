@@ -1,5 +1,4 @@
 import { Byte, Word } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 import { IInstruction } from '../ast'
 import {
   IELF,
@@ -104,10 +103,7 @@ export class FileWriter {
    */
   public addSymbol(symbol: ISymbol): void {
     if (symbol.name in this.file.symbols)
-      throw new VirtualBoardError(
-        `Symbol with name '${symbol.name}' already exists.`,
-        VirtualBoardErrorType.DuplicateSymbolDefinition
-      )
+      throw new Error(`Symbol with name '${symbol.name}' already exists.`)
     this.file.symbols[symbol.name] = symbol
   }
 
@@ -157,7 +153,7 @@ export class FileWriter {
   }
 
   /**
-   * Aligns the content to be specified alignment.
+   * Aligns the content to be specified alignment by filling zeros bytes.
    *
    * @param alignment the alignment (e.g. 2 for halfword and 4 for word alignment)
    */
@@ -168,7 +164,7 @@ export class FileWriter {
       if (off) {
         const fill = alignment - off
         this.file.content.push(
-          ...Array(fill).fill(Byte.fromUnsignedInteger(0xff))
+          ...Array(fill).fill(Byte.fromUnsignedInteger(0x00))
         )
       }
     }
@@ -179,8 +175,7 @@ export class FileWriter {
    *
    * @param bytes the bytes to write
    */
-  public writeBytes(bytes: Byte[], alignment?: number): void {
-    if (alignment) this.align(alignment)
+  public writeBytes(bytes: Byte[]): void {
     this.file.content.push(...bytes)
   }
 

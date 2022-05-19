@@ -1,4 +1,5 @@
 import { Word } from 'types/binary'
+import { EventEmitter } from 'types/events/emitter'
 
 export enum Register {
   R0 = 0,
@@ -31,6 +32,10 @@ export enum Flag {
   V = 'V'
 }
 
+export type RegistersEvents = {
+  change(): void
+}
+
 type IRegisterData = {
   [register in Register]: Word
 }
@@ -38,7 +43,7 @@ type IRegisterData = {
 /**
  * Represents the registers of the CPU
  */
-export class Registers {
+export class Registers extends EventEmitter<RegistersEvents> {
   private data: IRegisterData
   public static lowRegisters: Register[] = [
     Register.R0,
@@ -52,6 +57,7 @@ export class Registers {
   ]
 
   constructor() {
+    super()
     this.data = this.initializeRegisters()
   }
 
@@ -71,6 +77,7 @@ export class Registers {
    */
   public writeRegister(register: Register, word: Word): void {
     this.data[register] = word
+    this.emit('change')
   }
 
   /**
@@ -93,6 +100,7 @@ export class Registers {
     this.data[Register.APSR] = setBit
       ? this.data[Register.APSR].setBit(offset)
       : this.data[Register.APSR].clearBit(offset)
+    this.emit('change')
   }
 
   /**
@@ -139,6 +147,7 @@ export class Registers {
    */
   public reset(): void {
     this.data = this.initializeRegisters()
+    this.emit('change')
   }
 
   /**

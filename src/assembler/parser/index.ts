@@ -3,12 +3,18 @@ import { ParseError } from './error'
 import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
-const VALUE = `[0-9a-z#]+`
+const VALUE = `[0-9a-z]+`
 const SPACE_OR_TAB = `[ \\t]`
+const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
-const OPTION = `[0-9a-z#\\[\\]=_{}]+`
-const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const OPTION = `(?:(?:[0-9a-z_]|[\\[{#=]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
+const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
+const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
+const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
+const COMMENT = `;[^\\n]*`
 
+//second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
+const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
 /**
  * Parses a given code string and return a parsed code file (AST representation).
  *
@@ -28,12 +34,53 @@ export function parse(code: string): ICodeFile {
       pattern: /\s+/
     },
     {
+      name: 'ProcedureInstructionStart',
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('Label must be defined in area', match.from)
+        }
+        label = match.captures[0]
+      }
+    },
+    {
+      name: 'ProcedureInstructionEnds',
+      pattern: `ENDP\|END`
+    },
+    {
+      name: 'ExportInstruction',
+      pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
+    },
+    {
+      name: 'Preserve8Instruction',
+      pattern: `THUMB`
+    },
+    {
+      name: 'ThumbInstruction',
+      pattern: `PRESERVE8`
+    },
+    {
+      name: 'ALIGN',
+      pattern: `ALIGN`,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError('ALIGN must be defined in area', match.from)
+        }
+        const instruction: IInstruction = {
+          name: 'ALIGN',
+          options: [],
+          line: match.from.line
+        }
+        area.instructions.push(instruction)
+      }
+    },
+    {
       name: 'Comment',
-      pattern: /;[^\n]*/
+      pattern: COMMENT
     },
     {
       name: 'LiteralSymbolDeclaration',
-      pattern: `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`,
+      pattern: LITERAL_SYMBOL_DECLARATION,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
         label = null
@@ -41,7 +88,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
-      pattern: `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`,
+      pattern: AREA_DECLARATION,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
@@ -58,10 +105,10 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
-      pattern: `(${SYMBOL})(?=\\s*${SPACE_OR_TAB}${INSTRUCTION})`,
+      pattern: LABEL_DECLARATION,
       onMatch(match: ITextMatch) {
         if (!area) {
-          throw new ParseError(match.from, 'Label must be defined in area')
+          throw new ParseError('Label must be defined in area', match.from)
         }
         label = match.captures[0]
       }
@@ -72,8 +119,8 @@ export function parse(code: string): ICodeFile {
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(
-            match.from,
-            'Instruction must be defined in area'
+            'Instruction must be defined in area',
+            match.from
           )
         }
         const instruction: IInstruction = {
@@ -91,7 +138,7 @@ export function parse(code: string): ICodeFile {
   ]
   const cursor = parseText(code, rules)
   if (cursor.index != code.length) {
-    throw new ParseError(cursor, 'Unknown token')
+    throw new ParseError('Unknown token', cursor)
   }
   return ast
 }

@@ -1,9 +1,9 @@
-import { CompileError } from 'assembler/parser/error'
+import { AssemblerError } from 'assembler/error'
+import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
 import { $enum } from 'ts-enum-util'
 import { Byte, Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 import { ICodeFile, IInstruction, ISymbols } from './ast'
 import { IELF, SectionType, SymbolType } from './elf/interfaces'
 import { createFile } from './elf/utils'
@@ -61,6 +61,7 @@ export function encode(code: ICodeFile): IELF {
   const file = createFile()
   const writer = new FileWriter(file)
   addSymbols(writer, code.symbols)
+  const equConstants: Map<string, Word> = createEquConstantsMap(file)
   for (const area of code.areas) {
     const type = $enum(SectionType).asValueOrThrow(area.type)
     writer.startSection(type, area.name)
@@ -68,11 +69,14 @@ export function encode(code: ICodeFile): IELF {
     for (const instruction of area.instructions) {
       writer.mapLine(instruction.line)
       addLabel(writer, instruction)
+      replaceEquConstants(instruction, equConstants)
       try {
         writeInstruction(writer, instruction, pool)
       } catch (e: any) {
-        if (e instanceof VirtualBoardError) {
-          throw new CompileError(instruction.line, e.message, e.type)
+        if (e instanceof InstructionError) {
+          throw new AssemblerError(e.message, instruction.line)
+        } else if (e instanceof Error) {
+          throw e // in case of everything else just throw it on
         }
       }
     }
@@ -80,6 +84,55 @@ export function encode(code: ICodeFile): IELF {
     writer.endSection()
   }
   return file
+}
+
+/**
+ * Creates a map for fast lookup of equ constants.
+ *
+ * @param file file from which the map is created
+ * @returns created map
+ */
+function createEquConstantsMap(file: IELF): Map<string, Word> {
+  const equConstants: Map<string, Word> = new Map<string, Word>()
+  for (const symbol in file.symbols) {
+    if (file.symbols[symbol].type === SymbolType.Constant)
+      equConstants.set(file.symbols[symbol].name, file.symbols[symbol].value)
+  }
+  return equConstants
+}
+
+/**
+ * Replaces all references to equ constants for the given instruction with the actual value.
+ *
+ * @param instruction instruction to replace options
+ * @param equConstants map of equ constant that is used to lookup the actual value
+ */
+function replaceEquConstants(
+  instruction: IInstruction,
+  equConstants: Map<string, Word>
+): void {
+  for (let i = 0; i < instruction.options.length; i++) {
+    const hasEndingBracket = instruction.options[i].endsWith(']')
+    let trimmedEquName = hasEndingBracket
+      ? instruction.options[i]
+          .slice(1, instruction.options[i].length - 1)
+          .trim()
+      : instruction.options[i].slice(1).trim()
+    if (instruction.options[i].startsWith('#') && isNaN(+trimmedEquName)) {
+      const val = equConstants.get(trimmedEquName)
+
+      if (val && !hasEndingBracket) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString()
+      } else if (val && hasEndingBracket) {
+        instruction.options[i] = '#' + val.toUnsignedInteger().toString() + ']'
+      } else {
+        throw new AssemblerError(
+          `Instruction refers to constant #${trimmedEquName} which does not exists.`,
+          instruction.line
+        )
+      }
+    }
+  }
 }
 
 /**
@@ -107,12 +160,18 @@ function addSymbols(writer: FileWriter, symbols: ISymbols): void {
  */
 function addLabel(writer: FileWriter, instruction: IInstruction): void {
   if (instruction.label) {
-    writer.addSymbol({
-      type: SymbolType.Address,
-      name: instruction.label,
-      section: writer.getCurrentSection().name,
-      value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
-    })
+    try {
+      writer.addSymbol({
+        type: SymbolType.Address,
+        name: instruction.label,
+        section: writer.getCurrentSection().name,
+        value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
+      })
+    } catch (e: any) {
+      if (e instanceof Error) {
+        throw new AssemblerError(e.message, instruction.line)
+      }
+    }
   }
 }
 
@@ -166,6 +225,7 @@ function writePseudoInstruction(
   const encoder = InstructionSet.getEncoder(instruction.name, options)
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -176,7 +236,7 @@ function writePseudoInstruction(
     length: bytes.length,
     value: instruction.options[1].slice(1)
   })
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -201,8 +261,7 @@ function isDataInstruction(instruction: IInstruction): boolean {
 function isSymbolDataInstruction(instruction: IInstruction): boolean {
   return (
     instruction.name == 'DCD' &&
-    instruction.options.length == 1 &&
-    isNaN(+instruction.options[0])
+    instruction.options.every((option) => isNaN(+option))
   )
 }
 
@@ -218,8 +277,11 @@ function writeDataInstruction(
 ): void {
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
-    writer.addDataRelocation(instruction.options[0], bytes.length)
-    writer.writeBytes(bytes, 4)
+    writer.align(4)
+    for (const option of instruction.options) {
+      writer.addDataRelocation(option.trim(), bytes.length)
+      writer.writeBytes(bytes)
+    }
     return
   } else if (instruction.name === 'ALIGN') {
     const alignment =
@@ -229,19 +291,49 @@ function writeDataInstruction(
   }
   let bytes: Byte[] = []
   let alignment: number = 0
-  const values = instruction.options.map((x) => +x)
+  let optionsContainAString: boolean = false
+  let values: number[] = []
+  instruction.options.forEach((x) => {
+    if (x.startsWith('"')) {
+      optionsContainAString = true
+      x = x.substring(1, x.length - 1)
+      for (let i = 0; i < x.length; i++) {
+        if (i + 1 < x.length) {
+          // Special case when the string contains an escaped double quote (i.e. "Example'"")
+          if (x.charAt(i) === `'` && x.charAt(i + 1) === `"`) {
+            continue
+          }
+        }
+        values.push(x.charCodeAt(i))
+      }
+    } else {
+      values.push(+x)
+    }
+  })
   switch (instruction.name) {
     case 'DCB':
       bytes = values.map(Byte.fromUnsignedInteger)
       alignment = 1
       break
     case 'DCW':
+      if (optionsContainAString) {
+        throw new AssemblerError(
+          'String operands can only be specified for DCB',
+          instruction.line
+        )
+      }
       bytes = values
         .map(Halfword.fromUnsignedInteger)
         .flatMap((x) => x.toBytes())
       alignment = 2
       break
     case 'DCD':
+      if (optionsContainAString) {
+        throw new AssemblerError(
+          'String operands can only be specified for DCB',
+          instruction.line
+        )
+      }
       bytes = values.map(Word.fromUnsignedInteger).flatMap((x) => x.toBytes())
       alignment = 4
       break
@@ -252,7 +344,8 @@ function writeDataInstruction(
       alignment = 1
       break
   }
-  writer.writeBytes(bytes, alignment)
+  writer.align(alignment)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -271,10 +364,11 @@ function writeCodeInstruction(
   )
   const opcode = encoder.encodeInstruction(instruction.options)
   const bytes = opcode.flatMap((x) => x.toBytes())
+  writer.align(2)
   if (encoder.needsLabels) {
     writer.addCodeRelocation(instruction, bytes.length)
   }
-  writer.writeBytes(bytes, 2)
+  writer.writeBytes(bytes)
 }
 
 /**
@@ -285,7 +379,14 @@ function writeCodeInstruction(
  */
 function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
   if (pool.entries.length > 0) {
-    writer.writeBytes(END_OF_CODE.toBytes(), 2)
+    // To ensure that it's not possible for the processor to 'fall into'
+    // the literal pool, we add a 'END_OF_CODE' instruction before the literal pool.
+    writer.align(2)
+    writer.writeBytes(END_OF_CODE.toBytes())
+    // Because the offset to the 'DCD' instruction is calculated before the data instruction
+    // is written and we want the offset to include the alignment, we word align everything
+    // before writing the literal pool.
+    writer.align(4)
     for (const entry of pool.entries) {
       const encoder = InstructionSet.getEncoder(
         entry.instruction.name,

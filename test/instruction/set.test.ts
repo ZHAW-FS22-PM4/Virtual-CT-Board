@@ -1,13 +1,14 @@
+import { InstructionError } from 'instruction/error'
 import { IInstruction } from 'instruction/interfaces'
 import { InstructionSet } from 'instruction/set'
 import { Halfword } from 'types/binary'
-import { VirtualBoardError, VirtualBoardErrorType } from 'types/error'
 
 const validInstructionName = 'TEST'
 const invalidInstructionName = 'ZZZ_notImplemeted'
 const instruction: IInstruction = {
   name: validInstructionName,
   pattern: '11001100XXXXXXXX',
+  patternSecondPart: '',
   opcodeLength: 1,
   needsLabels: false,
   canEncodeInstruction: jest.fn((name) => name == validInstructionName),
@@ -22,19 +23,18 @@ describe('InstructionSet', function () {
   })
   it('should return error when no encoder found', function () {
     expect(() => sut.getEncoder(invalidInstructionName, [])).toThrowError(
-      new VirtualBoardError(
-        `Unable to find instruction encoder for the instruction '${invalidInstructionName}'.`,
-        VirtualBoardErrorType.NoEncoderFound
+      new InstructionError(
+        `Unable to find instruction '${invalidInstructionName}'.`
       )
     )
   })
   it('should return executor', function () {
-    const opcode = Halfword.fromUnsignedInteger(0b1100110000000000)
+    const opcode = [Halfword.fromUnsignedInteger(0b1100110000000000)]
     expect(sut.getExecutor(opcode)).not.toBeNull()
   })
   it('should return error when no executor for opcode found', function () {
     expect(() =>
-      sut.getExecutor(Halfword.fromUnsignedInteger(0xffff))
+      sut.getExecutor([Halfword.fromUnsignedInteger(0xffff)])
     ).toThrowError(`Unable to find instruction executor for the opcode 'ffff'.`)
   })
 })

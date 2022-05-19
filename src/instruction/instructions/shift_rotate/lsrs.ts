@@ -1,6 +1,7 @@
 import { evaluateZeroAndNegativeFlags } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   checkOptionCount,
   create,
@@ -22,7 +23,7 @@ export class LsrsRegisterInstruction extends BaseInstruction {
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
     if (options.length == 3 && options[0] !== options[1])
-      throw new Error('Parameter 1 and 2 must be identical!')
+      throw new InstructionError('Parameter 1 and 2 must be identical.')
 
     let opcode: Halfword = create(this.pattern)
     let rmBits: Halfword = createLowRegisterBits(options[options.length - 1])
@@ -76,7 +77,7 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   public canEncodeInstruction(commandName: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[length - 1])
+      isImmediate(options[options.length - 1])
     )
   }
 
@@ -104,7 +105,9 @@ export class LsrsImmediateInstruction extends BaseInstruction {
     let immValue: Word = Word.fromHalfwords(getBits(opcode[0], this.immPattern))
 
     if (immValue.value === 0) {
-      throw new Error('Zero is not allowed as immediate in an LSRS operation!')
+      throw new InstructionError(
+        'Zero is not allowed as immediate in an LSRS operation.'
+      )
     }
 
     let shift = rmValue.value >>> immValue.value

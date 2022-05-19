@@ -1,11 +1,11 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   StrImmediate5OffsetInstruction,
   StrRegisterOffsetInstruction
 } from 'instruction/instructions/store/str'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
@@ -19,23 +19,24 @@ const strRegisterOptionsValid = ['R0', '[R1', 'R2]']
 const strRegisterOptionsInvalid = ['R0', 'R1', 'R2']
 const strRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
 const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
+const strLiteralOptionsValidShort = ['R3', '[R4]']
 const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
 const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
-
-const lowRegisterOption: string = 'R1'
-const lowRegisterOption2: string = '[R2'
-const lowRegisterOption3: string = 'R3]'
-const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F'
-const invalidImmediateOption: string = '5'
-
-const highRegisterOption: string = 'SP'
-const invalidRegisterOption: string = 'R22'
 
 const instructionStoreInstructionImmediateOffset =
   new StrImmediate5OffsetInstruction()
 const instructionStoreInstructionRegisterOffset =
   new StrRegisterOffsetInstruction()
+
+const encodingErrorWrongBracketsOn2nd = new InstructionError(
+  'Opening or closing bracket missing for 2. param'
+)
+const encodingErrorWrongBracketsOn2ndOr3rd = new InstructionError(
+  'Opening bracket on 2. param or closing bracket on 3. param'
+)
+const offsetNotWordAligned = new InstructionError(
+  'Immediate offset not word aligned'
+)
 
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
@@ -91,17 +92,23 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strName,
         strLiteralOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffset.canEncodeInstruction(
         strName,
         strLiteralOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionImmediateOffset.canEncodeInstruction(
         strName,
         strLiteralOptionsValid
+      )
+    ).toBe(true)
+    expect(
+      instructionStoreInstructionImmediateOffset.canEncodeInstruction(
+        strName,
+        strLiteralOptionsValidShort
       )
     ).toBe(true)
   })
@@ -135,13 +142,13 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strName,
         strRegisterOptionsInvalid
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffset.canEncodeInstruction(
         strName,
         strRegisterOptionsInvalid2
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instructionStoreInstructionRegisterOffset.canEncodeInstruction(
         strName,
@@ -160,138 +167,175 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         strRegisterOptionsValid
       )
     ).toBe(true)
+    expect(
+      instructionStoreInstructionRegisterOffset.canEncodeInstruction(
+        strName,
+        strLiteralOptionsValidShort
+      )
+    ).toBe(false)
   })
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('StrImmediate5OffsetInstruction', () => {
-    // STR R1, [R2, #0x01]
     expect(
       instructionStoreInstructionImmediateOffset
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionLow
-        ])[0]
+        .encodeInstruction(['R1', '[R2', '#0x04]'])[0]
         .toBinaryString()
     ).toEqual('0110000001010001')
-    // STR R1, [R2, #0x1F]
     expect(
       instructionStoreInstructionImmediateOffset
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionHigh
-        ])[0]
+        .encodeInstruction(['R7', '[R4', '#16]'])[0]
         .toBinaryString()
-    ).toEqual('0110011111010001')
+    ).toEqual('0110000100100111')
+    expect(
+      instructionStoreInstructionImmediateOffset
+        .encodeInstruction(['R6', '[R6', '#0x7c]'])[0]
+        .toBinaryString()
+    ).toEqual('0110011111110110')
+    expect(
+      instructionStoreInstructionImmediateOffset
+        .encodeInstruction(['R4', '[R7]'])[0]
+        .toBinaryString()
+    ).toEqual('0110000000111100')
     // STR R1, [R2, R3]
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        lowRegisterOption3
+        'R1',
+        '[R2',
+        'R3]'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
+        'R1',
+        '[R2'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(encodingErrorWrongBracketsOn2nd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffset.encodeInstruction([
+        'R1',
+        '[R2',
+        '#5'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
+    expect(() =>
+      instructionStoreInstructionImmediateOffset.encodeInstruction([
+        'R5',
+        'R2]',
+        '0x1F]'
+      ])
+    ).toThrow(encodingErrorWrongBracketsOn2ndOr3rd)
     // STR R1, [R2, 5]
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidImmediateOption
+        'R1',
+        '[R2',
+        '5]'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionImmediateOffset.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
+    expect(() =>
+      instructionStoreInstructionImmediateOffset.encodeInstruction([
+        'R1',
+        '[R2',
+        '#0x11]'
+      ])
+    ).toThrow(offsetNotWordAligned)
+    expect(() =>
+      instructionStoreInstructionImmediateOffset.encodeInstruction([
+        'R1',
+        '[R2',
+        '#0xa2]'
+      ])
+    ).toThrow(offsetNotWordAligned)
   })
   test('StrRegisterOffsetInstruction', () => {
     // STR R1, [R2, R3]
     expect(
       instructionStoreInstructionRegisterOffset
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          lowRegisterOption3
-        ])[0]
+        .encodeInstruction(['R1', '[R2', 'R3]'])[0]
         .toBinaryString()
     ).toEqual('0101000011010001')
     // STR R1, [R2, #0x1F]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        validImmediateOptionHigh
+        'R1',
+        '[R2',
+        '#0x1F]'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R1, [R2, SP]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        highRegisterOption
+        'R1',
+        '[R2',
+        'SP]'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R1, [R2, R22]
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidRegisterOption
+        'R1',
+        '[R2',
+        'R22]'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
     // STR R5, [R2
     expect(() =>
-      instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
-      ])
-    ).toThrow(VirtualBoardError)
+      instructionStoreInstructionRegisterOffset.encodeInstruction(['R1', '[R2'])
+    ).toThrow(InstructionError)
     // STR R5, 0x1F], [R2
     expect(() =>
       instructionStoreInstructionRegisterOffset.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
+        'R1',
+        '#0x1F]',
+        '[R2'
       ])
-    ).toThrow(VirtualBoardError)
+    ).toThrow(InstructionError)
   })
 })
 
 describe('test executeInstruction function', () => {
   test('STR word immediate offset', () => {
-    // STR R7, [R6, #0x01]
+    // STR R6, [R7, #0x01]
     instructionStoreInstructionImmediateOffset.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0110000001111110)],
       registers,
       memory
     )
-    expect(memory.readWord(registerValueR7.add(0x01)).toHexString()).toEqual(
+    expect(memory.readWord(registerValueR7.add(0x04)).toHexString()).toEqual(
       '12345678'
+    )
+    // LDR R5, [R6]
+    memory.writeWord(registerValueR6, Word.fromUnsignedInteger(0xffffffff))
+    instructionStoreInstructionImmediateOffset.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0110000000110101)],
+      registers,
+      memory
+    )
+    expect(memory.readWord(registerValueR6).toBinaryString()).toEqual(
+      '00000000000000000000000100000000'
     )
     memory.reset()
   })
   test('STR word register offset', () => {
-    // STR R7, [R6, R5]
+    // STR R6, [R7, R5]
     instructionStoreInstructionRegisterOffset.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0101000101111110)],
       registers,
       memory
     )
     expect(
-      memory.readWord(registerValueR7.add(registerValueR5)).toHexString()
+      memory.readWord(registerValueR7.add(registerValueR5.value)).toHexString()
     ).toEqual('12345678')
     memory.reset()
   })

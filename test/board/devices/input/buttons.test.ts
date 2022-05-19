@@ -1,4 +1,4 @@
-import { Buttons } from 'board/devices/input/buttons'
+import { ButtonsDevice } from 'board/devices/input/buttons'
 import { Byte, Word } from 'types/binary'
 
 const address: Word = Word.fromUnsignedInteger(0x60000210)
@@ -7,10 +7,10 @@ const byte_0000_0101: Byte = Byte.fromUnsignedInteger(5)
 const byte_0000_0100: Byte = Byte.fromUnsignedInteger(4)
 const byte_0000_1111: Byte = Byte.fromUnsignedInteger(15)
 
-let buttons: Buttons
+let buttons: ButtonsDevice
 
 beforeEach(() => {
-  buttons = new Buttons()
+  buttons = new ButtonsDevice()
   buttons.press(0)
   buttons.press(2)
 })

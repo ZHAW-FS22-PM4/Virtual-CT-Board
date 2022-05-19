@@ -1,20 +1,19 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
-import { IInstructionSet } from 'instruction/interfaces'
+import { IInstructionExecutor, IInstructionSet } from 'instruction/interfaces'
 import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
 
-const cycleSpeed: number = 200
+const cycleSpeed: number = 10
 
 /**
  * The events which can be emitted by the processor.
  */
 type ProcessorEvents = {
-  afterCycle: () => void
   reset: () => void
-  afterReset: () => void
   endOfCode: () => void
+  error: (message: string) => void
 }
 
 /**
@@ -69,16 +68,17 @@ export class Processor extends EventEmitter<ProcessorEvents> {
 
   /**
    * Runs one processor cycle.
+   *
+   * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step(): void {
-    if (this.isRunning()) return
-    this.cycle()
+  public step(): boolean {
+    if (this.isRunning()) return false
+    return this.cycle()
   }
 
   /**
    * Resets the whole processor state. It first halts the execution if required and afterwards
    * resets memory and registers.
-   * @returns void
    */
   public reset(): void {
     this.halt()
@@ -99,24 +99,46 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       Register.PC,
       this.memory.readWord(Word.fromUnsignedInteger(0x08000004))
     )
-
-    this.emit('afterReset')
   }
 
-  private cycle() {
-    const pc: Word = this.registers.readRegister(Register.PC)
-    const opcode = [this.memory.readHalfword(pc)]
-    if (opcode[0].value === END_OF_CODE.value) {
-      this.halt()
-      this.emit('endOfCode')
-      return
+  private cycle(): boolean {
+    let executor: IInstructionExecutor | null = null
+    let pcIncremented = false
+    try {
+      const pc = this.registers.readRegister(Register.PC)
+      const opcode = [this.memory.readHalfword(pc)]
+      if (opcode[0].value === END_OF_CODE.value) {
+        this.halt()
+        this.emit('endOfCode')
+        return false
+      }
+      if (opcode[0].value >> 12 === 15) {
+        // if opcode starts with 1111 it's 32bit long
+        opcode.push(this.memory.readHalfword(pc.add(2)))
+      }
+      executor = this.instructions.getExecutor(opcode)
+      this.registers.writeRegister(
+        Register.PC,
+        pc.add(executor.opcodeLength * 2)
+      )
+      pcIncremented = true
+      executor.executeInstruction(opcode, this.registers, this.memory)
+      return true
+    } catch (e) {
+      if (e instanceof Error) {
+        this.halt()
+        // In case error happened during execution of the instruction, the program counter has to be set back,
+        // so the correct address is fetched from the source map to highlight the line.
+        if (executor && pcIncremented) {
+          const pc = this.registers.readRegister(Register.PC)
+          this.registers.writeRegister(
+            Register.PC,
+            pc.add(-1 * executor.opcodeLength * 2)
+          )
+        }
+        this.emit('error', e.message)
+      }
+      return false
     }
-    const executor = this.instructions.getExecutor(opcode[0])
-    for (let i = 1; i < executor.opcodeLength; i++) {
-      opcode.push(this.memory.readHalfword(pc.add(i * 2)))
-    }
-    this.registers.writeRegister(Register.PC, pc.add(executor.opcodeLength * 2))
-    executor.executeInstruction(opcode, this.registers, this.memory)
-    this.emit('afterCycle')
   }
 }

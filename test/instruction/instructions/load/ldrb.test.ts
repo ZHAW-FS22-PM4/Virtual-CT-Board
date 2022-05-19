@@ -1,48 +1,37 @@
 import { Memory } from 'board/memory'
 import { Register, Registers } from 'board/registers'
+import { InstructionError } from 'instruction/error'
 import {
   LdrbImmediate5OffsetInstruction,
   LdrbRegisterOffsetInstruction
 } from 'instruction/instructions/load/ldrb'
 import { Halfword, Word } from 'types/binary'
-import { VirtualBoardError } from 'types/error'
 
 const invalidInstructionName = 'NeverGonnaBeAnInstruction'
 
 const invalidInstructionOptions = ['R77', '#2#']
 
-const strName = 'LDR'
-const strbName = 'LDRB'
-const strhName = 'LDRH'
+const ldrName = 'LDR'
+const ldrbName = 'LDRB'
+const ldrhName = 'LDRH'
 
-const strRegisterOptionsValid = ['R0', '[R1', 'R2]']
-const strRegisterOptionsInvalid = ['R0', 'R1', 'R2']
-const strRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
-const strLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
-const strLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
-const strLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
+const ldrRegisterOptionsValid = ['R0', '[R1', 'R2]']
+const ldrRegisterOptionsInvalid = ['R0', 'R1', 'R2']
+const ldrRegisterOptionsInvalid2 = ['R0', 'R1]', '[R2']
+const ldrLiteralOptionsValid = ['R0', '[R1', '#0xe6]']
+const ldrLiteralOptionsValidShort = ['R6', '[R4]']
+const ldrLiteralOptionsInvalid = ['R0', 'R1', '#0xe6']
+const ldrLiteralOptionsInvalid2 = ['R0', 'R1]', '[#0xe6']
 
-const lowRegisterOption: string = 'R1'
-const lowRegisterOption2: string = '[R2'
-const lowRegisterOption3: string = 'R3]'
-const validImmediateOptionLow: string = '#0x01]'
-const validImmediateOptionHigh: string = '#0x1F'
-const invalidImmediateOption: string = '5'
-
-const highRegisterOption: string = 'SP'
-const invalidRegisterOption: string = 'R22'
-
-const instructionLoadInstructionImmediateOffsetByte =
-  new LdrbImmediate5OffsetInstruction()
-const instructionLoadInstructionRegisterOffsetByte =
-  new LdrbRegisterOffsetInstruction()
+const instrLdrbImm = new LdrbImmediate5OffsetInstruction()
+const instrLdrbReg = new LdrbRegisterOffsetInstruction()
 
 const registers: Registers = new Registers()
 const memory: Memory = new Memory()
 
 const registerValueR7: Word = Word.fromUnsignedInteger(0x00000000)
-const registerValueR6: Word = Word.fromUnsignedInteger(0x12345678)
-const registerValueR5: Word = Word.fromUnsignedInteger(0x00000100)
+const registerValueR6: Word = Word.fromUnsignedInteger(0x1f2e3d4c)
+const registerValueR5: Word = Word.fromUnsignedInteger(0x08010100)
 
 registers.writeRegister(Register.R7, registerValueR7)
 registers.writeRegister(Register.R6, registerValueR6)
@@ -51,232 +40,139 @@ registers.writeRegister(Register.R5, registerValueR5)
 describe('test canEncodeInstruction (wheter the class is responsible for this command) function', () => {
   test('LOAD instruction - LDRB (immediate offset) - byte encoder', () => {
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
+      instrLdrbImm.canEncodeInstruction(
         invalidInstructionName,
         invalidInstructionOptions
       )
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strName,
-        strLiteralOptionsValid
-      )
+      instrLdrbImm.canEncodeInstruction(ldrName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strLiteralOptionsValid
-      )
+      instrLdrbImm.canEncodeInstruction(ldrhName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsValid
-      )
+      instrLdrbImm.canEncodeInstruction(ldrbName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsInvalid
-      )
+      instrLdrbImm.canEncodeInstruction(ldrhName, ldrRegisterOptionsInvalid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsInvalid2
-      )
+      instrLdrbImm.canEncodeInstruction(ldrhName, ldrRegisterOptionsInvalid2)
     ).toBe(false)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid
-      )
-    ).toBe(false)
+      instrLdrbImm.canEncodeInstruction(ldrbName, ldrLiteralOptionsInvalid)
+    ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid2
-      )
-    ).toBe(false)
+      instrLdrbImm.canEncodeInstruction(ldrbName, ldrLiteralOptionsInvalid2)
+    ).toBe(true)
     expect(
-      instructionLoadInstructionImmediateOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsValid
-      )
+      instrLdrbImm.canEncodeInstruction(ldrbName, ldrLiteralOptionsValid)
+    ).toBe(true)
+    expect(
+      instrLdrbImm.canEncodeInstruction(ldrbName, ldrLiteralOptionsValidShort)
     ).toBe(true)
   })
   test('LOAD instruction - LDRB (register offset) - byte encoder', () => {
     expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
+      instrLdrbReg.canEncodeInstruction(
         invalidInstructionName,
         invalidInstructionOptions
       )
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strName,
-        strRegisterOptionsValid
-      )
+      instrLdrbReg.canEncodeInstruction(ldrName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strhName,
-        strRegisterOptionsValid
-      )
+      instrLdrbReg.canEncodeInstruction(ldrhName, ldrRegisterOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsValid
-      )
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrLiteralOptionsValid)
     ).toBe(false)
     expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsInvalid
-      )
-    ).toBe(false)
-    expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsInvalid2
-      )
-    ).toBe(false)
-    expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strLiteralOptionsInvalid
-      )
-    ).toBe(false)
-    expect(
-      instructionLoadInstructionRegisterOffsetByte.canEncodeInstruction(
-        strbName,
-        strRegisterOptionsValid
-      )
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrRegisterOptionsInvalid)
     ).toBe(true)
+    expect(
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrRegisterOptionsInvalid2)
+    ).toBe(true)
+    expect(
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrLiteralOptionsInvalid)
+    ).toBe(false)
+    expect(
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrRegisterOptionsValid)
+    ).toBe(true)
+    expect(
+      instrLdrbReg.canEncodeInstruction(ldrbName, ldrLiteralOptionsValidShort)
+    ).toBe(false)
   })
 })
 
 describe('test encodeInstruction (command with options --> optcode) function', () => {
   test('LdrbImmediate5OffsetInstruction', () => {
-    // LDRB R1, [R2, #0x01]
     expect(
-      instructionLoadInstructionImmediateOffsetByte
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionLow
-        ])[0]
-        .toBinaryString()
+      instrLdrbImm.encodeInstruction(['R1', '[R2', '#0x1]'])[0].toBinaryString()
     ).toEqual('0111100001010001')
-    // LDRB R1, [R2, #0x1F]
     expect(
-      instructionLoadInstructionImmediateOffsetByte
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          validImmediateOptionHigh
-        ])[0]
+      instrLdrbImm
+        .encodeInstruction(['R1', '[R2', '#0x1F]'])[0]
         .toBinaryString()
     ).toEqual('0111111111010001')
-    // LDRB R1, [R2, R3]
+    expect(
+      instrLdrbImm.encodeInstruction(['R7', '[R4]'])[0].toBinaryString()
+    ).toEqual('0111100000100111')
+    expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2', 'R3]'])).toThrow(
+      InstructionError
+    )
+    expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2'])).toThrow(
+      InstructionError
+    )
+    expect(() => instrLdrbImm.encodeInstruction(['R1', '[R2', '6]'])).toThrow(
+      InstructionError
+    )
     expect(() =>
-      instructionLoadInstructionImmediateOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        lowRegisterOption3
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R5, [R2
-    expect(() =>
-      instructionLoadInstructionImmediateOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R1, [R2, 5]
-    expect(() =>
-      instructionLoadInstructionImmediateOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidImmediateOption
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R5, 0x1F], [R2
-    expect(() =>
-      instructionLoadInstructionImmediateOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
-      ])
-    ).toThrow(VirtualBoardError)
+      instrLdrbImm.encodeInstruction(['R1', '0x19]', '[R2'])
+    ).toThrow(InstructionError)
   })
   test('LdrbRegisterOffsetInstruction', () => {
-    // LDRB R1, [R2, R3]
     expect(
-      instructionLoadInstructionRegisterOffsetByte
-        .encodeInstruction([
-          lowRegisterOption,
-          lowRegisterOption2,
-          lowRegisterOption3
-        ])[0]
-        .toBinaryString()
+      instrLdrbReg.encodeInstruction(['R1', '[R2', 'R3]'])[0].toBinaryString()
     ).toEqual('0101110011010001')
-    // LDRB R1, [R2, #0x1F]
     expect(() =>
-      instructionLoadInstructionRegisterOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        validImmediateOptionHigh
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R1, [R2, SP]
-    expect(() =>
-      instructionLoadInstructionRegisterOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        highRegisterOption
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R1, [R2, R22]
-    expect(() =>
-      instructionLoadInstructionRegisterOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2,
-        invalidRegisterOption
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R5, [R2
-    expect(() =>
-      instructionLoadInstructionRegisterOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        lowRegisterOption2
-      ])
-    ).toThrow(VirtualBoardError)
-    // LDRB R5, 0x1F], [R2
-    expect(() =>
-      instructionLoadInstructionRegisterOffsetByte.encodeInstruction([
-        lowRegisterOption,
-        validImmediateOptionHigh,
-        lowRegisterOption2
-      ])
-    ).toThrow(VirtualBoardError)
+      instrLdrbReg.encodeInstruction(['R1', '[R2', '#0x1F]'])
+    ).toThrow(InstructionError)
+    expect(() => instrLdrbReg.encodeInstruction(['R1', '[R2', 'R8]'])).toThrow(
+      InstructionError
+    )
+    expect(() => instrLdrbReg.encodeInstruction(['R11', '[R2', 'R5]'])).toThrow(
+      InstructionError
+    )
+    expect(() => instrLdrbReg.encodeInstruction(['R1', '[R2'])).toThrow(
+      InstructionError
+    )
+    expect(() => instrLdrbReg.encodeInstruction(['R1', '0xd]', '[R2'])).toThrow(
+      InstructionError
+    )
   })
 })
 
 describe('test executeInstruction function', () => {
   test('LDRB immediate offset', () => {
-    // LDRB R7, [R6, #0x01]
-    memory.writeWord(
-      registerValueR6.add(0x01),
-      Word.fromUnsignedInteger(0x0009)
-    )
-    instructionLoadInstructionImmediateOffsetByte.executeInstruction(
-      [Halfword.fromUnsignedInteger(0b0111100001110111)],
+    // LDRB R7, [R6, #0x1c]
+    memory.writeWord(registerValueR6.add(0x1c), Word.fromUnsignedInteger(0xd3))
+    instrLdrbImm.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111111100110111)],
       registers,
       memory
     )
-    expect(registers.readRegister(Register.R7).value).toEqual(9)
+    expect(registers.readRegister(Register.R7).value).toEqual(0xd3)
+    // LDRB R2, [R5]
+    memory.writeWord(registerValueR5, Word.fromUnsignedInteger(0x70))
+    instrLdrbImm.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0111100000101010)],
+      registers,
+      memory
+    )
+    expect(registers.readRegister(Register.R2).value).toEqual(0x70)
     memory.reset()
   })
   test('LDRB register offset', () => {
@@ -285,7 +181,7 @@ describe('test executeInstruction function', () => {
       registerValueR6.add(registerValueR5),
       Word.fromUnsignedInteger(0x0009)
     )
-    instructionLoadInstructionRegisterOffsetByte.executeInstruction(
+    instrLdrbReg.executeInstruction(
       [Halfword.fromUnsignedInteger(0b0101110101110111)],
       registers,
       memory

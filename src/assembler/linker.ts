@@ -96,10 +96,19 @@ function writeSegments(file: IELF, objectFile: IELF): void {
 function writeCodeSegment(writer: FileWriter, objectFile: IELF): void {
   writer.startSegment(SegmentType.Load, FLASH_START)
   writer.writeBytes(VECTOR_TABLE)
-  for (const section of getSectionsOfType(objectFile, SectionType.Code)) {
-    writeSection(writer, objectFile, section)
+  const sections = getSectionsOfType(objectFile, SectionType.Code)
+  if (sections.length > 0) {
+    for (const section of sections) {
+      writeSection(writer, objectFile, section)
+      writer.writeBytes(END_OF_CODE.toBytes())
+      writer.align(4)
+    }
+  } else {
+    writer.startSection(SectionType.Code, '|.empty|')
+    writer.writeBytes(END_OF_CODE.toBytes())
+    writer.align(4)
+    writer.endSection()
   }
-  writer.writeBytes(END_OF_CODE.toBytes())
   writer.endSegment()
 }
 
@@ -116,6 +125,7 @@ function writeDataSegment(writer: FileWriter, objectFile: IELF): void {
     writer.startSegment(SegmentType.Load, SRAM_START)
     for (const section of sections) {
       writeSection(writer, objectFile, section)
+      writer.align(4)
     }
     writer.endSegment()
   }
