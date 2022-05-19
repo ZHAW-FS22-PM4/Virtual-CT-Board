@@ -65,10 +65,6 @@ export function parse(code: string): ICodeFile {
       pattern: `PRESERVE8${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
-      name: 'ThumbInstruction',
-      pattern: `PRESERVE8`
-    },
-    {
       name: 'ALIGN',
       indentRequired: true,
       pattern: `ALIGN${INSTRUCTION_SEPARATOR_LOOKAHED}`,
@@ -119,6 +115,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
+      indentRequired: true,
       pattern: AREA_DECLARATION,
       onMatch(match: ITextMatch) {
         area = {
