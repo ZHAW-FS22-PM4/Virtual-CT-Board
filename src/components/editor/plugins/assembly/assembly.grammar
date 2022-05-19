@@ -177,11 +177,11 @@ kw<term> { @specialize[@name="Keyword"]<identifier, term> }
   }
 
   MachInstrIntegerLiteral {
-    "#" digits | ("=0x" | "=0X") hexDigits
+    "#" space* digits | ("=" space* "0x" | "=" space* "0X") hexDigits
   }
 
   MachInstrSymbolicLiteral {
-    "=" identifier
+    "=" space* identifier
   }
 
   IntegerLiteral {
