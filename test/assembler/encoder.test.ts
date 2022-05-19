@@ -261,7 +261,7 @@ describe('encode', function () {
             instructions: [
               {
                 name: name,
-                options: ['8+8'],
+                options: ['8   +8'],
                 line: 0
               }
             ]
@@ -288,7 +288,24 @@ describe('encode', function () {
             instructions: [
               {
                 name: name,
-                options: ['8*(2+2)'],
+                options: ['((8*(  (1+   1)+2)) )'],
+                line: 0
+              }
+            ]
+          },
+          {
+            type: AreaType.Data,
+            isReadOnly: true,
+            name: 'secondData',
+            instructions: [
+              {
+                name: name,
+                options: ['(   4+ 3   *4)'], //16
+                line: 0
+              },
+              {
+                name: name,
+                options: ['(8+8  )*8'], //128
                 line: 0
               }
             ]
@@ -296,10 +313,12 @@ describe('encode', function () {
         ]
       }
       const file = encode(code)
-      expect(Object.keys(file.sections).length).toBe(1)
+      expect(Object.keys(file.sections).length).toBe(2)
       expect(getSection(file, '|.data|').offset).toBe(0)
       expect(getSection(file, '|.data|').size).toBe(32)
-      expect(file.content.length).toBe(32)
+      expect(getSection(file, 'secondData').offset).toBe(32)
+      expect(getSection(file, 'secondData').size).toBe(144)
+      expect(file.content.length).toBe(176)
     }
   })
 

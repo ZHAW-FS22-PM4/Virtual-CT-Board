@@ -1,4 +1,5 @@
 import { AssemblerError } from 'assembler/error'
+import { ALLOWED_EVAL_PATTERN } from 'assembler/parser'
 import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
@@ -8,7 +9,6 @@ import { ICodeFile, IInstruction, ISymbols } from './ast'
 import { IELF, SectionType, SymbolType } from './elf/interfaces'
 import { createFile } from './elf/utils'
 import { FileWriter } from './elf/writer'
-import { SPACE_OR_TAB } from './parser'
 
 /**
  * Represents a literal pool which can be filled with data and can be
@@ -419,10 +419,7 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
  */
 function evaluateExpression(instruction: IInstruction): number {
   let valToEval = instruction.options[0]
-  const expression = new RegExp(
-    `^(\\(?[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*\\(?[0-9]+\\)?)*)$`,
-    'mi'
-  )
+  const expression = new RegExp(`^${ALLOWED_EVAL_PATTERN}$`, 'mi')
   const match = expression.exec(valToEval)
   if (!match) {
     throw Error('Instruction option contains unallowed characters to eval.')

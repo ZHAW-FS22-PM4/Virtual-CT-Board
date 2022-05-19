@@ -4,8 +4,8 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z]+`
-export const WHITESPACE = `\\s+`
-export const SPACE_OR_TAB = `[ \\t]`
+const WHITESPACE = `\\s+`
+const SPACE_OR_TAB = `[ \\t]`
 const COMMENT = `;[^\\n]*`
 const INSTRUCTION_SEPARATOR_LOOKAHED = `(?=${WHITESPACE}|${COMMENT})`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
@@ -15,7 +15,10 @@ const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPA
 const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
 const SPACE_OR_FILL = `SPACE|FILL|\\%`
-const SPACE_OR_FILL_INSTRUCTION = `(${SPACE_OR_FILL})${SPACE_OR_TAB}+(\\(?[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*\\(?[0-9]+\\)?)*)`
+const OPTIONAL_OPENING_BRACKETS = `[\\( ]*`
+const OPTIONAL_CLOSING_BRACKETS = `[\\) ]*`
+export const ALLOWED_EVAL_PATTERN = `${OPTIONAL_OPENING_BRACKETS}${SPACE_OR_TAB}*[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*${OPTIONAL_OPENING_BRACKETS}${SPACE_OR_TAB}*[0-9]+${SPACE_OR_TAB}*${OPTIONAL_CLOSING_BRACKETS})*`
+const SPACE_OR_FILL_INSTRUCTION = `(${SPACE_OR_FILL})${SPACE_OR_TAB}+(${ALLOWED_EVAL_PATTERN})`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
 const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
