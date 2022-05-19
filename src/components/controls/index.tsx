@@ -147,14 +147,14 @@ export class ControlsComponent extends React.Component<
             <button
               className="btn btn-primary btn-sm ms-2"
               title="Reset"
-              disabled={this.state.mode == ControlsMode.EDIT}
+              disabled={this.state.mode === ControlsMode.EDIT}
               onClick={() => this.resetProcessor()}>
               <i className="fa fa-stop" />
             </button>
             <button
               className="btn btn-primary btn-sm ms-2"
               title={
-                this.state.mode == ControlsMode.EDIT
+                this.state.mode === ControlsMode.EDIT
                   ? 'Run'
                   : this.state.mode === ControlsMode.STEP
                   ? 'Continue'
@@ -163,8 +163,8 @@ export class ControlsComponent extends React.Component<
               onClick={() => this.runOrHalt()}>
               <i
                 className={
-                  this.state.mode == ControlsMode.EDIT ||
-                  this.state.mode == ControlsMode.STEP
+                  this.state.mode === ControlsMode.EDIT ||
+                  this.state.mode === ControlsMode.STEP
                     ? 'fa fa-play'
                     : 'fa fa-pause'
                 }
@@ -177,11 +177,11 @@ export class ControlsComponent extends React.Component<
                   ? 'Step Over'
                   : 'Step Into'
               }
-              disabled={this.state.mode == ControlsMode.RUN}
+              disabled={this.state.mode === ControlsMode.RUN}
               onClick={() => this.step()}>
               <i
                 className={
-                  this.state.mode == ControlsMode.STEP
+                  this.state.mode === ControlsMode.STEP
                     ? 'fa fa-forward'
                     : 'fa fa-step-forward'
                 }

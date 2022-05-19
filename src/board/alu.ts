@@ -32,7 +32,7 @@ export function add(w1: Word, w2: Word): AluResult {
   flags[Flag.C] =
     w1.toUnsignedInteger() + w2.toUnsignedInteger() > Word.MAX_VALUE
   flags[Flag.V] =
-    w1.hasSign() == w2.hasSign() && w1.hasSign() != result.hasSign()
+    w1.hasSign() === w2.hasSign() && w1.hasSign() != result.hasSign()
 
   return {
     result: result,
