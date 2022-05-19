@@ -4,14 +4,16 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z]+`
-const SPACE_OR_TAB = `[ \\t]`
+export const WHITESPACE = `\\s+`
+export const SPACE_OR_TAB = `[ \\t]`
+const COMMENT = `;[^\\n]*`
+const INSTRUCTION_SEPARATOR_LOOKAHED = `(?=${WHITESPACE}|${COMMENT})`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
 const OPTION = `(?:(?:[0-9a-z_]|[\\[{#=]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
-const COMMENT = `;[^\\n]*`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
 const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
@@ -31,11 +33,13 @@ export function parse(code: string): ICodeFile {
   const rules: ITextParseRule[] = [
     {
       name: 'Whitespace',
-      pattern: /\s+/
+      indentRequired: false,
+      pattern: WHITESPACE
     },
     {
       name: 'ProcedureInstructionStart',
-      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC`,
+      indentRequired: false,
+      pattern: `(${SYMBOL})${SPACE_OR_TAB}+PROC${INSTRUCTION_SEPARATOR_LOOKAHED}`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError('Label must be defined in area', match.from)
@@ -45,23 +49,28 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'ProcedureInstructionEnds',
-      pattern: `ENDP\|END`
+      indentRequired: true,
+      pattern: `(?:ENDP|END)${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
       name: 'ExportInstruction',
-      pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}`
+      indentRequired: true,
+      pattern: `EXPORT${SPACE_OR_TAB}+${SYMBOL}${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
       name: 'Preserve8Instruction',
-      pattern: `THUMB`
+      indentRequired: true,
+      pattern: `PRESERVE8${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
       name: 'ThumbInstruction',
-      pattern: `PRESERVE8`
+      indentRequired: true,
+      pattern: `THUMB${INSTRUCTION_SEPARATOR_LOOKAHED}`
     },
     {
       name: 'ALIGN',
-      pattern: `ALIGN`,
+      indentRequired: true,
+      pattern: `ALIGN${INSTRUCTION_SEPARATOR_LOOKAHED}`,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError('ALIGN must be defined in area', match.from)
@@ -76,11 +85,13 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Comment',
+      indentRequired: false,
       pattern: COMMENT
     },
     {
       name: 'LiteralSymbolDeclaration',
-      pattern: LITERAL_SYMBOL_DECLARATION,
+      indentRequired: false,
+      pattern: LITERAL_SYMBOL_DECLARATION + INSTRUCTION_SEPARATOR_LOOKAHED,
       onMatch(match: ITextMatch) {
         ast.symbols[match.captures[0]] = match.captures[1]
         label = null
@@ -88,7 +99,8 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'AreaDeclaration',
-      pattern: AREA_DECLARATION,
+      indentRequired: true,
+      pattern: AREA_DECLARATION + INSTRUCTION_SEPARATOR_LOOKAHED,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
@@ -105,6 +117,7 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Label',
+      indentRequired: false,
       pattern: LABEL_DECLARATION,
       onMatch(match: ITextMatch) {
         if (!area) {
@@ -115,7 +128,8 @@ export function parse(code: string): ICodeFile {
     },
     {
       name: 'Instruction',
-      pattern: INSTRUCTION,
+      indentRequired: true,
+      pattern: INSTRUCTION + INSTRUCTION_SEPARATOR_LOOKAHED,
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(

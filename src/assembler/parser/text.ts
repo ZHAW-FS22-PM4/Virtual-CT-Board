@@ -24,6 +24,7 @@ export interface ITextMatch {
  */
 export interface ITextParseRule {
   name: string
+  indentRequired: boolean
   pattern: string | RegExp
   onMatch?(match: ITextMatch): void
 }
@@ -54,7 +55,7 @@ export function parseText(text: string, rules: ITextParseRule[]): ITextCursor {
                 ? match[0].length - match[0].lastIndexOf('\n') - 1
                 : startCursor.position + match[0].length
           }
-          if (rule.name === 'Instruction') {
+          if (rule.indentRequired) {
             let charBeforeInstruction = text.charAt(startCursor.index - 1)
             if (
               charBeforeInstruction !== ' ' &&
