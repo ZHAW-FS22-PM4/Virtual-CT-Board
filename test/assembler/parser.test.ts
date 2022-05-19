@@ -5,12 +5,12 @@ import { ITextParseRule, parseText } from 'assembler/parser/text'
 
 const code = `
 MY_CONSTANT EQU 0x123
-PRESERVE8
-THUMB
-AREA |.data|, DATA, READWRITE
+ PRESERVE8
+ THUMB
+ AREA |.data|, DATA, READWRITE
   ; A comment
   DCD 0xFF ; A comment
-AREA |.text|, CODE, READONLY
+ AREA |.text|, CODE, READONLY
          MOVS R1, #123
   label1 MOVS R2, #456
 
@@ -137,7 +137,7 @@ describe('parse code', function () {
     ;description for var2
     DCD 0x33554466
 
-AREA Pseudo, CODE, READONLY
+    AREA Pseudo, CODE, READONLY
 
          LDR R5,var1
          LDR R6,=0x20003000
@@ -211,6 +211,68 @@ AREA Pseudo, CODE, READONLY
     expect(ast.areas[0].instructions[4].name).toBe('MOVS')
     expect(ast.areas[0].instructions[4].options.length).toBe(2)
   })
+  it('can parse labels starting with Instruction name', function () {
+    const code = `
+    AREA LabelCode, CODE, READONLY
+
+endless
+        SBCS R1, R7
+        B endless
+        END
+    `
+
+    //TODO align with data instruction
+    const ast = parse(code)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    let codeArea = ast.areas[0]
+    expect(codeArea.name).toBe('LabelCode')
+    expect(codeArea.type).toBe(AreaType.Code)
+    expect(codeArea.isReadOnly).toBe(true)
+    expect(codeArea.instructions).toHaveLength(2)
+    expect(codeArea.instructions[0].name).toBe('SBCS')
+    expect(codeArea.instructions[0].options).toEqual(['R1', 'R7'])
+    expect(codeArea.instructions[0].label).toEqual('endless')
+    expect(codeArea.instructions[0].line).toBe(4)
+    expect(codeArea.instructions[1].name).toBe('B')
+    expect(codeArea.instructions[1].options).toEqual(['endless'])
+    expect(codeArea.instructions[1].line).toBe(5)
+
+    const code2 = `
+    AREA test2, CODE, READONLY
+tHumbsUp DCB alignment, "test"
+
+    LSRS R2, R2, R6
+    ASRS R2, R2, R6
+
+alignment
+        SBCS R1, R7
+        ENDP
+    `
+    const ast2 = parse(code2)
+    expect(Object.keys(ast2.symbols)).toHaveLength(0)
+    expect(ast2.areas).toHaveLength(1)
+    codeArea = ast2.areas[0]
+    expect(codeArea.name).toBe('test2')
+    expect(codeArea.type).toBe(AreaType.Code)
+    expect(codeArea.isReadOnly).toBe(true)
+    expect(codeArea.instructions).toHaveLength(4)
+    expect(codeArea.instructions[0].name).toBe('DCB')
+    expect(codeArea.instructions[0].options).toEqual(['alignment', '"test"'])
+    expect(codeArea.instructions[0].label).toEqual('tHumbsUp')
+    expect(codeArea.instructions[0].line).toBe(2)
+    expect(codeArea.instructions[1].name).toBe('LSRS')
+    expect(codeArea.instructions[1].options).toEqual(['R2', 'R2', 'R6'])
+    expect(codeArea.instructions[1].line).toBe(4)
+    expect(codeArea.instructions[2].name).toBe('ASRS')
+    expect(codeArea.instructions[2].options).toEqual(['R2', 'R2', 'R6'])
+    expect(codeArea.instructions[2].label).toBeUndefined()
+    expect(codeArea.instructions[2].line).toBe(5)
+    expect(codeArea.instructions[3].name).toBe('SBCS')
+    expect(codeArea.instructions[3].options).toEqual(['R1', 'R7'])
+    expect(codeArea.instructions[3].label).toEqual('alignment')
+    expect(codeArea.instructions[3].line).toBe(8)
+  })
 })
 
 describe('parse text', function () {
@@ -220,6 +282,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch
         }
@@ -251,6 +314,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\n/,
           onMatch
         }
@@ -282,6 +346,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\nTEST\nT/,
           onMatch
         }
@@ -313,6 +378,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\n?/,
           onMatch
         }
@@ -344,6 +410,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST\nTEST/,
           onMatch
         }
@@ -370,6 +437,37 @@ describe('parse text', function () {
         captures: []
       })
     })
+    it('should throw if instruction is not indented', function () {
+      const onMatch = jest.fn()
+      const rules: ITextParseRule[] = [
+        {
+          name: 'Whitespace',
+          indentRequired: false,
+          pattern: /\s+/,
+          onMatch
+        },
+        {
+          name: 'TEST',
+          indentRequired: true,
+          pattern: /TEST/,
+          onMatch
+        }
+      ]
+
+      const instrNotIndented = 'Instruction not indented by space or tab.'
+      let parseError = new ParseError(instrNotIndented, {
+        index: 0,
+        line: 1,
+        position: 0
+      })
+      expect(() => parseText(' TEST\nTEST', rules)).toThrow(parseError)
+      parseError = new ParseError(instrNotIndented, {
+        index: 0,
+        line: 0,
+        position: 0
+      })
+      expect(() => parseText('TEST\nTEST', rules)).toThrow(parseError)
+    })
   })
   describe('rules', function () {
     it('should prioritize first rule', function () {
@@ -378,11 +476,13 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch: onMatch1
         },
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /T*/,
           onMatch: onMatch2
         }
@@ -415,6 +515,7 @@ describe('parse text', function () {
       const rules: ITextParseRule[] = [
         {
           name: 'TEST',
+          indentRequired: false,
           pattern: /TEST/,
           onMatch: onMatch
         }
@@ -631,7 +732,7 @@ TST R1, R5
     parseError = new ParseError(unknownToken, {
       index: 0,
       line: 11,
-      position: 15
+      position: 8
     })
     expect(() =>
       parse(`
