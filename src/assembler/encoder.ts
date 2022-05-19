@@ -185,7 +185,7 @@ function addLabel(writer: FileWriter, instruction: IInstruction): void {
 function writeInstruction(
   writer: FileWriter,
   instruction: IInstruction,
-  pool: ILiteralPool,
+  pool: ILiteralPool
 ) {
   if (isPseudoInstruction(instruction))
     writePseudoInstruction(writer, instruction, pool)
@@ -340,7 +340,9 @@ function writeDataInstruction(
     case 'SPACE':
     case 'FILL':
     case '%':
-      bytes = Array(evaluateExpression(instruction)).fill(Byte.fromUnsignedInteger(0xFF))
+      bytes = Array(evaluateExpression(instruction)).fill(
+        Byte.fromUnsignedInteger(0xff)
+      )
       alignment = 1
       break
   }
@@ -414,5 +416,5 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
  *
  */
 function evaluateExpression(instruction: IInstruction): number {
-    return eval(instruction.options[0])
+  return eval(instruction.options[0])
 }

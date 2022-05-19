@@ -86,8 +86,8 @@ export function parse(code: string): ICodeFile {
       onMatch(match: ITextMatch) {
         if (!area) {
           throw new ParseError(
-              'SPACE or FILL must be defined in area',
-              match.from
+            'SPACE or FILL must be defined in area',
+            match.from
           )
         }
         const instruction: IInstruction = {
