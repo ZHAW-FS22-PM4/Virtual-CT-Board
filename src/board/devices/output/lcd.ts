@@ -177,7 +177,7 @@ export class LcdDevice extends Device {
           Word.fromUnsignedInteger(LcdDevice.BINARY_ADRESSES[0] + offset)
         )
         let nibble = byte.value & mask
-        if (mask == 0xf0) {
+        if (mask === 0xf0) {
           nibble = nibble >> 4
         }
         return nibble.toString(16).toUpperCase()
