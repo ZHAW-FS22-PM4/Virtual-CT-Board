@@ -14,6 +14,7 @@ import {
   isLiteralString,
   isOptionCountValid,
   isPCRegister,
+  mapLabelOffset,
   removeBracketsFromRegisterString,
   setBits
 } from 'instruction/opcode'
@@ -201,7 +202,7 @@ export class LdrRegisterInstruction extends BaseInstruction {
       immValue = createImmediateBits(
         //limit bit count so negative values will not be considered wrong
         `#${
-          labels ? limitValuesToBitCount(labels[pseudoValue].value, 8) : '0' //VCB-176 --> limitValuesToBitCount 10 instead of 8 as param
+          limitValuesToBitCount(mapLabelOffset(pseudoValue, labels).value, 8) //VCB-176 --> limitValuesToBitCount 10 instead of 8 as param
         }`,
         8,
         0 //VCB-176 --> 2

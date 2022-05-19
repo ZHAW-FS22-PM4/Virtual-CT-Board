@@ -1,6 +1,7 @@
 import { AreaType, ICodeFile } from 'assembler/ast'
 import { SegmentType } from 'assembler/elf/interfaces'
 import { encode } from 'assembler/encoder'
+import { AssemblerError } from 'assembler/error'
 import { link } from 'assembler/linker'
 import { END_OF_CODE } from 'instruction/special'
 import { Byte, Halfword, Word } from 'types/binary'
@@ -364,5 +365,133 @@ describe('linker', function () {
         file.content[13]
       )
     ).toEqual(Word.fromUnsignedInteger(0xffff0011))
+  })
+  it('should throw exception if label as option is not defined', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Code,
+          isReadOnly: true,
+          name: 'myTestCode',
+          instructions: [
+            {
+              name: 'DCD',
+              options: ['myTest'],
+              line: 12
+            }
+          ]
+        }
+      ]
+    }
+    let encodedFile = encode(code)
+    expect(encodedFile.relocations.length).toBe(1)
+    expect(() => link(encodedFile)).toThrow(
+      new AssemblerError(`Symbol 'myTest' is not defined.`, 12)
+    )
+    code.areas = [
+      {
+        type: AreaType.Code,
+        isReadOnly: true,
+        name: 'myTestCode',
+        instructions: [
+          {
+            name: 'B',
+            options: ['other'],
+            line: 0
+          }
+        ]
+      }
+    ]
+    encodedFile = encode(code)
+    expect(encodedFile.relocations.length).toBe(1)
+    expect(() => link(encodedFile)).toThrow(
+      new AssemblerError(`Symbol 'other' is not defined.`, 0)
+    )
+    code.areas = [
+      {
+        type: AreaType.Code,
+        isReadOnly: true,
+        name: 'myTestCode',
+        instructions: [
+          {
+            name: 'LDR',
+            options: ['R2', '[R5', '#4]'],
+            line: 0
+          },
+          {
+            name: 'BL',
+            options: ['dada2do'],
+            line: 1
+          }
+        ]
+      }
+    ]
+    encodedFile = encode(code)
+    expect(encodedFile.relocations.length).toBe(1)
+    expect(() => link(encodedFile)).toThrow(
+      new AssemblerError(`Symbol 'dada2do' is not defined.`, 1)
+    )
+    code.areas = [
+      {
+        type: AreaType.Code,
+        isReadOnly: true,
+        name: 'myTestCode',
+        instructions: [
+          {
+            name: 'LDR',
+            options: ['R2', 'myLita'],
+            line: 0
+          }
+        ]
+      }
+    ]
+    encodedFile = encode(code)
+    expect(encodedFile.relocations.length).toBe(1)
+    expect(() => link(encodedFile)).toThrow(
+      new AssemblerError(`Symbol 'myLita' is not defined.`, 0)
+    )
+    code.areas = [
+      {
+        type: AreaType.Code,
+        isReadOnly: true,
+        name: 'myTestCode',
+        instructions: [
+          {
+            name: 'DCD',
+            options: ['one', 'two', 'other'],
+            line: 0
+          },
+          {
+            name: 'B',
+            options: ['other'],
+            label: 'one',
+            line: 1
+          },
+          {
+            name: 'MOVS',
+            options: ['R1', '#4'],
+            label: 'two',
+            line: 2
+          },
+          {
+            name: 'MOVS',
+            options: ['R7', 'R0'],
+            label: 'other',
+            line: 3
+          },
+          {
+            name: 'BNE',
+            options: ['notSet'],
+            line: 4
+          }
+        ]
+      }
+    ]
+    encodedFile = encode(code)
+    expect(encodedFile.relocations.length).toBe(5)
+    expect(() => link(encodedFile)).toThrow(
+      new AssemblerError(`Symbol 'notSet' is not defined.`, 4)
+    )
   })
 })

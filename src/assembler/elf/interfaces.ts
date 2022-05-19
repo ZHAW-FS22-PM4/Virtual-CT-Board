@@ -164,6 +164,11 @@ export interface IRelocation {
   length: number
 
   /**
+   * Line within source code where relocation is applied to. Is required for error handling during relocation
+   */
+  line: number
+
+  /**
    * The instruction which will be used for code re-location.
    */
   instruction?: IInstruction

@@ -1,7 +1,8 @@
 import { Register, Registers } from 'board/registers'
 import { InstructionError } from 'instruction/error'
+import { ILabelOffsets } from 'instruction/interfaces'
 import { $enum } from 'ts-enum-util'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 
 /**
  * If pattern length is not valid throws an error since should never happen.
@@ -434,4 +435,24 @@ export function isLiteralString(option: string): boolean {
   } catch (e) {
     return !option.includes('[') && !option.includes(']')
   }
+}
+
+/**
+ * Returns the offset value to use for the provided label option.
+ * Throws an error if labels are provided but given was is not defined
+ *
+ * @param labelOption string provided as param which could be literal
+ * @param labels the labels with their offsets relative to this instruction
+ * @returns
+ */
+export function mapLabelOffset(
+  labelOption: string,
+  labels?: ILabelOffsets
+): Word {
+  if (labels && !labels[labelOption]) {
+    throw new InstructionError(`Symbol '${labelOption}' is not defined.`)
+  }
+  return labels
+    ? Word.fromUnsignedInteger(labels[labelOption].value)
+    : Word.fromUnsignedInteger(0)
 }

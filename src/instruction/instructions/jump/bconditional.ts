@@ -2,7 +2,13 @@ import { IMemory } from 'board/memory/interfaces'
 import { Flag, Register, Registers } from 'board/registers'
 import { InstructionError } from 'instruction/error'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
+import {
+  checkOptionCount,
+  create,
+  getBits,
+  mapLabelOffset,
+  setBits
+} from 'instruction/opcode'
 import { Byte, Halfword } from 'types/binary'
 import { BaseInstruction } from '../base'
 
@@ -29,7 +35,7 @@ abstract class ConditionalJumpInstruction extends BaseInstruction {
 
     let offset
     if (labels) {
-      let word = labels[options[0]].toSignedInteger()
+      let word = mapLabelOffset(options[0], labels).toSignedInteger()
       if (word % 2 !== 0) {
         throw new Error(`Offset ${word} not dividable by two.`)
       }
