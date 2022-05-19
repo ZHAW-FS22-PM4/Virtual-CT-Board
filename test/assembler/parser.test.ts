@@ -182,6 +182,35 @@ AREA Pseudo, CODE, READONLY
     expect(ast.areas[1].instructions[3].options).toEqual(['R4', '=var2'])
     expect(ast.areas[1].instructions[3].line).toBe(14)
   })
+  it('can parse immediate offsets with spaces in between', () => {
+    const pseudoCode = `
+    AREA myCode, CODE, READWRITE
+    LDR R7, =   0x08123456f
+    start LDR R6, =  var1
+    LDR R0, =  ADDR_DIP_SWITCH_7_0
+    LDR R1, =	0x90000000
+    MOVS R2, #	44
+    `
+    const ast = parse(pseudoCode)
+    expect(ast.areas.length).toBe(1)
+    expect(ast.areas[0].instructions.length).toBe(5)
+
+    expect(ast.areas[0].instructions[0].name).toBe('LDR')
+    expect(ast.areas[0].instructions[0].options.length).toBe(2)
+
+    expect(ast.areas[0].instructions[1].name).toBe('LDR')
+    expect(ast.areas[0].instructions[1].label).toBeDefined()
+    expect(ast.areas[0].instructions[1].options.length).toBe(2)
+
+    expect(ast.areas[0].instructions[2].name).toBe('LDR')
+    expect(ast.areas[0].instructions[2].options.length).toBe(2)
+
+    expect(ast.areas[0].instructions[3].name).toBe('LDR')
+    expect(ast.areas[0].instructions[3].options.length).toBe(2)
+
+    expect(ast.areas[0].instructions[4].name).toBe('MOVS')
+    expect(ast.areas[0].instructions[4].options.length).toBe(2)
+  })
 })
 
 describe('parse text', function () {
