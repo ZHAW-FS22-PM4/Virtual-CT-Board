@@ -194,7 +194,7 @@ export class MemoryComponent extends React.Component<{}, IMemoryState> {
                 key={'quick_jump_' + i}
                 data-address={address}
                 disabled={
-                  this.state.startAddress == this.lineAddress(Number(address))
+                  this.state.startAddress === this.lineAddress(Number(address))
                 }>
                 <span>{title}</span>
                 <span className="address badge bg-secondary ms-3">

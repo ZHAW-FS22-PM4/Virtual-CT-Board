@@ -52,11 +52,11 @@ export class BlInstruction extends BaseInstruction {
     )
 
     let opcodeSecondPart: Halfword = create(this.patternSecondPart)
-    if (i1Bit == sBit) {
+    if (i1Bit === sBit) {
       opcodeSecondPart = opcodeSecondPart.setBit(13)
     }
 
-    if (i2Bit == sBit) {
+    if (i2Bit === sBit) {
       opcodeSecondPart = opcodeSecondPart.setBit(11)
     }
 

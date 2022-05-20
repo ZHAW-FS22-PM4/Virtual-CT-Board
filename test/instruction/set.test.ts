@@ -11,7 +11,7 @@ const instruction: IInstruction = {
   patternSecondPart: '',
   opcodeLength: 1,
   needsLabels: false,
-  canEncodeInstruction: jest.fn((name) => name == validInstructionName),
+  canEncodeInstruction: jest.fn((name) => name === validInstructionName),
   encodeInstruction: jest.fn(),
   executeInstruction: jest.fn()
 }
