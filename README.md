@@ -142,4 +142,4 @@ $ npm run test -- --watch
 
 ## Credits
 
-- Favicon by [https://www.flaticon.com/free-icon/cpu_2628402](Vitaly Gorbachev)
+- Favicon by [Vitaly Gorbachev](https://www.flaticon.com/free-icon/cpu_2628402)
