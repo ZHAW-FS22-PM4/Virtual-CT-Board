@@ -6,6 +6,8 @@ import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
 
 // We want the processor to cycle as fast as possible.
+// A delay of `0` causes the JavaScript engine to execute the callback
+// at the next event loop cycle (immediately).
 const cycleSpeed: number = 0
 
 /**
