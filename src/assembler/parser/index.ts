@@ -7,7 +7,7 @@ const VALUE = `[0-9a-z]+`
 const WHITESPACE = `\\s+`
 const SPACE_OR_TAB = `[ \\t]`
 const COMMENT = `;[^\\n]*`
-const INSTRUCTION_SEPARATOR_LOOKAHED = `(?=${WHITESPACE}|${COMMENT})`
+const INSTRUCTION_SEPARATOR_LOOKAHED = `(?=${WHITESPACE}|${COMMENT}|$)`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
 
 const OPTION = `(?:(?:[0-9a-z_]|[\\[{#=]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|${SPACE_OR_TAB}*-${SPACE_OR_TAB}*)+|${STRING})`
