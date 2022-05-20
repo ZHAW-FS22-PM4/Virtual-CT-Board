@@ -1,10 +1,11 @@
 import { assemble } from 'assembler'
 
 const fs = require('fs')
-const files = fs.readdirSync('test/labs/lab-files', { encoding: 'utf8' })
+const basePath = 'test/labs/lab_files'
+const files = fs.readdirSync(basePath, { encoding: 'utf8' })
 
 test.each([...files])('assemble file : %s', (fileName) => {
-  const fileContent = fs.readFileSync(`test/labs/lab-files/${fileName}`, {
+  const fileContent = fs.readFileSync(`${basePath}/${fileName}`, {
     encoding: 'utf8',
     flag: 'r'
   })
