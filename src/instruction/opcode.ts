@@ -202,9 +202,9 @@ export function createImmediateBits(
     if (optionValue % (lsbZeroBitCount * 2) !== 0) {
       throw new InstructionError(
         `Immediate offset not ${
-          lsbZeroBitCount == 2
+          lsbZeroBitCount === 2
             ? 'word'
-            : lsbZeroBitCount == 1
+            : lsbZeroBitCount === 1
             ? 'halfword'
             : lsbZeroBitCount + ' bytes'
         } aligned`
@@ -286,14 +286,14 @@ export function checkBracketsOnLastOptions(
       'Provided option count is more than one apart or max is smaller than min'
     )
   }
-  if (optionCountMin != optionCountMax && options.length == optionCountMin) {
+  if (optionCountMin !== optionCountMax && options.length === optionCountMin) {
     if (!registerStringEnclosedInBrackets(options[optionCountMin - 1])) {
       throw new InstructionError(
         `Opening or closing bracket missing for ${optionCountMin}. param`
       )
     }
   } else if (
-    options.length == optionCountMax &&
+    options.length === optionCountMax &&
     !registerStringHasBrackets(
       options[optionCountMax - 2],
       options[optionCountMax - 1]

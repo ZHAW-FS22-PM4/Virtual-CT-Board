@@ -261,7 +261,7 @@ function isDataInstruction(instruction: IInstruction): boolean {
  */
 function isSymbolDataInstruction(instruction: IInstruction): boolean {
   return (
-    instruction.name == 'DCD' &&
+    instruction.name === 'DCD' &&
     instruction.options.every((option) => isNaN(+option))
   )
 }
