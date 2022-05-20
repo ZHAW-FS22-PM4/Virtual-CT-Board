@@ -472,6 +472,33 @@ alignment
     expect(codeArea.instructions[3].label).toEqual('alignment')
     expect(codeArea.instructions[3].line).toBe(8)
   })
+
+  it('can parse command on last line without spacing and ending on comment', function () {
+    const code = `
+    AREA testTest, CODE, READONLY
+             MOVS R1, #   6;comment on instruction
+labelOther    RSBS R1, R1,#0
+
+             LDRSB     R7,[R3,R4  ]`
+    const ast = parse(code)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('testTest')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(3)
+    expect(ast.areas[0].instructions[0].name).toBe('MOVS')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R1', '#   6'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('RSBS')
+    expect(ast.areas[0].instructions[1].label).toBe('labelOther')
+    expect(ast.areas[0].instructions[1].options).toEqual(['R1', 'R1', '#0'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+    expect(ast.areas[0].instructions[2].name).toBe('LDRSB')
+    expect(ast.areas[0].instructions[2].label).toBeUndefined()
+    expect(ast.areas[0].instructions[2].options).toEqual(['R7', '[R3', 'R4  ]'])
+    expect(ast.areas[0].instructions[2].line).toBe(5)
+  })
 })
 
 describe('parse text', function () {
