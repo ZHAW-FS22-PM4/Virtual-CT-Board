@@ -44,7 +44,7 @@ describe('test canEncodeInstruction (wheter the class is responsible for this co
         invalidInstructionName,
         invalidInstructionOptions
       )
-    ).toBe(false)
+    ).toBe(true)
     expect(
       instrLdrbImm.canEncodeInstruction(ldrName, ldrLiteralOptionsValid)
     ).toBe(false)

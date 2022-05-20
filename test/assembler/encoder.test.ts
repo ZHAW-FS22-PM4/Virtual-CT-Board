@@ -513,7 +513,7 @@ describe('encode', function () {
     expect(getSection(file, '|.code|').offset).toBe(0)
     expect(getSection(file, '|.code|').size).toBe(24)
     expect(file.content.length).toBe(24)
-    expect(file.content[0].value).toBe(0x01)
+    expect(file.content[0].value).toBe('false')
     expect(file.content[1].value).toBe(0x70)
     expect(file.content[2].value).toBe(0x41)
     expect(file.content[3].value).toBe(0x71)
