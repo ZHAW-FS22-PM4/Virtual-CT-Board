@@ -68,7 +68,7 @@ let plugins = [
         dest: 'dist/'
       },
       {
-        src: './src/favicon.png',
+        src: './src/favicon.svg',
         dest: 'dist/'
       }
     ]

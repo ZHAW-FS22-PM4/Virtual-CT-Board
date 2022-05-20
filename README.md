@@ -139,7 +139,3 @@ $ npm run test -- --coverage
 ```
 $ npm run test -- --watch
 ```
-
-## Credits
-
-- Favicon by [Vitaly Gorbachev](https://www.flaticon.com/free-icon/cpu_2628402)
