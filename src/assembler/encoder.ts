@@ -1,4 +1,5 @@
 import { AssemblerError } from 'assembler/error'
+import { ALLOWED_EVAL_PATTERN } from 'assembler/parser'
 import { InstructionError } from 'instruction/error'
 import InstructionSet from 'instruction/set'
 import { END_OF_CODE } from 'instruction/special'
@@ -340,7 +341,9 @@ function writeDataInstruction(
     case 'SPACE':
     case 'FILL':
     case '%':
-      bytes = Array(values[0]).fill(Byte.fromUnsignedInteger(0x00))
+      bytes = Array(evaluateExpression(instruction)).fill(
+        Byte.fromUnsignedInteger(0x00)
+      )
       alignment = 1
       break
   }
@@ -407,4 +410,19 @@ function writeLiteralPool(writer: FileWriter, pool: ILiteralPool) {
       })
     }
   }
+}
+
+/**
+ * Evalutes the expression and returns the value of space to reserve.
+ *
+ * Only operations with + and * are enforced by regex with numbers and brackets as operands.
+ */
+function evaluateExpression(instruction: IInstruction): number {
+  let valToEval = instruction.options[0]
+  const expression = new RegExp(`^${ALLOWED_EVAL_PATTERN}$`, 'mi')
+  const match = expression.exec(valToEval)
+  if (!match) {
+    throw Error('Instruction option contains unallowed characters to eval.')
+  }
+  return eval(valToEval)
 }

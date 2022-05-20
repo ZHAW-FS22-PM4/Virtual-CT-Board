@@ -195,32 +195,363 @@ describe('encode', function () {
     expect(file.relocations[1].length).toBe(4)
     expect(file.relocations[1].symbol).toBe('case2')
   })
-  it('should encode SPACE instruction', function () {
-    for (const name of ['SPACE', 'FILL', '%']) {
-      const code: ICodeFile = {
-        symbols: {},
-        areas: [
-          {
-            type: AreaType.Data,
-            isReadOnly: true,
-            name: '|.data|',
-            instructions: [
-              {
-                name: name,
-                options: ['16'],
-                line: 0
-              }
-            ]
-          }
-        ]
-      }
-      const file = encode(code)
-      expect(Object.keys(file.sections).length).toBe(1)
-      expect(getSection(file, '|.data|').offset).toBe(0)
-      expect(getSection(file, '|.data|').size).toBe(16)
-      expect(file.content.length).toBe(16)
+  it('should encode SPACE instruction with fix value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'SPACE',
+              options: ['16'],
+              line: 0
+            }
+          ]
+        }
+      ]
     }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
   })
+
+  it('should encode FILL instruction with fix value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'FILL',
+              options: ['16'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
+  })
+
+  it('should encode % instruction with fix value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: '%',
+              options: ['16'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
+  })
+
+  it('should encode SPACE instruction with calculated multiplication value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'SPACE',
+              options: ['8*8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(64)
+    expect(file.content.length).toBe(64)
+  })
+
+  it('should encode FILL instruction with calculated multiplication value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'FILL',
+              options: ['8*8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(64)
+    expect(file.content.length).toBe(64)
+  })
+
+  it('should encode % instruction with calculated multiplication value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: '%',
+              options: ['8*8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(64)
+    expect(file.content.length).toBe(64)
+  })
+
+  it('should encode SPACE instruction with calculated addition value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'SPACE',
+              options: ['8   +8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
+  })
+
+  it('should encode FILL instruction with calculated addition value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'FILL',
+              options: ['8   +8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
+  })
+
+  it('should encode % instruction with calculated addition value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: '%',
+              options: ['8   +8'],
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(1)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(16)
+    expect(file.content.length).toBe(16)
+  })
+
+  it('should encode SPACE instruction with calculated addition, multiplication and brackets value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'SPACE',
+              options: ['((8*(  (1+   1)+2)) )'],
+              line: 0
+            }
+          ]
+        },
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: 'secondData',
+          instructions: [
+            {
+              name: 'SPACE',
+              options: ['(   4+ 3   *4)'], //16
+              line: 0
+            },
+            {
+              name: 'SPACE',
+              options: ['(8+8  )*8'], //128
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(2)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(32)
+    expect(getSection(file, 'secondData').offset).toBe(32)
+    expect(getSection(file, 'secondData').size).toBe(144)
+    expect(file.content.length).toBe(176)
+  })
+
+  it('should encode FILL instruction with calculated addition, multiplication and brackets value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: 'FILL',
+              options: ['((8*(  (1+   1)+2)) )'],
+              line: 0
+            }
+          ]
+        },
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: 'secondData',
+          instructions: [
+            {
+              name: 'FILL',
+              options: ['(   4+ 3   *4)'], //16
+              line: 0
+            },
+            {
+              name: 'FILL',
+              options: ['(8+8  )*8'], //128
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(2)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(32)
+    expect(getSection(file, 'secondData').offset).toBe(32)
+    expect(getSection(file, 'secondData').size).toBe(144)
+    expect(file.content.length).toBe(176)
+  })
+
+  it('should encode % instruction with calculated addition, multiplication and brackets value', function () {
+    const code: ICodeFile = {
+      symbols: {},
+      areas: [
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: '|.data|',
+          instructions: [
+            {
+              name: '%',
+              options: ['((8*(  (1+   1)+2)) )'],
+              line: 0
+            }
+          ]
+        },
+        {
+          type: AreaType.Data,
+          isReadOnly: true,
+          name: 'secondData',
+          instructions: [
+            {
+              name: '%',
+              options: ['(   4+ 3   *4)'], //16
+              line: 0
+            },
+            {
+              name: '%',
+              options: ['(8+8  )*8'], //128
+              line: 0
+            }
+          ]
+        }
+      ]
+    }
+    const file = encode(code)
+    expect(Object.keys(file.sections).length).toBe(2)
+    expect(getSection(file, '|.data|').offset).toBe(0)
+    expect(getSection(file, '|.data|').size).toBe(32)
+    expect(getSection(file, 'secondData').offset).toBe(32)
+    expect(getSection(file, 'secondData').size).toBe(144)
+    expect(file.content.length).toBe(176)
+  })
+
   it('should encode ALIGN instruction', function () {
     const code: ICodeFile = {
       symbols: {},

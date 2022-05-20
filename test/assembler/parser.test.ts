@@ -127,6 +127,205 @@ describe('parse code', function () {
     ])
     expect(ast.areas[0].instructions[3].line).toBe(6)
   })
+
+  it('can parse SPACE instruction with multiplication', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        SPACE 8*8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('SPACE')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse % instruction with multiplication', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        % 8*8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('%')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse FILL instruction with multiplication', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        FILL 8*8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('FILL')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse SPACE instruction with addition', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        SPACE 8+8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('SPACE')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8+8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse % instruction with addition', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        % 8+8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('%')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8+8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse FILL instruction with addition', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        FILL 8+8
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('FILL')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8+8'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse SPACE instruction with addition and brackets', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        SPACE 8*(2+2)
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('SPACE')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*(2+2)'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse % instruction with addition and brackets', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        SPACE 8*(2+2)
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('SPACE')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*(2+2)'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
+  it('can parse FILL instruction with addition and brackets', function () {
+    const loadCode = `
+    AREA myCode, CODE, READONLY
+             STR R4, [R5]
+        FILL 8*(2+2)
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myCode')
+    expect(ast.areas[0].type).toBe(AreaType.Code)
+    expect(ast.areas[0].isReadOnly).toBe(true)
+    expect(ast.areas[0].instructions).toHaveLength(2)
+    expect(ast.areas[0].instructions[0].name).toBe('STR')
+    expect(ast.areas[0].instructions[0].options).toEqual(['R4', '[R5]'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+    expect(ast.areas[0].instructions[1].name).toBe('FILL')
+    expect(ast.areas[0].instructions[1].label).toBeUndefined()
+    expect(ast.areas[0].instructions[1].options).toEqual(['8*(2+2)'])
+    expect(ast.areas[0].instructions[1].line).toBe(3)
+  })
+
   it('can parse pseudo instruction code', function () {
     const pseudoCode = `
     SOME_VALUE EQU 0x78ecd8e7

@@ -4,8 +4,8 @@ import { ITextMatch, ITextParseRule, parseText } from './text'
 
 const SYMBOL = `[a-z_]+[a-z0-9_]*|\\|[a-z0-9._ ]+\\|`
 const VALUE = `[0-9a-z]+`
-export const WHITESPACE = `\\s+`
-export const SPACE_OR_TAB = `[ \\t]`
+const WHITESPACE = `\\s+`
+const SPACE_OR_TAB = `[ \\t]`
 const COMMENT = `;[^\\n]*`
 const INSTRUCTION_SEPARATOR_LOOKAHED = `(?=${WHITESPACE}|${COMMENT})`
 const STRING = `(?:"(?:[^'"\n]|'"?)*")`
@@ -14,6 +14,11 @@ const OPTION = `(?:(?:[0-9a-z_]|[\\[{#=]${SPACE_OR_TAB}*|${SPACE_OR_TAB}*[\\]}]|
 const INSTRUCTION = `([a-z]+)${SPACE_OR_TAB}+(${OPTION}(?:${SPACE_OR_TAB}*,${SPACE_OR_TAB}*${OPTION})*)`
 const LITERAL_SYMBOL_DECLARATION = `(${SYMBOL})${SPACE_OR_TAB}+EQU${SPACE_OR_TAB}+(${VALUE})`
 const AREA_DECLARATION = `AREA${SPACE_OR_TAB}+(${SYMBOL})${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(DATA|CODE)${SPACE_OR_TAB}*,${SPACE_OR_TAB}*(READ(WRITE|ONLY))`
+const SPACE_OR_FILL = `SPACE|FILL|\\%`
+const OPTIONAL_OPENING_BRACKETS = `[\\( ]*`
+const OPTIONAL_CLOSING_BRACKETS = `[\\) ]*`
+export const ALLOWED_EVAL_PATTERN = `${OPTIONAL_OPENING_BRACKETS}${SPACE_OR_TAB}*[0-9]+(?:${SPACE_OR_TAB}*[\\*\\+]${SPACE_OR_TAB}*${OPTIONAL_OPENING_BRACKETS}${SPACE_OR_TAB}*[0-9]+${SPACE_OR_TAB}*${OPTIONAL_CLOSING_BRACKETS})*`
+const SPACE_OR_FILL_INSTRUCTION = `(${SPACE_OR_FILL})${SPACE_OR_TAB}+(${ALLOWED_EVAL_PATTERN})`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
 const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
@@ -89,6 +94,25 @@ export function parse(code: string): ICodeFile {
       pattern: COMMENT
     },
     {
+      name: 'spaceOrFillInstruction',
+      indentRequired: true,
+      pattern: SPACE_OR_FILL_INSTRUCTION,
+      onMatch(match: ITextMatch) {
+        if (!area) {
+          throw new ParseError(
+            'SPACE or FILL must be defined in area',
+            match.from
+          )
+        }
+        const instruction: IInstruction = {
+          name: match.captures[0].toUpperCase(),
+          options: [match.captures[1]],
+          line: match.from.line
+        }
+        area.instructions.push(instruction)
+      }
+    },
+    {
       name: 'LiteralSymbolDeclaration',
       indentRequired: false,
       pattern: LITERAL_SYMBOL_DECLARATION + INSTRUCTION_SEPARATOR_LOOKAHED,
@@ -100,7 +124,7 @@ export function parse(code: string): ICodeFile {
     {
       name: 'AreaDeclaration',
       indentRequired: true,
-      pattern: AREA_DECLARATION + INSTRUCTION_SEPARATOR_LOOKAHED,
+      pattern: AREA_DECLARATION,
       onMatch(match: ITextMatch) {
         area = {
           name: match.captures[0],
