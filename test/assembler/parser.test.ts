@@ -473,7 +473,7 @@ alignment
     expect(codeArea.instructions[3].line).toBe(8)
   })
 
-  it('can parse command on last line without spacing and ending on comment', function () {
+  it('can parse command without spacing afterwards or ending on a comment', function () {
     const code = `
     AREA testTest, CODE, READONLY
              MOVS R1, #   6;comment on instruction
