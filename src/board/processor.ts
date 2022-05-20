@@ -5,7 +5,8 @@ import { END_OF_CODE } from 'instruction/special'
 import { Word } from 'types/binary'
 import { EventEmitter } from 'types/events/emitter'
 
-const cycleSpeed: number = 10
+// We want the processor to cycle as fast as possible.
+const cycleSpeed: number = 0
 
 /**
  * The events which can be emitted by the processor.
