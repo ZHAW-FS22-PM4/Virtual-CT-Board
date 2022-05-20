@@ -66,6 +66,10 @@ let plugins = [
       {
         src: './node_modules/fork-awesome/fonts',
         dest: 'dist/'
+      },
+      {
+        src: './src/favicon.png',
+        dest: 'dist/'
       }
     ]
   })
