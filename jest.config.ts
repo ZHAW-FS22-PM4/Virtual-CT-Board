@@ -5,8 +5,6 @@ const config: Config.InitialOptions = {
   testEnvironment: 'jsdom',
   verbose: true,
   moduleDirectories: ['node_modules', 'src'],
-
-  collectCoverage: true,
   collectCoverageFrom: [
     './src/assembler/**/*.ts',
     './src/board/**/*.ts',
