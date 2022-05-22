@@ -5,7 +5,8 @@ import {
   SubsImmediate8Instruction,
   SubsRegistersInstruction
 } from 'instruction/instructions/subtract/subs'
-import { Word } from 'types/binary'
+import InstructionSet from 'instruction/set'
+import { Halfword, Word } from 'types/binary'
 
 const name = 'SUBS'
 
@@ -20,59 +21,71 @@ beforeEach(function () {
   memory.reset()
   registers.reset()
 
-  registers.writeRegister(Register.R0, Word.fromUnsignedInteger(10))
-  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(30))
-  registers.writeRegister(Register.R2, Word.fromUnsignedInteger(10))
+  registers.writeRegister(Register.R1, Word.fromUnsignedInteger(2))
+  registers.writeRegister(Register.R2, Word.fromUnsignedInteger(4))
+  registers.writeRegister(Register.R3, Word.fromUnsignedInteger(16))
 })
 
 describe('test canEncodeInstruction() function', () => {
-  it('should return true for SubsRegistersInstruction', () => {
+  it('should return true for SubsRegistersInstruction and false for the others', () => {
     expect(subsReg.canEncodeInstruction('SUBS', ['R0', 'R1'])).toBe(true)
     expect(subsReg.canEncodeInstruction('SUBS', ['R0', 'R1', 'R2'])).toBe(true)
-
     expect(subsImm3.canEncodeInstruction('SUBS', ['R0', 'R1'])).toBe(false)
     expect(subsImm3.canEncodeInstruction('SUBS', ['R0', 'R1', 'R2'])).toBe(
       false
     )
-
     expect(subsImm8.canEncodeInstruction('SUBS', ['R0', 'R1'])).toBe(false)
     expect(subsImm8.canEncodeInstruction('SUBS', ['R0', 'R1', 'R2'])).toBe(
       false
     )
   })
-  it('should return true for SubsImmediate3Instruction', () => {
+  it('should return true for SubsImmediate3Instruction and false for the others', () => {
     expect(subsImm3.canEncodeInstruction('SUBS', ['R0', 'R1', '#3'])).toBe(true)
-
     expect(subsImm8.canEncodeInstruction('SUBS', ['R0', 'R1', '#3'])).toBe(
       false
     )
-
     expect(subsReg.canEncodeInstruction('SUBS', ['R0', 'R1', '#3'])).toBe(false)
   })
-  it('should return true for SubsImmediate8Instruction', () => {
-    expect(subsImm3.canEncodeInstruction('SUBS', ['R0', '#25'])).toBe(true)
-
-    expect(subsImm8.canEncodeInstruction('SUBS', ['R0', '#25'])).toBe(false)
-
+  it('should return true for SubsImmediate8Instruction and false for the others', () => {
+    expect(subsImm8.canEncodeInstruction('SUBS', ['R0', '#25'])).toBe(true)
+    expect(subsImm3.canEncodeInstruction('SUBS', ['R0', '#25'])).toBe(false)
     expect(subsReg.canEncodeInstruction('SUBS', ['R0', '#25'])).toBe(false)
   })
 })
 
 describe('test encodeInstruction() function', () => {
   it('should encode given arguments correctly', () => {
-    expect(subsReg.encodeInstruction(['R0', 'R0', 'R1'])).toBe([0x1a40])
-    expect(subsReg.encodeInstruction(['R0', 'R1'])).toBe([0x1a40])
-    expect(subsImm3.encodeInstruction(['R0', 'R1', '#1'])).toBe([0x1e48])
-    expect(subsImm8.encodeInstruction(['R0', '#1'])).toBe([0x3801])
+    expect(subsReg.encodeInstruction(['R0', 'R0', 'R1'])[0]).toEqual(
+      Halfword.fromUnsignedInteger(0x1a40)
+    )
+    expect(subsReg.encodeInstruction(['R0', 'R1'])[0]).toEqual(
+      Halfword.fromUnsignedInteger(0x1a40)
+    )
+    expect(subsImm3.encodeInstruction(['R0', 'R1', '#1'])[0]).toEqual(
+      Halfword.fromUnsignedInteger(0x1e48)
+    )
+    expect(subsImm8.encodeInstruction(['R0', '#1'])[0]).toEqual(
+      Halfword.fromUnsignedInteger(0x3801)
+    )
   })
-  it('should throw exception for immediate values higher than 3 bits', () => {})
-  it('should throw exception for immediate values higher than 8 bits', () => {})
+  it('should throw exception for high registers', () => {
+    expect(() => subsReg.encodeInstruction(['R12', 'R0', 'R0'])).toThrow()
+    expect(() => subsReg.encodeInstruction(['R0', 'R12', 'R0'])).toThrow()
+    expect(() => subsReg.encodeInstruction(['R0', 'R0', 'R12'])).toThrow()
+    expect(() => subsImm3.encodeInstruction(['R12', 'R0', '#1'])).toThrow()
+    expect(() => subsImm3.encodeInstruction(['R0', 'R12', '#1'])).toThrow()
+    expect(() => subsImm8.encodeInstruction(['R12', '#1'])).toThrow()
+  })
+  it('should throw exception for immediate values higher than 3 bits', () => {
+    expect(() => subsImm3.encodeInstruction(['R12', 'R0', '#10'])).toThrow()
+  })
+  it('should throw exception for immediate values higher than 8 bits', () => {
+    expect(() => subsImm8.encodeInstruction(['R12', '#256'])).toThrow()
+    expect(() => subsImm8.encodeInstruction(['R12', '#500'])).toThrow()
+  })
 })
 
-describe('test onExecuteInstruction() function', () => {})
-
-/*
-describe('SUBS instruction', function () {
+describe('test executeInstruction() method', function () {
   it('should subtract register from register and store in another register', function () {
     const options = ['R1', 'R3', 'R2']
     const encoder = InstructionSet.getEncoder(name, options)
@@ -98,4 +111,3 @@ describe('SUBS instruction', function () {
     expect(registers.readRegister(Register.R3).value).toBe(4)
   })
 })
-*/

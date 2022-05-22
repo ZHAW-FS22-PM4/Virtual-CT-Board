@@ -27,6 +27,7 @@ export class SubsRegistersInstruction extends BaseInstruction {
   private maxExpectedOptionCount: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
+    let immCheckIndex = options.length === 3 ? 2 : 1
     return (
       super.canEncodeInstruction(name, options) &&
       isOptionCountValid(
@@ -34,7 +35,7 @@ export class SubsRegistersInstruction extends BaseInstruction {
         this.minExpectedOptionCount,
         this.maxExpectedOptionCount
       ) &&
-      !isImmediate(options[2])
+      !isImmediate(options[immCheckIndex])
     )
   }
 
