@@ -21,7 +21,7 @@ export const ALLOWED_EVAL_PATTERN = `${OPTIONAL_OPENING_BRACKETS}${SPACE_OR_TAB}
 const SPACE_OR_FILL_INSTRUCTION = `(${SPACE_OR_FILL})${SPACE_OR_TAB}+(${ALLOWED_EVAL_PATTERN})`
 
 //second part (after ${SPACE_OR_TAB}${INSTRUCTION}|) is only for clearer error handling
-const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
+const LABEL_DECLARATION = `(${SYMBOL})(?=(?:${COMMENT}|\\s)*(?:${SPACE_OR_TAB}${INSTRUCTION}|${SPACE_OR_TAB}${SPACE_OR_FILL_INSTRUCTION}|\\s(?:${LITERAL_SYMBOL_DECLARATION}|${AREA_DECLARATION}|${INSTRUCTION})))`
 /**
  * Parses a given code string and return a parsed code file (AST representation).
  *
@@ -108,6 +108,10 @@ export function parse(code: string): ICodeFile {
           name: match.captures[0].toUpperCase(),
           options: [match.captures[1]],
           line: match.from.line
+        }
+        if (label) {
+          instruction.label = label
+          label = null
         }
         area.instructions.push(instruction)
       }

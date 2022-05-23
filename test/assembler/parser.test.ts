@@ -150,6 +150,24 @@ describe('parse code', function () {
     expect(ast.areas[0].instructions[1].line).toBe(3)
   })
 
+  it('can parse SPACE instruction with label', function () {
+    const loadCode = `
+    AREA myVars, DATA, READWRITE
+        table SPACE 16
+    `
+    const ast = parse(loadCode)
+    expect(Object.keys(ast.symbols)).toHaveLength(0)
+    expect(ast.areas).toHaveLength(1)
+    expect(ast.areas[0].name).toBe('myVars')
+    expect(ast.areas[0].type).toBe(AreaType.Data)
+    expect(ast.areas[0].isReadOnly).toBe(false)
+    expect(ast.areas[0].instructions).toHaveLength(1)
+    expect(ast.areas[0].instructions[0].name).toBe('SPACE')
+    expect(ast.areas[0].instructions[0].label).toEqual('table')
+    expect(ast.areas[0].instructions[0].options).toEqual(['16'])
+    expect(ast.areas[0].instructions[0].line).toBe(2)
+  })
+
   it('can parse % instruction with multiplication', function () {
     const loadCode = `
     AREA myCode, CODE, READONLY
