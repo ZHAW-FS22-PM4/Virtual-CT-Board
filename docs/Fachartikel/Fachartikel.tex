@@ -63,7 +63,7 @@ Ein fester Bestandteil des Informatikstudiums an der ZHAW ist das Modul \glqq Co
 
 \subsection{Die Idee}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den höheren Semestern gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den höheren Semestern gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), welche die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
 \includegraphics[width=10cm]{ctboard}
@@ -142,7 +142,7 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 
 \paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form von Maschinencode sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen.
 
-\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die DIP-Schalter und die Tx-Buttons als binäre On-/Off-Schalter und der Rotary-Schalter, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
+\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die DIP-Schalter und die Tx-Buttons als binäre On-/Off-Schalter und der Rotary-Schalter, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Hex-Zahlen und das LCD-Display für Text- und Farbanzeige zur Verfügung.
 
 \paragraph{Assembler-Befehle} Alle für die CT1-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
 \begin{itemize}
@@ -202,8 +202,9 @@ Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Mo
 \begin{itemize}
 	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen. Siehe hierzu Tabelle \ref{praktika}.
 	\item[$-$] Für die ersten beiden Praktika sowie Praktikum 9 müsste auch C-Code interpretier- und ausführbar sein.
+	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können. Dazu müsste ein Linker implementiert werden.
+	\item[$-$] Für das Praktikum 9 wäre die Implementation des Potentiometers vonnöten.
 	\item[$-$] Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
-	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
 
 %%% Allenfalls Weiteres
 
@@ -222,9 +223,9 @@ Sollte die ZHAW zudem eine Erweiterung der Software anstreben, könnten zukünft
 \begin{itemize}
 
 \item[$-$] (o.N). (o.D). \emph{InES CT Board} [Online]. https://ennis.zhaw.ch [Stand: 30.03.2022]
-\item[$-$] S. Arik. (2015). \emph{VisUAL. A highly visual ARM emulator.} https://salmanarif.bitbucket.io/visual/index.html. [Stand: 30.03.2022]
+\item[$-$] S. Arik. (2015). \emph{VisUAL. A highly visual ARM emulator.} https://salmanarif. bitbucket.io/visual/index.html. [Stand: 30.03.2022]
 \item[$-$] S. West. (2018). \emph{Meeting Millennial Expectations In These Four Areas Of Technology.} https://www.forbes.com/sites/forbestechcouncil/2018/06/28/meeting-millennial-expectations-in-these-four-areas-of-technology/?sh=5df2822f4ffc [Stand: 25.04.2022]
-\item[$-$] L. Wirthman. (2020). How Tech-Savvy Millennials Are Driving the Digital Workplace. \emph{https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/} [Stand: 25.04.2022]
+\item[$-$] L. Wirthman. (2020). \emph{How Tech-Savvy Millennials Are Driving the Digital Workplace.} https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/ [Stand: 25.04.2022]
 
 \end{itemize}
 
