@@ -2,7 +2,7 @@
 ; -- Constants
 ; -------------------------------------------------------------------
     
-                AREA myCode, CODE, READONLY
+                AREA myData, DATA, READWRITE
                     
                 THUMB
 
@@ -33,6 +33,8 @@ jump_table		DCD case_dark
 
                 ; END: to be programmed
     
+
+				AREA myCode, CODE, READONLY
 
 ; -------------------------------------------------------------------
 ; -- Main
