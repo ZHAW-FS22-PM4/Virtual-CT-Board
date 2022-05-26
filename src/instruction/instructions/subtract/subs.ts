@@ -2,7 +2,6 @@ import { sub } from 'board/alu'
 import { IMemory } from 'board/memory/interfaces'
 import { Registers } from 'board/registers'
 import {
-  checkOptionCount,
   create,
   createImmediateBits,
   createLowRegisterBits,
@@ -24,22 +23,37 @@ export class SubsRegistersInstruction extends BaseInstruction {
   private rdPattern: string = '0001101000000XXX'
   private rnPattern: string = '0001101000XXX000'
   private rmPattern: string = '0001101XXX000000'
-  private expectedOptionCount: number = 3
+  private minExpectedOptionCount: number = 2
+  private maxExpectedOptionCount: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
+    let immCheckIndex = options.length === 3 ? 2 : 1
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      !isImmediate(options[2])
+      isOptionCountValid(
+        options,
+        this.minExpectedOptionCount,
+        this.maxExpectedOptionCount
+      ) &&
+      !isImmediate(options[immCheckIndex])
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
-    opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
-    opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[2]))
+
+    opcode = setBits(
+      opcode,
+      this.rnPattern,
+      createLowRegisterBits(options[options.length === 2 ? 0 : 1])
+    )
+    opcode = setBits(
+      opcode,
+      this.rmPattern,
+      createLowRegisterBits(options[options.length === 2 ? 1 : 2])
+    )
+
     return [opcode]
   }
 
@@ -81,7 +95,6 @@ export class SubsImmediate3Instruction extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[1]))
@@ -130,7 +143,6 @@ export class SubsImmediate8Instruction extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(
