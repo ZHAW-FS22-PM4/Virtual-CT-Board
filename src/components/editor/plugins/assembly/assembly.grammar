@@ -1,5 +1,5 @@
 @top Program {
-  statement* | SymbolicDeclaration*
+  statement*
 }
 
 @skip { space | comment }
@@ -9,17 +9,12 @@ statement {
 }
 
 AreaDeclaration {
-  kw<"AREA"> commaSep<areaProps> instruction*
+  kw<"AREA">? commaSep<areaProps> instruction*
 }
 
 areaProps {
-  AreaName |
   ReadOrWriteArea |
   CodeOrDataArea
-}
-
-AreaName {
-  identifier
 }
 
 ReadOrWriteArea {
