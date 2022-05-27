@@ -74,9 +74,9 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step(): boolean {
-    if (this.isRunning()) return false
-    return this.cycle()
+  public step(): void {
+    if (this.isRunning()) return
+    this.cycle()
   }
 
   /**
@@ -104,17 +104,12 @@ export class Processor extends EventEmitter<ProcessorEvents> {
     )
   }
 
-  private cycle(): boolean {
+  private cycle(): void {
     let executor: IInstructionExecutor | null = null
     let pcIncremented = false
     try {
       const pc = this.registers.readRegister(Register.PC)
       const opcode = [this.memory.readHalfword(pc)]
-      if (opcode[0].value === END_OF_CODE.value) {
-        this.halt()
-        this.emit('endOfCode')
-        return false
-      }
       if (opcode[0].value >> 12 === 15) {
         // if opcode starts with 1111 it's 32bit long
         opcode.push(this.memory.readHalfword(pc.add(2)))
@@ -126,7 +121,13 @@ export class Processor extends EventEmitter<ProcessorEvents> {
       )
       pcIncremented = true
       executor.executeInstruction(opcode, this.registers, this.memory)
-      return true
+      if (
+        this.memory.readHalfword(this.registers.readRegister(Register.PC))
+          .value === END_OF_CODE.value
+      ) {
+        this.halt()
+        this.emit('endOfCode')
+      }
     } catch (e) {
       if (e instanceof Error) {
         this.halt()
@@ -141,7 +142,6 @@ export class Processor extends EventEmitter<ProcessorEvents> {
         }
         this.emit('error', e.message)
       }
-      return false
     }
   }
 }

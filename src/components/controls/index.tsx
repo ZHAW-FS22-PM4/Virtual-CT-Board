@@ -98,9 +98,7 @@ export class ControlsComponent extends React.Component<
         })
       })
     } else if (this.state.mode === ControlsMode.STEP) {
-      if (!Board.processor.step()) {
-        return
-      }
+      Board.processor.step()
     }
     this.updateProgramCounterHighlighting()
   }
