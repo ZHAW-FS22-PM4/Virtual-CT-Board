@@ -9,17 +9,12 @@ statement {
 }
 
 AreaDeclaration {
-  kw<"AREA"> commaSep<areaProps> instruction*
+  kw<"AREA">? commaSep<areaProps> instruction*
 }
 
 areaProps {
-  AreaName |
   ReadOrWriteArea |
   CodeOrDataArea
-}
-
-AreaName {
-  identifier
 }
 
 ReadOrWriteArea {
@@ -35,7 +30,8 @@ instruction {
   SymbolicDeclaration |
   PushPopInstruction |
   BranchInstruction |
-  AdditionalInstruction
+  AdditionalInstruction |
+  DataInstructionDeclaration
 }
 
 SymbolicDeclaration {
@@ -164,7 +160,7 @@ kw<term> { @specialize[@name="Keyword"]<identifier, term> }
 
   identifier { $[A-Za-z0-9_]+ }
 
-  RegisterLiteral { "R" $[0-9] | "R1" $[1-2] | "SP" | "LR" | "PC" }
+  RegisterLiteral { ("R" | "r") $[0-9] | ("R1" | "r1") $[0-2] | "SP" | "LR" | "PC" }
 
   RegisterLiteralRange { RegisterLiteral space* "-" space* RegisterLiteral }
 

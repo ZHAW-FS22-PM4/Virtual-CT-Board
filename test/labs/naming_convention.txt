@@ -1,0 +1,5 @@
+Labs should be named the following way for better consistency:
+
+lab<number>_<labname>_<subtask>_<variant>
+
+<subtask> and <variant> may be optional depending on your needs.

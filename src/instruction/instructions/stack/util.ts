@@ -114,7 +114,7 @@ export abstract class StackInstruction extends BaseInstruction {
    */
   protected checkCurlyBracketsOnOptions(options: string[]): void {
     if (!this.stackOptionsEnclosedInCurlyBrackets(options)) {
-      if (options.length == 1) {
+      if (options.length === 1) {
         throw new InstructionError(
           `Opening or closing curly bracket missing for 1. param.`
         )

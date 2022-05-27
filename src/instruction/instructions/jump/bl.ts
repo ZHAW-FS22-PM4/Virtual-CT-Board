@@ -1,7 +1,13 @@
 import { IMemory } from 'board/memory/interfaces'
 import { Register, Registers } from 'board/registers'
 import { ILabelOffsets } from 'instruction/interfaces'
-import { checkOptionCount, create, getBits, setBits } from 'instruction/opcode'
+import {
+  checkOptionCount,
+  create,
+  getBits,
+  mapLabelOffset,
+  setBits
+} from 'instruction/opcode'
 import { getBinaryValue } from 'instruction/utils'
 import { Halfword, Word } from 'types/binary'
 import { BinaryType } from 'types/binary/binaryType'
@@ -26,9 +32,7 @@ export class BlInstruction extends BaseInstruction {
     labels?: ILabelOffsets
   ): Halfword[] {
     checkOptionCount(options, 1)
-    const offset = labels
-      ? Word.fromUnsignedInteger(labels[options[0]].value)
-      : Word.fromUnsignedInteger(0x0000)
+    const offset = mapLabelOffset(options[0], labels)
     const offsetBinaryString = offset.toBinaryString()
     const sBit = offset.isBitSet(24)
     const i1Bit = offset.isBitSet(23)
@@ -48,11 +52,11 @@ export class BlInstruction extends BaseInstruction {
     )
 
     let opcodeSecondPart: Halfword = create(this.patternSecondPart)
-    if (i1Bit == sBit) {
+    if (i1Bit === sBit) {
       opcodeSecondPart = opcodeSecondPart.setBit(13)
     }
 
-    if (i2Bit == sBit) {
+    if (i2Bit === sBit) {
       opcodeSecondPart = opcodeSecondPart.setBit(11)
     }
 

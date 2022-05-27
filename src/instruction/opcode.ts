@@ -1,7 +1,8 @@
 import { Register, Registers } from 'board/registers'
 import { InstructionError } from 'instruction/error'
+import { ILabelOffsets } from 'instruction/interfaces'
 import { $enum } from 'ts-enum-util'
-import { Halfword } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 
 /**
  * If pattern length is not valid throws an error since should never happen.
@@ -201,9 +202,9 @@ export function createImmediateBits(
     if (optionValue % (lsbZeroBitCount * 2) !== 0) {
       throw new InstructionError(
         `Immediate offset not ${
-          lsbZeroBitCount == 2
+          lsbZeroBitCount === 2
             ? 'word'
-            : lsbZeroBitCount == 1
+            : lsbZeroBitCount === 1
             ? 'halfword'
             : lsbZeroBitCount + ' bytes'
         } aligned`
@@ -285,14 +286,14 @@ export function checkBracketsOnLastOptions(
       'Provided option count is more than one apart or max is smaller than min'
     )
   }
-  if (optionCountMin != optionCountMax && options.length == optionCountMin) {
+  if (optionCountMin !== optionCountMax && options.length === optionCountMin) {
     if (!registerStringEnclosedInBrackets(options[optionCountMin - 1])) {
       throw new InstructionError(
         `Opening or closing bracket missing for ${optionCountMin}. param`
       )
     }
   } else if (
-    options.length == optionCountMax &&
+    options.length === optionCountMax &&
     !registerStringHasBrackets(
       options[optionCountMax - 2],
       options[optionCountMax - 1]
@@ -434,4 +435,24 @@ export function isLiteralString(option: string): boolean {
   } catch (e) {
     return !option.includes('[') && !option.includes(']')
   }
+}
+
+/**
+ * Returns the offset value to use for the provided label option.
+ * Throws an error if labels are provided but given was is not defined
+ *
+ * @param labelOption string provided as param which could be literal
+ * @param labels the labels with their offsets relative to this instruction
+ * @returns
+ */
+export function mapLabelOffset(
+  labelOption: string,
+  labels?: ILabelOffsets
+): Word {
+  if (labels && !labels[labelOption]) {
+    throw new InstructionError(`Symbol '${labelOption}' is not defined.`)
+  }
+  return labels
+    ? Word.fromUnsignedInteger(labels[labelOption].value)
+    : Word.fromUnsignedInteger(0)
 }

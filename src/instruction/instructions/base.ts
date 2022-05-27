@@ -30,7 +30,7 @@ export abstract class BaseInstruction implements IInstruction {
     registers: Registers,
     memory: IMemory
   ): void {
-    if (opcode.length != this.opcodeLength) {
+    if (opcode.length !== this.opcodeLength) {
       throw new Error('Invalid opcode length.')
     }
     this.onExecuteInstruction(opcode, registers, memory)
