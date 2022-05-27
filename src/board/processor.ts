@@ -74,10 +74,9 @@ export class Processor extends EventEmitter<ProcessorEvents> {
    *
    * @returns true when the step was executed sucessfully, otherwise false
    */
-  public step(): boolean {
-    if (this.isRunning()) return false
+  public step(): void {
+    if (this.isRunning()) return
     this.cycle()
-    return true
   }
 
   /**
