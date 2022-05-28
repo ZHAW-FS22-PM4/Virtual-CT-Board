@@ -6,6 +6,7 @@
 \usepackage{amsmath,amssymb,amsthm} % For including math equations, theorems, symbols, etc
 \usepackage{quotes} % for quotation marks
 \usepackage{caption}
+\usepackage[table]{xcolor}
 \captionsetup{font=footnotesize}
 
 \title{Fachartikel}
@@ -40,6 +41,13 @@
 \section*{Abstract}
 \thispagestyle{empty}
 
+% Einleitung
+% Methodische Einordnung der Arbeit
+% Vorgehen
+% Ergebnis
+
+Ein fester Bestandteil des Informatikstudiums an der ZHAW ist das Modul \glqq Computertechnik 1\grqq, in dem die Studierenden das hardwarenahe Programmieren erlernen. Dafür wird ihnen ein physisches Microcontroller-Board zur Verfügung gestellt, das für die Durchführung der zum Modul gehörigen Praktika notwendig ist. Das Projekt \glqq Virtual CT Board\grqq{} strebt die Virtualisierung dieses physischen Boards an, um den Studierenden eine handliche, digitale Version davon zur Verfügung zu stellen. Dazu wurde eine Software gebaut, die als Web-Applikation funktioniert und in einem Browser verwendbar ist. Das Projekt hatte zum Ziel, so viele Funktionen des physischen CT Boards umzusetzen, wie während der festgesetzten Projektdauer möglich sein würden, wobei im Zwei-Wochen-Rhythmus Reviews und Plannings gemäss der agilen SCRUM-Methode abgehalten wurden. Nachdem die Grundarchitektur erstellt war, wurden darauf aufbauend die einzelnen Funktionen des Boards und des dazugehörigen Code-Editors umgesetzt. Im Zentrum standen dabei die Lauffähigkeit von Assembly-Code und die diversen Input-/Output-Möglichkeiten des Boards.
+\newline Das vorliegend umgesetzte \glqq Virtual CT Board\grqq{} ist ein Prototyp, der noch der einen oder anderen Ergänzung bedarf, bevor er das physische CT Board vollständig ersetzen kann. Der Grundstein ist jedoch gelegt: Die Hälfte der 12 CT1-Praktika können bereits mit dem \glqq Virtual CT Board\grqq{} durchgeführt werden. 
 
 
 \newpage
@@ -55,7 +63,7 @@
 
 \subsection{Die Idee}
 
-Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den ersten Jahren gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), die die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein sogenanntes CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
+Jedes Jahr beginnen fast 200 Studentinnen und Studenten ein Bachelorstudium der Informatik an der ZHAW. Zu ihren Pflichtmodulen in den höheren Semestern gehört die Veranstaltung \glqq Computertechnik 1\grqq (nachfolgend CT1 genannt), welche die grundlegende Funktionsweise eines Computers an der Schnittstelle zwischen Hard- und Software behandelt. Im dazugehörigen Praktikum probieren die Studierenden das erworbene Wissen selbst aus und benutzen dabei als Hardware ein Microcontroller-Board, kurz CT Board, das über einen Prozessor und einen Speicher verfügt und diverse Input-/Output-Möglichkeiten bereitstellt (siehe Abbildung \ref{ctboard}). Das CT Board wird mit einem Kabel an den Computer angeschlossen und so mit der zugehörigen Software verbunden, die Befehle an das Board übermitteln kann. Damit sie die Übungen auch zuhause durchführen können, leihen die Studierenden zu Beginn des Semesters ein solches CT Board von der Hochschule aus. Dieses muss von ihnen nach Hause transportiert und am Ende des Jahres wieder zurückgebracht werden.
 
 \begin{figure}[h]
 \includegraphics[width=10cm]{ctboard}
@@ -79,13 +87,14 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 \paragraph{Für die Studierenden:}
 \begin{itemize}
 \item[$-$] Die Studierenden des CT1-Moduls haben eine elegante Alternative zu den physischen CT Boards und müssen jene nicht mehr nach Hause tragen und für ihre Erhaltung besorgt sein.
-\item[$-$] Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen Strom und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
-\item[$-$] Alle Praktika des CT1-Moduls lassen sich mit dem \glqq Virtual CT Board\grqq{} umsetzen.
+\item[$-$] Im Gegensatz zum bisherigen physischen CT Board benötigt das \glqq Virtual CT Board\grqq{} keinen direkten Stromanschluss und lässt sich daher überall - also beispielsweise auch unterwegs - direkt auf dem Laptop starten.
+\item[$-$] Viele der Praktika des CT1-Moduls lassen sich mit dem \glqq Virtual CT Board\grqq{} umsetzen.
 \end{itemize}
 
+\newpage
 \paragraph{Für die ZHAW:}
 \begin{itemize}
-\item[$-$] Die Lizenz für die vorliegend entwickelte Software ist um einiges preiswerter als die Beschaffung physischer CT Boards. Ausserdem müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
+\item[$-$] Die vorliegend entwickelte Software ist ein Open-Source-Projekt, weshalb der ZHAW keine Kosten für ihren Erwerb entstehen, im Gegensatz zur Beschaffung physischer CT Boards. Ausserdem müssen alte oder defekte Geräte nicht mehr ausgetauscht oder repariert werden.
 \item[$-$] Die Dozierenden müssen für die Praktika nicht mehr mühsam Keil-Projekte konfigurieren. Es genügt, die Assembler-Files ins \glqq Virtual CT Board\grqq{} hochzuladen.
 \end{itemize}
 
@@ -94,10 +103,10 @@ Zwei Zielgruppen werden als Kundschaft anvisiert, nämlich die Informatikstudier
 Es existieren bereits verschiedene Produkte, die den Studenten des CT1-Moduls beim Erlernen ihrer Fertigkeiten behilflich sein können.
 
 \paragraph{Virtuelle Emulatoren}
-Der Emulator VisUAL von Alman Sarif soll hier stellvertretend für andere virtuelle Emulatoren für die Assembly-Programmiersprache vorgestellt werden. Er wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
+Der Emulator VisUAL von Salman Arif (2015) soll hier stellvertretend für andere virtuelle Emulatoren für die Assembly-Program-miersprache vorgestellt werden. Er wurde ebenfalls für ein Einführungsmodul in die Computerarchitektur entwickelt, allerdings am Imperial College in London. Die Software ermöglicht das Schreiben von Assembly-Code in einem Editor-Fenster, der dann via Button ausgeführt wird und dessen Auswirkungen auf die Register und Flags rechts davon angezeigt werden (siehe Abbildung \ref{emulator}).
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{visual_emulator}
-\caption{Der Emulator VisUAL samt seiner grafischen Oberfläche. (Quelle: https://salmanarif.bitbucket.io/visual/index.html)}
+\caption{Der Emulator VisUAL samt seiner grafischen Oberfläche (Arif 2015).}
 \label{emulator}
 \end{figure}
 Der Unterschied zum \glqq Virtual CT Board\grqq{} besteht darin, dass VisUAL und auch andere Assembler-Emulatoren nicht auf das CT Board ausgerichtet sind, das die CT1-Praktika verlangen. Es gibt bei diesen Programmen keine Visualisierung von Hardware-Bestandteilen, mit Ausnahme der Register und Flags. Das bedeutet, dass diese Emulatoren zwar nützlich sind, um in Assembler zu programmieren, jedoch nicht für die Durchführung der CT1-Praktika an der ZHAW ausreichen. Das \glqq Virtual CT Board\grqq{} füllt diese Lücke, indem auch die fürs CT1-Modul notwendigen Hardware-Bestandteile des physischen CT Boards visualisiert werden und dieselben Input-/Output-Möglichkeiten bestehen wie beim realen.
@@ -113,24 +122,28 @@ Trotz ausführlicher und sorgfältiger technischer Analyse des Funktionsumfangs 
 \item[$-$] Gewisse Funktionen können virtuell nicht gleich nachgebaut werden. Insbesondere die Simulation von Interrupts könnte eine Herausforderung darstellen.
 \item[$-$] Der Funktionsumfang des virtuellen Boards könnte aufgrund knapper Projektlaufzeit eingeschränkt werden. 
 \item[$-$] Aufgrund falscher Implementierung können unvorhergesehene Fehler auftreten. Das virtuelle Board wurde nicht mehrere Jahre getestet wie das phyische Board.
-\item[$-$] Das physische Board besitzt im Vergleich zum Browsercache ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
+\item[$-$] Das physische Board besitzt im Vergleich zum Browser ein grosses Memory. Die Software könnte deshalb auf schwächeren Laptops der Studierenden nicht richtig funktionieren. 
 \end{itemize}
 
 \section{Resultate}
 
-Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{} ist die Grafikoberfläche unseres Endprodukts ersichtlich. Im Nachfolgenden werden die in der virtualisierten Variante umgesetzten Funktionen des physischen CT Boards erläutert.
+Das Projekt wurde in der Programmiersprache TypeScript als Web-Applikation umgesetzt. Das \glqq Virtual CT Board\grqq{} ist somit in einem Browser darstell- und benutzbar. Auf der linken Seite befindet sich der Texteditor für die Eingabe des Assembly-Codes, auf der rechten Seite die leicht schematisierte Abbildung des CT Boards mit den bedienbaren Input-Switches und den synchronen Output-Anzeigen. Auch die Register- und Memory-Inhalte werden in eigenen Containern abgebildet, wobei das Memory durchsucht und schrittweise durchgeklickt werden kann. In der Abbildung \ref{final} ist die Grafikoberfläche unseres Endprodukts ersichtlich. Darin sind die verschiedenen Bereiche und Elemente des User Interface für die erleichterte Orientierung mit Namen versehen. Im Nachfolgenden werden dann die in der virtualisierten Variante umgesetzten Funktionen des physischen CT Boards genauer erläutert.
 
-%%% Screenshot des Virtual CT Boards einfügen
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{final}
+\caption[size=8pt]{Die Grafikoberfläche des virtuellen CT Boards. Die einzelnen Elemente und Bereiche sind in gelben Sprechblasen mit Namen versehen.}
+\label{final}
+\end{figure}
 
 \subsection{Funktionen des \glqq Virtual CT Boards\grqq}
 
-Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards gemäss der vermittelten Inhalte der CT1-Vorlesung so simpel wie möglich und so genau wie nötig nachzubauen.
+Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards gemäss den vermittelten Inhalten der CT1-Vorlesung so simpel wie möglich und so genau wie nötig nachzubauen.
 
-\paragraph{Prozessor} Wie auch das physische CT Board verfügt das virtuelle Board über einen Prozessor samt \emph{Arithmetic Logic Unit} und Registern. Dieser bildet das Kernstück der Anwendung, denn dort finden die Ausführung des Programmcodes und die Berechnungen statt. 
+\paragraph{Prozessor} Wie auch das physische CT Board verfügt das virtuelle Board über einen Prozessor samt \emph{Arithmetic Logic Unit} und Registern. Dieser bildet das Kernstück der Anwendung, denn dort finden die Ausführung des Programmcodes und die Berechnungen statt. Die Register samt Flags werden auf dem \glqq Virtual CT Board\grqq{} angezeigt (siehe Abbildung \ref{final}).
 
-\paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form des sogenannten Opcodes sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen.
+\paragraph{Memory} Im Memory werden sämtliche Daten abgelegt: Dazu gehören die Programm-Instruktionen in Form von Maschinencode sowie die Daten, die durch die Inputfunktionen des Boards hereinkommen. Auch das Memory ist Teil des User Interface (siehe Abbildung \ref{final}).
 
-\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die \emph{Dip Switches} und die Tx-Buttons als binäre On-/Off-Schalter und der \emph{Rotary Switch}, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Symbole und das LCD-Display für Text- und Farbanzeige zur Verfügung.
+\paragraph{Input/Output} Folgende Komponenten stellen Input-Funktionen bereit: Die DIP-Schalter und die Tx-Buttons als binäre On-/Off-Schalter und der Rotary-Schalter, der kreisum gedreht werden kann. Als Output-Komponenten stehen die LED-Lämpchen, das Sieben-Segment-Display für die Darstellung vierstelliger Hex-Zahlen und das LCD-Display für Text- und Farbanzeige zur Verfügung. Die Lage dieser Komponenten auf dem \glqq Virtual CT Board\grqq{} ist in der Abbildung \ref{final} dargestellt.
 
 \paragraph{Assembler-Befehle} Alle für die CT1-Praktika relevanten Instruktionen der Assembler-Sprache wurden umgesetzt und sind im \glqq Virtual CT Board\grqq{} verwendbar. Dazu gehören:
 \begin{itemize}
@@ -138,46 +151,83 @@ Der Ansatz des Entwicklungsteams bestand darin, die Komponenten des CT Boards ge
 	\item[$-$] arithmetische Operationen: \emph{Add}, \emph{Subtract} und \emph{Multiply}
 	\item[$-$] \emph{Logical} und \emph{Shift/rotate} Operationen
 	\item[$-$] Vergleichsoperationen: \emph{Compare} und \emph{Test}
-	\item[$-$] Stack-Operationen: \emph{Push} und \emph{Pop} %%% Wurden diese tatsächlich noch umgesetzt?
+	\item[$-$] Stack-Operationen: \emph{Push} und \emph{Pop}
 	\item[$-$] Kontrollstrukturen: \emph{Conditional} und \emph{Unconditional branches}
 \end{itemize}
 
-\paragraph{Debugging} Der Debug-Modus erlaubt es, Schritt für Schritt durch den Programmcode zu gehen und jede Zeile einzeln auszuführen.
+\paragraph{Debugging} Der Step-Modus erlaubt es, Schritt für Schritt durch den Programmcode zu gehen und jede Zeile einzeln auszuführen.
 
 \subsection{Ausführbare Praktika}
 
-%%% Welche Praktika sind ausführbar? Sind überhaupt welche ausführbar?
+Die manuellen Tests haben ergeben, dass von den insgesamt 12 Praktika 6 ausführbar sind. Die Tabelle \ref{praktika} gibt einen Überblick über den Lauffähigkeitsstatus der Praktika und listet bei jenen, die noch nicht ausführbar sind, die fehlenden Funktionen auf.
+
+\rowcolors{2}{gray!10}{gray!40}
+\begin{table}[ht]
+\begin{tabular}{ | l | c | c |}
+	\hline
+    \textbf{Praktikum} & \textbf{Lauffähigkeit} & \textbf{Fehlende Funktion} \\
+	\hline
+    1 Target System & Nein & C Code \\
+	\hline
+    2 Bit Manipulations & Nein & C Code \\
+\hline
+    3 Introduction to Assembly & Ja* & - \\
+\hline
+    4 Data Transfer Commands & Ja & - \\
+\hline
+    5 Arithmetic Operations & Ja & - \\
+\hline
+    6 ALU and Branch Instructions & Ja & - \\
+\hline
+    7 Control Structures & Ja & - \\
+\hline
+    8 Structured Programming in Assembly & Ja & - \\
+\hline
+    9 Subroutines and Parameter Passing & Nein & Potentiometer \\
+\hline
+    10 Multiplication & Nein** & Linker \\
+\hline
+    11 Modular Coding and Linking & Nein & C Code \\
+\hline
+    12 Interrupt & Nein & Interrupts \\
+\hline
+\end{tabular}
+* Vorgegebener Code muss leicht angepasst werden.
+\newline** Wäre nach einigen Anpassungen am Programmrahmen ebenfalls lauffähig.
+\caption[size=8pt]{Lauffähigkeitsstatus aller Praktika des CT1-Moduls auf dem virtuellen CT Board.}
+\label{praktika}
+\end{table}
 
 \section{Diskussion und Ausblick}
 
-Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Die Studierenden können nach und nach auf das \glqq Virtual CT Board\grqq{} umsteigen - wenn auch noch nicht vollständig. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, könnten im CT1-Unterricht die physischen Boards neben dem virtuellen eingesetzt und damit die bestehenden Ressourcen ideal ausgeschöpft werden. Falls die ZHAW Interesse daran hat, das \glqq Virtual CT Board\grqq{} weiter zu entwickeln und auch finanziell zu unterstützen, bietet sich die Umsetzung folgender Punkte an, für die die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat:
+Die aktuelle Version der Software ermöglicht es, einige der Praktika des CT1-Moduls virtuell durchzuführen. Damit ist der Grundstein für die Ersetzung der physischen CT Boards gelegt. Die Studierenden können nach und nach auf das \glqq Virtual CT Board\grqq{} umsteigen - wenn auch noch nicht vollständig. Bis alle Praktika von CT1 auf dem \glqq Virtual CT Board\grqq{} lauffähig sind, könnten im CT1-Unterricht die physischen Boards neben dem virtuellen eingesetzt und damit die bestehenden Ressourcen ideal ausgeschöpft werden. Falls die ZHAW Interesse daran hat, das \glqq Virtual CT Board\grqq{} weiter zu entwickeln und auch finanziell zu unterstützen, bietet sich die Umsetzung folgender Punkte an, für welche die aufgewendete Zeit im Rahmen des PM4-Moduls nicht ausgereicht hat (siehe hierzu auch Tabelle \ref{praktika}):
 
 \begin{itemize}
-	\item[$-$] Einige Assembler-Funktionen und Befehle wurden noch nicht umgesetzt, insbesondere die Interrupts, die in späteren CT1-Praktika behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
-	\item[$-$] Für die ersten beiden Praktika müsste auch C-Code interpretier- und ausführbar sein.
+	\item[$-$] Einige Assembler-Funktionen wurden noch nicht umgesetzt, insbesondere die Interrupts, die im Praktikum 12 behandelt werden, aber auch kleinere Befehle wie die \emph{Extend-} und \emph{Reverse-}Operationen.
+	\item[$-$] Für die ersten beiden Praktika sowie Praktikum 9 müsste auch C-Code interpretier- und ausführbar sein.
+	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können. Dazu müsste ein Linker implementiert werden.
+	\item[$-$] Für das Praktikum 9 wäre die Implementation des Potentiometers vonnöten.
 	\item[$-$] Idealerweise sollte die Applikation das Laden und Speichern von Assembler-Files ermöglichen, damit die Studierenden ihre Arbeit jederzeit sichern und fortsetzen können.
-	\item[$-$] Um auch komplexere Praktika durchführbar zu machen, muss der Text Editor mehrere Assembler-Files laden, anzeigen und ausführen können.
-
-%%% Allenfalls Weiteres
 
 \end{itemize}
 
 
-Sollte die ZHAW zudem eine Erweiterung der Software anstreben, könnten zukünftig auch folgende Funktionalitäten umgesetzt werden: 
+{\parindent0pt Sollte die ZHAW zudem eine Erweiterung der Software anstreben, könnten zukünftig auch folgende Funktionalitäten umgesetzt werden: }
 \begin{itemize}
 \item[$-$] Implementierung einer vorbereiteten Bibliothek aller Praktika und Übungen des Moduls \glqq Computertechnik 1\grqq. 
 \item[$-$] Implementierung der Funktionalitäten, welche für das Modul \glqq Computertechnik 2\grqq{} vorausgesetzt sind. 
 \item[$-$] Implementierung einer virtuellen Darstellung von Signalen auf einem Oszilloskop.
 \end{itemize}
 
+\newpage
 \section{Literaturverzeichnis}
 
 \begin{itemize}
 
-\item[$-$] \emph{https://ennis.zhaw.ch} [abgerufen am 30.03.2022]
-\item[$-$] \emph{https://salmanarif.bitbucket.io/visual/index.html}. [abgerufen am 30.03.2022]
-\item[$-$] West, Steve (2018). Meeting Millennial Expectations In These Four Areas Of Technology. \emph{https://www.forbes.com/sites/forbestechcouncil/2018/06/28/meeting-millennial-expectations-in-these-four-areas-of-technology/?sh=5df2822f4ffc} [Abgerufen am 25.04.2022]
-\item[$-$] Wirthman, Lisa (2020). How Tech-Savvy Millennials Are Driving the Digital Workplace. \emph{https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/} [Abgerufen am 25.04.2022]
+\item[$-$] (o.N). (o.D). \emph{InES CT Board} [Online]. https://ennis.zhaw.ch [Stand: 30.03.2022]
+\item[$-$] S. Arik. (2015). \emph{VisUAL. A highly visual ARM emulator} [Online]. https://salmanarif.bitbucket.io/visual/index.html. [Stand: 30.03.2022]
+\item[$-$] S. West. (2018). \emph{Meeting Millennial Expectations In These Four Areas Of Technology} [Online]. https://www.forbes.com/sites/forbestechcouncil/2018/06/28/ meeting-millennial-expectations-in-these-four-areas-of-technology/?sh=5df2822f4ffc [Stand: 25.04.2022]
+\item[$-$] L. Wirthman. (2020). \emph{How Tech-Savvy Millennials Are Driving the Digital Workplace} [Online]. https://www.dell.com/en-us/perspectives/how-tech-savvy-millennials-are-driving-the-digital-workplace/ [Stand: 25.04.2022]
 
 \end{itemize}
 
