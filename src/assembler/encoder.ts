@@ -68,8 +68,6 @@ export function encode(code: ICodeFile): IELF {
     writer.startSection(type, area.name)
     const pool: ILiteralPool = { entries: [] }
     for (const instruction of area.instructions) {
-      writer.mapLine(instruction.line)
-      addLabel(writer, instruction)
       replaceEquConstants(instruction, equConstants)
       try {
         writeInstruction(writer, instruction, pool)
@@ -153,30 +151,6 @@ function addSymbols(writer: FileWriter, symbols: ISymbols): void {
 }
 
 /**
- * Adds the label of the specified instruction (if any) to
- * the file.
- *
- * @param writer the file writer
- * @param instruction the instruction
- */
-function addLabel(writer: FileWriter, instruction: IInstruction): void {
-  if (instruction.label) {
-    try {
-      writer.addSymbol({
-        type: SymbolType.Address,
-        name: instruction.label,
-        section: writer.getCurrentSection().name,
-        value: Word.fromUnsignedInteger(writer.getCurrentSectionOffset())
-      })
-    } catch (e: any) {
-      if (e instanceof Error) {
-        throw new AssemblerError(e.message, instruction.line)
-      }
-    }
-  }
-}
-
-/**
  * Writes the specified instruction to the file.
  *
  * @param writer the file writer
@@ -227,6 +201,8 @@ function writePseudoInstruction(
   const opcode = encoder.encodeInstruction(options)
   const bytes = opcode.flatMap((x) => x.toBytes())
   writer.align(2)
+  writer.mapLine(instruction.line)
+  writer.addLabel(instruction.label, instruction.line)
   pool.entries.push({
     instruction: {
       name: instruction.name,
@@ -279,12 +255,16 @@ function writeDataInstruction(
   if (isSymbolDataInstruction(instruction)) {
     const bytes = Word.fromUnsignedInteger(0x0).toBytes()
     writer.align(4)
+    writer.mapLine(instruction.line)
+    writer.addLabel(instruction.label, instruction.line)
     for (const option of instruction.options) {
       writer.addDataRelocation(option.trim(), bytes.length, instruction.line)
       writer.writeBytes(bytes)
     }
     return
   } else if (instruction.name === 'ALIGN') {
+    writer.mapLine(instruction.line)
+    writer.addLabel(instruction.label, instruction.line)
     const alignment =
       instruction.options.length > 0 ? Number(instruction.options[0]) : 4
     writer.align(alignment)
@@ -348,6 +328,8 @@ function writeDataInstruction(
       break
   }
   writer.align(alignment)
+  writer.mapLine(instruction.line)
+  writer.addLabel(instruction.label, instruction.line)
   writer.writeBytes(bytes)
 }
 
@@ -368,6 +350,8 @@ function writeCodeInstruction(
   const opcode = encoder.encodeInstruction(instruction.options)
   const bytes = opcode.flatMap((x) => x.toBytes())
   writer.align(2)
+  writer.mapLine(instruction.line)
+  writer.addLabel(instruction.label, instruction.line)
   if (encoder.needsLabels) {
     writer.addCodeRelocation(instruction, bytes.length)
   }
