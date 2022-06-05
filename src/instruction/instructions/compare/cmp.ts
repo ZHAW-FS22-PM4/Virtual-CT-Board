@@ -20,7 +20,7 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
   public pattern: string = '0100001010XXXXXX'
   private rnPattern: string = '0100001010000XXX'
   private rmPattern: string = '0100001010XXX000'
-  private optionCount: number = 2
+  private expectedOptionCount: number = 2
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
@@ -30,7 +30,7 @@ export class CmpInstructionWithLowRegisters extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.optionCount)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
@@ -57,7 +57,7 @@ export class CmpInstructionWithHighRegisters extends BaseInstruction {
   public pattern: string = '01000101XXXXXXXX'
   private rnPattern: string = '01000101X0000XXX'
   private rmPattern: string = '010001010XXXX000'
-  private optionCount: number = 2
+  private expectedOptionCount: number = 2
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
@@ -67,7 +67,7 @@ export class CmpInstructionWithHighRegisters extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.optionCount)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rnPattern, createRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, createRegisterBits(options[1]))
@@ -94,7 +94,7 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
   public pattern: string = '00101XXXXXXXXXXX'
   private rnPattern: string = '00101XXX00000000'
   private immPattern: string = '00101000XXXXXXXX'
-  private optionCount: number = 2
+  private expectedOptionCount: number = 2
   private instrWithSameName: BaseInstruction[] = [
     new CmpInstructionWithLowRegisters(),
     new CmpInstructionWithHighRegisters()
@@ -108,7 +108,7 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.optionCount)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     let immBits: Halfword = createImmediateBits(options[1], 8)
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))

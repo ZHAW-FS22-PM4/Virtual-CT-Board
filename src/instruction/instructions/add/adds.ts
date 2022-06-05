@@ -143,7 +143,8 @@ export class AddsImmediate8Instruction extends BaseInstruction {
         this.expectedOptionCountMin,
         this.expectedOptionCountMax
       ) &&
-      isImmediate(options[options.length - 1])
+      isImmediate(options[options.length - 1]) &&
+      (options.length === 2 || options[0] === options[1])
     )
   }
 

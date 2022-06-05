@@ -16,10 +16,10 @@ export class CmnInstruction extends BaseInstruction {
   public pattern: string = '0100001011XXXXXX'
   public rnPattern: string = '0100001011000XXX'
   public rmPattern: string = '0100001011XXX000'
-  public optionCount: number = 2
+  public expectedOptionCount: number = 2
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.optionCount)
+    checkOptionCount(options, this.expectedOptionCount)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rnPattern, createLowRegisterBits(options[0]))
     opcode = setBits(opcode, this.rmPattern, createLowRegisterBits(options[1]))
