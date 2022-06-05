@@ -95,12 +95,15 @@ export class CmpInstructionWithImmediateOffset extends BaseInstruction {
   private rnPattern: string = '00101XXX00000000'
   private immPattern: string = '00101000XXXXXXXX'
   private optionCount: number = 2
+  private instrWithSameName: BaseInstruction[] = [
+    new CmpInstructionWithLowRegisters(),
+    new CmpInstructionWithHighRegisters()
+  ]
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isLowRegister(options[0]) &&
-      isImmediate(options[1])
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 

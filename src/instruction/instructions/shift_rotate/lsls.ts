@@ -20,9 +20,9 @@ export class LslsRegisterInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000010000XXX'
   private rmPattern: string = '0100000010XXX000'
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       options.every((x) => !isImmediate(x))
     )
   }
@@ -70,11 +70,12 @@ export class LslsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0000000000000XXX'
   private rmPattern: string = '0000000000XXX000'
   private immPattern: string = '00000XXXXX000000'
+  private instrWithSameName: BaseInstruction[] = [new LslsRegisterInstruction()]
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[options.length - 1])
+      super.canEncodeInstruction(name, options) &&
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 

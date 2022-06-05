@@ -20,9 +20,9 @@ export class AsrsRegisterInstruction extends BaseInstruction {
   private rdnPattern: string = '0100000100000XXX'
   private rmPattern: string = '0100000100XXX000'
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       options.every((x) => !isImmediate(x))
     )
   }
@@ -77,11 +77,12 @@ export class AsrsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0001000000000XXX'
   private rmPattern: string = '0001000000XXX000'
   private immPattern: string = '00010XXXXX000000'
+  private instrWithSameName: BaseInstruction[] = [new AsrsRegisterInstruction()]
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[options.length - 1])
+      super.canEncodeInstruction(name, options) &&
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 

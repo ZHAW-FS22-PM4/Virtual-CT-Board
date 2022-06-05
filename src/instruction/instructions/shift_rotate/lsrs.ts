@@ -59,9 +59,9 @@ export class LsrsRegisterInstruction extends BaseInstruction {
     registers.setFlags({ C: isCarrySet })
   }
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
+      super.canEncodeInstruction(name, options) &&
       options.every((x) => !isImmediate(x))
     )
   }
@@ -73,11 +73,12 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0000100000000XXX'
   private rmPattern: string = '0000100000XXX000'
   private immPattern: string = '00001XXXXX000000'
+  private instrWithSameName: BaseInstruction[] = [new LsrsRegisterInstruction()]
 
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
+  public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
-      super.canEncodeInstruction(commandName, options) &&
-      isImmediate(options[options.length - 1])
+      super.canEncodeInstruction(name, options) &&
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
     )
   }
 
