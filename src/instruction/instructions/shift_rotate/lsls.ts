@@ -70,14 +70,9 @@ export class LslsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0000000000000XXX'
   private rmPattern: string = '0000000000XXX000'
   private immPattern: string = '00000XXXXX000000'
-  private instrWithSameName: BaseInstruction[] = [new LslsRegisterInstruction()]
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
+  protected instrWithSameName: BaseInstruction[] = [
+    new LslsRegisterInstruction()
+  ]
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)

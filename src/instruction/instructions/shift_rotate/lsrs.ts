@@ -73,14 +73,9 @@ export class LsrsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0000100000000XXX'
   private rmPattern: string = '0000100000XXX000'
   private immPattern: string = '00001XXXXX000000'
-  private instrWithSameName: BaseInstruction[] = [new LsrsRegisterInstruction()]
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
+  protected instrWithSameName: BaseInstruction[] = [
+    new LsrsRegisterInstruction()
+  ]
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)

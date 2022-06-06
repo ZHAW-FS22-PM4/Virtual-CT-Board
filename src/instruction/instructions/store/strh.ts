@@ -27,16 +27,9 @@ export class StrhImmediate5OffsetInstruction extends BaseInstruction {
   private immPattern: string = '10000XXXXX000000'
   private expectedOptionCountMin: number = 2
   private expectedOptionCountMax: number = 3
-  private instrWithSameName: BaseInstruction[] = [
+  protected instrWithSameName: BaseInstruction[] = [
     new StrhRegisterOffsetInstruction()
   ]
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(

@@ -91,17 +91,10 @@ export class SubsImmediate3Instruction extends BaseInstruction {
   private rnPattern: string = '0001111000XXX000'
   private imm3Pattern: string = '0001111XXX000000'
   private expectedOptionCount: number = 3
-  private instrWithSameName: BaseInstruction[] = [
+  protected instrWithSameName: BaseInstruction[] = [
     new SubsRegistersInstruction(),
     new SubsImmediate8Instruction()
   ]
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionCount)

@@ -77,14 +77,9 @@ export class AsrsImmediateInstruction extends BaseInstruction {
   private rdPattern: string = '0001000000000XXX'
   private rmPattern: string = '0001000000XXX000'
   private immPattern: string = '00010XXXXX000000'
-  private instrWithSameName: BaseInstruction[] = [new AsrsRegisterInstruction()]
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
+  protected instrWithSameName: BaseInstruction[] = [
+    new AsrsRegisterInstruction()
+  ]
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, 2, 3)
