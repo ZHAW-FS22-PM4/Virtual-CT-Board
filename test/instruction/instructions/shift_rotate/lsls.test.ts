@@ -23,6 +23,49 @@ beforeEach(() => {
   registers.writeRegister(Register.R7, Word.fromUnsignedInteger(0x00))
 })
 
+describe('test canEncodeInstruction function', () => {
+  it('should return correct boolean for LSLS with registers', () => {
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R1', 'R2', 'R2'])
+    ).toBe(true)
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R9', 'R9', 'R0'])
+    ).toBe(true)
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R1', 'R2', '#4'])
+    ).toBe(false)
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R7', '#4'])
+    ).toBe(false)
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R3', 'R1'])
+    ).toBe(true)
+    expect(
+      lslsRegisterInstruction.canEncodeInstruction('LSLS', ['R4', 'R4', 'R2'])
+    ).toBe(true)
+  })
+  it('should return correct boolean for LSLS with immediate', () => {
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R1', 'R2', 'R2'])
+    ).toBe(false)
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R9', 'R9', 'R0'])
+    ).toBe(false)
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R1', 'R2', '#4'])
+    ).toBe(true)
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R7', '#4'])
+    ).toBe(true)
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R3', 'R1'])
+    ).toBe(false)
+    expect(
+      lslsImmediateInstruction.canEncodeInstruction('LSLS', ['R4', 'R4', 'R2'])
+    ).toBe(false)
+  })
+})
+
 describe('test encodeInstruction function for LSLS with registers', () => {
   it('should create correct opcode for LSLS R1, R1, R2', () => {
     let registerArray = ['R1', 'R1', 'R2']

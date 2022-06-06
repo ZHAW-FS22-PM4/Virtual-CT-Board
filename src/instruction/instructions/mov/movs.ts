@@ -65,14 +65,9 @@ export class MovsImmediate8Instruction extends BaseInstruction {
   private rdPattern: string = '00100XXX00000000'
   private immPattern: string = '00100000XXXXXXXX'
   private expectedOptionCount: number = 2
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionCount) &&
-      isImmediate(options[1])
-    )
-  }
+  protected instrWithSameName: BaseInstruction[] = [
+    new MovsRegistersInstruction()
+  ]
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(options, this.expectedOptionCount)

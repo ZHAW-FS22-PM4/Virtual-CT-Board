@@ -24,17 +24,27 @@ export class AddsRegistersInstruction extends BaseInstruction {
   private rdPattern: string = '0001100000000XXX'
   private rnPattern: string = '0001100000XXX000'
   private rmPattern: string = '0001100XXX000000'
+  private expectedOptionCountMin: number = 2
+  private expectedOptionCountMax: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, 2, 3) &&
+      isOptionCountValid(
+        options,
+        this.expectedOptionCountMin,
+        this.expectedOptionCountMax
+      ) &&
       options.every((x) => !isImmediate(x))
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, 2, 3)
+    checkOptionCount(
+      options,
+      this.expectedOptionCountMin,
+      this.expectedOptionCountMax
+    )
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
     let rnBits = createLowRegisterBits(options[options.length - 2])
@@ -72,19 +82,14 @@ export class AddsImmediate3Instruction extends BaseInstruction {
   private rdPattern: string = '0001110000000XXX'
   private rnPattern: string = '0001110000XXX000'
   private immPattern: string = '0001110XXX000000'
-  private expectedOptionsCount: number = 3
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, this.expectedOptionsCount) &&
-      isImmediate(options[2]) &&
-      options[0] !== options[1]
-    )
-  }
+  private expectedOptionCount: number = 3
+  protected instrWithSameName: BaseInstruction[] = [
+    new AddsRegistersInstruction(),
+    new AddsImmediate8Instruction()
+  ]
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, this.expectedOptionsCount)
+    checkOptionCount(options, this.expectedOptionCount)
     let immBits = createImmediateBits(options[2], 3)
     let opcode: Halfword = create(this.pattern)
     opcode = setBits(opcode, this.rdPattern, createLowRegisterBits(options[0]))
@@ -120,17 +125,28 @@ export class AddsImmediate8Instruction extends BaseInstruction {
   public pattern: string = '00110XXXXXXXXXXX'
   private rdnPattern: string = '00110XXX00000000'
   private immPattern: string = '00110000XXXXXXXX'
+  private expectedOptionCountMin: number = 2
+  private expectedOptionCountMax: number = 3
 
   public canEncodeInstruction(name: string, options: string[]): boolean {
     return (
       super.canEncodeInstruction(name, options) &&
-      isOptionCountValid(options, 2, 3) &&
-      isImmediate(options[options.length - 1])
+      isOptionCountValid(
+        options,
+        this.expectedOptionCountMin,
+        this.expectedOptionCountMax
+      ) &&
+      isImmediate(options[options.length - 1]) &&
+      (options.length === 2 || options[0] === options[1])
     )
   }
 
   public encodeInstruction(options: string[]): Halfword[] {
-    checkOptionCount(options, 2, 3)
+    checkOptionCount(
+      options,
+      this.expectedOptionCountMin,
+      this.expectedOptionCountMax
+    )
     // for ADDS imm8, result and operand must be stored in the same register
     if (options.length === 3 && options[0] !== options[1]) {
       throw new InstructionError(

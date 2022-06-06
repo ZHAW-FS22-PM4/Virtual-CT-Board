@@ -22,6 +22,61 @@ beforeEach(function () {
   registers.writeRegister(Register.R4, Word.fromUnsignedInteger(0x77777777))
   registers.writeRegister(Register.R8, Word.fromUnsignedInteger(0xb316))
 })
+describe('test canEncodeInstruction function', () => {
+  it('should return correct boolean for ADDS registers only', () => {
+    expect(
+      addsRegistersInstruction.canEncodeInstruction('ADDS', ['R1', 'R2'])
+    ).toBe(true)
+    expect(
+      addsRegistersInstruction.canEncodeInstruction('ADDS', ['R2', 'R2', 'R7'])
+    ).toBe(true)
+    expect(
+      addsRegistersInstruction.canEncodeInstruction('ADDS', ['R1', '#2'])
+    ).toBe(false)
+  })
+  it('should return correct boolean for ADDS immediate 3', () => {
+    expect(
+      addsImmediate3Instruction.canEncodeInstruction('ADDS', ['R8', 'R2'])
+    ).toBe(false)
+    expect(
+      addsImmediate3Instruction.canEncodeInstruction('ADDS', [
+        'R2',
+        'R3',
+        '#0xf5'
+      ])
+    ).toBe(true)
+    expect(
+      addsImmediate3Instruction.canEncodeInstruction('ADDS', ['abc'])
+    ).toBe(true)
+    expect(
+      addsImmediate3Instruction.canEncodeInstruction('ADDS', ['R1', '#2'])
+    ).toBe(false)
+    expect(
+      addsImmediate3Instruction.canEncodeInstruction('ADDS', ['R4', 'R2', 'R7'])
+    ).toBe(false)
+  })
+  it('should return correct boolean for ADDS immediate 8', () => {
+    expect(
+      addsImmediate8Instruction.canEncodeInstruction('ADDS', ['R6', 'R2'])
+    ).toBe(false)
+    expect(
+      addsImmediate8Instruction.canEncodeInstruction('ADDS', [
+        'R2',
+        'R3',
+        '#0x9'
+      ])
+    ).toBe(false)
+    expect(
+      addsImmediate8Instruction.canEncodeInstruction('ADDS', ['abc'])
+    ).toBe(false)
+    expect(
+      addsImmediate8Instruction.canEncodeInstruction('ADDS', ['R1', '#2'])
+    ).toBe(true)
+    expect(
+      addsImmediate8Instruction.canEncodeInstruction('ADDS', ['R4', 'R2', 'R7'])
+    ).toBe(false)
+  })
+})
 
 describe('test encodeInstruction function for ADDS registers only', () => {
   it('should create correct opcode for ADDS R1, R2, R3', () => {

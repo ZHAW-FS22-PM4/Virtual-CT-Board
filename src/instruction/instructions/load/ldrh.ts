@@ -82,18 +82,11 @@ export class LdrhImmediate5OffsetInstruction extends BaseInstruction {
   private rnPattern: string = '1000100000XXX000'
   private rtPattern: string = '1000100000000XXX'
   private immPattern: string = '10001XXXXX000000'
-  private instrWithSameName: BaseInstruction[] = [
+  protected instrWithSameName: BaseInstruction[] = [
     new LdrhRegisterOffsetInstruction()
   ]
   private expectedOptionCountMin: number = 2
   private expectedOptionCountMax: number = 3
-
-  public canEncodeInstruction(name: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(name, options) &&
-      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
-    )
-  }
 
   public encodeInstruction(options: string[]): Halfword[] {
     checkOptionCount(
