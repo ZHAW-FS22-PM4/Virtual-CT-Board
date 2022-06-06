@@ -30,7 +30,7 @@
 }
 
 .button-component .button.down {
-  box-shadow: rgba(0, 0, 0, 0.75) -1px 1px 3px inset;
+  box-shadow: rgba(0, 0, 0, 0.75) -6px 6px 10px inset;
 }
 
 .button-component .label {
