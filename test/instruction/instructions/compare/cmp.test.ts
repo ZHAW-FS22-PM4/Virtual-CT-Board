@@ -24,6 +24,62 @@ beforeEach(() => {
   registers.writeRegister(Register.R10, Word.fromUnsignedInteger(0x80000000))
 })
 
+describe('test canEncodeInstruction function', () => {
+  it('should return correct boolean for CMP with low registers', () => {
+    expect(cmpLowInstruction.canEncodeInstruction('CMP', ['R1', 'R2'])).toBe(
+      true
+    )
+    expect(cmpLowInstruction.canEncodeInstruction('CMP', ['R8', 'R2'])).toBe(
+      false
+    )
+    expect(cmpLowInstruction.canEncodeInstruction('CMP', ['R7', 'R9'])).toBe(
+      false
+    )
+    expect(cmpLowInstruction.canEncodeInstruction('CMP', ['R7', '#3'])).toBe(
+      false
+    )
+  })
+  it('should return correct boolean for CMP with high registers', () => {
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R8', 'R2'])).toBe(
+      true
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R3', 'R10'])).toBe(
+      true
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R12', 'R11'])).toBe(
+      true
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R7', 'R6'])).toBe(
+      false
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R5', '#4'])).toBe(
+      false
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['R4', '88'])).toBe(
+      true
+    )
+    expect(cmpHighInstruction.canEncodeInstruction('CMP', ['xyz'])).toBe(true)
+  })
+  it('should return correct boolean for CMP with immediate', () => {
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['R8', 'R2'])).toBe(
+      false
+    )
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['R1', 'R2'])).toBe(
+      false
+    )
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['R9', '#4'])).toBe(
+      false
+    )
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['4', 'R2'])).toBe(
+      false
+    )
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['xyz'])).toBe(false)
+    expect(cmpImmInstruction.canEncodeInstruction('CMP', ['R5', '#4'])).toBe(
+      true
+    )
+  })
+})
+
 describe('test encodeInstruction function for CMP with low registers', () => {
   it('should create correct opcode for CMP R0, R7', () => {
     let registerArray = ['R0', 'R7']

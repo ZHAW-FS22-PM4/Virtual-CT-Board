@@ -23,6 +23,49 @@ beforeEach(() => {
   registers.writeRegister(Register.R7, Word.fromUnsignedInteger(32))
 })
 
+describe('test canEncodeInstruction function', () => {
+  it('should return correct boolean for ASRS with registers', () => {
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R1', 'R2', 'R2'])
+    ).toBe(true)
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R9', 'R9', 'R0'])
+    ).toBe(true)
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R1', 'R2', '#4'])
+    ).toBe(false)
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R7', '#4'])
+    ).toBe(false)
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R3', 'R1'])
+    ).toBe(true)
+    expect(
+      asrsRegisterInstruction.canEncodeInstruction('ASRS', ['R4', 'R4', 'R2'])
+    ).toBe(true)
+  })
+  it('should return correct boolean for ASRS with immediate', () => {
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R1', 'R2', 'R2'])
+    ).toBe(false)
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R9', 'R9', 'R0'])
+    ).toBe(false)
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R1', 'R2', '#4'])
+    ).toBe(true)
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R7', '#4'])
+    ).toBe(true)
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R3', 'R1'])
+    ).toBe(false)
+    expect(
+      asrsImmediateInstruction.canEncodeInstruction('ASRS', ['R4', 'R4', 'R2'])
+    ).toBe(false)
+  })
+})
+
 describe('test encodeInstruction function for ASRS with registers', () => {
   it('should create correct opcode for ASRS R1, R1, R2', () => {
     let registerArray = ['R1', 'R1', 'R2']

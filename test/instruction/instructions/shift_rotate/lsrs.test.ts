@@ -23,6 +23,49 @@ beforeEach(() => {
   registers.writeRegister(Register.R7, Word.fromUnsignedInteger(0))
 })
 
+describe('test canEncodeInstruction function', () => {
+  it('should return correct boolean for LSRS with registers', () => {
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R1', 'R2', 'R2'])
+    ).toBe(true)
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R9', 'R9', 'R0'])
+    ).toBe(true)
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R1', 'R2', '#4'])
+    ).toBe(false)
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R7', '#4'])
+    ).toBe(false)
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R3', 'R1'])
+    ).toBe(true)
+    expect(
+      lsrsRegisterInstruction.canEncodeInstruction('LSRS', ['R4', 'R4', 'R2'])
+    ).toBe(true)
+  })
+  it('should return correct boolean for LSRS with immediate', () => {
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R1', 'R2', 'R2'])
+    ).toBe(false)
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R9', 'R9', 'R0'])
+    ).toBe(false)
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R1', 'R2', '#4'])
+    ).toBe(true)
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R7', '#4'])
+    ).toBe(true)
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R3', 'R1'])
+    ).toBe(false)
+    expect(
+      lsrsImmediateInstruction.canEncodeInstruction('LSRS', ['R4', 'R4', 'R2'])
+    ).toBe(false)
+  })
+})
+
 describe('test encodeInstruction function for LSRS with registers', () => {
   it('should create correct opcode for LSRS R1, R1, R2', () => {
     let registerArray = ['R1', 'R1', 'R2']
@@ -143,7 +186,7 @@ describe('test encodeInstruction function for LSRS with immediate', () => {
   })
 })
 
-describe('test executeInstruction function for LSLS with immediate', () => {
+describe('test executeInstruction function for LSRS with immediate', () => {
   it('should return correct result for high register value (LSRS R2, R1, #4; R1 = 0xffffffff)', () => {
     let registerArray = ['R2', 'R1', '#4']
     let opcode = lsrsImmediateInstruction.encodeInstruction(registerArray)

@@ -1,9 +1,11 @@
 import { Memory } from 'board/memory'
-import { Register, Registers } from 'board/registers'
+import { Flag, Register, Registers } from 'board/registers'
+import { RsbsInstruction } from 'instruction/instructions/subtract/rsbs'
 import InstructionSet from 'instruction/set'
-import { Word } from 'types/binary'
+import { Halfword, Word } from 'types/binary'
 
 const name = 'RSBS'
+const rsbsInstr = new RsbsInstruction()
 
 const registers = new Registers()
 const memory = new Memory()
@@ -29,5 +31,32 @@ describe('RSBS instruction', function () {
     const options = ['R1', 'R2', '#2']
     const encoder = InstructionSet.getEncoder(name, options)
     expect(() => encoder.encodeInstruction(options, {})).toThrow()
+  })
+
+  it('should create correct opcode for RSBS R6, R3, #0', () => {
+    let opcode = rsbsInstr.encodeInstruction(['R6', 'R3', '#000'])
+    expect(opcode[0].toBinaryString()).toEqual('0100001001011110')
+  })
+
+  it('should throw when a high register is provided as param for RSBS R10, R2, #0', () => {
+    expect(() => rsbsInstr.encodeInstruction(['R10', 'R2', '#0'])).toThrow()
+  })
+
+  it('should throw when not #0 is provided as immediate for RSBS', () => {
+    expect(() => rsbsInstr.encodeInstruction(['R1', 'R2', '#1'])).toThrow()
+  })
+
+  it('should write correct result to Rn (RSBS R6, R3, #0; R3 = 0x12345678)', () => {
+    registers.writeRegister(Register.R3, Word.fromUnsignedInteger(0x12345678))
+    rsbsInstr.executeInstruction(
+      [Halfword.fromUnsignedInteger(0b0100001001011110)],
+      registers,
+      memory
+    )
+    expect(registers.readRegister(Register.R6).value).toEqual(0xedcba988)
+    expect(registers.isFlagSet(Flag.N)).toBeTruthy()
+    expect(registers.isFlagSet(Flag.Z)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.C)).toBeFalsy()
+    expect(registers.isFlagSet(Flag.V)).toBeFalsy()
   })
 })
