@@ -7,7 +7,6 @@ import {
   create,
   createLowRegisterBits,
   getBits,
-  isImmediate,
   setBits
 } from 'instruction/opcode'
 import { Halfword, Word } from 'types/binary'
@@ -52,12 +51,5 @@ export class RorsInstruction extends BaseInstruction {
     registers.writeRegister(rdnBits.value, result)
     registers.setFlags(evaluateZeroAndNegativeFlags(result))
     registers.setFlags({ C: isCarrySet })
-  }
-
-  public canEncodeInstruction(commandName: string, options: string[]): boolean {
-    return (
-      super.canEncodeInstruction(commandName, options) &&
-      options.every((x) => !isImmediate(x))
-    )
   }
 }

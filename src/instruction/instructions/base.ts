@@ -12,6 +12,7 @@ export abstract class BaseInstruction implements IInstruction {
   public patternSecondPart: string = ''
   public opcodeLength: number = 1
   public needsLabels: boolean = false
+  protected instrWithSameName: BaseInstruction[] = []
 
   /**
    * To distinguish which encoder is responsible if multiple commands with same name are possible
@@ -20,7 +21,10 @@ export abstract class BaseInstruction implements IInstruction {
    * @returns true if the encoder is resposible for given instruction
    */
   public canEncodeInstruction(name: string, options: string[]): boolean {
-    return this.name === name
+    return (
+      this.name === name &&
+      !this.instrWithSameName.some((i) => i.canEncodeInstruction(name, options))
+    )
   }
 
   public abstract encodeInstruction(options: string[]): Halfword[]
