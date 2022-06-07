@@ -1,3 +1,4 @@
+import { AssemblerError } from 'assembler/error'
 import { Byte, Word } from 'types/binary'
 import { IInstruction } from '../ast'
 import {
@@ -7,7 +8,8 @@ import {
   ISymbol,
   RelocationType,
   SectionType,
-  SegmentType
+  SegmentType,
+  SymbolType
 } from './interfaces'
 import { setBytes } from './utils'
 
@@ -153,6 +155,30 @@ export class FileWriter {
       this.getCurrentSectionOffset(),
       line
     )
+  }
+
+  /**
+   * Adds the label of the specified instruction (if any) to
+   * the file.
+   *
+   * @param label the label to add
+   * @param line the line in the soruce file
+   */
+  public addLabel(label: string | undefined, line: number): void {
+    if (label) {
+      try {
+        this.addSymbol({
+          type: SymbolType.Address,
+          name: label,
+          section: this.getCurrentSection().name,
+          value: Word.fromUnsignedInteger(this.getCurrentSectionOffset())
+        })
+      } catch (e: any) {
+        if (e instanceof Error) {
+          throw new AssemblerError(e.message, line)
+        }
+      }
+    }
   }
 
   /**

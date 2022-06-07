@@ -437,8 +437,6 @@ endless
         B endless
         END
     `
-
-    //TODO align with data instruction
     const ast = parse(code)
     expect(Object.keys(ast.symbols)).toHaveLength(0)
     expect(ast.areas).toHaveLength(1)
