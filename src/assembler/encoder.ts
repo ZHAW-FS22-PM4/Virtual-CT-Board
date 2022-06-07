@@ -263,8 +263,6 @@ function writeDataInstruction(
     }
     return
   } else if (instruction.name === 'ALIGN') {
-    writer.mapLine(instruction.line)
-    writer.addLabel(instruction.label, instruction.line)
     const alignment =
       instruction.options.length > 0 ? Number(instruction.options[0]) : 4
     writer.align(alignment)
